@@ -57,7 +57,7 @@ import org.millstone.base.terminal.Resource;
  * @since 3.0
  */
 public class Table extends Select implements Action.Container,
-        Container.Ordered {
+        Container.Ordered, Container.Sortable {
 
     private static final int CELL_KEY = 0;
 
@@ -208,6 +208,13 @@ public class Table extends Select implements Action.Container,
     /** Is table editable */
     private boolean editable = false;
 
+    /** Current sorting direction */
+	boolean sortAscendic = true;
+	
+	/** Currently table is sorted on this propertyId */
+	Object sortContainerPropertyId = null;
+
+	
     /* Table constructors *************************************************** */
 
     /** Create new empty table */
@@ -856,7 +863,7 @@ public class Table extends Select implements Action.Container,
 
         super.changeVariables(source, variables);
 
-        // Page start index
+		// Page start index
         if (variables.containsKey("firstvisible")) {
             setCurrentPageFirstItemIndex(((Integer) variables
                     .get("firstvisible")).intValue() - 1);
@@ -877,6 +884,22 @@ public class Table extends Select implements Action.Container,
                                     this, itemId);
             }
         }
+
+    	// Sorting
+		boolean doSort = false;
+		if (variables.containsKey("sortcolumn")) {
+			setSortColumnIndex(
+				((Integer) variables.get("sortcolumn")).intValue());
+			doSort = true;
+		}
+		if (variables.containsKey("sortascendic")) {
+			setSortAscendic(
+				((Boolean) variables.get("sortascendic")).booleanValue());
+			doSort = true;
+		}
+		if (doSort) 
+			this.sort();
+		
     }
 
     /**
@@ -1023,6 +1046,12 @@ public class Table extends Select implements Action.Container,
         // The cursors are only shown on pageable table
         if (first != 0 || getPageLength() > 0)
                 target.addVariable(this, "firstvisible", first + 1);
+
+        // Sorting
+		if (getContainerDataSource() instanceof Container.Sortable) {
+			target.addVariable(this, "sortcolumn", this.getSortColumnIndex());
+			target.addVariable(this, "sortascendic", this.sortAscendic);
+		}
 
         // Actions
         if (!actionSet.isEmpty()) {
@@ -1561,4 +1590,93 @@ public class Table extends Select implements Action.Container,
         this.editable = editable;
     }
 
+    /** Sort table.
+     * 
+     * @see org.millstone.base.data.Container.Sortable#sort(java.lang.Object[], boolean[])
+     * 
+     * @throws UnsupportedOperationException if the container data source does not
+     *       implement Container.Sortable
+     */
+	public void sort(Object[] propertyId, boolean[] ascendic)
+	throws UnsupportedOperationException {
+		Container c = getContainerDataSource();
+		if (c instanceof Container.Sortable) {
+			((Container.Sortable) c).sort(propertyId, ascendic);
+		} else if (c != null) {
+			throw new UnsupportedOperationException("Underlying Data does not allow sorting");
+		}
+	}
+
+	/** Sort table by currently selected sorting column.
+	 * 
+     * @throws UnsupportedOperationException if the container data source does not
+     *       implement Container.Sortable
+	 */
+	public void sort() {
+	    if (getSortContainerPropertyId() == null)
+	        return;
+	    sort(new Object[] { this.sortContainerPropertyId },
+				new boolean[] { this.sortAscendic });
+    }
+
+    /* (non-Javadoc)
+     * @see org.millstone.base.data.Container.Sortable#getSortableContainerPropertyIds()
+     */
+    public Collection getSortableContainerPropertyIds() {
+		Container c = getContainerDataSource();
+		if (c instanceof Container.Sortable) {
+			return ((Container.Sortable) c).getSortableContainerPropertyIds();
+		} else {
+			return new LinkedList();
+		}
+    }
+
+	/**
+	 * @see fi.kttk.sto.common.ejb.SortableContainer#getSortContainerPropertyId()
+	 */
+	public Object getSortContainerPropertyId() {
+		return this.sortContainerPropertyId;
+	}
+
+	/**
+	 * @see fi.kttk.sto.common.ejb.SortableContainer#setSortContainerPropertyId(java.lang.Object)
+	 */
+	public void setSortContainerPropertyId(Object propertyId) {
+		if ((this.sortContainerPropertyId != null
+			&& !this.sortContainerPropertyId.equals(propertyId))
+			|| (this.sortContainerPropertyId == null && propertyId != null)) {
+			this.sortContainerPropertyId = propertyId;
+			sort();
+		}
+	}
+	
+	private int getSortColumnIndex() {
+		// Get column index
+		Object[] cols = getVisibleColumns();
+		if (cols != null && this.sortContainerPropertyId != null) {
+			for (int i = 0; i < cols.length; i++) {
+				if (this.sortContainerPropertyId.equals(cols[i])) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+	private void setSortColumnIndex(int i) {
+		Object[] c = getVisibleColumns();
+		if (c != null && i >= 0 && i < c.length) {
+			setSortContainerPropertyId(c[i]);
+		}
+	}
+
+	public boolean isSortAscendic() {
+		return this.sortAscendic;
+	}
+
+	public void setSortAscendic(boolean ascendic) {
+		if (this.sortAscendic != ascendic) {
+			this.sortAscendic = ascendic;
+			sort();
+		}
+	}
 }
