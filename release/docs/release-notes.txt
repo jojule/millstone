@@ -11,17 +11,16 @@
 
 ------------------------------------------------------------------------------
 
-Millstone 3.0.1 Release
+Millstone 3.0.2 Release
 -----------------------
 This version is service release for the Millstone Base 3.0 and the 
 Millstone WebAdapter 3.0 modules. 
 
-This release adds to the Web Adapter support for different XSL/T processors 
-and fixes incompabilities in themes. The code has also been cleaned up and
-some parts of the documentation has been updated.
+This version includes fixes both in base and web-adapter modules, and it 
+also adds some previously unimplemented features to the default theme.
 
-For more detailed description of changes from previous release refer to the 
-changes.txt.
+More detailed description about the changes can be found in the changes.txt.
+
 
 Future Releases
 ---------------
