@@ -470,9 +470,10 @@ public class Form
 			Object id = i.next();
 			Property property = itemDatasource.getItemProperty(id);
 			if (id != null && property != null) {
-				addField(
-					id,
-					this.fieldFactory.createField(itemDatasource, id, this));
+				Field f =
+					this.fieldFactory.createField(itemDatasource, id, this);
+				f.setPropertyDataSource(property);
+				addField(id, f);
 			}
 		}
 	}
