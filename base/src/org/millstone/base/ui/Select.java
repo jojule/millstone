@@ -751,9 +751,10 @@ public class Select
 	 * @param caption New caption.
 	 */
 	public void setItemCaption(Object itemId, String caption) {
-		if (itemId != null);
-		itemCaptions.put(itemId, caption);
-		requestRepaint();
+		if (itemId != null) {
+			itemCaptions.put(itemId, caption);
+			requestRepaint();
+		}
 	}
 
 	/** Get the caption of an item.
