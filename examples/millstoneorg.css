@@ -1,0 +1,141 @@
+/* 
+  File name:  default.css
+  Author:     IT Mill Ltd
+
+  Description:
+    Stylesheet for Millstone 0.9 Default style.
+*/
+
+body, body.main, td {
+	margin: 0px;
+	font-family: Arial, Helvetica;
+	font-size: 12px;
+	color: black;
+	vertical-align: top;
+}
+body.main {
+	margin:		25px;
+}
+
+
+/*-- Menu buttons ---------------------- */
+.button {
+	font-size: 11px;
+	font-weight: bold;
+	text-decoration: none;
+	color: #000066;
+}
+
+
+.button:hover {
+	text-decoration:underline;
+}
+
+
+.buttontrue {
+	font-size: 11px;
+	font-weight: bold;
+	text-decoration: none;
+	color: #ffffff;
+}
+
+
+DIV.header {
+	position: absolute;
+	top: 17px;
+	right: 20px;
+}
+
+
+/*-- Link styles ------------------------- */
+
+a   {
+    color: #6699cc;
+    font-weight: bold;    
+    text-decoration: none;    
+     }
+
+a:hover {
+    text-decoration: underline; 
+    }
+
+a.div {
+	padding-left: 20px;
+	background-image: url(/org/img/bullet-1.gif);
+	background-repeat: no-repeat;
+	line-height: 25px;}
+
+/*-- Header styles ---------------------------- */
+
+H1,H2,H3,H4,H5 {
+    font-size: 12px;
+    color: #000066;
+    margin-top: 12px;
+    margin-bottom: 2px;
+}
+
+H1 { font-size: 14px; margin-top: 18px; }
+H1.box { margin-top: 5px;}
+
+H2 { margin-left: 12px;}
+
+TH {
+    text-align: left;
+    font-size: 12px;
+    font-weight: bold;
+    color: #000066;
+    border-bottom: 1px solid #000066;
+}
+
+
+/*-- Other styles ------------------------- */
+
+TD.para {
+    vertical-align: top;
+    margin: 10px;
+    padding: 10px;
+    color: #000066;
+    text-decoration: none;
+    border: 1px solid #000066;
+    background-color: white;
+
+}
+
+
+TABLE.downloads { width: 400px;}
+
+SUP {font-size: 8px;}
+
+DIV.trademarks {
+    color: #6699cc;
+	float:right; 
+	text-align: right;
+	font-size: 10px;	
+}
+/*-- Page layouts ---------------------------- */
+
+DIV.body { width:450px;}
+DIV.frontpage { width: 500px;}
+
+/* -- Box Styles -----------------------------*/
+DIV.box {
+	vertical-align: top; 
+	width: 200px;
+	padding: 0px; 
+    border: 1px solid #000066;
+	}
+
+DIV.box-body {
+	padding: 4px; 
+}
+
+DIV.box-title {
+    width: 100%;
+	padding: 2px; 
+    color: white; 
+ 	font-weight: bold; 
+	border-bottom: 1px solid #000066;
+	background-color: #6699cc;}
+
+
+
