@@ -11,6 +11,37 @@
 
 ------------------------------------------------------------------------------
 
+version 3.0.1
+---------------------------
+
+Base:
+- Removed unused import statements from several classes under base package.
+- Table: Fixed td-sections to conform UIDL sepcification.
+- Added missing caching parameters to all applicationResources
+
+WebAdapter:
+- Added support for different XSL/T processors to the Web Adapter.
+  The XSL/T processor to be used is selected based on system properties.
+  The Web Adapeter has been tested with J2SDK1.4.1(Xalan) and 
+  Saxon 6.5.2 and 7.3.
+- Removed unused import statements from several classes.
+
+Default Theme:
+- Added support for Saxon6 by removing $dhtml-variables from template 
+  match-patterns
+- DateField: Fixed invalid mode attributes in named templates
+- Button, Link: Fixed immediate switch mode bug in non-javascript browsers
+  - Fixed description and error related bugs
+  - Added support for Saxon6 by removing $dhtml-variables from template 
+    match-patterns
+
+Examples:
+- Chat: Added message history. Fixed bugs related to leaving chat.
+- FeatureDateField: Locale selector is now statically initialized
+- OrderedLayoutFeature: Added initial content.
+- Removed unused import statements from several classes.
+
+
 version 3.0.0
 ---------------------------
 - First public release of Millstone Base Library and Web Adapter
