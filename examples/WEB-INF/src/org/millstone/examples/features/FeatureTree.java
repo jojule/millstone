@@ -2,6 +2,7 @@ package org.millstone.examples.features;
 
 import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.data.util.FilesystemContainer;
+import org.millstone.base.data.util.ObjectProperty;
 import org.millstone.base.ui.*;
 import org.millstone.base.event.Action;
 import java.io.File;
@@ -18,22 +19,13 @@ public class FeatureTree extends Feature implements Action.Handler {
 
 		OrderedLayout l = new OrderedLayout();
 
-		// Example panel
-		File root = null;
-
-		// Use root given as parameter
-		if ((this.getApplication() != null)
-			&& (this.getApplication().getProperty("exampleroot") != null)) {
-			root = new File(this.getApplication().getProperty("exampleroot"));
-		}
-
-		FilesystemContainer fs = new FilesystemContainer(root, false);
 		Panel show = new Panel("Tree component");
-		t = new Tree("Caption", fs);
-		if (root == null) {
-			t.setDescription(
-				"The tree is empty, because \"exampleroot\" parameter is not specified."
-					+ " Please declare this at server.xml or in web.xml.");
+		t = new Tree("Caption");
+		for (int i=0;i<10;i++) {
+			t.addItem("Parent "+i);
+			t.addItem("Child "+i);
+		    t.setParent("Child "+i, "Parent "+i);
+		   	t.setChildrenAllowed("Child "+i, false);
 		}
 
 		// Handle actions for the tree
@@ -71,7 +63,12 @@ public class FeatureTree extends Feature implements Action.Handler {
 	}
 
 	protected String getExampleSrc() {
-		return "Tree t = new Tree(\"Caption\",datasource);\n";
+		return "t = new Tree(\"Caption\");\n"+
+					"for (int i=0;i<10;i++) {\n"+
+					" t.addItem(\"Parent \"+i);"+
+					" t.addItem(\"Child \"+i);\n"+
+		    		"t.setParent(\"Child \"+i, \"Parent \"+i);\n"+
+		   			"t.setChildrenAllowed(\"Child \"+i, false);";
 	}
 	/**
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
@@ -79,10 +76,15 @@ public class FeatureTree extends Feature implements Action.Handler {
 	protected String[] getDescriptionXHTML() {
 		return new String[] {
 			"Tree",
-			"This is the Tree component.<br/>"
-				+ "It is used to display hierarchical data, such as for instance a menu or filesystem.<br/>"
-				+ "<br/>On the demo tab you can try out how the different properties "
-				+ "affect the presentation of the component.",
+			"A tree is a natural way to represent datasets that have hierarchical relationships, like for instance a filesystems. "+
+			"Millstone features a versatile and powerfull Tree component that works much like the tree components "+
+			"of most modern operating system userinterfaces, only regardeless of the terminal in question. "+
+			"The most prominent use of the Tree component is to use it for displaying a hierachical menu, like the "+
+			"menu on the left side of the screen for instance, or to display filesystems.<br/><br/>"+
+			"The tree, again like all Millstone data-components, may be bound to an underlying datasource like for "+
+			"a database or a filesystem.<br/>"+
+			"<br/>On the demo tab you can try out how the different properties "+
+			"affect the presentation of the component.",
 			"tree.jpg" };
 	}
 

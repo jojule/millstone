@@ -41,7 +41,9 @@ public class FeatureLabel extends Feature {
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
 	protected String[] getDescriptionXHTML() {
-		return new String[]{"Label","A simple text label component.<br/>"+
+		return new String[]{"Label",
+				"Millstone Labels are used not only for captions and plain text but also for embedding "+
+				"more complicated content such as for instance XHTML."+
 				"<br/>"+
 				"On the demo tab you can try out how the different properties affect "+
 				"the presentation of the component.","label.jpg"}; 

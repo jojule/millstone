@@ -46,7 +46,7 @@ public class FeatureEmbedded extends Feature {
 						"widthUnits",
 						"heightUnits" ,
 						"style"}));
-		cpp.setLayout(new OrderedLayout());
+
 		Select s = new Select("heightUnits");
 		s.addProperty("name", String.class, "");
 		s.setItemCaptionPropertyId("name");
@@ -87,9 +87,10 @@ public class FeatureEmbedded extends Feature {
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
 	protected String[] getDescriptionXHTML() {
-		return new String[]{"Embedded","<p>Embedded object is used to add multimedia to your application. "
-			+ "This component allows you to specify the data and parameters for objects, "
-			+ "and the code that can be used to display/manipulate that data.</p>"
+		return new String[]{"Embedded",
+			"The embedding feature allows for adding multimedia and other non-specified content to your application. "
+			+ "The feature has provisions for embedding both applets and Active X controls. "
+			+ "Actual support for embedded media types is left to the terminal."
 			+ "<br/>"
 			+ "On the demo tab you can try out how the different properties affect the presentation "
 			+ "of the component.","embedded.jpg"};

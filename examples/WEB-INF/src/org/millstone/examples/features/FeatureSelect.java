@@ -71,11 +71,13 @@ public class FeatureSelect extends Feature {
 	protected String[] getDescriptionXHTML() {
 		return new String[] {
 			"Select",
-			"This is the Select control."
-				+ "It is used for selecting either a single or multiple items from a list.<br/>"
-				+ "<br/>"
-				+ "On the demo tab you can try out how the different properties affect the"
-				+ " presentation of the component.",
+			"The select feature embodies  two different modes of item selection.  "+
+			"Firstly it presents the single selection mode which is usually represented as "+
+			"either a drop-down menu or a radio-group of switches, secondly it "+
+			"allows for multiple item selection, this is usually represented as either a "+
+			"listbox of selectable items or as a group of checkboxes.<br/><br/>"+
+			"On the demo tab you can try out how the different properties affect the"+
+			" presentation of the component.",
 			"select.jpg" };
 	}
 

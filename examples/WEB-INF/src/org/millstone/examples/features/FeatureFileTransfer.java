@@ -79,8 +79,8 @@ public class FeatureFileTransfer
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
 	protected String[] getDescriptionXHTML() {
-		return new String[]{"Filetransfer","This demonstrates the use of the Upload component together with the Link component.<br/>"
-			+ "This implementation does not actually store the file to disk, it only keeps it in a buffer.<br/>"
+		return new String[]{"Filetransfer","This demonstrates the use of the Upload component together with the Link component. "
+			+ "This implementation does not actually store the file to disk, it only keeps it in a buffer. "
 			+ "The example given on the example-tab on the other hand stores the file to disk and binds the link to that file.<br/>"
 			+ "<br/>On the demo tab you can try out how the different properties affect the presentation of the component.","filetransfer.jpg"};
 	}

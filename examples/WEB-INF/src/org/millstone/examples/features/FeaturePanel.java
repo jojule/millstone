@@ -56,10 +56,12 @@ public class FeaturePanel extends Feature {
 	protected String[] getDescriptionXHTML() {
 		return new String[] {
 			"Panel",
-			"The panel container is a bordered and captioned container for components.<br/>"
-				+ "<br/>"
-				+ "On the demo tab you can try out how the different properties "
-				+ "affect the presentation of the component.",
+			"The Panel is a container for other components, it usually draws a frame around it's "+
+			"extremities and may have a caption to clarify the nature of the contained components purpose."+
+			"A panel always contains firstly a layout onto which the actual contained components are added, "+
+			"this layout may be switched on the fly. <br/><br/>"+
+			"On the demo tab you can try out how the different properties "+
+			"affect the presentation of the component.",
 			"panel.jpg" };
 	}
 

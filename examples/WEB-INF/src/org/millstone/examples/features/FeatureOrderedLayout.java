@@ -16,10 +16,14 @@ public class FeatureOrderedLayout extends Feature {
 		// Example panel
 		Panel show = new Panel("OrderedLayout component");
 		OrderedLayout ol = new OrderedLayout();
-		ol.addComponent(new Label("Label 1 in OrderedLayout"));
-		ol.addComponent(new Label("Label 2 in OrderedLayout"));
-		ol.addComponent(new Label("Label 3 in OrderedLayout"));
-		ol.addComponent(new Label("Label 4 in OrderedLayout"));
+		ol.addComponent(new TextField("TextField caption"));
+		ol.addComponent(new Label("Label"));
+		Select sel = new Select("Select caption");
+		sel.addItem("Value 1");
+		sel.addItem("Value 2");
+		sel.addItem("Value 3");
+		ol.addComponent(sel);
+		ol.addComponent(new Label("Label 2"));
 
 		show.addComponent(ol);
 		l.addComponent(show);
@@ -56,20 +60,22 @@ public class FeatureOrderedLayout extends Feature {
 
 	protected String getExampleSrc() {
 		return "OrderedLayout ol = new OrderedLayout(OrderedLayout.ORIENTATION_FLOW);\n"
-			+ "ol.addComponent(new Label(\"Label 1 in OrderedLayout \"));\n"
-			+ "ol.addComponent(new Label(\"Label 2 in OrderedLayout \"));\n"
-			+ "ol.addComponent(new Label(\"Label 3 in OrderedLayout \"));\n";
+			+ "ol.addComponent(new TextField(\"Textfield caption\"));\n"
+			+ "ol.addComponent(new Label(\"Label\"));\n";
 
 	}
 	/**
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
 	protected String[] getDescriptionXHTML() {
-		return new String[]{"OrderedLayout","An container that lays out the components it contains either<br/>"
-			+ "vertically, horizontally or flowingly.<br/>"
-			+ "The legal values for the orientation property are 0,1 and 2. <br/>"
-			+ "<br/>"
-			+ "On the demo tab you can try out how the different properties "+
+		return new String[]{"OrderedLayout",
+			"This feature provides a container for laying out components either "+
+			"vertically, horizontally or flowingly. The orientation may be changed "+
+			"during runtime. It also defines a special style for themes to implement called \"form\""+
+			"that is used for input forms where the components are layed-out side-by-side "+
+			"with their captions."+
+			"<br/><br/>"+
+			"On the demo tab you can try out how the different properties "+
 			"affect the presentation of the component.","orderedlayout.jpg"};
 	}
 

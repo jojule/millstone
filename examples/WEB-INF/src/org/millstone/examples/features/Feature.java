@@ -73,8 +73,7 @@ public abstract class Feature extends CustomComponent {
 				properties.removeProperty(ids[i]);
 		}
 
-		// This is how we would like it to work...
-		//((OrderedLayout)properties.getLayout()).setStyle("form");
+		((OrderedLayout)properties.getLayout()).setStyle("form");
 
 		return properties;
 	}

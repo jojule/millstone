@@ -19,19 +19,24 @@ public class FeatureTable extends Feature implements Action.Handler {
 
 		IndexedContainer ic = new IndexedContainer();
 
-		ic.addProperty("Column 1", String.class, "");
-		ic.addProperty("Column 2", String.class, "");
-		ic.addProperty("Column 3", String.class, "");
-		ic.addProperty("Column 4", String.class, "");
-		ic.addProperty("Column 5", String.class, "");
+		String[] firstnames = new String[]{"John","Mary","Joe","Sarah","Jeff","Jane","Peter","Marc","Josie","Linus"};
+		String[] lastnames = new String[]{"Torvalds","Smith","Jones","Beck","Sheridan","Picard","Hill","Fielding","Einstein"};
+		String[] eyecolors = new String[]{"Blue","Green","Brown"};
+		String[] haircolors = new String[]{"Brown","Black","Red","Blonde"};
+
+		ic.addProperty("Firstname", String.class, "");
+		ic.addProperty("Lastname", String.class, "");
+		ic.addProperty("Age", String.class, "");
+		ic.addProperty("Eyecolor", String.class, "");
+		ic.addProperty("Haircolor", String.class, "");
 
 		for (int j = 0; j < 50; j++) {
 			Item i = ic.getItem(ic.addItem());
-			i.getProperty("Column 1").setValue("[Row: " + j + " Col: 1]");
-			i.getProperty("Column 2").setValue("[Row: " + j + " Col: 2]");
-			i.getProperty("Column 3").setValue("[Row: " + j + " Col: 3]");
-			i.getProperty("Column 4").setValue("[Row: " + j + " Col: 4]");
-			i.getProperty("Column 5").setValue("[Row: " + j + " Col: 5]");
+			i.getProperty("Firstname").setValue(firstnames[(int)(Math.random()*9)]);
+			i.getProperty("Lastname").setValue(lastnames[(int)(Math.random()*9)]);
+			i.getProperty("Age").setValue(new Integer((int)(Math.random()*80)));
+			i.getProperty("Eyecolor").setValue(eyecolors[(int)(Math.random()*3)]);
+			i.getProperty("Haircolor").setValue(haircolors[(int)(Math.random()*4)]);
 		}
 		t = new Table("Table component", ic);
 		t.setPageLength(10);
@@ -55,7 +60,7 @@ public class FeatureTable extends Feature implements Action.Handler {
 					"caption",
 					"style",
 					"description" });
-		cpp.setLayout(new OrderedLayout());
+
 		Select s =
 			createSelect(
 				"Column Header Mode",
@@ -125,13 +130,16 @@ public class FeatureTable extends Feature implements Action.Handler {
 	protected String[] getDescriptionXHTML() {
 		return new String[] {
 			"Table",
-			"This is the Table component."
-				+ "It is used for displaying data in rows and columns "
-				+ "on multiple pages when neccessary.<br/>"
-				+ "It can be bound to an underlying datasource, such as for instance a database table.<br/>"
-				+ "<br/>"
-				+ "On the demo tab you can try out how the different properties "
-				+ "affect the presentation of the component.",
+			"The Table feature caters for displaying large volumes of tabular data, "+
+			"in multiple pages where needed.<br/><br/> "+
+			"Selection of the displayed data is supported both in selecting exclusively one row "+
+			"or multiple rows at the same time. For each row, there may be a set of actions associated, "+
+			"depending on the skin implementation these actions may be displayed either as a drop-down "+
+			"menu for each row or a set of command buttons. <br/><br/>"+
+			"As with all Millstone data-components , so also the Table may be bound to an underlying "+
+			"datasource, such as for instance a database table.<br/><br/>"+
+		    "On the demo tab you can try out how the different properties "+
+			"affect the presentation of the component.",
 			"table.jpg" };
 	}
 

@@ -11,7 +11,9 @@ import org.millstone.base.terminal.ParameterHandler;
 import org.millstone.base.terminal.URIHandler;
 import org.millstone.base.ui.*;
 
-public class FeatureParameters extends Feature implements URIHandler, ParameterHandler{
+public class FeatureParameters
+	extends Feature
+	implements URIHandler, ParameterHandler {
 
 	private Label context = new Label();
 	private Label relative = new Label();
@@ -26,10 +28,12 @@ public class FeatureParameters extends Feature implements URIHandler, ParameterH
 
 		OrderedLayout l = new OrderedLayout();
 
-		Label info = new Label("To test this feature, try to "+
-		"add some get parameters to URL. For example if you have "+
-		"the feature browser installed in your local host, try url: " +
-		"http://localhost:8080/examples/features/test/uri?test=1&test=2");
+		Label info =
+			new Label(
+				"To test this feature, try to "
+					+ "add some get parameters to URL. For example if you have "
+					+ "the feature browser installed in your local host, try url: "
+					+ "http://localhost:8080/examples/features/test/uri?test=1&test=2");
 		info.setCaption("Usage info");
 		l.addComponent(info);
 
@@ -40,7 +44,7 @@ public class FeatureParameters extends Feature implements URIHandler, ParameterH
 		relative.setCaption("Last relative URI");
 		p1.addComponent(relative);
 		l.addComponent(p1);
-		
+
 		// Parameters
 		Panel p2 = new Panel("Parameter Handler");
 		params.setCaption("Last parameters");
@@ -48,7 +52,7 @@ public class FeatureParameters extends Feature implements URIHandler, ParameterH
 		params.setRowHeaderMode(Table.ROW_HEADER_MODE_ID);
 		p2.addComponent(params);
 		l.addComponent(p2);
-	
+
 		return l;
 	}
 
@@ -56,8 +60,17 @@ public class FeatureParameters extends Feature implements URIHandler, ParameterH
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
 	protected String[] getDescriptionXHTML() {
-		return new String[]{"Parameters","Parameters and URL:s can be received trough the windows by registering "+
-		"URIHandler and ParameterHandler classes window.","parameters.jpg"};
+		return new String[] {
+			"Parameters",
+			"This is a demonstration of how URL parameters can be recieved and handled."
+				+ "Parameters and URL:s can be received trough the windows by registering "
+				+ "URIHandler and ParameterHandler classes window.",
+			"parameters.jpg" };
+	}
+
+	protected String getExampleSrc() {
+		return "This is a more advanced example, please see the source of this example, FeatureParameters.java,"+
+		"as the complete class is a better demonstration then could be given here.";
 	}
 
 	/** Add URI and parametes handlers to window.
@@ -92,15 +105,16 @@ public class FeatureParameters extends Feature implements URIHandler, ParameterH
 	 */
 	public void handleParameters(Map parameters) {
 		params.removeAllItems();
-		for (Iterator i=parameters.keySet().iterator(); i.hasNext();) {
+		for (Iterator i = parameters.keySet().iterator(); i.hasNext();) {
 			String name = (String) i.next();
 			String[] values = (String[]) parameters.get(name);
 			String v = "";
-			for (int j=0; j<values.length; j++) {
-				if (v.length() > 0) v += ", ";
-				v += "'" + values[j] + "'";	
+			for (int j = 0; j < values.length; j++) {
+				if (v.length() > 0)
+					v += ", ";
+				v += "'" + values[j] + "'";
 			}
-			params.addItem(new Object[] {v} , name);
+			params.addItem(new Object[] { v }, name);
 		}
 	}
 }

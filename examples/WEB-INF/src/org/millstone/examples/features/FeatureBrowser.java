@@ -14,9 +14,12 @@ public class FeatureBrowser
 	private Feature currentFeature = null;
 	private GridLayout layout;
 	private static final String WELCOME_TEXT =
-			"In this application you may view a demonstration of each Millstone UI component <br/>"
-			+ "and all the layouts. Each component has a description, demonstration and code-example"
-			+ "associated with it.<br/><br/>Please send comments and suggestions to <a href=\"mailto:dev@millstone.org\">dev@millstone.org</a>.";
+			"<h3>Welcome to the Millstone feature tour!</h3>"
+			+"In this application you may view a demonstration of each Millstone feature. <br/>"
+			+ "Each feature has a description, demonstration and code-example "
+			+ "associated with it.<br/><br/>"
+			+"Start your tour by selecting a component from the list on the left.<br/><br/>"
+			+"For more information, point your browser to: <a href=\"http://www.millstone.org\">www.millstone.org</a>";
 
 	public FeatureBrowser() {
 

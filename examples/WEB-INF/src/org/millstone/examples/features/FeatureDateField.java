@@ -37,7 +37,6 @@ public class FeatureDateField extends Feature {
 					"caption",
 					"description",
 					"style" });
-		cpp.setLayout(new OrderedLayout());
 		
 		Select s = createSelect("Style", 
 			new String[]{"field","text","calendar"},
@@ -58,9 +57,12 @@ public class FeatureDateField extends Feature {
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
 	protected String[] getDescriptionXHTML() {
-		return new String[]{"Datefield","This is the DateField control.<br/>"+
-				"It is used to display date and time with varying granularity.<br/>"+
-				"<br/>Furthermore a validator may be bound to the component to check and "+
+		return new String[]{"Datefield",
+				"Representing Dates and times and providing a way to select or enter some specific date or time "+
+				"is an oft recuring need in data-entry userinterfaces. Millstone provides a DateField feature that "+
+				"is both clear and easy to use and yet powerfull in its task allowing for granularity control and "+
+				"full support for different locales. "+
+				"A validator may be bound to the component to check and "+
 				"validate the given input.<br/>"+
 				"<br/>On the demo tab you can try out how the different properties affect the "+
 				"presentation of the component.","datefield.jpg"};

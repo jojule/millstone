@@ -60,11 +60,9 @@ public class FeatureButton extends Feature {
 		new ClassResource("button.gif", this.getApplication());
 		return new String[] {
 			"Button",
-			"<img src=\"res(button.gif)\"/>This is the Button control.<br/>"
-				+ "It can function either as a pushbutton or switch. (checkbox)<br/>"
-				+ "<br/>"
-				+ "On the demo tab you can try out how the different properties affect "
-				+ "the presentation of the component.",
+		    "In Millstone, buttons may function either as a pushbuttons or switches. (checkboxes)<br/><br/>"+
+		    "On the demo tab you can try out how the different properties affect "+
+			"the presentation of the component.",
 			"button.gif" };
 	}
 
