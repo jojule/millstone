@@ -111,7 +111,8 @@
 
       
       <!-- Main form -->
-      <FORM NAME="millstone" METHOD="POST" ACCEPT-CHARSET="UTF-8" ENCTYPE="multipart/form-data">
+      <FORM NAME="millstone" METHOD="POST" ACCEPT-CHARSET="UTF-8" ENCTYPE="multipart/form-data" 
+        ACTION="{wa:getFormAction()}">
 		
         <xsl:if test="$dhtml">
 			<xsl:attribute name="onsubmit">form_submit()</xsl:attribute>

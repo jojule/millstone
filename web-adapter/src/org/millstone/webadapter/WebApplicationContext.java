@@ -44,12 +44,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.WeakHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.millstone.base.Application;
 import org.millstone.base.service.ApplicationContext;
+import org.millstone.base.ui.Window;
 
 /** Web application context for Millstone applications.
  *
@@ -61,12 +63,46 @@ public class WebApplicationContext implements ApplicationContext {
 
 	private List listeners;
 	private HttpSession session;
-
+	private WeakHashMap formActions = new WeakHashMap();
+	
 	/** Create a new Web Application Context. */
 	WebApplicationContext(HttpSession session) {
 		this.session = session;
 	}
 
+	/** Get the form action for given window.
+	 * 
+	 * By default, this action is "", which preserves the current url. Commonly
+	 * this is wanted to be set to <code>application.getUrl().toString()</code>
+	 * or <code>window.getUrl().toString()</code> in order to clean any
+	 * local links or parameters set from the action.
+	 * 
+	 * @param window Window for which the action is queried
+	 * @return Action to be set into Form action attribute
+	 */ 
+	public String getWindowFormAction(Window window) {
+		String action = (String) formActions.get(window);
+		return action == null ? "" : action;
+	}
+	
+	/** Set the form action for given window.
+	 * 
+	 * By default, this action is "", which preserves the current url. Commonly
+	 * this is wanted to be set to <code>application.getUrl().toString()</code>
+	 * or <code>window.getUrl().toString()</code> in order to clean any
+	 * local links or parameters set from the action.
+	 * 
+	 * @param window Window for which the action is set
+	 * @param action New action for the window.
+	 * @return Action to be set into Form action attribute
+	 */ 
+	public void setWindowFormAction(Window window, String action) {
+		if (action == null || action == "") 
+			formActions.remove(window);
+		else
+			formActions.put(window,action);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.millstone.base.service.ApplicationContext#getBaseDirectory()
 	 */

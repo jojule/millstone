@@ -430,6 +430,21 @@ public class ThemeFunctionLibrary {
 		}
 	}
 
+	/** Get Form Action URL for the requested window.
+	 * 
+	 * <p>This returns the action for the window main form. This action
+	 * can be set through WebApplicationContect setWindowFormAction method..</p>
+	 * 
+	 * @return Form action for the current window.
+	 */
+	static public String getFormAction() {
+		
+		Window win = window();
+		Application app = application();
+		
+		return ((WebApplicationContext)app.getContext()).getWindowFormAction(win);
+	}
+
 	/** Generate JavaScript for updating given window */
 	static protected String getWindowRefreshScript(
 		Application application,
