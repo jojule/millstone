@@ -942,9 +942,9 @@ public class WebAdapterServlet
 		HttpSession session = request.getSession();
 
 		// Get the application to variablemap map
-		HashMap varMapMap = (HashMap) session.getAttribute(SESSION_ATTR_VARMAP);
+		Map varMapMap = (Map) session.getAttribute(SESSION_ATTR_VARMAP);
 		if (varMapMap == null) {
-			varMapMap = new HashMap();
+			varMapMap = new WeakHashMap();
 			session.setAttribute(SESSION_ATTR_VARMAP, varMapMap);
 		}
 
