@@ -4,6 +4,18 @@
                          "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
 <web-app>
 
+	<!-- Servlet definitions for ajax tests - - - - - - - - - - - - - - - -->
+
+    <servlet>
+        <servlet-name>ajax-hello</servlet-name>
+        <servlet-class>org.millstone.ajaxadapter.AjaxAdapterServlet</servlet-class>
+        <init-param>
+            <param-name>application</param-name>
+            <param-value>org.millstone.examples.HelloWorld</param-value>
+        </init-param>
+    </servlet>
+
+
 	<!-- Servlet definitions for example applications - - - - - - - - - - -->
 
     <servlet>
@@ -68,6 +80,13 @@
             <param-value>org.millstone.examples.features.FeaturesApplication</param-value>
         </init-param>
     </servlet>
+
+	<!-- Namespace mappings for ajax test applications - - - - - - - - - - -->
+
+    <servlet-mapping>
+        <servlet-name>ajax-hello</servlet-name>
+        <url-pattern>/ajax/hello/*</url-pattern>
+    </servlet-mapping>
 
 	<!-- Namespace mappings for example applications - - - - - - - - - - - -->
 
