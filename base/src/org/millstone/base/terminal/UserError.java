@@ -40,7 +40,6 @@ package org.millstone.base.terminal;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.logging.ErrorManager;
 
 import org.millstone.base.event.ListenerMethod;
 

@@ -38,7 +38,6 @@
 
 package org.millstone.base.ui;
 
-import java.nio.channels.OverlappingFileLockException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.HashMap;
