@@ -5,21 +5,32 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 import java.io.File;
+import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.*;
 
 /** Jukebox implementing a shared playlist and standard playing interface.
  *
  * @author  IT Mill Ltd
  */
-public class Jukebox implements Runnable {
+public class Jukebox {
 
-	private static LinkedList playList = new LinkedList();
-	private static Song current = null;
-	private static Player player;
-	private static Thread playerThread;
-	private static Random rand;
-	private static boolean playing = false;
-	private static LinkedList listeners = new LinkedList();
+	// Fields used by controller thread only
+	private LinkedList listeners = new LinkedList();
+	private Thread playerThread;
+	private boolean disablePlaylistChange = false;
+	private Random rand;
+
+	// Fields used by both threads
+	private AudioDevice audioDevice;
+	private Player player;
+	private LinkedList playList = new LinkedList();
+	private Song current = null;
+	private boolean playing = false;
+
+	/** Construct new jukebox instance */
+	public Jukebox() {
+
+	}
 
 	/** Get iterator for iterating trough songs in playlist. */
 	public Iterator getPlayListIterator() {
@@ -39,17 +50,22 @@ public class Jukebox implements Runnable {
 	 * @param file MP3-file or directory to be added to playlist
 	 */
 	public void addToPlayList(File file) {
-		if (file.isFile() && file.getName().toLowerCase().endsWith(".mp3"))
-			playList.add(new Song(file));
-		else if (file.isDirectory()) {
+		if (file.isFile() && file.getName().toLowerCase().endsWith(".mp3")) {
+			synchronized (playList) {
+				playList.add(new Song(file));
+			}
+		} else if (file.isDirectory()) {
 			File[] f = file.listFiles();
+			this.disablePlaylistChange = true;
 			for (int i = 0; i < f.length; i++)
-				addToPlayList(f[i]);
+				if (f[i].getName().toLowerCase().endsWith(".mp3"))
+					addToPlayList(f[i]);
+			this.disablePlaylistChange = false;
 		}
-		playlistChange();
+		if (!disablePlaylistChange)
+			playlistChange();
 		if (current == null && size() > 0) {
 			current = (Song) playList.getFirst();
-			stateChange();
 		}
 	}
 
@@ -59,7 +75,9 @@ public class Jukebox implements Runnable {
 	public void removeFromPlayList(Song song) {
 		if (song == current)
 			next();
-		playList.remove(song);
+		synchronized (playList) {
+			playList.remove(song);
+		}
 		playlistChange();
 	}
 
@@ -69,127 +87,116 @@ public class Jukebox implements Runnable {
 	public void clearPlayList() {
 		if (isPlaying())
 			stop();
-		playList.clear();
+
+		synchronized (playList) {
+			playList.clear();
+		}
 		current = null;
 		playlistChange();
 	}
 
+	/** Pley the current song if any,
+	 *  This function does not trigger events.
+	 */
+	private synchronized void startPlayerThread() {
+
+		// Stop first
+		stopPlayerThread();
+
+		// Start playing mode
+		playing = true;
+
+		// Start playing current
+		playerThread = new Thread(new PlayerThread(), "Audio Player Thread");
+		playerThread.start();
+	}
+
+	/** Stop playing the current song. 
+	 *  This function does not trigger events.
+	 * 
+	 */
+	private synchronized void stopPlayerThread() {
+
+		playing = false;
+		if (player != null) {
+			player.close();
+		}
+		player = null;
+		if (audioDevice != null)
+			audioDevice.close();
+		audioDevice = null;
+		if (playerThread != null)
+			playerThread.interrupt();
+		playerThread = null;
+	}
+
 	/** Start playing.
 	 */
-	public synchronized void play() {
-		if (size() > 0) {
-			if (current == null)
-				current = (Song) playList.getFirst();
-
-			// Stop if currently playing
-			playing = false;
-			if (player != null)
-				player.close();
-			while (playerThread != null && playerThread.isAlive()) {
-				playerThread.interrupt();
-				try {
-					wait(2);
-				} catch (java.lang.InterruptedException e) {
-					System.out.println("Interrupted exception at player.");
-				}
-			}
-
-			// Start playing current
-			playerThread = new Thread(this);
-			playing = true;
-			playerThread.start();
-		}
+	public void play() {
+		startPlayerThread();
 		stateChange();
 	}
 
 	/** Stop playing.
 	 */
-	public synchronized void stop() {
-		playing = false;
-		if (playerThread != null) {
-			if (player != null) {
-				player.close();
-				player = null;
-			}
-			while (playerThread.isAlive()) {
-				playerThread.interrupt();
-				try {
-					wait(2);
-				} catch (java.lang.InterruptedException e) {
-					System.out.println("Interrupted exception at player.");
-				}
-			}
-			playerThread = null;
-		}
+	public void stop() {
+		stopPlayerThread();
 		stateChange();
 	}
 
 	/** Move to next song in playlist.
 	 */
 	public void next() {
-		if (current != null) {
-			int index = playList.indexOf(current);
-			if (index < playList.size() - 1) {
-				current = (Song) playList.get(index + 1);
-				if (isPlaying()) play();
-			} else {
-				current = null;
-				if (size() > 0)
-					current = (Song) playList.getFirst();
-				stop();
+
+		Song next = null;
+
+		synchronized (playList) {
+
+			if (current != null) {
+				int index = playList.indexOf(current);
+				next = null;
+				if (index < playList.size() - 1) {
+					next = (Song) playList.get(index + 1);
+				}
 			}
-		} else
-			if (isPlaying()) play();
-		playlistChange();
+		}
+		setCurrentSong(next);
 	}
 
 	/** Move to previous song in playlist.
 	 */
 	public void prev() {
-		if (current != null) {
-			int index = playList.indexOf(current);
-			if (index > 0)
-				current = (Song) playList.get(index - 1);
+
+		Song prev = null;
+
+		synchronized (playList) {
+
+			if (current != null) {
+				int index = playList.indexOf(current);
+				if (index > 0) {
+					prev = (Song) playList.get(index - 1);
+				}
+			}
 		}
-		if (isPlaying()) play();
-		playlistChange();
+
+		setCurrentSong(prev);
 	}
 
 	/** Move to random song in playlist.
 	 */
 	public void random() {
-		if (size() > 0) {
-			if (rand == null)
-				rand = new Random();
-			int index = rand.nextInt(size());
-			current = (Song) playList.get(index);
-			if (isPlaying()) play();
-			playlistChange();
-		}
-	}
 
-	public void run() {
-		while (playing) {
-			try {
-				AudioDevice audioDev =
-					FactoryRegistry.systemRegistry().createAudioDevice();
-				player = new Player(current.getStream(), audioDev);
-				player.play();
-				player.close();
-			} catch (java.lang.Exception e) {
-				System.out.println("Exception at player:"+e);
-				playing = false;
-			}
-
-			if (playing) {
-				int index = playList.indexOf(current);
-				if (index < playList.size() - 1) {
-					current = (Song) playList.get(index + 1);
-					stateChange();
-				} else
-					playing = false;
+		Song random = null;
+		synchronized (playList) {
+			if (size() > 0) {
+				if (rand == null)
+					rand = new Random();
+				int index = rand.nextInt(size());
+				random = (Song) playList.get(index);
 			}
 		}
+
+		setCurrentSong(random);
 	}
 
 	/** Get the currently playing song */
@@ -199,15 +206,32 @@ public class Jukebox implements Runnable {
 
 	/** Get the currently playing song */
 	public void setCurrentSong(Song song) {
-		if (song != null) {
-			if (!playList.contains(song))
-				playList.addLast(song);
-			if (current != song) {
-				current = song;
-				play();
+
+		boolean wasPlaying = isPlaying();
+		Song oldSong = current;
+
+		stopPlayerThread();
+		synchronized (playList) {
+			if (song != null) {
+				if (!playList.contains(song))
+					playList.addLast(song);
+				if (oldSong != song) {
+					current = song;
+				}
+
+			} else {
+				current = null;
 			}
-		} else
-			stop();
+		}
+
+		// Resume playing state
+		if (wasPlaying)
+			startPlayerThread();
+
+		// Trigger event
+		if (current != oldSong)
+			stateChange();
+
 	}
 
 	/** Is the player active */
@@ -250,9 +274,66 @@ public class Jukebox implements Runnable {
 			 ((JukeboxListener) i.next()).jukeboxPlaylistChanged(this);
 	}
 
-	/** Get the playlist */ 
+	/** Get the playlist */
 	public LinkedList getPlayList() {
 		return playList;
+	}
+
+	private class PlayerThread implements Runnable {
+
+		private boolean stopNow = false;
+
+		/**
+		 * @see java.lang.Runnable#run()
+		 */
+		public void run() {
+			stopNow = false;
+			try {
+				audioDevice =
+					FactoryRegistry.systemRegistry().createAudioDevice();
+			} catch (JavaLayerException e) {
+				System.out.println("Failed to open audio device:" + e);
+			}
+
+			try {
+
+				// Play until somebody stops
+				Song song = getCurrentSong();
+				while (!stopNow && isPlaying() && song != null) {
+
+					player = new Player(song.getStream(), audioDevice);
+					player.play();
+
+					// Check if the playing was stopped
+					if (!isPlaying()) {
+						song = null;
+					} else {
+						// Get next song, if available
+						synchronized (playList) {
+							if (current != null) {
+								int index = playList.indexOf(current);
+								current = null;
+								if (index < playList.size() - 1) {
+									current = (Song) playList.get(index + 1);
+									stateChange();
+								}
+								song = current;
+							}
+						}
+					}
+				}
+
+				// Catch exeptions
+			} catch (java.lang.Exception e) {
+				System.out.println("Exception in player:" + e);
+			}
+
+			// Stop from playing
+			playing=false;
+			stateChange();
+
+		}
+
 	}
 }
 

@@ -4,8 +4,8 @@ import org.millstone.base.ui.*;
 import org.millstone.base.event.*;
 import org.millstone.base.terminal.FileResource;
 import org.millstone.base.terminal.ThemeResource;
-import org.millstone.base.data.Property;
 import org.millstone.base.data.util.FilesystemContainer;
+import org.millstone.base.data.util.MethodProperty;
 
 import java.io.File;
 import java.util.Collection;
@@ -20,9 +20,10 @@ public class StonePlayer extends org.millstone.base.Application {
 	/** Shared jukebox used for playing. */
 	private static Jukebox sharedJukebox;
 
-	/** Creates a new instance of Calculator and initialized UI */
+	/** Creates a new instance  StonePlayer UI */
 	public StonePlayer() {
-		sharedJukebox = new Jukebox();
+		if (sharedJukebox == null)
+			sharedJukebox = new Jukebox();
 	}
 
 	/**
@@ -70,40 +71,35 @@ public class StonePlayer extends org.millstone.base.Application {
 
 	}
 
-	private class Playlist
-		extends OrderedLayout
-		implements JukeboxListener, Property.ValueChangeListener {
+	/** Playlist UI implementation. */
+	public class Playlist extends CustomComponent implements JukeboxListener {
 
 		private Table playlist;
+		private boolean updating = false;
 
 		public Playlist() {
 
-			playlist = new Table();
+			setCompositionRoot(playlist = new Table());
 
 			// Playlist
 			playlist.setCaption("Playlist");
 			playlist.setRowHeaderMode(Table.ROW_HEADER_MODE_ID);
 			playlist.setSelectable(true);
 			playlist.setImmediate(true);
-			playlist.addListener(this);
 			playlist.setStyle("list");
-			addComponent(playlist);
 
 			// Listen julkebox changes
+			playlist.setPropertyDataSource(
+				new MethodProperty(sharedJukebox, "currentSong"));
 			sharedJukebox.addListener(this);
 
 			// Refresh the view to reflect the current jukebox state 
 			jukeboxPlaylistChanged(sharedJukebox);
 		}
 
-		/** Invoked when state of the jukebox has changed. */
+		/** Invoked when state of the jukebox has changed.*/
 		public void jukeboxStateChanged(Jukebox jukebox) {
-
-			// select the current song
-			Song song = jukebox.getCurrentSong();
-			if (song != null) {
-				playlist.setValue(song);
-			}
+			this.requestRepaint();
 		}
 
 		/** Refresh the playlist.
@@ -113,68 +109,46 @@ public class StonePlayer extends org.millstone.base.Application {
 
 			// Update the visible playlist
 			Collection pl = jukebox.getPlayList();
+			Song c = jukebox.getCurrentSong();
+			playlist.setWriteThrough(false);
 			playlist.removeAllItems();
 			if (pl != null) {
 				for (Iterator i = pl.iterator(); i.hasNext();) {
 					playlist.addItem((Song) i.next());
 				}
 			}
-
-			// (re)select the current song
-			Song song = jukebox.getCurrentSong();
-			if (song != null) {
-				playlist.setValue(song);
-			}
+			if (c != null)
+				playlist.select(c);
+			playlist.setWriteThrough(true);
 		}
-
-		/** Invoked when the selection in playlist has changed.
-		 * @see org.millstone.base.data.Property.ValueChangeListener#valueChange(Property.ValueChangeEvent)
-		 */
-		public void valueChange(Property.ValueChangeEvent event) {
-			Song s = (Song) event.getProperty().getValue();
-			if (s != null) {
-				sharedJukebox.setCurrentSong(s);
-			}
-		}
-
 	}
 
-	/** Player controls buttons and current song information. */
-	private class Player extends OrderedLayout implements JukeboxListener {
+	/** Player controls buttons and current song information.
+	 *  This  class implements a component which can be used to  control the
+	 * underlying jukebox.
+	 */
+	public class Player extends GridLayout implements JukeboxListener {
 
-		private Label currentTitle;
-		private Button playstop;
+		/** Button for play and stop. */
+		private Button playButton;
 
 		public Player() {
 
-			setOrientation(OrderedLayout.ORIENTATION_VERTICAL);
+			// Create grid for controls
+			super(4, 2);
 
 			// Create buttons by connecting them directly to
 			// the jukebox functions. Play/stop button handled separately
-			OrderedLayout hl =
-				new OrderedLayout(OrderedLayout.ORIENTATION_HORIZONTAL);
-
-			Button b;
-			hl.addComponent(b = new Button("Prev", sharedJukebox, "prev"));
-			b.setStyle("stoneplayer");
-
-			hl.addComponent(
-				playstop = new Button("Play", sharedJukebox, "play"));
-			playstop.setStyle("stoneplayer");
-
-			hl.addComponent(b = new Button("Next", sharedJukebox, "next"));
-			b.setStyle("stoneplayer");
-
-			hl.addComponent(b = new Button("Rand", sharedJukebox, "random"));
-			b.setStyle("stoneplayer");
-
-			addComponent(hl);
+			addComponent(new Button("Prev", sharedJukebox, "prev"));
+			addComponent(playButton = new Button("Play", this, "togglePlay"));
+			addComponent(new Button("Next", sharedJukebox, "next"));
+			addComponent(new Button("Rand", sharedJukebox, "random"));
 
 			// Current song title
 			Panel titlePanel = new Panel("Currently playing");
-
-			titlePanel.addComponent(currentTitle = new Label(""));
-			addComponent(titlePanel);
+			titlePanel.addComponent(
+				new Label(new MethodProperty(sharedJukebox, "currentSong")));
+			addComponent(titlePanel, 0, 1, 3, 1);
 
 			// Listen julkebox changes
 			sharedJukebox.addListener(this);
@@ -183,34 +157,27 @@ public class StonePlayer extends org.millstone.base.Application {
 			jukeboxStateChanged(sharedJukebox);
 		}
 
+		public void togglePlay() {
+			if (sharedJukebox.isPlaying()) {
+				sharedJukebox.stop();
+			} else {
+				sharedJukebox.play();
+			}
+
+		}
+
 		/** Invoked when state of the jukebox has changed. */
 		public void jukeboxStateChanged(Jukebox jukebox) {
 
 			// update play/stop button state
 			if (jukebox.isPlaying()) {
-				playstop.setCaption("Stop");
-				playstop.removeListener(Button.ClickEvent.class, sharedJukebox);
-				playstop.addListener(
-					Button.ClickEvent.class,
-					sharedJukebox,
-					"stop");
+				playButton.setCaption("Stop");
 			} else {
-				playstop.setCaption("Play");
-				playstop.removeListener(Button.ClickEvent.class, sharedJukebox);
-				playstop.addListener(
-					Button.ClickEvent.class,
-					sharedJukebox,
-					"play");
+				playButton.setCaption("Play");
 			}
-			// select the current song
-			Song song = jukebox.getCurrentSong();
-			if (song != null) {
-				currentTitle.setValue(song.getName());
-			}
-
 		}
 
-		/** Ignore playlist changed.
+		/** Ignore playlist changes.
 		 * @see org.millstone.examples.stoneplayer.JukeboxListener#jukeboxPlaylistChanged(Jukebox)
 		 */
 		public void jukeboxPlaylistChanged(Jukebox jukebox) {
@@ -219,9 +186,9 @@ public class StonePlayer extends org.millstone.base.Application {
 	}
 
 	/** Music file browser component.
-	 * 
+	 *  A component for browsing and selecting through music files.
 	 */
-	private class FileBrowser extends OrderedLayout implements Action.Handler {
+	public class FileBrowser extends OrderedLayout implements Action.Handler {
 
 		private Table results;
 
@@ -262,7 +229,7 @@ public class StonePlayer extends org.millstone.base.Application {
 			}
 		}
 
-		// Define some actions for files/folders
+		/* Define some actions for files/folders */
 		private Action ACT_PLAY = new Action("Play", null);
 		private Action ACT_ENQ = new Action("Enqueue", null);
 		private Action ACT_DL = new Action("Download", null);
@@ -273,30 +240,13 @@ public class StonePlayer extends org.millstone.base.Application {
 		public Action[] getActions(Object target, Object source) {
 
 			if (((File) target).isDirectory()) {
-
-				// If directory contains mp3 files enable
-				// play/enqueue actions for this directory
-				boolean containsMp3 = false;
-				String[] list = ((File) target).list();
-				if (list == null)
-					return new Action[] {
-				};
-				for (int i = 0; i < list.length && (!containsMp3); i++) {
-					if (list[i].endsWith(".mp3"))
-						containsMp3 = true;
-				}
-				if (containsMp3)
-					return new Action[] { ACT_PLAY, ACT_ENQ };
-				else
-					return new Action[] {
-				};
+				return new Action[] { ACT_PLAY, ACT_ENQ };
 			} else {
-				// MP3 files are always playable/downloadable
 				return new Action[] { ACT_PLAY, ACT_ENQ, ACT_DL };
 			}
 		}
 
-		/** Handle file actions.
+		/** Handle file/directory actions.
 		 * @see org.millstone.base.event.Action.Handler#handleAction(Action, Object, Object)
 		 */
 		public void handleAction(Action action, Object sender, Object target) {
