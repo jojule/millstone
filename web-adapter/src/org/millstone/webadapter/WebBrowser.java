@@ -59,7 +59,7 @@ public class WebBrowser implements Terminal {
 	private static WebBrowser DEFAULT = new WebBrowser();
 
 	/** Content type */
-	private String contentType = "text/html";
+	private String contentType = "text/html; charset=utf-8";
 
 	/** Holds the collection of accepted locales */
 	private Collection locales = new ArrayList();
