@@ -2,13 +2,13 @@
 
 <xsl:stylesheet version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"  
-    xmlns:wa="xalan://org.millstone.webadapter.ThemeFunctionLibrary" 
-    xmlns:browser="xalan://org.millstone.webadapter.WebBrowser">
+    xmlns:wa="millstone://org.millstone.webadapter.ThemeFunctionLibrary" 
+    xmlns:browser="millstone://org.millstone.webadapter.WebBrowser">
 
 <xsl:output method="html" doctype-public="-//W3C//DTD HTML 4.0 Transitional//EN"/>
 
 <!-- Calculate some browser dependant variables for use in templates -->
-<xsl:variable name="dhtml" select="browser:supports(wa:browser(),browser:parseJavaScriptVersion('ECMA-262'))"/> 
+<xsl:variable name="dhtml" select="browser:supports(wa:browser(),browser:parseJavaScriptVersion('ECMA-262'))"/>
 
 <xsl:variable name="maxtablewidth">
   <xsl:choose>
