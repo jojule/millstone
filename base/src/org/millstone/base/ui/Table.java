@@ -944,7 +944,7 @@ public class Table extends Select implements Action.Container,
         if (isMultiSelect())
             selectedKeys = new String[((Set) getValue()).size()];
         else
-            selectedKeys = new String[(getValue() == null ? 0 : 1)];
+            selectedKeys = new String[(getValue() == null && getNullSelectionItemId() == null? 0 : 1)];
         int keyIndex = 0;
 
         // Table attributes
