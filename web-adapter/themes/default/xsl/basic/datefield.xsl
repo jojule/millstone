@@ -436,7 +436,7 @@
 
 <!-- Generate day selections -->
 
-<xsl:template name="calendar-day" mode="datefield-dropdown">
+<xsl:template name="calendar-day">
   <xsl:param name="day"/>
   <xsl:param name="selectedday"/>
   
@@ -458,7 +458,7 @@
 
 <!-- Generate month selections -->
 
-<xsl:template name="calendar-month" mode="datefield-calendar">
+<xsl:template name="calendar-month">
   <xsl:param name="month"/>
   <xsl:param name="selectedmonth"/>
   
@@ -481,7 +481,7 @@
 
 <!-- Generate weeks for calendar -->
 
-<xsl:template name="calendar-weeks" mode="datefield-calendar">
+<xsl:template name="calendar-weeks">
   <xsl:param name="calendarid"/>
   <xsl:param name="dayid"/>
   <xsl:param name="week"/>
@@ -510,7 +510,7 @@
 
 <!-- Generate titles for weekdays -->
 
-<xsl:template name="calendar-weekdaytitle" mode="datefield-calendar">
+<xsl:template name="calendar-weekdaytitle">
   <xsl:param name="weekday"/>
   <xsl:param name="weekbegin"/>
   
@@ -527,7 +527,7 @@
 
 <!-- Generate days for a week -->
 
-<xsl:template name="calendar-weekdays" mode="datefield-calendar">
+<xsl:template name="calendar-weekdays">
   <xsl:param name="day"/>
   <xsl:param name="week"/>
   <xsl:param name="calendarid"/>
