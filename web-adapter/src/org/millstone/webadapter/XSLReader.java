@@ -79,9 +79,6 @@ public class XSLReader implements XMLReader, ContentHandler {
 		String transformerName =
 			UIDLTransformer.xsltFactory.getClass().getName();
 
-		// FIXME
-		System.out.println("DEBUG: transformerFactory == " + transformerName);
-
 		// Saxon 7.x
 		if ("net.sf.saxon.TransformerFactoryImpl".equals(transformerName))
 			xsltProcessor = XSLT_SAXON7;
