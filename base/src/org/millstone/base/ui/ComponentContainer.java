@@ -1,0 +1,160 @@
+/* *************************************************************************
+ 
+   								Millstone(TM) 
+   				   Open Sourced User Interface Library for
+   		 		       Internet Development with Java
+
+             Millstone is a registered trademark of IT Mill Ltd
+                  Copyright (C) 2000,2001,2002 IT Mill Ltd
+                     
+   *************************************************************************
+
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+   *************************************************************************
+   
+   For more information, contact:
+   
+   IT Mill Ltd                           phone: +358 2 4802 7180
+   Ruukinkatu 2-4                        fax:  +358 2 4802 7181
+   20540, Turku                          email: info@itmill.com
+   Finland                               company www: www.itmill.com
+   
+   Primary source for MillStone information and releases: www.millstone.org
+
+   ********************************************************************** */
+
+package org.millstone.base.ui;
+
+import java.util.Iterator;
+
+/** Extension to the {@link Component} interface which adds to it the capacity
+ * to contain other components. All UI elements that can have child elements
+ * implement this interface.
+ * 
+ * @author IT Mill Ltd.
+ * @version @VERSION@
+ * @since 3.0
+ */
+public interface ComponentContainer extends Component {
+
+    /** Adds a component into this container.
+     * 
+     * @param c the component to be added
+     */
+    public void addComponent(Component c);
+
+    /** Removes a component from this container.
+     * 
+     * @param c the component to be added
+     */
+    public void removeComponent(Component c);
+    
+    /** Removes all components from this container. */    
+    public void removeAllComponents();
+
+    /** Gets an iterator to the collection of contained components. Using
+     * this iterator it is possible to step through all components contained
+     * in this container.
+     * 
+     * @return component iterator
+     */    
+    public Iterator getComponentIterator();
+    
+    /** Moves all components from an another container into this container.
+     * The components are removed from <code>source</code>.
+     * 
+     * @param source the container which contains the components that are to
+     * be moved to this container
+     */
+    public void moveComponentsFrom(ComponentContainer source);
+    
+    /** Listen component attach events */
+    public void addListener(ComponentAttachListener listener);
+
+    /** Stop listening component attach events */
+    public void removeListener(ComponentAttachListener listener);
+
+    /** Listen component detach events */
+    public void addListener(ComponentDetachListener listener);
+    
+    /** Stop listening component detach events */
+    public void removeListener(ComponentDetachListener listener);
+
+	/** Component attach listener interface. */
+	public interface ComponentAttachListener {
+
+		/** A new component is attached to container */		
+		public void componentAttachedToContainer(ComponentAttachEvent event);
+	}    
+
+	/** Component detach listener interface. */
+	public interface ComponentDetachListener {
+
+		/** A component has been detached from container */		
+		public void componentDetachedFromContainer(ComponentDetachEvent event);
+	}    
+
+	/** Component attach event sent when a component is attached to container */
+	public class ComponentAttachEvent extends Component.Event {	
+	
+		private Component component;
+
+		/** Create new attach event.
+		 * @param container The component container the component has been detached to.
+		 * @param attachedComponent The component that has been attached
+		 */
+		public ComponentAttachEvent(ComponentContainer container, Component attachedComponent) {
+			super(container);
+			this.component = attachedComponent;	
+		}	
+		
+		/** Get the component container */
+		public ComponentContainer getContainer() {
+			return (ComponentContainer) getSource();	
+		}
+		
+		/** Get the attached component */
+		public Component getAttachedComponent() {
+			return component;	
+		}
+	}
+
+	/** Component detach event sent when a component is detached from container */
+	public class ComponentDetachEvent extends Component.Event {	
+	
+		private Component component;
+
+		/** Create new detach event.
+		 * @param container The component container the component has been detached from.
+		 * @param detachedComponent The component that has been detached
+		 */
+		public ComponentDetachEvent(ComponentContainer container, Component detachedComponent) {
+			super(container);
+			this.component = detachedComponent;	
+		}	
+		
+		/** Get the component container */
+		public ComponentContainer getContainer() {
+			return (ComponentContainer) getSource();	
+		}
+		
+		/** Get the detached component */
+		public Component getDetachedComponent() {
+			return component;	
+		}
+	}
+
+}

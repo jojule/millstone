@@ -1,0 +1,325 @@
+/* *************************************************************************
+ 
+   								Millstone(TM) 
+   				   Open Sourced User Interface Library for
+   		 		       Internet Development with Java
+
+             Millstone is a registered trademark of IT Mill Ltd
+                  Copyright (C) 2000,2001,2002 IT Mill Ltd
+                     
+   *************************************************************************
+
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+   *************************************************************************
+   
+   For more information, contact:
+   
+   IT Mill Ltd                           phone: +358 2 4802 7180
+   Ruukinkatu 2-4                        fax:  +358 2 4802 7181
+   20540, Turku                          email: info@itmill.com
+   Finland                               company www: www.itmill.com
+   
+   Primary source for MillStone information and releases: www.millstone.org
+
+   ********************************************************************** */
+
+package org.millstone.base.ui;
+
+import java.lang.reflect.Method;
+
+import org.millstone.base.terminal.PaintTarget;
+import org.millstone.base.terminal.PaintException;
+import org.millstone.base.data.Property;
+import org.millstone.base.data.util.ObjectProperty;
+
+/** Label component for showing non-editable short texts.
+ *
+ * The label content can be set to the modes specified by the final members
+ * CONTENT_*
+ * 
+ * <p>The contents of the label may contain simple
+ * formatting:
+ * <ul>
+ * <li> <b>&lt;b></b> Bold
+ * <li> <b>&lt;i></b> Italic
+ * <li> <b>&lt;u></b> Underlined
+ * <li> <b>&lt;br/></b> Linebreak
+ * <li> <b>&lt;ul>&lt;li>item 1&lt;/li>&lt;li>item 2&lt;/li>&lt;/ul></b> List of items
+ * </ul>
+ * The <b>b</b>,<b>i</b>,<b>u</b> and <b>li</b> tags can contain all the
+ * tags in the list recursively.
+ * </p>
+ *
+ * @author IT Mill Ltd.
+ * @version @VERSION@
+ * @since 3.0
+ */
+public class Label
+	extends AbstractComponent
+	implements
+		Property,
+		Property.Viewer,
+		Property.ValueChangeListener,
+		Property.ValueChangeNotifier {
+
+	/** Content mode, where the label contains only plain text. The getValue()
+	 * result is coded to XML when painting 
+	 */
+	public static final int CONTENT_TEXT = 0;
+
+	/** Content mode, where the label contains preformatted text.
+	 */
+	public static final int CONTENT_PREFORMATTED = 1;
+
+	/** Formatted content mode, where the contents is XML restricted to the
+	 * UIDL 1.0 formatting markups
+	 */
+	public static final int CONTENT_UIDL = 2;
+
+	/** Content mode, where the label contains XHTML. Contents is then enclosed in
+	 * DIV elements having namespace of "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd".	 
+	 */
+	public static final int CONTENT_XHTML = 3;
+
+
+	/** The default content mode is plain text */
+	public static final int CONTENT_DEFAULT = CONTENT_TEXT;
+
+	private Property dataSource;
+	private int contentMode = CONTENT_DEFAULT;
+
+	/** Creates an empty Label. */
+	public Label() {
+		setPropertyDataSource(new ObjectProperty("", String.class));
+	}
+
+	/** Creates a new instance of Label with text-contents. */
+	public Label(String content) {
+		setPropertyDataSource(new ObjectProperty(content, String.class));
+	}
+
+	/** Creates a new instance of Label with text-contents read from given datasource. */
+	public Label(Property contentSource) {
+		setPropertyDataSource(contentSource);
+	}
+
+	/** Creates a new instance of Label with text-contents. */
+	public Label(String content, int contentMode) {
+		setPropertyDataSource(new ObjectProperty(content, String.class));
+		setContentMode(contentMode);
+	}
+
+	/** Creates a new instance of Label with text-contents read from given datasource. */
+	public Label(Property contentSource, int contentMode) {
+		setPropertyDataSource(contentSource);
+		setContentMode(contentMode);
+	}
+
+	/** Get component UIDL tag.
+	 * @return Component UIDL tag as string.
+	 */
+	public String getTag() {
+		return "label";
+	}
+
+	/** Set the component to read-only.
+	 * Readonly is not used in label.
+	 * @param readOnly True to enable read-only mode, False to disable it
+	 */
+	public void setReadOnly(boolean readOnly) {
+		if (dataSource == null)
+			throw new IllegalStateException("Datasource must be se");
+		dataSource.setReadOnly(readOnly);
+	}
+
+	/** Is the component read-only ?
+	 * Readonly is not used in label - this returns allways false.
+	 * @return True iff the component is in read only mode
+	 */
+	public boolean isReadOnly() {
+		if (dataSource == null)
+			throw new IllegalStateException("Datasource must be se");
+		return dataSource.isReadOnly();
+	}
+
+	/** Paint the content of this component.
+	 * @param event PaintEvent.
+	 */
+	public void paintContent(PaintTarget target) throws PaintException {
+		if (contentMode == CONTENT_TEXT)
+			target.addText(toString());
+		else if (contentMode == CONTENT_UIDL)
+			target.addUIDL(toString());
+		else if (contentMode == CONTENT_XHTML) {
+			target.startTag("data");
+			target.addXMLSection("div", toString(),"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd");
+			target.endTag("data");
+		}
+		else if (contentMode == CONTENT_PREFORMATTED) {
+			target.startTag("pre");
+			target.addText(toString());
+			target.endTag("pre");
+		}
+
+	}
+
+	/** Get the value of the label.
+	 * Value of the label is the XML contents of the label.
+	 * @return Value of the label
+	 */
+	public Object getValue() {
+		if (dataSource == null)
+			throw new IllegalStateException("Datasource must be se");
+		return dataSource.getValue();
+	}
+
+	/** Set the value of the label.
+	 * Value of the label is the XML contents of the label.
+	 * @param newValue New value of the label
+	 */
+	public void setValue(Object newValue) {
+		if (dataSource == null)
+			throw new IllegalStateException("Datasource must be se");
+		this.dataSource.setValue(newValue);
+	}
+
+	public String toString() {
+		if (dataSource == null)
+			throw new IllegalStateException("Datasource must be se");
+		return dataSource.toString();
+	}
+
+	public Class getType() {
+		if (dataSource == null)
+			throw new IllegalStateException("Datasource must be se");
+		return dataSource.getType();
+	}
+
+	/** Get viewing data-source property.  */
+	public Property getPropertyDataSource() {
+		return dataSource;
+	}
+
+	/** Set the property as data-source for viewing.  */
+	public void setPropertyDataSource(Property newDataSource) {
+		// Stop listening the old data source changes
+		if (dataSource != null
+			&& Property.ValueChangeNotifier.class.isAssignableFrom(
+				dataSource.getClass()))
+			 ((Property.ValueChangeNotifier) dataSource).removeListener(this);
+
+		// Set the new data source
+		dataSource = newDataSource;
+
+		// Listen the new data source if possible
+		if (dataSource != null
+			&& Property.ValueChangeNotifier.class.isAssignableFrom(
+				dataSource.getClass()))
+			 ((Property.ValueChangeNotifier) dataSource).addListener(this);
+	}
+
+	/**
+	 * Returns the namespace.
+	 * @return String
+	 */
+	public int getContentMode() {
+		return contentMode;
+	}
+
+	/**
+	 * Sets the namespace.
+	 * @param namespace The namespace to set
+	 */
+	public void setContentMode(int contentMode) {
+		if (contentMode >= CONTENT_TEXT && contentMode <= CONTENT_XHTML)
+			this.contentMode = contentMode;
+	}
+
+	/* Value change events ****************************************** */
+
+	private static final Method VALUE_CHANGE_METHOD;
+
+	static {
+		try {
+			VALUE_CHANGE_METHOD =
+				Property.ValueChangeListener.class.getDeclaredMethod(
+					"valueChange",
+					new Class[] { Property.ValueChangeEvent.class });
+		} catch (java.lang.NoSuchMethodException e) {
+			// This should never happen
+			throw new java.lang.RuntimeException();
+		}
+	}
+
+	/** Value change event 
+	 * @author IT Mill Ltd.
+	 * @version @VERSION@
+	 * @since 3.0
+	 */
+	public class ValueChangeEvent
+		extends Component.Event
+		implements Property.ValueChangeEvent {
+
+		/** New instance of text change event
+		 * @param source Source of the event.
+		 */
+		public ValueChangeEvent(Label source) {
+			super(source);
+		}
+
+		/** Value where the event occurred
+		 * @return Source of the event.
+		 */
+		public Property getProperty() {
+			return (Property) getSource();
+		}
+	}
+
+	/** Add value change listener
+	 * @param listener Listener to be added.
+	 */
+	public void addListener(Property.ValueChangeListener listener) {
+		addListener(
+			Label.ValueChangeEvent.class,
+			listener,
+			VALUE_CHANGE_METHOD);
+	}
+
+	/** Remove value change listener
+	 * @param listener Listener to be removed.
+	 */
+	public void removeListener(Property.ValueChangeListener listener) {
+		removeListener(
+			Label.ValueChangeEvent.class,
+			listener,
+			VALUE_CHANGE_METHOD);
+	}
+
+	/** Emit options change event. */
+	protected void fireValueChange() {
+		// Set the error message
+		fireEvent(new Label.ValueChangeEvent(this));
+		requestRepaint();
+	}
+
+	/** Listen value change events from data source.
+	 * @see org.millstone.base.data.Property.ValueChangeListener#valueChange(Property.ValueChangeEvent)
+	 */
+	public void valueChange(Property.ValueChangeEvent event) {
+		fireValueChange();
+	}
+
+}

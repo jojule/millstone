@@ -1,0 +1,1047 @@
+/* *************************************************************************
+ 
+   								Millstone(TM) 
+   				   Open Sourced User Interface Library for
+   		 		       Internet Development with Java
+
+             Millstone is a registered trademark of IT Mill Ltd
+                  Copyright (C) 2000,2001,2002 IT Mill Ltd
+                     
+   *************************************************************************
+
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+   *************************************************************************
+   
+   For more information, contact:
+   
+   IT Mill Ltd                           phone: +358 2 4802 7180
+   Ruukinkatu 2-4                        fax:  +358 2 4802 7181
+   20540, Turku                          email: info@itmill.com
+   Finland                               company www: www.itmill.com
+   
+   Primary source for MillStone information and releases: www.millstone.org
+
+   ********************************************************************** */
+
+
+package org.millstone.base.data.util;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Iterator;
+import java.util.Hashtable;
+import java.util.Collections;
+import java.util.Collection;
+import java.util.EventObject;
+import java.beans.PropertyChangeListener;
+import java.lang.reflect.Constructor;
+import org.millstone.base.data.Container;
+import org.millstone.base.data.Item;
+import org.millstone.base.data.Property;
+
+/** <p>A list implementation of the org.millstone.base.data.Container
+ * interface. A list is a ordered collection wherein the user has a precise
+ * control over where in the list each new Item is inserted. The user may
+ * access the Items by their integer index (position in the list) or by
+ * their Item ID.</p>
+ * 
+ * @see org.millstone.base.data.Container
+ * 
+ * @author IT Mill Ltd.
+ * @version @VERSION@
+ * @since 3.0
+ */
+
+public class IndexedContainer
+	implements
+		Container,
+		Container.Indexed,
+		Container.ItemSetChangeNotifier,
+		Container.PropertySetChangeNotifier,
+		Property.ValueChangeNotifier {
+
+	/* Internal structure *************************************************** */
+
+	/** Linked list of ordered Item IDs */
+	private LinkedList itemIds = new LinkedList();
+
+	/** Linked list of ordered Property IDs */
+	private LinkedList propertyIds = new LinkedList();
+
+	/** Property ID to type mapping */
+	private Hashtable types = new Hashtable();
+
+	/** Hash of Items, where each Item is implemented as a mapping from
+	 * Property ID to Property value.
+	 */
+	private Hashtable items = new Hashtable();
+
+	/** Set of properties that are read-only.
+	 */
+	private HashSet readOnlyProperties = new HashSet();
+
+	/** List of all Property value change event listeners listening 
+	 * all the properties
+	 */
+	private LinkedList propertyValueChangeListeners = null;
+
+	/** Data structure containing all listeners interested in changes to
+	 * single Properties. The data structure is a hashtable mapping Property
+	 * IDs to a hashtable that maps Item IDs to a linked list of listeners
+	 * listening Property identified by given Property ID and Item ID.
+	 */
+	private Hashtable singlePropertyValueChangeListeners = null;
+
+	/** List of all Property set change event listeners */
+	private LinkedList propertySetChangeListeners = null;
+
+	/** List of all container Item set change event listeners */
+	private LinkedList itemSetChangeListeners = null;
+
+	/* Container methods **************************************************** */
+
+	/** Gets the Item with the given Item ID from the list. If the list
+	 * does not contain the requested Item, <code>null</code> is returned.
+	 * 
+	 * @param itemId ID of the Item to retrieve
+	 * @return the Item with the given ID or <code>null</code> if the Item
+	 * is not found in the list
+	 */
+	public Item getItem(Object itemId) {
+		if (items.containsKey(itemId))
+			return new IndexedContainerItem(itemId);
+		return null;
+	}
+
+	/** Gets the ID's of all Items stored in the list. The ID's are
+	 * returned as a unmodifiable collection.
+	 * 
+	 * @return unmodifiable collection of Item IDs
+	 */
+	public Collection getItemIds() {
+		return Collections.unmodifiableCollection(itemIds);
+	}
+
+	/** Gets the ID's of all Properties stored in the list. The ID's are
+	 * returned as a unmodifiable collection.
+	 * 
+	 * @return unmodifiable collection of Property IDs
+	 */
+	public Collection getPropertyIds() {
+		return Collections.unmodifiableCollection(propertyIds);
+	}
+
+	/** Gets the type of a Property stored in the list.
+	 * 
+	 * @param id ID of the Property
+	 * @return Type of the requested Property
+	 */
+	public Class getType(Object propertyId) {
+		return (Class) types.get(propertyId);
+	}
+
+	/** Gets the Property identified by the given Item ID and Property ID
+	 * from the lsit. If the list does not contain the Property,
+	 * <code>null</code> is returned.
+	 * 
+	 * @param itemId ID of the Item which contains the requested Property
+	 * @param propertyId ID of the Property to retrieve
+	 * @return Property with the given ID or <code>null</code>
+	 * 
+	 * @see org.millstone.base.data.Container#getProperty(Object, Object)
+	 */
+	public Property getProperty(Object itemId, Object propertyId) {
+		if (!items.containsKey(itemId))
+			return null;
+		return new IndexedContainerProperty(itemId, propertyId);
+	}
+
+	/** Gets the number of Items in the list.
+	 * 
+	 * @return number of Items in the list
+	 */
+	public int size() {
+		return itemIds.size();
+	}
+
+	/** Tests if the list contains the specified Item
+	 * 
+	 * @param itemId ID the of Item to be tested for
+	 * @return <code>true</code> if the operation succeeded,
+	 * <code>false</code> if not
+	 */
+	public boolean containsId(Object itemId) {
+		return items.containsKey(itemId);
+	}
+
+	/** Add a new Property to all Items in the list. The Property ID, data
+	 * type and default value of the new Property are given as parameters.
+	 *
+	 * @param propertyId ID of the new Property 
+	 * @param type Data type of the new Property
+	 * @param defaultValue The value all created Properties are
+	 * initialized to
+	 * @return <code>true</code> if the operation succeeded,
+	 * <code>false</code> if not
+	 */
+	public boolean addProperty(
+		Object propertyId,
+		Class type,
+		Object defaultValue) {
+
+		// Fails, if nulls are given
+		if (propertyId == null || type == null)
+			return false;
+
+		// Fails if the Property is already present
+		if (propertyIds.contains(propertyId))
+			return false;
+
+		// Add the Property to Property list and types
+		propertyIds.addLast(propertyId);
+		types.put(propertyId, type);
+
+		// If default value is given, set it
+		if (defaultValue != null)
+			for (Iterator i = itemIds.iterator(); i.hasNext();)
+				getItem(i.next()).getProperty(propertyId).setValue(
+					defaultValue);
+
+		// Send a change event
+		firePropertySetChange();
+
+		return true;
+	}
+
+	/** Remove all Items from the list. Note that Property ID and type
+	 * information is preserved.
+	 *
+	 * @return <code>true</code> if the operation succeeded,
+	 * <code>false</code> if not
+	 */
+	public boolean removeAllItems() {
+
+		// Remove all Items
+		itemIds.clear();
+		items.clear();
+
+		// Send a change event
+		fireContentsChange();
+
+		return true;
+	}
+
+	/** Create a new Item into the list, and assign it an automatic ID. The
+	 * new ID is returned, or <code>null</code> if the operation fails.
+	 * After a successful call you can use the
+	 * {@link #getItem(Object ItemId) <code>getItem</code>} method to
+	 * fetch the Item.
+	 *
+	 * @return ID of the newly created Item, or <code>null</code> in
+	 * case of a failure
+	 */
+	public Object addItem() {
+
+		// Create a new id
+		Object id = new Object();
+
+		// Add the Item into container
+		addItem(id);
+
+		return id;
+	}
+
+	/** Create a new Item with the given ID into the list. The new Item is
+	 * returned, and it is ready to have its Properties modified. Returns
+	 * <code>null</code> if the operation fails or the Container already
+	 * contains a Item with the given ID.
+	 *
+	 * @param itemId ID of the Item to be created
+	 * @return Created new Item, or <code>null</code> in case of a failure
+	 */
+	public Item addItem(Object itemId) {
+
+		// Make sure that the Item has not been created yet
+		if (items.containsKey(itemId))
+			return null;
+
+		// Add the Item to container
+		itemIds.add(itemId);
+		items.put(itemId, new Hashtable());
+
+		// Send the event
+		fireContentsChange();
+
+		return getItem(itemId);
+	}
+
+	/** Remove the Item corresponding to the given Item ID from the list.
+	 *
+	 * @param itemId ID of the Item to remove
+	 * @return <code>true</code> if the operation succeeded,
+	 * <code>false</code> if not
+	 */
+	public boolean removeItem(Object itemId) {
+
+		if (items.remove(itemId) == null)
+			return false;
+		itemIds.remove(itemId);
+
+		fireContentsChange();
+
+		return true;
+	}
+
+	/** Remove a Property specified by the given Property ID from the list.
+	 * Note that the Property will be removed from all Items in the list.
+	 *
+	 * @param propertyId ID of the Property to remove
+	 * @return <code>true</code> if the operation succeeded,
+	 * <code>false</code> if not
+	 */
+	public boolean removeProperty(Object propertyId) {
+
+		// Fails if the Property is not present
+		if (!propertyIds.contains(propertyId))
+			return false;
+
+		// Remove the Property to Property list and types
+		propertyIds.remove(propertyId);
+		types.remove(propertyId);
+
+		// If remove the Property from all Items
+		for (Iterator i = itemIds.iterator(); i.hasNext();)
+			 ((Hashtable) items.get(i.next())).remove(propertyId);
+
+		// Send a change event
+		firePropertySetChange();
+
+		return true;
+	}
+
+	/* Container.Ordered methods ******************************************** */
+
+	/** Gets the ID of the first Item in the list.
+	 * 
+	 * @return ID of the first Item in the list
+	 */
+	public Object firstItemId() {
+		return itemIds.getFirst();
+	}
+
+	/** Gets the ID of the last Item in the list.
+	 * 
+	 * @return ID of the last Item in the list
+	 */
+	public Object lastItemId() {
+		return itemIds.getLast();
+	}
+
+	/** Gets the ID of the Item following the Item that corresponds to
+	 * <code>itemId</code>. If the given Item is the last or not found
+	 * in the list, <code>null</code> is returned.
+	 * 
+	 * @param itemId ID of an Item in the list
+	 * @return ID of the next Item or <code>null</code>
+	 */
+	public Object nextItemId(Object itemId) {
+		try {
+			return itemIds.get(itemIds.indexOf(itemId) + 1);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
+	}
+
+	/** Gets the ID of the Item preceding the Item that corresponds to
+	 * <code>itemId</code>. If the given Item is the first or not found
+	 * in the list, <code>null</code> is returned.
+	 * 
+	 * @param itemId ID of an Item in the list
+	 * @return ID of the previous Item or <code>null</code>
+	 */
+	public Object prevItemId(Object itemId) {
+		try {
+			return itemIds.get(itemIds.indexOf(itemId) - 1);
+		} catch (IndexOutOfBoundsException e) {
+			return null;
+		}
+	}
+
+	/** Tests if the Item corresponding to the given Item ID is the first
+	 * Item in the list.
+	 * 
+	 * @param itemId ID of an Item in the list
+	 * @return <code>true</code> if the Item is first in the list,
+	 * <code>false</code> if not
+	 */
+	public boolean isFirstId(Object itemId) {
+		return (size() >= 1 && itemIds.get(0).equals(itemId));
+	}
+
+	/** Tests if the Item corresponding to the given Item ID is the last
+	 * Item in the list.
+	 * 
+	 * @param itemId ID of an Item in the list
+	 * @return <code>true</code> if the Item is last in the list,
+	 * <code>false</code> if not
+	 */
+	public boolean isLastId(Object itemId) {
+		int s = size();
+		return (s >= 1 && itemIds.get(s - 1).equals(itemId));
+	}
+
+	/**
+	 * @see org.millstone.base.data.Container.Ordered#addItemAfter(Object, Object)
+	 */
+	public Item addItemAfter(Object previousItemId, Object newItemId) {
+
+		// Get the index of the addition
+		int index = 0;
+		if (previousItemId != null) {
+			index = 1 + indexOfId(previousItemId);
+			if (index <= 0 || index > size()) return null;
+		}
+		
+		return addItemAt(index,newItemId);
+			}
+
+	/**
+	 * @see org.millstone.base.data.Container.Ordered#addItemAfter(Object)
+	 */
+	public Object addItemAfter(Object previousItemId) {
+		
+		// Get the index of the addition
+		int index = 0;
+		if (previousItemId != null) {
+			index = 1 + indexOfId(previousItemId);
+			if (index <= 0 || index > size()) return null;
+		}
+		
+		return addItemAt(index);
+	}
+
+	/** Get ID with the index.
+	 * The following is true for the index: 0 <= index < size().
+	 * @return ID in the given index.
+	 * @param index Index of the requested ID in the container.
+	 */
+	public Object getIdByIndex(int index) {
+		return itemIds.get(index);
+	}
+
+	/** Get the index of an id.
+	 * The following is true for the index: 0 <= index < size().
+	 * @return Index of the Item or -1 if the Item is not in the container.
+	 * @param itemId ID of an Item in the collection
+	 */
+	public int indexOfId(Object itemId) {
+		return itemIds.indexOf(itemId);
+	}
+	
+	/**
+	 * @see org.millstone.base.data.Container.Indexed#addItemAt(int, Object)
+	 */
+	public Item addItemAt(int index, Object newItemId) {
+		
+		// Make sure that the Item has not been created yet
+		if (items.containsKey(newItemId))
+			return null;
+
+		// Add the Item to container
+		itemIds.add(index,newItemId);
+		items.put(newItemId, new Hashtable());
+
+		// Send the event
+		fireContentsChange();
+
+		return getItem(newItemId);
+	}
+
+	/**
+	 * @see org.millstone.base.data.Container.Indexed#addItemAt(int)
+	 */
+	public Object addItemAt(int index) {
+
+		// Create a new id
+		Object id = new Object();
+
+		// Add the Item into container
+		addItemAt(index,id);
+
+		return id;
+	}
+
+	/* Event notifiers ****************************************************** */
+
+	/** An <code>event</code> object specifying the list whose
+	 * Property set has changed.
+	 * @author IT Mill Ltd.
+     * @version @VERSION@
+     * @since 3.0
+	 */
+	private class PropertySetChangeEvent
+		extends EventObject
+		implements Container.PropertySetChangeEvent {
+
+		private PropertySetChangeEvent(IndexedContainer source) {
+			super(source);
+		}
+
+		/** Gets the list whose Property set has changed.
+		 * 
+		 * @return source object of the event as a Container
+		 */
+		public Container getContainer() {
+			return (Container) getSource();
+		}
+	}
+
+	/** An <code>event</code> object specifying the list whose
+	 * Item set has changed.
+	 * @author IT Mill Ltd.
+     * @version @VERSION@
+     * @since 3.0
+	 */
+	private class ItemSetChangeEvent
+		extends EventObject
+		implements Container.ItemSetChangeEvent {
+
+		private ItemSetChangeEvent(IndexedContainer source) {
+			super(source);
+		}
+
+		/** Gets the list whose Item set has changed.
+		 * 
+		 * @return source object of the event as a Container
+		 */
+		public Container getContainer() {
+			return (Container) getSource();
+		}
+
+	}
+
+	/** An <code>event</code> object specifying the Propery in a list
+	 * whose value has changed.
+	 * @author IT Mill Ltd.
+     * @version @VERSION@
+     * @since 3.0
+	 */
+	private class PropertyValueChangeEvent
+		extends EventObject
+		implements Property.ValueChangeEvent {
+
+		private PropertyValueChangeEvent(Property source) {
+			super(source);
+		}
+
+		/** Gets the Property whose value has changed.
+		 * 
+		 * @return source object of the event as a Property
+		 */
+		public Property getProperty() {
+			return (Property) getSource();
+		}
+
+	}
+
+	/** Registers a new Property set change listener for this list.
+	 * 
+	 * @param listener the new Listener to be registered
+	 */
+	public void addListener(Container.PropertySetChangeListener listener) {
+		if (propertySetChangeListeners == null)
+			propertySetChangeListeners = new LinkedList();
+		propertySetChangeListeners.add(listener);
+	}
+
+	/** Removes a previously registered Property set change listener.
+	 * 
+	 * @param listener listener to be removed
+	 */
+	public void removeListener(Container.PropertySetChangeListener listener) {
+		if (propertySetChangeListeners != null)
+			propertySetChangeListeners.remove(listener);
+	}
+
+	/** Adds a Item set change listener for the list.
+	 * 
+	 * @param listener listener to be added
+	 */
+	public void addListener(Container.ItemSetChangeListener listener) {
+		if (itemSetChangeListeners == null)
+			itemSetChangeListeners = new LinkedList();
+		itemSetChangeListeners.add(listener);
+	}
+
+	/** Removes a Item set change listener from the object.
+	 * 
+	 * @param listener listener to be removed
+	 */
+	public void removeListener(Container.ItemSetChangeListener listener) {
+		if (itemSetChangeListeners != null)
+			itemSetChangeListeners.remove(listener);
+	}
+
+	/** Registers a new value change listener for this object.
+	 * 
+	 * @param listener the new Listener to be registered
+	 */
+	public void addListener(Property.ValueChangeListener listener) {
+		if (propertyValueChangeListeners == null)
+			propertyValueChangeListeners = new LinkedList();
+		propertyValueChangeListeners.add(listener);
+	}
+
+	/** Removes a previously registered value change listener.
+	 * 
+	 * @param listener listener to be removed
+	 */
+	public void removeListener(Property.ValueChangeListener listener) {
+		if (propertyValueChangeListeners != null)
+			propertyValueChangeListeners.remove(listener);
+	}
+
+	/** Send a Property value change event to all interested listeners */
+	private void firePropertyValueChange(IndexedContainerProperty source) {
+
+		// Send event to listeners listening all value changes
+		if (propertyValueChangeListeners != null) {
+			Object[] l = propertyValueChangeListeners.toArray();
+			Property.ValueChangeEvent event =
+				new IndexedContainer.PropertyValueChangeEvent(source);
+			for (int i = 0; i < l.length; i++)
+				 ((Property.ValueChangeListener) l[i]).valueChange(event);
+		}
+
+		// Send event to single property value change listeners
+		if (singlePropertyValueChangeListeners != null) {
+			Hashtable propertySetToListenerListMap =
+				(Hashtable) singlePropertyValueChangeListeners.get(
+					source.propertyId);
+			if (propertySetToListenerListMap != null) {
+				LinkedList listenerList =
+					(LinkedList) propertySetToListenerListMap.get(
+						source.itemId);
+				if (listenerList != null) {
+					Property.ValueChangeEvent event =
+						new IndexedContainer.PropertyValueChangeEvent(source);
+					for (Iterator i = listenerList.iterator(); i.hasNext();)
+						((Property.ValueChangeListener) i.next()).valueChange(
+							event);
+				}
+			}
+		}
+
+	}
+
+	/** Send a Property set change event to all interested listeners */
+	private void firePropertySetChange() {
+		if (propertySetChangeListeners != null) {
+			Object[] l = propertySetChangeListeners.toArray();
+			Container.PropertySetChangeEvent event =
+				new IndexedContainer.PropertySetChangeEvent(this);
+			for (int i = 0; i < l.length; i++)
+				(
+					(
+						Container
+							.PropertySetChangeListener) l[i])
+							.containerPropertySetChange(
+					event);
+		}
+	}
+
+	/** Send Item set change event to all registered interested listeners */
+	private void fireContentsChange() {
+		if (itemSetChangeListeners != null) {
+			Object[] l = itemSetChangeListeners.toArray();
+			Container.ItemSetChangeEvent event =
+				new IndexedContainer.ItemSetChangeEvent(this);
+			for (int i = 0; i < l.length; i++)
+				(
+					(
+						Container
+							.ItemSetChangeListener) l[i])
+							.containerItemSetChange(
+					event);
+		}
+	}
+
+	/** Add new single Property change listener */
+	private void addSinglePropertyChangeListener(
+		Object propertyId,
+		Object itemId,
+		Property.ValueChangeListener listener) {
+		if (listener != null) {
+			if (singlePropertyValueChangeListeners == null)
+				singlePropertyValueChangeListeners = new Hashtable();
+			Hashtable propertySetToListenerListMap =
+				(Hashtable) singlePropertyValueChangeListeners.get(propertyId);
+			if (propertySetToListenerListMap == null) {
+				propertySetToListenerListMap = new Hashtable();
+				singlePropertyValueChangeListeners.put(
+					propertyId,
+					propertySetToListenerListMap);
+			}
+			LinkedList listenerList =
+				(LinkedList) propertySetToListenerListMap.get(itemId);
+			if (listenerList == null) {
+				listenerList = new LinkedList();
+				propertySetToListenerListMap.put(itemId, listenerList);
+			}
+			listenerList.addLast(listener);
+		}
+	}
+
+	/** Remove a previously registered single Property change listener */
+	private void removeSinglePropertyChangeListener(
+		Object propertyId,
+		Object itemId,
+		Property.ValueChangeListener listener) {
+		if (listener != null && singlePropertyValueChangeListeners != null) {
+			Hashtable propertySetToListenerListMap =
+				(Hashtable) singlePropertyValueChangeListeners.get(propertyId);
+			if (propertySetToListenerListMap != null) {
+				LinkedList listenerList =
+					(LinkedList) propertySetToListenerListMap.get(itemId);
+				if (listenerList != null) {
+					listenerList.remove(listener);
+					if (listenerList.isEmpty())
+						propertySetToListenerListMap.remove(itemId);
+				}
+				if (propertySetToListenerListMap.isEmpty())
+					singlePropertyValueChangeListeners.remove(propertyId);
+			}
+			if (singlePropertyValueChangeListeners.isEmpty())
+				singlePropertyValueChangeListeners = null;
+		}
+	}
+
+	/* Internal Item and Property implementations *************************** */
+
+	/* A class implementing the org.millstone.base.data.Item interface to be
+	 * contained in the list.
+	 * @author IT Mill Ltd.
+     * @version @VERSION@
+     * @since 3.0
+	 */
+	class IndexedContainerItem implements Item {
+
+		/** Item ID in the host container for this Item */
+		private Object itemId;
+
+		/** Constructs a new ListItem instance and connects it to a
+		 * host container.
+		 * 
+		 * @param host the list that contains this Item
+		 * @param itemId Item ID of the new Item
+		 */
+		private IndexedContainerItem(Object itemId) {
+
+			// Get the item contents from the host
+			if (itemId == null)
+				throw new NullPointerException();
+			this.itemId = itemId;
+		}
+
+		/** Gets the Property corresponding to the given Property ID stored
+		 * in the Item. If the Item does not contain the Property, 
+		 * <code>null</code> is returned.
+		 * 
+		 * @param id identifier of the Property to get
+		 * @return the Property with the given ID or <code>null</code>
+		 */
+		public Property getProperty(Object id) {
+			return new IndexedContainerProperty(itemId, id);
+		}
+
+		/** Gets the collection containing the IDs of all Properties stored
+		 * in the Item.
+		 * 
+		 * @return unmodifiable collection contaning IDs of the Properties
+		 * stored the Item
+		 */
+		public Collection getPropertyIds() {
+			return Collections.unmodifiableCollection(propertyIds);
+		}
+
+		/** Gets the <code>String</code> representation of the contents of
+		 * the Item. The format of the string is a space separated
+		 * catenation of the <code>String</code> representations of the
+		 * Properties contained by the Item.
+		 * 
+		 * @return <code>String</code> representation of the Item contents
+		 */
+		public String toString() {
+			String retValue = "";
+
+			for (Iterator i = propertyIds.iterator(); i.hasNext();) {
+				Object propertyId = i.next();
+				retValue += getProperty(propertyId).toString();
+				if (i.hasNext())
+					retValue += " ";
+			}
+
+			return retValue;
+		}
+
+		/** Calculates a integer hash-code for the Item that's unique inside the
+		 * list. Two Items inside the same list have always different hash-codes,
+		 * though Items in different lists may have identical hash-codes.
+		 * 
+		 * @return A locally unique hash-code as integer
+		 */
+		public int hashCode() {
+			return getHost().hashCode() ^ itemId.hashCode();
+		}
+
+		/** Tests if the given object is the same as the this object.
+		 * Two Items got from a list container with the same ID are equal.
+		 * 
+		 * @param obj an object to compare with this object
+		 * @return <code>true</code> if the given object is the same as
+		 * this object, <code>false</code> if not
+		 */
+		public boolean equals(Object obj) {
+			if (obj == null
+				|| !obj.getClass().equals(IndexedContainerItem.class))
+				return false;
+			IndexedContainerItem li = (IndexedContainerItem) obj;
+			return getHost() == li.getHost() && itemId.equals(li.itemId);
+		}
+
+		private IndexedContainer getHost() {
+			return IndexedContainer.this;
+		}
+
+		/** Indexed container does not support adding new properties.
+		* @see org.millstone.base.data.Item#addProperty(Object, Property)
+		*/
+		public boolean addProperty(Object id, Property property)
+			throws UnsupportedOperationException {
+			throw new UnsupportedOperationException(
+				"Indexed container item "
+					+ "does not support adding new properties");
+		}
+
+		/** Indexed container does not support removing properties.
+		 * @see org.millstone.base.data.Item#removeProperty(Object)
+		 */
+		public boolean removeProperty(Object id)
+			throws UnsupportedOperationException {
+			throw new UnsupportedOperationException("Indexed container item does not support property removal");
+		}
+
+	}
+
+	/* A class implementing the org.millstone.base.data.Property interface
+	 * to be contained in the Items contained in the list.
+	 * @author IT Mill Ltd.
+     * @version @VERSION@
+     * @since 3.0
+	 */
+	private class IndexedContainerProperty
+		implements Property, Property.ValueChangeNotifier {
+
+		/** ID of the Item, where the Property resides */
+		private Object itemId;
+
+		/** Id of the Property */
+		private Object propertyId;
+
+		/** Constructs a new ListProperty object and connect it to a
+		 * ListItem and a ListContainer.
+		 * 
+		 * @param itemId ID of the Item to connect the new Property to
+		 * @param propertyId Property ID of the new Property
+		 * @param host the list that contains the Item to contain the new
+		 * Property
+		 */
+		private IndexedContainerProperty(Object itemId, Object propertyId) {
+			if (itemId == null || propertyId == null)
+				throw new NullPointerException();
+			this.propertyId = propertyId;
+			this.itemId = itemId;
+		}
+
+		/** Return the type of the Property. The methods <code>getValue</code>
+		 * and <code>setValue</code> must be compatible with this type: one
+		 * must be able to safely cast the value returned from
+		 * <code>getValue</code> to the given type and pass any variable
+		 * assignable to this type as a parameter to <code>setValue</code.
+		 * 
+		 * @return type of the Property
+		 */
+		public Class getType() {
+			return (Class) types.get(propertyId);
+		}
+
+		/** Gets the value stored in the Property.
+		 * 
+		 * @return the value stored in the Property
+		 */
+		public Object getValue() {
+			return ((Hashtable) items.get(itemId)).get(propertyId);
+		}
+
+		/** <p>Test if the Property is in read-only mode. In read-only mode
+		 * calls to the method <code>setValue</code> will throw
+		 * <code>ReadOnlyException</code>s and will not modify the value of
+		 * the Property.</p>
+		 *
+		 * @return <code>true</code> if the Property is in read-only mode,
+		 * <code>false</code> if it's not
+		 */
+		public boolean isReadOnly() {
+			return readOnlyProperties.contains(this);
+		}
+
+		/** Set the Property's read-only mode to the specified status.
+		 * 
+		 * @param newStatus new read-only status of the Property
+		 */
+		public void setReadOnly(boolean newStatus) {
+			if (newStatus)
+				readOnlyProperties.add(this);
+			else
+				readOnlyProperties.remove(this);
+		}
+
+		/** Sets the value of the Property. By default this method will try
+		 * to assign the value directly, but if it is unassignable, it will
+		 * try to use the <code>String</code> constructor of the internal
+		 * data type to assign the value,
+		 *
+		 * @param newValue New value of the Property. This should be
+		 * assignable to the Property's internal type or support
+		 * <code>toString</code>.
+		 * 
+		 * @throws Property.ReadOnlyException if the object is in read-only
+		 * mode
+		 * @throws Property.ConversionException if <code>newValue</code> can't
+		 * be converted into the Property's native type directly or through
+		 * <code>String</code>
+		 */
+		public void setValue(Object newValue)
+			throws Property.ReadOnlyException, Property.ConversionException {
+
+			// Get the Property set
+			Hashtable propertySet = (Hashtable) items.get(itemId);
+
+			// Support null values on all types
+			if (newValue == null)
+				propertySet.remove(propertyId);
+
+			// Try to assign the compatible value directly
+			else if (getType().isAssignableFrom(newValue.getClass()))
+				propertySet.put(propertyId, newValue);
+
+			// Otherwise try to convert the value trough string constructor
+			else
+				try {
+
+					// Get the string constructor
+					Constructor constr =
+						getType().getConstructor(new Class[] { String.class });
+
+					// Create new object from the string
+					propertySet.put(
+						propertyId,
+						constr.newInstance(
+							new Object[] { newValue.toString()}));
+
+				} catch (java.lang.Exception e) {
+					throw new Property.ConversionException(
+						"Conversion for value '"
+							+ newValue
+							+ "' of class "
+							+ newValue.getClass().getName()
+							+ " to "
+							+ getType().getName()
+							+ " failed");
+				}
+
+			firePropertyValueChange(this);
+		}
+
+		/** Return the value of the Property in human readable textual format.
+		 * The return value should be assignable to the <code>setValue</code>
+		 * method if the Property is not in read-only mode.
+		 * 
+		 * @return <code>String</code> representation of the value stored in
+		 * the Property
+		 */
+		public String toString() {
+			Object value = getValue();
+			if (value == null)
+				return null;
+			return value.toString();
+		}
+
+		/** Calculates a integer hash-code for the Property that's unique
+		 * inside the Item containing the Property. Two different Properties
+		 * inside the same Item contained in the same list always have
+		 * different hash-codes, though Properties in different Items may
+		 * have identical hash-codes.
+		 * 
+		 * @return A locally unique hash-code as integer
+		 */
+		public int hashCode() {
+			return itemId.hashCode()
+				^ propertyId.hashCode()
+				^ IndexedContainer.this.hashCode();
+		}
+
+		/** Tests if the given object is the same as the this object.
+		 * Two Properties got from an Item with the same ID are equal.
+		 * 
+		 * @param obj an object to compare with this object
+		 * @return <code>true</code> if the given object is the same as
+		 * this object, <code>false</code> if not
+		 */
+		public boolean equals(Object obj) {
+			if (obj == null
+				|| !obj.getClass().equals(IndexedContainerProperty.class))
+				return false;
+			IndexedContainerProperty lp = (IndexedContainerProperty) obj;
+			return lp.getHost() == getHost()
+				&& lp.propertyId.equals(propertyId)
+				&& lp.itemId.equals(itemId);
+		}
+
+		/** Registers a new value change listener for this Property.
+		 * 
+		 * @param listener the new Listener to be registered
+		 * @see org.millstone.base.data.Property.ValueChangeNotifier#addListener(ValueChangeListener)
+		 */
+		public void addListener(Property.ValueChangeListener listener) {
+			addSinglePropertyChangeListener(propertyId, itemId, listener);
+		}
+
+		/** Removes a previously registered value change listener.
+		 * 
+		 * @param listener listener to be removed
+		 * @see org.millstone.base.data.Property.ValueChangeNotifier#removeListener(ValueChangeListener)
+		 */
+		public void removeListener(Property.ValueChangeListener listener) {
+			removeSinglePropertyChangeListener(propertyId, itemId, listener);
+		}
+
+		private IndexedContainer getHost() {
+			return IndexedContainer.this;
+		}
+
+	}	
+}
