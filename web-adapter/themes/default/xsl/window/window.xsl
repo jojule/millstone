@@ -15,7 +15,7 @@
 	  <xsl:if test="string-length(@style) &gt; 0"><xsl:attribute name="CLASS"><xsl:value-of select="@style"/></xsl:attribute></xsl:if>
     
       <!-- Special handling of modal windows -->
-      <xsl:if test="$dhtml and (@style='modal')"><SCRIPT>makeModal(window);</SCRIPT></xsl:if>	 
+      <xsl:if test="$dhtml and (@style='modal')"><SCRIPT>Millstone.makeModal(window);</SCRIPT></xsl:if>	 
       
 	  <!-- Window resize variable ids -->
       <xsl:variable name="heightid"><xsl:value-of select="./integer[@name='height']/@id"/></xsl:variable>
@@ -41,7 +41,7 @@
         
         <!-- Capture scroll events -->
 		<xsl:if test="$scrolldownid and $scrollleftid">
-		  <xsl:attribute name="onscroll">setVarById('<xsl:value-of select="$scrolldownid"/>',document.body.scrollTop,false);setVarById('<xsl:value-of select="$scrollleftid"/>',document.body.scrollLeft,false)</xsl:attribute>
+		  <xsl:attribute name="onscroll">Millstone.setVarById('<xsl:value-of select="$scrolldownid"/>',document.body.scrollTop,false);Millstone.setVarById('<xsl:value-of select="$scrollleftid"/>',document.body.scrollLeft,false)</xsl:attribute>
 		</xsl:if>
 		
 		<!-- Window onload script -->
@@ -102,8 +102,8 @@
 				w = document.body.clientWidth;
 				h = document.body.clientHeight;				
 			}
-			if(chromeX>=0) setVarById('<xsl:value-of select="$widthid"/>',w+chromeX, false);
-		  	if(chromeY>=0) setVarById('<xsl:value-of select="$heightid"/>',h+chromeY,false);	    
+			if(chromeX>=0) Millstone.setVarById('<xsl:value-of select="$widthid"/>',w+chromeX, false);
+		  	if(chromeY>=0) Millstone.setVarById('<xsl:value-of select="$heightid"/>',h+chromeY,false);	    
 	    }
 	    
 		</SCRIPT>
@@ -173,12 +173,12 @@
     </xsl:if>
 
     <xsl:if test="$dhtml">
-	    <SCRIPT LANGUAGE="Javascript" SRC="{wa:resource('script/default.js')}"/>
+	    <SCRIPT LANGUAGE="Javascript" SRC="{wa:resource('script/millstone.js')}"/>
 	    <SCRIPT LANGUAGE="Javascript">
 		
 			<!-- Open new windows -->
 		    <xsl:for-each select="open">
-				openWindow('<xsl:value-of select="@src"
+				Millstone.openWindow('<xsl:value-of select="@src"
 		          />','<xsl:value-of select="wa:getWindowTargetName(@name)"
 		          />',<xsl:choose><xsl:when test="@width"><xsl:value-of select="@width"/></xsl:when><xsl:otherwise>-1</xsl:otherwise></xsl:choose
 		          >,<xsl:choose><xsl:when test="@height"><xsl:value-of select="@height"/></xsl:when><xsl:otherwise>-1</xsl:otherwise></xsl:choose

@@ -9,8 +9,7 @@
     <xsl:if test="not(@immediate='true') and $dhtml"><xsl:attribute name="onchange">this.CLASS='modified'</xsl:attribute></xsl:if>
     <xsl:if test="@tabindex"><xsl:attribute name="tabindex"><xsl:value-of select="@tabindex"/></xsl:attribute></xsl:if>
     <xsl:if test="@focusid"><xsl:attribute name="FOCUSID"><xsl:value-of select="@focusid"/></xsl:attribute></xsl:if>
-  </INPUT>
-  
+  </INPUT>  
 </xsl:template>
 
 </xsl:stylesheet>

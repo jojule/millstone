@@ -73,7 +73,7 @@
 		         <A CLASS="{$class}-column-header">
 		           <xsl:choose>
 		               <xsl:when test="../../integer[@name='sortcolumn']/@value=$thispos">
-		                   <xsl:attribute name="HREF">javascript:setVarById('<xsl:value-of select="../../boolean[@name='sortascending']/@id"/>','<xsl:value-of select="not(../../boolean[@name='sortascending']/@value='true')"/>',true);</xsl:attribute>
+		                   <xsl:attribute name="HREF">javascript:Millstone.setVarById('<xsl:value-of select="../../boolean[@name='sortascending']/@id"/>','<xsl:value-of select="not(../../boolean[@name='sortascending']/@value='true')"/>',true);</xsl:attribute>
 		                   <xsl:value-of select="@caption" />
 		                   <IMG BORDER="0" CLASS="{$class}-column-header" valign="middle">
 		                       <xsl:if test="../../boolean[@name='sortascending']/@value='true'"><xsl:attribute name="SRC"><xsl:value-of select="wa:resource('icon/arrows/down.gif')"/></xsl:attribute></xsl:if>        
@@ -81,7 +81,7 @@
 		                   </IMG>
 		               </xsl:when>
 		               <xsl:otherwise>
-		                       <xsl:attribute name="HREF">javascript:setVarById('<xsl:value-of select="../../integer[@name='sortcolumn']/@id"/>','<xsl:value-of select="$thispos"/>',true);</xsl:attribute>
+		                       <xsl:attribute name="HREF">javascript:Millstone.setVarById('<xsl:value-of select="../../integer[@name='sortcolumn']/@id"/>','<xsl:value-of select="$thispos"/>',true);</xsl:attribute>
 		                       <xsl:value-of select="@caption" />
 		               </xsl:otherwise>
 		           </xsl:choose>
@@ -192,7 +192,7 @@
       <xsl:when test="$dhtml">
           <xsl:variable name="trid"><xsl:value-of select="$selectedid"/>_<xsl:value-of select="@key"/></xsl:variable>  
           <xsl:attribute name="ID"><xsl:value-of select="$trid"/></xsl:attribute>
-          <xsl:attribute name="onclick">tableSelClick('<xsl:value-of select="$selectedid"/>','<xsl:value-of select="@key"/>','<xsl:value-of select="../../@immediate"/>','<xsl:value-of select="../../@selectmode"/>')</xsl:attribute>
+          <xsl:attribute name="onclick">Millstone.tableSelClick('<xsl:value-of select="$selectedid"/>','<xsl:value-of select="@key"/>','<xsl:value-of select="../../@immediate"/>','<xsl:value-of select="../../@selectmode"/>')</xsl:attribute>
       </xsl:when>
 
       <!-- Normal HTML mode selection -->
