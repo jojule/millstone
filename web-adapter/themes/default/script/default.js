@@ -1117,7 +1117,14 @@ function showOverlayLayer(win)
 			'px;top:' + top + 'px;width:' + width + 
 			'px;height:' + height + 'px;position:absolute;">' + 
 		html + '</div>';
-		win.document.body.insertAdjacentHTML('beforeEnd', divhtml);
+		if (win.document.body.insertAdjacentHTML) {
+			win.document.body.insertAdjacentHTML('beforeEnd', divhtml);		
+		} else {
+			var range = document.createRange();
+			range.setStartBefore(document.body);
+			var node = range.createContextualFragment(divhtml)
+			win.document.body.appendChild(node);
+		}
 	}
 	layer = win.document.getElementById(id);
 	if (layer) {
