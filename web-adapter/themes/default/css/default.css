@@ -64,7 +64,7 @@ IMG.action {
 	vertical-align: middle;
 }
 
-/* Paddings -------------------------------------------------------------- */
+/* Component Margins and Paddings --------------------------------------- */
 
 INPUT.button, DIV.button, NOBR.button,
 DIV.component, 
@@ -81,11 +81,15 @@ DIV.upload {
 	margin: 5px;
 }
 
+/* Layout Properties ----------------------------------------------------- */
+
 DIV.customlayout, DIV.gridlayout, DIV.orderedlayout, DIV.orderedlayout-form 
 { 
 	margin: 0px; 
 }
-
+TD.form-caption {
+	vertical-align: top;
+}
 
 /* TextField ------------------------------------------------------------- */
 

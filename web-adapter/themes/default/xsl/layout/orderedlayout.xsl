@@ -42,7 +42,7 @@
     <TABLE BORDER="0" WIDTH="{$maxtablewidth}">
       <xsl:for-each select="*">
         <TR>
-          <TD>
+          <TD CLASS="form-caption">
 		    <xsl:if test="not(local-name()!='button' and @type='switch') and local-name()!='link' and @caption">
 		      <NOBR CLASS="caption">
   		        <xsl:if test="@icon"><IMG SRC="{@icon}" /></xsl:if>
@@ -62,7 +62,7 @@
 <xsl:template match="orderedlayout[(@orientation='flow') and (@style='form')]" mode="core">
   <xsl:for-each select="*">
     <TABLE BORDER="0" WIDTH="{$maxtablewidth}">
-      <TR CLASS="flowform-caption">
+      <TR CLASS="form-caption">
         <TD>
 	      <xsl:if test="not(local-name()!='button' and @type='switch') and local-name()!='link' and @caption">
 		    <NOBR CLASS="caption">
@@ -84,7 +84,7 @@
 <xsl:template match="orderedlayout[(@orientation='horizontal') and (@style='form')]" mode="core">
   <xsl:if test="./child::*">
     <TABLE BORDER="0">
-      <TR>
+      <TR CLASS="form-caption">
         <xsl:for-each select="*">
           <TD>
 		    <xsl:if test="not(local-name()!='button' and @type='switch') and local-name()!='link' and @caption">
