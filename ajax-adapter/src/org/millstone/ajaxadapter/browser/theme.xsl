@@ -51,7 +51,7 @@
 </xsl:template>
 
 <xsl:template match="label|datefield|embedded|textfield|upload|select|table|tree|customlayout|gridlayout|orderedlayout|tabsheet">
-  <DIV ID='PID{@pid}'>
+  <DIV ID='{@id}'>
     <xsl:if test="(@caption)|(@icon)|(./description)|(./error)">
       <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
       <NOBR CLASS="caption">
@@ -155,8 +155,7 @@
         <xsl:if test="not(string-length(@caption) &gt; 0)"><xsl:attribute name="ID"><xsl:value-of select="./boolean/@id"/></xsl:attribute></xsl:if>
       </INPUT></xsl:if>
       <xsl:if test="string-length(@caption) &gt; 0">
-      <INPUT CLASS="button" TYPE="SUBMIT" ID="{./boolean/@id}" NAME="set:{./boolean/@id}=true" VALUE=" {@caption} ">
-        <xsl:attribute name="ONCLICK">Millstone.showHourglassCursor()</xsl:attribute>    
+      <INPUT CLASS="button" TYPE="BUTTON" ONCLICK="variableChange('{./boolean/@id}','true',true)" VALUE=" {@caption} ">
         <xsl:attribute name="CLASS">button<xsl:if test="string-length(./@style) &gt; 0">-<xsl:value-of select="./@style"/></xsl:if></xsl:attribute>    
    	    <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
         <xsl:if test="@readonly='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>

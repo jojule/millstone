@@ -1,31 +1,61 @@
 
-document.write("<hr><b>Debug</b><br/><TEXTAREA STYLE='border: 1px solid gray; background-color: #ffffbb' id='debug' COLS='80' ROWS='10'></TEXTAREA>");
+// Globals
+var xsltProcessor = new XSLTProcessor();
+var variableChanges = "";
+
 function debug(message) {
-    document.getElementById("debug").value = message;
+    var ta = document.getElementById("debug");
+ //   ta.value = ta.value + "\n==========\n" + message;
+    ta.scrollTop = ta.scrollHeight;
 }
 
 // Load updates and return them as xml
-function getChangesUIDL() {
+function sendGetChanges(repaintAll) {
 	var x = new XMLHttpRequest();
-	x.open("GET", windowUrl + "?xmlHttpRequest=1&repaintAll=1", false);
+	x.open("GET", windowUrl + "?xmlHttpRequest=1" +  (repaintAll ? "&repaintAll=1" : "") + variableChanges, false);
 	x.send(null);
 	var updates = x.responseXML;
 	debug(x.responseText);
 	delete x;
-	return updates;
-}	
-var myXMLHTTPRequest = new XMLHttpRequest();
-myXMLHTTPRequest.open("GET", "theme.xsl", false);
-myXMLHTTPRequest.send(null);
-var xslStylesheet = myXMLHTTPRequest.responseXML;
-var xsltProcessor = new XSLTProcessor();
-xsltProcessor.importStylesheet(xslStylesheet);
+	
+	variableChanges = "";
 
-var changes = getChangesUIDL().getElementsByTagName("changes");
-for (i=0; i<changes.length; i++) {
-  var change = changes.item(i);
-  var transformed = xsltProcessor.transformToFragment(change,document);
-  var node = document.getElementById(windowId)
-  node.innerHTML = "";
-  node.appendChild(transformed);
+	var changes = updates.getElementsByTagName("change");
+	for (i=0; i<changes.length; i++) {
+	  debug("changes nro: " + i);
+	  var change = changes.item(i);
+	  var paintableId = change.getAttribute("pid");
+	  var transformed = xsltProcessor.transformToFragment(change,document);
+	  var node = document.getElementById(paintableId);
+	  node.parentNode.replaceChild(transformed,node);
+	  
+//	  node.innerHTML = "";
+	//  node.appendChild(transformed);
+	}
+}	
+
+function init() {
+
+	// Debug box
+	document.write("<hr><b>Debug</b><br/><TEXTAREA STYLE='border: 1px solid gray; background-color: #ffffbb' id='debug' COLS='80' ROWS='20'></TEXTAREA>");
+	
+	// Stylesheet
+	var myXMLHTTPRequest = new XMLHttpRequest();
+	myXMLHTTPRequest.open("GET", "theme.xsl", false);
+	myXMLHTTPRequest.send(null);
+	var xslStylesheet = myXMLHTTPRequest.responseXML;
+	xsltProcessor.importStylesheet(xslStylesheet);
 }
+
+function variableChange(name, value, immediate) {
+	
+	debug("variableChange('" + name + "', '" + value + "', " + immediate + ");");
+
+	variableChanges = variableChanges + "&" + name + "=" + value;
+
+	if (immediate) 
+		sendGetChanges(false);
+ }
+
+init();
+sendGetChanges(true);
