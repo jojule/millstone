@@ -1,3 +1,41 @@
+/* *************************************************************************
+ 
+   								Millstone(TM) 
+   				   Open Sourced User Interface Library for
+   		 		       Internet Development with Java
+
+             Millstone is a registered trademark of IT Mill Ltd
+                  Copyright (C) 2000,2001,2002 IT Mill Ltd
+                     
+   *************************************************************************
+
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+   *************************************************************************
+   
+   For more information, contact:
+   
+   IT Mill Ltd                           phone: +358 2 4802 7180
+   Ruukinkatu 2-4                        fax:  +358 2 4802 7181
+   20540, Turku                          email: info@itmill.com
+   Finland                               company www: www.itmill.com
+   
+   Primary source for MillStone information and releases: www.millstone.org
+
+   ********************************************************************** */
+
 package org.millstone.examples.features;
 
 import java.util.Hashtable;
@@ -63,23 +101,23 @@ public class FeatureTable extends Feature implements Action.Handler {
 		String[] haircolors =
 			new String[] { "Brown", "Black", "Red", "Blonde" };
 
-		ic.addProperty("Firstname", String.class, "");
-		ic.addProperty("Lastname", String.class, "");
-		ic.addProperty("Age", String.class, "");
-		ic.addProperty("Eyecolor", String.class, "");
-		ic.addProperty("Haircolor", String.class, "");
+		ic.addContainerProperty("Firstname", String.class, "");
+		ic.addContainerProperty("Lastname", String.class, "");
+		ic.addContainerProperty("Age", String.class, "");
+		ic.addContainerProperty("Eyecolor", String.class, "");
+		ic.addContainerProperty("Haircolor", String.class, "");
 
 		for (int j = 0; j < 50; j++) {
 			Item i = ic.getItem(ic.addItem());
-			i.getProperty("Firstname").setValue(
+			i.getItemProperty("Firstname").setValue(
 				firstnames[(int) (Math.random() * 9)]);
-			i.getProperty("Lastname").setValue(
+			i.getItemProperty("Lastname").setValue(
 				lastnames[(int) (Math.random() * 9)]);
-			i.getProperty("Age").setValue(
+			i.getItemProperty("Age").setValue(
 				new Integer((int) (Math.random() * 80)));
-			i.getProperty("Eyecolor").setValue(
+			i.getItemProperty("Eyecolor").setValue(
 				eyecolors[(int) (Math.random() * 3)]);
-			i.getProperty("Haircolor").setValue(
+			i.getItemProperty("Haircolor").setValue(
 				haircolors[(int) (Math.random() * 4)]);
 		}
 		t = new Table("Table component", ic);
@@ -203,11 +241,8 @@ public class FeatureTable extends Feature implements Action.Handler {
 			"Last action clicked was '"
 				+ action.getCaption()
 				+ "' on item '"
-				+ t.getItem(target).getProperty("Column 1")
+				+ t.getItem(target).getItemProperty("Column 1")
 				+ "'");
 	}
 
 }
-
-/* This Millstone sample code is public domain. *  
- * For more information see www.millstone.org.  */

@@ -1,3 +1,41 @@
+/* *************************************************************************
+ 
+   								Millstone(TM) 
+   				   Open Sourced User Interface Library for
+   		 		       Internet Development with Java
+
+             Millstone is a registered trademark of IT Mill Ltd
+                  Copyright (C) 2000,2001,2002 IT Mill Ltd
+                     
+   *************************************************************************
+
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+   *************************************************************************
+   
+   For more information, contact:
+   
+   IT Mill Ltd                           phone: +358 2 4802 7180
+   Ruukinkatu 2-4                        fax:  +358 2 4802 7181
+   20540, Turku                          email: info@itmill.com
+   Finland                               company www: www.itmill.com
+   
+   Primary source for MillStone information and releases: www.millstone.org
+
+   ********************************************************************** */
+
 package org.millstone.examples.features;
 
 import java.util.Date;
@@ -11,69 +49,58 @@ import org.millstone.base.ui.*;
 public class FeatureDateField extends Feature {
 
 	public FeatureDateField() {
-		super();		
+		super();
 	}
 
 	protected Component getDemoComponent() {
-
-		// Create locale selector
-		Select selector = new Select("Application Locale");
-		selector.addProperty("name",String.class,"");
-		selector.setItemCaptionPropertyId("name");
-		Locale[] locales = Locale.getAvailableLocales();
-		for (int i = 0; i < locales.length; i++) {
-			selector.addItem(locales[i]).getProperty("name").setValue(locales[i].getDisplayName());		
-		}
-		selector.setImmediate(true);
-		selector.setPropertyDataSource(new MethodProperty(this.getApplication(),"locale"));
-		
-		Panel localePanel = new Panel("Extra options");
-		localePanel.addComponent(selector);
 
 		OrderedLayout l = new OrderedLayout();
 
 		// Example panel
 		Panel show = new Panel("DateField component");
-
 		DateField df = new DateField("Caption");
 		df.setValue(new java.util.Date());
-		df.setStyle("calendar");
-
 		show.addComponent(df);
 		l.addComponent(show);
 
-		Hashtable alternateEditors = new Hashtable();
+		// Create locale selector
+		Select selector = new Select("Application Locale");
+		selector.addContainerProperty("name", String.class, "");
+		selector.setItemCaptionPropertyId("name");
+		Locale[] locales = Locale.getAvailableLocales();
+		for (int i = 0; i < locales.length; i++)
+			selector.addItem(locales[i]).getItemProperty("name").setValue(
+				locales[i].getDisplayName());
+		selector.setImmediate(true);
+		selector.setPropertyDataSource(
+			new MethodProperty(this.getApplication(), "locale"));
+		l.addComponent(selector);
 
-		Select s =
-			createSelect(
-				"Style",
-				new String[] { "", "text", "calendar" },
-				new String[] { "Default", "Text", "Calendar" });
+		// Properties
+		PropertyPanel p = new PropertyPanel(df);
+		Form ap = p.createBeanPropertySet(new String[] {"resolution"});
+		ap.replaceWithSelect("resolution", new Object[] {
+					new Integer(DateField.RESOLUTION_YEAR),
+					new Integer(DateField.RESOLUTION_MONTH),
+					new Integer(DateField.RESOLUTION_DAY),
+					new Integer(DateField.RESOLUTION_HOUR),
+					new Integer(DateField.RESOLUTION_MIN),
+					new Integer(DateField.RESOLUTION_SEC),
+					new Integer(DateField.RESOLUTION_MSEC)},
+					 new Object[] {
+					"Year",
+					"Month",
+					"Day",
+					"Hour",
+					"Minute",
+					"Second",
+					"Millisecond" });
+		Select themes = (Select) p.getField("style");
+		themes.addItem("text").getItemProperty(themes.getItemCaptionPropertyId()).setValue("text");
+		themes.addItem("calendar").getItemProperty(themes.getItemCaptionPropertyId()).setValue("calendar");
+		p.addProperties("DateField Properties", ap);
+		l.addComponent(p);
 
-		alternateEditors.put("style", s);
-		
-		Select t =
-			createSelect(
-				"Resolution",
-					new Integer[]{new Integer(DateField.RESOLUTION_YEAR),
-											new Integer(DateField.RESOLUTION_MONTH),
-											new Integer(DateField.RESOLUTION_DAY),
-											new Integer(DateField.RESOLUTION_HOUR),
-											new Integer(DateField.RESOLUTION_MIN),
-											new Integer(DateField.RESOLUTION_SEC),
-											new Integer(DateField.RESOLUTION_MSEC)},
-					new String[]{"Year","Month","Day","Hour","Minute","Second","Millisecond"}
-					);
-					
-		alternateEditors.put("resolution",t);
-
-		// Configuration
-		l.addComponent(
-			createPropertyPanel(df,
-				new String[] {"resolution"},
-				alternateEditors));
-
-		l.addComponent(localePanel);
 		return l;
 	}
 
@@ -100,6 +127,3 @@ public class FeatureDateField extends Feature {
 	}
 
 }
-
-/* This Millstone sample code is public domain. *  
- * For more information see www.millstone.org.  */

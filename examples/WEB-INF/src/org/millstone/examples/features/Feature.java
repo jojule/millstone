@@ -1,3 +1,41 @@
+/* *************************************************************************
+ 
+   								Millstone(TM) 
+   				   Open Sourced User Interface Library for
+   		 		       Internet Development with Java
+
+             Millstone is a registered trademark of IT Mill Ltd
+                  Copyright (C) 2000,2001,2002 IT Mill Ltd
+                     
+   *************************************************************************
+
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+   *************************************************************************
+   
+   For more information, contact:
+   
+   IT Mill Ltd                           phone: +358 2 4802 7180
+   Ruukinkatu 2-4                        fax:  +358 2 4802 7181
+   20540, Turku                          email: info@itmill.com
+   Finland                               company www: www.itmill.com
+   
+   Primary source for MillStone information and releases: www.millstone.org
+
+   ********************************************************************** */
+
 package org.millstone.examples.features;
 
 import org.millstone.base.data.util.BeanItem;
@@ -14,7 +52,7 @@ import java.util.Vector;
 import org.millstone.base.data.Property;
 import org.millstone.base.data.util.MethodProperty;
 
-public abstract class Feature extends CustomComponent {
+public class Feature extends CustomComponent {
 
 	private TabSheet ts;
 
@@ -38,10 +76,10 @@ public abstract class Feature extends CustomComponent {
 		String[] desc = getDescriptionXHTML();
 		if (desc != null) {
 			GridLayout gl = new GridLayout(2, 1);
-			gl.addComponent(
-				new Embedded(
-					"",
-					new ClassResource(desc[2], this.getApplication())));
+			if (desc[2] != null)
+	 			gl.addComponent(
+ 					new Embedded(
+						"", new ClassResource(desc[2], this.getApplication())));
 			gl.addComponent(
 				new Label(
 					"<h2>" + desc[0] + "</h2>" + desc[1],
@@ -50,7 +88,9 @@ public abstract class Feature extends CustomComponent {
 		}
 
 		// Demo
-		ts.addTab(getDemoComponent(), "Demo", null);
+		Component demo = getDemoComponent();
+		if (demo != null)
+			ts.addTab(demo, "Demo", null);
 
 		// Example source
 		String example = getExampleSrc();
@@ -67,14 +107,16 @@ public abstract class Feature extends CustomComponent {
 
 	// Returns, "name","desc", and optional image name string to display
 	protected String[] getDescriptionXHTML() {
-		return null;
+		return new String[] {"","<h2>Feature description is under construction</h2>",null};
 	}
 
 	protected String getExampleSrc() {
 		return null;
 	}
 
-	abstract protected Component getDemoComponent();
+	protected Component getDemoComponent() {
+		return null;	
+	}
 
 	protected Component createPropertyPanel(
 		Object objectToConfigure,
@@ -180,14 +222,14 @@ public abstract class Feature extends CustomComponent {
 		Object[] keys,
 		String[] names) {
 		Select s = new Select(caption);
-		s.addProperty("name", String.class, "");
+		s.addContainerProperty("name", String.class, "");
 		for (int i = 0; i < keys.length; i++) {
 			if (Integer.class.isAssignableFrom(keys[i].getClass())) {
-				s.addItem((Integer) keys[i]).getProperty("name").setValue(
+				s.addItem((Integer) keys[i]).getItemProperty("name").setValue(
 					names[i]);
 			}
 			if (String.class.isAssignableFrom(keys[i].getClass())) {
-				s.addItem((String) keys[i]).getProperty("name").setValue(
+				s.addItem((String) keys[i]).getItemProperty("name").setValue(
 					names[i]);
 			}
 		}

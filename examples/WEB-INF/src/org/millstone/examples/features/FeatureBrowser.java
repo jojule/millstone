@@ -1,8 +1,47 @@
+/* *************************************************************************
+ 
+   								Millstone(TM) 
+   				   Open Sourced User Interface Library for
+   		 		       Internet Development with Java
+
+             Millstone is a registered trademark of IT Mill Ltd
+                  Copyright (C) 2000,2001,2002 IT Mill Ltd
+                     
+   *************************************************************************
+
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+   *************************************************************************
+   
+   For more information, contact:
+   
+   IT Mill Ltd                           phone: +358 2 4802 7180
+   Ruukinkatu 2-4                        fax:  +358 2 4802 7181
+   20540, Turku                          email: info@itmill.com
+   Finland                               company www: www.itmill.com
+   
+   Primary source for MillStone information and releases: www.millstone.org
+
+   ********************************************************************** */
+
 package org.millstone.examples.features;
 
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
+import org.millstone.base.terminal.ClassResource;
 import org.millstone.base.ui.*;
 import org.millstone.base.data.*;
 
@@ -13,25 +52,29 @@ public class FeatureBrowser
 	private Tree features;
 	private Feature currentFeature = null;
 	private GridLayout layout;
-	private Panel welcomePanel;
+	private Component welcome;
+	private boolean initialized = false;
 
 	private static final String WELCOME_TEXT =
 		"<h3>Welcome to the Millstone feature tour!</h3>"
 			+ "In this Millstone application you may view a demonstration of some of its "
 			+ "features.<br/>"
-			+ "Each feature has a description, demonstration and code-example "
-			+ "associated with it.<br/><br/>"
-			+ "Start your tour by selecting a component from the list on the left.<br/><br/>"
+			+ "Most of the features can be tested online and include simple example of their "
+			+ "usage associated with it.<br/><br/>"
+			+ "Start your tour by selecting features from the list on the left.<br/><br/>"
 			+ "For more information, point your browser to: <a href=\"http://www.millstone.org\""
 			+ " target=\"_new\">www.millstone.org</a>";
 
-	public FeatureBrowser() {
+	public void attach() {
+
+		if (initialized) return;
+		initialized = true;
 
 		// Configure tree
 		features = new Tree();
 		features.setStyle("menu");
-		features.addProperty("name", String.class, "");
-		features.addProperty("feature", Feature.class, null);
+		features.addContainerProperty("name", String.class, "");
+		features.addContainerProperty("feature", Feature.class, null);
 		features.setItemCaptionPropertyId("name");
 		features.addListener(this);
 		features.setImmediate(true);
@@ -41,32 +84,46 @@ public class FeatureBrowser
 		setCompositionRoot(layout);
 		layout.addComponent(features, 0, 0, 0, 0);
 		Label greeting = new Label(WELCOME_TEXT, Label.CONTENT_XHTML);
-		welcomePanel = new Panel((String) null);
-		welcomePanel.addComponent(greeting);
-		layout.addComponent(welcomePanel, 1, 0, 1, 0);
+		//welcomePanel = new Panel((String) null);
+		welcome = new Embedded("",new ClassResource(getClass(),"millstone-logo.gif", getApplication()));
+		//	welcomePanel.addComponent(greeting);
+		layout.addComponent(welcome, 1, 0, 1, 0);
 
 		// Test component
-		registerFeature("/Field/TextField", new FeatureTextField());
-		registerFeature("/Field/DateField", new FeatureDateField());
-		registerFeature("/Container/Table", new FeatureTable());
-		registerFeature("/Container/Tree", new FeatureTree());
-		registerFeature("/Container/Panel", new FeaturePanel());
-		registerFeature("/Container/TabSheet", new FeatureTabSheet());
-		registerFeature("/Control/Select", new FeatureSelect());
-		registerFeature("/Control/Button", new FeatureButton());
-		registerFeature("/Basic/Label", new FeatureLabel());
-		registerFeature("/Basic/Link", new FeatureLink());
-		registerFeature("/Basic/Embedded", new FeatureEmbedded());
-		registerFeature("/Layouts/OrderedLayout", new FeatureOrderedLayout());
-		registerFeature("/Layouts/GridLayout", new FeatureGridLayout());
-		registerFeature("/io/File transfers", new FeatureFileTransfer());
-		registerFeature("/io/Parameters", new FeatureParameters());
-		registerFeature("/Basic/Window", new FeatureWindow());
-
-		// By default expand all
-		for (Iterator i = features.rootItemIds().iterator(); i.hasNext();) {
-			features.expandItem(i.next());
-		}
+		registerFeature("/UI Components/Basic/Text Field", new FeatureTextField());
+		registerFeature("/UI Components/Basic/Date Field", new FeatureDateField());
+		registerFeature("/UI Components/Basic/Button", new FeatureButton());
+		registerFeature("/UI Components/Basic/Form", new FeatureForm());
+		registerFeature("/UI Components/Basic/Label", new FeatureLabel());
+		registerFeature("/UI Components/Basic/Link", new FeatureLink());
+		registerFeature("/UI Components/Item Containers/Select", new FeatureSelect());
+		registerFeature("/UI Components/Item Containers/Table", new FeatureTable());
+		registerFeature("/UI Components/Item Containers/Tree", new FeatureTree());
+		registerFeature("/UI Components/Item Containers/Actions", new Feature());
+		registerFeature("/UI Components/Layouts/Ordered Layout", new FeatureOrderedLayout());
+		registerFeature("/UI Components/Layouts/Grid Layout", new FeatureGridLayout());
+		registerFeature("/UI Components/Layouts/Custom Layout", new FeatureGridLayout());
+		registerFeature("/UI Components/Layouts/Panel", new FeaturePanel());
+		registerFeature("/UI Components/Layouts/Tab Sheet", new FeatureTabSheet());
+		registerFeature("/UI Components/Layouts/Window", new FeatureWindow());
+		registerFeature("/UI Components/Layouts/Frame Window", new Feature());
+		registerFeature("/UI Components/Data handling/Embedded Objects", new FeatureEmbedded());
+		registerFeature("/UI Components/Data handling/XML and XHTML", new FeatureLabel());
+		registerFeature("/UI Components/Data handling/Upload", new FeatureFileTransfer());
+		registerFeature("/Data Model/Properties", new Feature());
+		registerFeature("/Data Model/Items", new Feature());
+		registerFeature("/Data Model/Containers", new Feature());
+		registerFeature("/Data Model/Validators", new Feature());
+		registerFeature("/Data Model/Buffering", new Feature());
+		registerFeature("/Event Framework/Method Events", new Feature());
+		registerFeature("/Event Framework/Event Router", new Feature());
+		registerFeature("/Event Framework/Component Events", new Feature());
+		registerFeature("/Event Framework/Data Change Events", new Feature());
+		registerFeature("/Event Framework/Item Container Actions", new Feature());
+		registerFeature("/Terminal/Web Adapter Themes", new Feature());
+		registerFeature("/Terminal/Server Initiated Events", new Feature());
+		registerFeature("/Terminal/Resource Framework", new Feature());
+		registerFeature("/Terminal/Parameters and URI Handling", new FeatureParameters());
 
 	}
 
@@ -81,13 +138,13 @@ public class FeatureBrowser
 				features.addItem(id);
 				features.setChildrenAllowed(id, false);
 			}
-			features.getProperty(id, "name").setValue(token);
+			features.getContainerProperty(id, "name").setValue(token);
 			if (parentId != null) {
 				features.setChildrenAllowed(parentId, true);
 				features.setParent(id, parentId);
 			}
 			if (!st.hasMoreTokens())
-				features.getProperty(id, "feature").setValue(feature);
+				features.getContainerProperty(id, "feature").setValue(feature);
 			parentId = id;
 		}
 	}
@@ -100,23 +157,17 @@ public class FeatureBrowser
 			if (id != null) {
 				if (features.areChildrenAllowed(id))
 					features.expandItem(id);
-				Property p = features.getProperty(id, "feature");
+				Property p = features.getContainerProperty(id, "feature");
 				Feature feature = p != null ? ((Feature) p.getValue()) : null;
 				if (feature != null) {
 					if (currentFeature != null)
 						layout.removeComponent(currentFeature);
 					currentFeature = feature;
 					layout.removeComponent(1, 0);
-					layout.addComponent(currentFeature, 1, 0, 1, 0);
-				} else {
-					layout.removeComponent(1, 0);
-					layout.addComponent(welcomePanel, 1, 0, 1, 0);
-
-				}
+					layout.addComponent(currentFeature, 1, 0);
+					getWindow().setCaption("Millstone Features / " + features.getContainerProperty(id, "name"));
+				} 
 			}
 		}
 	}
 }
-
-/* This Millstone sample code is public domain. *  
- * For more information see www.millstone.org.  */
