@@ -501,6 +501,7 @@ function fireAction(actionListId,actionVariableId,actionKey) {
 // Globals for handling browser differences
 var ie5 = document.all && document.getElementById;
 var ns6 = document.getElementById && !document.all;
+var safari = navigator.userAgent.toLowerCase().indexOf("safari") >= 0;
 
 // Global array of active popups
 var activePopups = new Array();
@@ -511,7 +512,6 @@ var skipNextHideAll = false;
 if (ie5 || ns6) {
 	document.onclick=hideAllPopups;
 }
-
 
 // --------------------------------------------------------------------------
 // Shows popup on location specified by given coordinates.
@@ -524,6 +524,12 @@ function showPopupById(popupId, clientX, clientY) {
 
 	popup = document.getElementById(popupId);
 	activePopups[popupCount++] = popupId;
+	
+	// Safari given clientX,Y in relation to body
+	if (safari) {
+	   clientX = clientX - document.body.scrollLeft;
+	   clientY = clientY - document.body.scrollTop;
+	}
 	
 	// Find out how close the mouse is to the corner of the window
 	var rightedge = ie5? document.body.clientWidth-clientX : window.innerWidth-clientX;
