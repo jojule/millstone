@@ -36,7 +36,6 @@ package org.millstone.base.ui;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -318,9 +317,8 @@ public class Table extends Select implements Action.Container,
 
         this.visibleColumns = newVC;
 
-        // Clear page buffer and notify about the change
-        pageBuffer = null;
-        requestRepaint();
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -378,9 +376,8 @@ public class Table extends Select implements Action.Container,
             this.columnHeaders.put(it.next(), columnHeaders[i]);
         }
 
-        // Clear page buffer and notify about the change
-        pageBuffer = null;
-        requestRepaint();
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -436,9 +433,8 @@ public class Table extends Select implements Action.Container,
             this.columnIcons.put(it.next(), columnIcons[i]);
         }
 
-        // Clear page buffer and notify about the change
-        pageBuffer = null;
-        requestRepaint();
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -451,7 +447,7 @@ public class Table extends Select implements Action.Container,
      * <ul>
      * <li><code>ALIGN_LEFT</code>: Left alignment</li>
      * <li><code>ALIGN_CENTER</code>: Centered</li>
-     * <li><code>ALIGN_LEFT</code>: Right alignment</li>
+     * <li><code>ALIGN_RIGHT</code>: Right alignment</li>
      * </ul>
      * The alignments default to <code>ALIGN_LEFT</code>: any null values are
      * rendered as align lefts.
@@ -466,7 +462,7 @@ public class Table extends Select implements Action.Container,
         String[] alignments = new String[this.visibleColumns.size()];
         int i = 0;
         for (Iterator it = this.visibleColumns.iterator(); it.hasNext(); i++) {
-            alignments[i++] = (String) this.columnAlignments.get(it.next());
+            alignments[i++] = getColumnAlignment(it.next());
         }
 
         return alignments;
@@ -514,9 +510,8 @@ public class Table extends Select implements Action.Container,
         }
         this.columnAlignments = newCA;
 
-        // Clear page buffer and notify about the change
-        pageBuffer = null;
-        requestRepaint();
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -547,9 +542,8 @@ public class Table extends Select implements Action.Container,
         if (pageLength >= 0 && this.pageLength != pageLength) {
             this.pageLength = pageLength;
 
-            // Clear page buffer and notify about the change
-            pageBuffer = null;
-            requestRepaint();
+            // Assure visual refresh
+            refreshCurrentPage();
         }
     }
 
@@ -609,9 +603,9 @@ public class Table extends Select implements Action.Container,
             this.currentPageFirstItemIndex = index;
         }
 
-        // Clear page buffer and notify about the change
-        pageBuffer = null;
-        requestRepaint();
+        // Assure visual refresh
+        refreshCurrentPage();
+
     }
 
     /**
@@ -638,12 +632,14 @@ public class Table extends Select implements Action.Container,
      *            the icon Resource to set.
      */
     public void setColumnIcon(Object propertyId, Resource icon) {
-        if (!this.visibleColumns.contains(propertyId)) {
-            throw new IllegalArgumentException(
-                    "The specified column is not visible!");
 
-        }
-        this.columnIcons.put(propertyId, icon);
+        if (icon == null)
+            this.columnIcons.remove(propertyId);
+        else
+            this.columnIcons.put(propertyId, icon);
+
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -651,14 +647,15 @@ public class Table extends Select implements Action.Container,
      * 
      * @param propertyId
      *            the propertyId indentifying the column.
-     * @return the header for the specifed column if it has one; propertyId if
-     *         the column has no header and
-     *         COLUMN_HEADER_MODE_EXPLICIT_DEFAULTS_ID is set; null otherwise.
+     * @return the header for the specifed column if it has one.
      */
     public String getColumnHeader(Object propertyId) {
+        if (getColumnHeaderMode() == COLUMN_HEADER_MODE_HIDDEN)
+            return null;
+
         String header = (String) this.columnHeaders.get(propertyId);
-        if (header == null
-                && this.getColumnHeaderMode() == COLUMN_HEADER_MODE_EXPLICIT_DEFAULTS_ID) {
+        if ((header == null && this.getColumnHeaderMode() == COLUMN_HEADER_MODE_EXPLICIT_DEFAULTS_ID)
+                || this.getColumnHeaderMode() == COLUMN_HEADER_MODE_ID) {
             header = propertyId.toString();
         }
 
@@ -668,26 +665,21 @@ public class Table extends Select implements Action.Container,
     /**
      * Sets column header for the specified column;
      * 
-     * <p>
-     * Throws IllegalArgumentException if the specified column is not visible.
-     * </p>
-     * 
      * @param propertyId
      *            the propertyId indentifying the column.
      * @param header
      *            the header to set.
      */
     public void setColumnHeader(Object propertyId, String header) {
-        if (!this.visibleColumns.contains(propertyId)) {
-            throw new IllegalArgumentException(
-                    "The specified column is not visible!");
 
-        }
         if (header == null) {
             this.columnHeaders.remove(propertyId);
             return;
         }
         this.columnHeaders.put(propertyId, header);
+
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -698,14 +690,16 @@ public class Table extends Select implements Action.Container,
      * @return the specified column's alignment if it as one; null otherwise.
      */
     public String getColumnAlignment(Object propertyId) {
-        return (String) this.columnAlignments.get(propertyId);
+        String a = (String) this.columnAlignments.get(propertyId);
+        return a == null ? ALIGN_LEFT : a;
     }
 
     /**
      * Sets the specified column's alignment.
      * 
      * <p>
-     * Throws IllegalArgumentException if the specified column is not visible.
+     * Throws IllegalArgumentException if the alignment is not one of the
+     * following: ALIGN_LEFT, ALIGN_CENTER or ALIGN_RIGHT
      * </p>
      * 
      * @param propertyId
@@ -714,17 +708,23 @@ public class Table extends Select implements Action.Container,
      *            the desired alignment.
      */
     public void setColumnAlignment(Object propertyId, String alignment) {
-        if (!this.visibleColumns.contains(propertyId)) {
-            throw new IllegalArgumentException(
-                    "The specified column is not visible!");
 
-        }
-        // TODO check for valid alignments? YES
-        if (alignment == null) {
+        // Check for valid alignments
+        if (alignment != null && !alignment.equals(ALIGN_LEFT)
+                && !alignment.equals(ALIGN_CENTER)
+                && !alignment.equals(ALIGN_RIGHT))
+            throw new IllegalArgumentException("Column alignment '" + alignment
+                    + "' is not supported.");
+
+        if (alignment == null || alignment.equals(ALIGN_LEFT)) {
             this.columnAlignments.remove(propertyId);
             return;
         }
+
         this.columnAlignments.put(propertyId, alignment);
+
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -742,9 +742,6 @@ public class Table extends Select implements Action.Container,
     /**
      * Sets whether the specified column is collapsed or not.
      * 
-     * <p>
-     * Throws IllegalArgumentException if the specified column is not visible.
-     * </p>
      * 
      * @param propertyId
      *            the propertyID identifying the column.
@@ -756,14 +753,14 @@ public class Table extends Select implements Action.Container,
         if (!this.isColumnCollapsingAllowed()) {
             throw new IllegalAccessException("Column collapsing not allowed!");
         }
-        if (!this.visibleColumns.contains(propertyId)) {
-            throw new IllegalArgumentException(
-                    "The specified column is not visible!");
-        }
+
         if (collapsed)
             this.collapsedColumns.add(propertyId);
         else
             this.collapsedColumns.remove(propertyId);
+
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -783,6 +780,12 @@ public class Table extends Select implements Action.Container,
      */
     public void setColumnCollapsingAllowed(boolean collapsingAllowed) {
         this.columnCollapsingAllowed = collapsingAllowed;
+
+        if (!collapsingAllowed)
+            collapsedColumns.clear();
+
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -802,6 +805,9 @@ public class Table extends Select implements Action.Container,
      */
     public void setColumnReorderingAllowed(boolean reorderingAllowed) {
         this.columnReorderingAllowed = reorderingAllowed;
+
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /*
@@ -828,9 +834,9 @@ public class Table extends Select implements Action.Container,
                 newOrder.add(columnId);
         }
         this.visibleColumns = newOrder;
-        // Clear page buffer and notify about the change
-        pageBuffer = null;
-        requestRepaint();
+
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -915,9 +921,8 @@ public class Table extends Select implements Action.Container,
             }
         }
 
-        // Clear page buffer and notify about the change
-        pageBuffer = null;
-        requestRepaint();
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -994,9 +999,8 @@ public class Table extends Select implements Action.Container,
                 && columnHeaderMode <= COLUMN_HEADER_MODE_EXPLICIT_DEFAULTS_ID)
             this.columnHeaderMode = columnHeaderMode;
 
-        // Clear page buffer and notify about the change
-        pageBuffer = null;
-        requestRepaint();
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -1046,9 +1050,8 @@ public class Table extends Select implements Action.Container,
             setItemCaptionMode(mode);
         }
 
-        // Clear page buffer and notify about the change
-        pageBuffer = null;
-        requestRepaint();
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -1127,12 +1130,6 @@ public class Table extends Select implements Action.Container,
         // Reset column properties
         if (this.collapsedColumns != null)
             this.collapsedColumns.clear();
-        if (this.columnAlignments != null)
-            this.columnAlignments.clear();
-        if (this.columnHeaders != null)
-            this.columnHeaders.clear();
-        if (this.columnIcons != null)
-            this.columnIcons.clear();
         setVisibleColumns(getContainerPropertyIds().toArray());
 
         // Assure visual refresh
@@ -1203,8 +1200,6 @@ public class Table extends Select implements Action.Container,
                                 .toString()), true);
                     }
                 } catch (Exception ignored) {
-                    // IGNORED (null submission?)
-                    // TODO do something useful
                 }
             }
         }
@@ -1216,9 +1211,7 @@ public class Table extends Select implements Action.Container,
                         ids[i] = columnIdMap.get(ids[i].toString());
                     }
                     this.setColumnOrder(ids);
-                } catch (Exception e) {
-                    // IGNORED (null submission?)
-                    // TODO do something useful
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -1233,12 +1226,6 @@ public class Table extends Select implements Action.Container,
      *             The paint operation failed.
      */
     public void paintContent(PaintTarget target) throws PaintException {
-
-        // TODO further cleanups may be possible by making use
-        // of new column datastructures (remove some unneccessary vars?).
-
-        // reset column id map
-        this.columnIdMap = new KeyMapper();
 
         // Focus control id
         if (this.getFocusableId() > 0) {
@@ -1302,15 +1289,11 @@ public class Table extends Select implements Action.Container,
                     String header = (String) this.getColumnHeader(columnId);
                     target.addAttribute("caption", (header != null ? header
                             : ""));
-                    if (this.columnIdMap == null) {
-                        this.columnIdMap = new KeyMapper();
-                    }
                     target.addAttribute("cid", this.columnIdMap.key(columnId));
                 }
-                if (this.getColumnAlignment(columnId) == null)
-                    target.addAttribute("align", ALIGN_LEFT);
-                else if (!this.getColumnIcon(columnId).equals(ALIGN_LEFT))
-                    target.addAttribute("align", this.getColumnIcon(columnId));
+                if (!ALIGN_LEFT.equals(this.getColumnAlignment(columnId)))
+                    target.addAttribute("align", this
+                            .getColumnAlignment(columnId));
                 target.endTag("ch");
             }
         }
@@ -1430,7 +1413,13 @@ public class Table extends Select implements Action.Container,
         }
         // Available columns
         if (this.columnCollapsingAllowed) {
-            String[] collapsedkeys = new String[this.collapsedColumns.size()];
+            HashSet ccs = new HashSet();
+            for (Iterator i = visibleColumns.iterator(); i.hasNext();) {
+                Object o = i.next();
+                if (isColumnCollapsed(o))
+                    ccs.add(o);
+            }
+            String[] collapsedkeys = new String[ccs.size()];
             int nextColumn = 0;
             for (Iterator it = this.visibleColumns.iterator(); it.hasNext()
                     && nextColumn < collapsedkeys.length;) {
@@ -1451,7 +1440,7 @@ public class Table extends Select implements Action.Container,
                     String head = getColumnHeader(columnId);
                     target.addAttribute("caption", (head != null ? head : ""));
                     if (this.isColumnCollapsed(columnId)) {
-                        target.addAttribute("collapsed", "true");
+                        target.addAttribute("collapsed", true);
                     }
                     target.endTag("column");
                 }
@@ -1934,6 +1923,9 @@ public class Table extends Select implements Action.Container,
      */
     public void setFieldFactory(FieldFactory fieldFactory) {
         this.fieldFactory = fieldFactory;
+
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -1971,6 +1963,9 @@ public class Table extends Select implements Action.Container,
      */
     public void setEditable(boolean editable) {
         this.editable = editable;
+
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -2044,6 +2039,9 @@ public class Table extends Select implements Action.Container,
             this.sortContainerPropertyId = propertyId;
             sort();
         }
+
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -2075,6 +2073,9 @@ public class Table extends Select implements Action.Container,
         if (c != null && i >= 0 && i < c.length) {
             setSortContainerPropertyId(c[i]);
         }
+
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 
     /**
@@ -2099,5 +2100,8 @@ public class Table extends Select implements Action.Container,
             this.sortAscending = ascending;
             sort();
         }
+
+        // Assure visual refresh
+        refreshCurrentPage();
     }
 }
