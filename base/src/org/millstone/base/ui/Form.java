@@ -43,7 +43,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Date;
 
 import org.millstone.base.data.*;
 import org.millstone.base.data.Item;
@@ -51,6 +50,7 @@ import org.millstone.base.data.Buffered;
 import org.millstone.base.data.Property;
 import org.millstone.base.data.Validator;
 import org.millstone.base.data.Validator.InvalidValueException;
+import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
 
@@ -82,7 +82,7 @@ import org.millstone.base.terminal.PaintTarget;
  * @since 3.0
  */
 public class Form
-	extends AbstractComponent
+	extends AbstractField
 	implements Item.Editor, Buffered, Item, Validatable {
 
 	/** Layout of the form */
@@ -106,11 +106,14 @@ public class Form
 	/** Mapping from propertyName to corresponding field */
 	private HashMap fields = new HashMap();
 
-	/** Registered FieldProviders */
-	private LinkedList fieldProviders;
+	/** Field factory for this form */
+	private FieldFactory fieldFactory;
 
 	/** Registered Validators */
 	private LinkedList validators;
+
+	/** Visible item properties */
+	private Collection visibleItemProperties;
 
 	/** Contruct a new form with default layout.
 	 * 
@@ -128,8 +131,18 @@ public class Form
 	 * @param formLayout The layout of the form.
 	 */
 	public Form(Layout formLayout) {
+		this(formLayout, new BaseFieldFactory());
+	}
+
+	/** Contruct a new form with given layout and FieldFactory.
+	 *
+	 * @param formLayout The layout of the form.
+	 * @param fieldFactory FieldFactory of the form
+	 */
+	public Form(Layout formLayout, FieldFactory fieldFactory) {
 		super();
 		setLayout(formLayout);
+		setFieldFactory(fieldFactory);
 	}
 
 	/* Documented in interface */
@@ -286,7 +299,7 @@ public class Form
 			return false;
 
 		// Get suitable field
-		Field field = constructField(id, property);
+		Field field = this.fieldFactory.createField(this, id, this);
 		if (field == null)
 			return false;
 
@@ -327,19 +340,23 @@ public class Form
 	 */
 	public void addField(Object propertyId, Field field) {
 
-		this.dependsOn(field);
-		field.dependsOn(this);
-		fields.put(propertyId, field);
-		propertyIds.addLast(propertyId);
-		field.setReadThrough(readThrough);
-		field.setWriteThrough(writeThrough);
+		if (propertyId != null && field != null) {
+			this.dependsOn(field);
+			field.dependsOn(this);
+			fields.put(propertyId, field);
+			propertyIds.addLast(propertyId);
+			field.setReadThrough(readThrough);
+			field.setWriteThrough(writeThrough);
 
-		if (layout instanceof CustomLayout)
-			((CustomLayout) layout).addComponent(field, propertyId.toString());
-		else
-			layout.addComponent(field);
+			if (layout instanceof CustomLayout)
+				((CustomLayout) layout).addComponent(
+					field,
+					propertyId.toString());
+			else
+				layout.addComponent(field);
 
-		requestRepaint();
+			requestRepaint();
+		}
 	}
 
 	/** The property identified by the property id.
@@ -451,9 +468,12 @@ public class Form
 		// Add all the properties to this form
 		for (Iterator i = propertyIds.iterator(); i.hasNext();) {
 			Object id = i.next();
-			Property property = newDataSource.getItemProperty(id);
-			if (id != null && property != null)
-				addItemProperty(id, property);
+			Property property = itemDatasource.getItemProperty(id);
+			if (id != null && property != null) {
+				addField(
+					id,
+					this.fieldFactory.createField(itemDatasource, id, this));
+			}
 		}
 	}
 
@@ -588,67 +608,6 @@ public class Form
 		layout.detach();
 	}
 
-	/** Create field by the type of the property.
-	 *
-	 * <p>This returns most suitable field type for editing property of
-	 * given type</p>
-	 * TODO : Create configurable factory for creating fields of any type.
-	 * @param propertyType Type of the property, that needs to be edited.
-	 */
-	private Field constructField(Object propertyId, Property property) {
-
-		// Null typed properties can not be edited
-		Class propertyType = property.getType();
-		if (propertyType == null)
-			return null;
-
-		// Try registered providers first
-		if (this.fieldProviders != null) {
-			Field field = null;
-			for (Iterator i = this.fieldProviders.iterator();
-				i.hasNext();
-				) {
-				field =
-					((FieldProvider) i.next()).getFieldForProperty(
-						propertyId,
-						property,
-						this);
-				if (field != null)
-					return field;
-			}
-		}
-
-		// Date field
-		if (Date.class.isAssignableFrom(propertyType)) {
-			return new DateField();
-		}
-
-		// Boolean field
-		if (Boolean.class.isAssignableFrom(propertyType)) {
-			Button button = new Button("");
-			button.setSwitchMode(true);
-			button.setImmediate(false);
-			return button;
-		}
-
-		// Nested form is used by default
-		return new TextField();
-	}
-
-	/** Add a FieldProvider. TODO: Document this. */
-	public void addFieldProvider(Form.FieldProvider provider) {
-
-		if (this.fieldProviders == null) {
-			this.fieldProviders = new LinkedList();
-		}
-		this.fieldProviders.add(provider);
-	}
-	
-	/** Remove a FieldProvider. TODO: Document this. */
-	public void removeFieldProvider(Form.FieldProvider provider) {
-		this.fieldProviders.remove(provider);
-	}
-
 	/**
 	 * @see org.millstone.base.data.Validatable#addValidator(org.millstone.base.data.Validator)
 	 */
@@ -715,26 +674,123 @@ public class Form
 			 ((Field) fields.get(i.next())).setReadOnly(readOnly);
 	}
 
-	/** Interface for providing form with custom Field implementations.
-	 * 
-	 * An application can this interface to provide a Form with custom
-	 * Field implementations.
-	 * 
-	 * @since 3.1
+	/** Set the field factory of Form.
+	 *
+	 * FieldFacroty is used to create fields for form properties.
+	 * By default the form uses BaseFieldFactory to create Field instances.
+	 *
+	 * @param fieldFactory New factory used to create the fields
+	 * @see Field
+	 * @see FieldFactory
 	 */
-	public interface FieldProvider {
+	public void setFieldFactory(FieldFactory fieldFactory) {
+		this.fieldFactory = fieldFactory;
+	}
 
-		/** Invoked when form initializes the field for given property.
-		 *  
-		 * @param propertyId Id of the property
-		 * @param property The property itself
-		 * @param form The form requesting the field
-		 * @return Field the implementation of Field or null if default should
-		 * be used.
-		 */
-		Field getFieldForProperty(
-			Object propertyId,
-			Property property,
-			Form form);
+	/** Get the field factory of the form.
+	 *
+	 * @return FieldFactory Factory used to create the fields
+	 */
+	public FieldFactory getFieldFactory() {
+		return this.fieldFactory;
+	}
+
+	/**
+	 * @see org.millstone.base.ui.AbstractField#getType()
+	 */
+	public Class getType() {
+		if (getPropertyDataSource() != null)
+			return getPropertyDataSource().getType();
+		return Object.class;
+	}
+
+	/** Set the internal value.
+	 * 
+	 * This is relevant when the Form is used as Field.
+	 * @see org.millstone.base.ui.AbstractField#setInternalValue(java.lang.Object)
+	 */
+	protected void setInternalValue(Object newValue) {
+		Object oldValue = getValue();
+		super.setInternalValue(newValue);
+
+		// Ignore form updating if data object has not changed.
+		if (oldValue != newValue) {
+			setFormDataSource(newValue, getVisibleItemProperties());
+		}
+	}
+
+	/**Get first field in form.
+	 * @return Field
+	 */
+	private Field getFirstField() {
+		Object id = null;
+		if (this.getItemPropertyIds() != null) {
+			id = this.getItemPropertyIds().iterator().next();
+		}
+		if (id != null)
+			return this.getField(id);
+		return null;
+	}
+
+	/** Update the internal form datasource.
+	 * 
+	 * Method setFormDataSource.
+	 * @param value
+	 */
+	protected void setFormDataSource(Object data, Collection properties) {
+
+		// If data is an item use it.
+		Item item = null;
+		if (data instanceof Item) {
+			item = (Item) data;
+		} else if (data != null) {
+			item = new BeanItem(data);
+		}
+
+		// Set the datasource to form
+		if (item != null && properties != null) {
+			// Show only given properties
+			this.setItemDataSource(item, properties);
+		} else {
+			// Show all properties
+			this.setItemDataSource(item);
+		}
+	}
+
+	/**
+	 * Returns the visibleProperties.
+	 * @return Collection
+	 */
+	public Collection getVisibleItemProperties() {
+		return visibleItemProperties;
+	}
+
+	/**
+	 * Sets the visibleProperties.
+	 * @param visibleProperties The visibleProperties to set
+	 */
+	public void setVisibleItemProperties(Collection visibleProperties) {
+		this.visibleItemProperties = visibleProperties;
+		Object value = getValue();
+		setFormDataSource(value, getVisibleItemProperties());
+	}
+
+	/** Focuses the first field in the form.
+	 * @see org.millstone.base.ui.Component.Focusable#focus()
+	 */
+	public void focus() {
+		Field f = getFirstField();
+		if (f != null) {
+			f.focus();
+		}
+	}
+
+	/**
+	 * @see org.millstone.base.ui.Component.Focusable#setTabIndex(int)
+	 */
+	public void setTabIndex(int tabIndex) {
+		super.setTabIndex(tabIndex);
+		for (Iterator i = this.getItemPropertyIds().iterator(); i.hasNext();)
+			 (this.getField(i.next())).setTabIndex(tabIndex);
 	}
 }
