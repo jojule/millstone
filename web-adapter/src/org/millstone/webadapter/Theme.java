@@ -193,7 +193,14 @@ public class Theme extends DefaultHandler {
 	 *  @param descriptionStream XML input to parse
 	 */
 	public Theme(InputStream descriptionStream) {
-		parse(new InputSource(descriptionStream));
+		try {
+			parse(new InputSource(descriptionStream));
+		} finally {
+			try {
+				descriptionStream.close();
+			} catch (IOException ignored) {
+			}
+		}
 	}
 
 	/** Parse XML data.
@@ -224,6 +231,7 @@ public class Theme extends DefaultHandler {
 			e.getException().printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
 		}
 
 	}

@@ -219,6 +219,10 @@ public class ServletThemeSource implements ThemeSource {
 				while ((n = stream.read(buf)) >= 0) {
 					out.write(buf, 0, n);
 				}
+				try{
+					stream.close();
+				} catch (IOException ignored){
+				}
 				data = out.toByteArray();
 
 				// Cache data
