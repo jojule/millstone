@@ -61,7 +61,6 @@ public class FeatureUpload
 	Buffer buffer = new Buffer();
 
 	Panel status = new Panel("Uploaded file:");
-	Panel download_window = new Panel("Uploaded files:");
 
 	public FeatureUpload() {
 		super();
@@ -135,15 +134,14 @@ public class FeatureUpload
 					"<b>Size:</b> " + event.getLength() + " bytes.",
 					Label.CONTENT_XHTML));
 
-			Link l =
+			status.addComponent(
 				new Link(
-					buffer.getFileName(),
+					"Download " + buffer.getFileName(),
 					new StreamResource(
 						buffer,
 						buffer.getFileName(),
-						this.getApplication()));
-			download_window.addComponent(l);
-			download_window.setVisible(true);
+						getApplication())));
+						
 			status.setVisible(true);
 		}
 	}

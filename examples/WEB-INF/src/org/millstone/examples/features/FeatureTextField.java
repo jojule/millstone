@@ -53,7 +53,7 @@ public class FeatureTextField extends Feature {
 
 		// Test component
 		TextField tf = new TextField("Caption");
-		Panel test = new Panel("TextField Component");
+		Panel test = new Panel("TextField Component Demo");
 		test.addComponent(tf);
 		l.addComponent(test);
 
@@ -84,19 +84,15 @@ public class FeatureTextField extends Feature {
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
 	protected String getDescriptionXHTML() {
-		return "Being one of the most quintessential components of any business application, "
-				+ "the ubiquitus Textfield is featured in Millstone with a variety of styles and modes. <br/><br/>"
-				+ "Millstone combines the logic of both the single line text-entry field and the multi-line "
-				+ "text-area into one component. "
-				+ "As with all Data-components of Millstone, the Textfield can also be bound to an "
-				+ "underlying data source, both directly or in a buffered (asynchronous) "
-				+ "mode. In buffered mode its background color will change to indicate "
-				+ "that the value has changed but is not committed.<br/>"
-				+ "<br/>Furthermore a validator may be bound to the component to check and validate the given input.<br/>"
-				+ "<br/>On the demo tab you can try out how the different properties affect "
-				+ "the presentation of the component.";
+		return "<p>Millstone combines the logic of both the single line text-entry field and the multi-line "
+			+ "text-area into one component. "
+			+ "As with all Data-components of Millstone, the Textfield can also be bound to an "
+			+ "underlying data source, both directly or in a buffered (asynchronous) "
+			+ "mode. In buffered mode its background color will change to indicate "
+			+ "that the value has changed but is not committed.</p>"
+			+ "<p>Furthermore a validator may be bound to the component to "
+			+ "check and validate the given input.</p>";
 	}
-
 
 	protected String getImage() {
 		return "textfield.gif";

@@ -40,12 +40,25 @@ package org.millstone.examples.features;
 
 public class FeatureItems extends Feature {
 
-	protected String getExampleSrc() {
-		return super.getExampleSrc();
-	}
-
 	protected String getTitle() {
 		return "Item Data Model";
+	}
+
+	protected String getDescriptionXHTML() {
+		return "<p>Item is an object that contains a set of named properties."
+			+ "Each of the properties is identified by item property id and a "
+			+ "reference to the property can be queried from the Item.</p>"+
+			"<p>Item defines inner-interfaces for maintaining the item "+
+			"property set and listening the item property set changes.</p>" + 
+			"<p>Items generally represent objects in the object oriented "+
+			"model, but with the exception that they are configurable and "
+			+"provide event mechanism. The simplest way of utilising Items "+
+			"is to use existing Item implementations, that provide property "+
+			"set functionality, automatic Bean to </p>";
+	}
+
+	protected String getImage() {
+		return "items.jpg";
 	}
 
 }

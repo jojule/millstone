@@ -48,4 +48,33 @@ public class FeatureProperties extends Feature {
 		return "Property Data Model";
 	}
 
+	protected String getDescriptionXHTML() {
+		return "<p>Millstone data model is one of the core concepts "
+			+ "in the library and Property-interface is the base of the "
+			+ "model. Property provides standardized API for a singe data object "
+			+ "that can be getted and setted. Property is typed, but can optionally "
+			+ "support data type conversions. Optionally properties can provide "
+			+ "value change events for following the state changes.</p>"
+			+ "<p>The most important function of the Property as well as other "
+			+ "data models is to connect classes implementing the interface to "
+			+ "editor and viewer classes. Mostly this is used to connect different "
+			+ "data sources to UI components for editing and viewing their contents.</p>"
+			+ "<p>Properties can be utilized either by implementing the interface "
+			+ "or by using some of the existing property implementations. Millstone "
+			+ "includes implementations for providing Property implementation for "
+			+ "arbitrary function pairs or Bean-properties, as well as simple object "
+			+ "properties.</p>"
+			+ "<p>Many of the UI components imlement Property interface and allow "
+			+ "setting other properties as their data-source. These UI-components "
+			+ "include TextField, DateField, Select, Table, Button, "
+			+ "Label and Tree.</p>";
+	}
+
+	/**
+	 * @see org.millstone.examples.features.Feature#getImage()
+	 */
+	protected String getImage() {
+		return "properties.jpg";
+	}
+
 }
