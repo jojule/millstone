@@ -66,6 +66,7 @@ public class Chat
 	/** Initialize the chat application */
 	public void init() {
 
+		// Initialize user interface
 		say.dependsOn(sayText);
 		say.addListener((Button.ClickListener) this);
 		listUsers.addListener((Button.ClickListener) this);
@@ -88,7 +89,7 @@ public class Chat
 		loginButton.dependsOn(loginName);
 		loginButton.addListener(this);
 		controls.addComponent(listUsers);
-		Button leaveButton = new Button("Leave", this, "close");
+		Button leaveButton = new Button("Leave", this, "leave");
 		controls.addComponent(leaveButton);
 		say.setVisible(false);
 		sayText.setVisible(false);
@@ -235,8 +236,8 @@ public class Chat
 		return is;
 	}
 
-	/** On application close leave the chat */
-	public void close() {
+	/** Leave the chat */
+	public void leave() {
 
 		// If we have been logged in, say goodbye
 		if (listEntry != null) {
@@ -254,8 +255,11 @@ public class Chat
 		if (chatWriter != null)
 			chatWriter.close();
 
-		// Close the application
-		super.close();
+		// Close the chat frames
+		frames.getFrameset().removeAllFrames();		
+		Window restartWin = new Window();
+		frames.getFrameset().newFrame(restartWin);
+		restartWin.addComponent(new Button("Restart chat",this,"close"));
 	}
 
 }
