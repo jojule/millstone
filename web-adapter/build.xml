@@ -1,15 +1,21 @@
 
 <project name="Millstone WebAdapter Release" default="package">
 
+	<!-- Load defaults -->
+	<target name="load-properties">
+   		<property file="local-build.properties"/>
+   		<property file="build.properties"/>
+	</target>
+
 	<!-- Initialize version information for development build-->
-	<target name="init-version"  depends="check-release-version" unless="millstone.version">
+	<target name="init-version"  depends="load-properties, check-release-version" unless="millstone.version">
 		<!-- Create current timestamp and version based on that -->
 		<tstamp/>
 		<property name="millstone.version" value="${DSTAMP}" />
 	</target>
 	
 	<!-- Ensure version information for release build-->
-	<target name="check-release-version" unless="millstone.version" if="release">
+	<target name="check-release-version" depends="load-properties" unless="millstone.version" if="release">
 		<echo message="You must specify version by setting the 'millstone.version' property!"/>
 		<echo message="For example: -Dmillstone.version=3.1.1"/>
 	</target>
@@ -27,11 +33,8 @@
 	</target>
 
 	<!-- Initialize working directories and other properties -->
-	<target name="init" depends="init-version, init-environment">
-   
-   		<!-- Load defaults -->
-   		<property file="build.properties"/>
-   
+	<target name="init" depends="load-properties, init-version, init-environment">
+      
     	<!-- Working directories -->
 		<property name="millstone.wa.src.dir" value="src/"/>
 	    <property name="millstone.wa.build.dir" value="build/"/>
@@ -58,10 +61,13 @@
 		<property name="millstone.wa.themes.jar" value="${millstone.wa.dist.dir}/millstone-web-themes-${millstone.version}.jar"/>
 
 		<echo message="Building Millstone WebAdapter"/>
+		<echo message="Version: ${millstone.version}" />
 		<echo message="Source: ${millstone.wa.src.dir}" />
 		<echo message="Millstone Base: ${millstone.base.dir}" />
 		<echo message="Build: ${millstone.wa.build.dir}" />
 		<echo message="Output: ${millstone.wa.dist.dir}" />
+		<echo message="Debug: ${millstone.debug}" />
+		<echo message="Optimize: ${millstone.optimize}" />
       
 	</target>
 
@@ -121,7 +127,7 @@
         <mkdir dir="${millstone.wa.build.dir}"/>
 		<mkdir dir="${millstone.wa.build.classes.dir}"/>
     	<javac srcdir="${millstone.wa.src.dir}" destdir="${millstone.wa.build.classes.dir}"
-	     deprecation="on" optimize="${optimize}">
+	     deprecation="on" debug="${millstone.debug}" optimize="${millstone.optimize}">
 			<classpath>
 				<pathelement location="${servlet.jar}"/>
 				<pathelement path="${millstone.base.dir}/build/classes"/>
