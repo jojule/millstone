@@ -280,23 +280,20 @@ public class Select
 
 					// Set the caption property, if used
 					if (getItemCaptionPropertyId() != null)
-						getContainerProperty(
-							newitem,
-							getItemCaptionPropertyId()).setValue(
-							newitem);
-
-					// Select new option
-					if (isMultiSelect()) {
-						Set s = new HashSet((Set) getValue());
-						s.add(newitem);
-						setValue(s);
-					} else
-						setValue(newitem);
+						try {
+							getContainerProperty(
+								newitem,
+								getItemCaptionPropertyId()).setValue(
+								newitem);
+						} catch (Property.ConversionException ignored) {
+							// The conversion exception is safely ignored, the caption is
+							// just missing	
+						}
 				}
 			}
 
-			// Selection change (when no new options are sent)
-			else if (variables.containsKey("selected")) {
+			// Selection change
+			if (variables.containsKey("selected")) {
 				String[] ka = (String[]) variables.get("selected");
 
 				// Multiselect mode
@@ -308,6 +305,11 @@ public class Select
 						Object id = itemIdMapper.get(ka[i]);
 						if (id != null && containsId(id))
 							s.add(id);
+						else if (
+							itemIdMapper.isNewIdKey(ka[i])
+								&& newitem != null
+								&& newitem.length() > 0)
+							s.add(newitem);
 					}
 
 					// Limit the deselection to the set of visible items
@@ -338,6 +340,8 @@ public class Select
 						Object id = itemIdMapper.get(ka[0]);
 						if (id != null && id.equals(getNullSelectionItemId()))
 							setValue(null);
+						else if (itemIdMapper.isNewIdKey(ka[0]))
+							setValue(newitem);
 						else
 							setValue(id);
 					}
@@ -495,7 +499,8 @@ public class Select
 		Object defaultValue)
 		throws UnsupportedOperationException {
 
-		boolean retval = items.addContainerProperty(propertyId, type, defaultValue);
+		boolean retval =
+			items.addContainerProperty(propertyId, type, defaultValue);
 		if (retval) {
 			fireValueChange();
 			firePropertySetChange();
@@ -774,7 +779,8 @@ public class Select
 				break;
 
 			case ITEM_CAPTION_MODE_PROPERTY :
-				Property p = getContainerProperty(itemId, getItemCaptionPropertyId());
+				Property p =
+					getContainerProperty(itemId, getItemCaptionPropertyId());
 				if (p != null)
 					caption = p.toString();
 				break;
