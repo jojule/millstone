@@ -39,8 +39,6 @@
 
 package org.millstone.base.data;
 
-import java.util.Arrays;
-
 import org.millstone.base.terminal.ErrorMessage;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
