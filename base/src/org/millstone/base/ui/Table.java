@@ -65,7 +65,9 @@ import org.millstone.base.terminal.Resource;
  * @version @VERSION@
  * @since 3.0
  */
-public class Table extends Select implements Action.Container, Container.Ordered {
+public class Table
+	extends Select
+	implements Action.Container, Container.Ordered {
 
 	private static final int CELL_KEY = 0;
 	private static final int CELL_HEADER = 1;
@@ -196,6 +198,12 @@ public class Table extends Select implements Action.Container, Container.Ordered
 
 	/** Action mapper */
 	private KeyMapper actionMapper = null;
+
+	/** Table cell editor factory */
+	private FieldFactory fieldFactory = new BaseFieldFactory();
+
+	/** Is table editable */
+	private boolean editable = false;
 
 	/* Table constructors *************************************************** */
 
@@ -809,6 +817,16 @@ public class Table extends Select implements Action.Container, Container.Ordered
 	 */
 	public void paintContent(PaintTarget target) throws PaintException {
 
+		// Focus control id
+		if (this.getFocusableId() > 0) {
+			target.addAttribute("focusid", this.getFocusableId());
+		}
+
+		// The tab ordering number
+		if (this.getTabIndex() > 0)
+			target.addAttribute("tabindex", this.getTabIndex());
+
+
 		// Initialize temps
 		Object[] colids = getVisibleColumns();
 		int cols = colids.length;
@@ -819,6 +837,7 @@ public class Table extends Select implements Action.Container, Container.Ordered
 		boolean colheads = colHeadMode != COLUMN_HEADER_MODE_HIDDEN;
 		boolean rowheads = getRowHeaderMode() != ROW_HEADER_MODE_HIDDEN;
 		Object[][] cells = getVisibleCells();
+		boolean iseditable = this.isEditable();
 
 		// selection support
 		String[] selectedKeys;
@@ -925,6 +944,10 @@ public class Table extends Select implements Action.Container, Container.Ordered
 					Component c = (Component) cells[CELL_FIRSTCOL + j][i];
 					if (c != null)
 						c.paint(target);
+				} else if (iseditable) {
+					Component c = (Component) cells[CELL_FIRSTCOL + j][i];
+					if (c != null)
+						c.paint(target);
 				} else
 					target.addSection(
 						"label",
@@ -996,7 +1019,9 @@ public class Table extends Select implements Action.Container, Container.Ordered
 		int cols = colids.length;
 		int pagelen = getPageLength();
 		int firstIndex = getCurrentPageFirstItemIndex();
-		int rows = size() - firstIndex;
+		int rows = size();
+		if (rows > 0 && firstIndex >=0)
+			rows -= firstIndex;;
 		if (pagelen > 0 && pagelen < rows)
 			rows = pagelen;
 		Object[][] cells = new Object[cols + CELL_FIRSTCOL][rows];
@@ -1026,28 +1051,32 @@ public class Table extends Select implements Action.Container, Container.Ordered
 				cells[CELL_ICON][i] = getItemIcon(id);
 			}
 			if (cols > 0) {
-				Item item = getItem(id);
 				for (int j = 0; j < cols; j++) {
-					if (item != null) {
-						Property p = item.getItemProperty(colids[j]);
+					Object value = null;
+					Property p = getContainerProperty(id, colids[j]);
+					if (p != null) {
 						if (p instanceof Property.ValueChangeNotifier) {
 							((Property.ValueChangeNotifier) p).addListener(
 								this);
 							listenedProperties.add(p);
 						}
 						if (iscomponent[j]) {
-							Component c = (Component) p.getValue();
-							c.setParent(this);
-							visibleComponents.add(c);
-							cells[CELL_FIRSTCOL + j][i] = c;
+							value = p.getValue();
 						} else if (p != null) {
-							cells[CELL_FIRSTCOL + j][i] = formatPropertyValue(p);
+							value = getPropertyValue(id, colids[j], p);
 						} else {
-							cells[CELL_FIRSTCOL + j][i] = formatPropertyValue(null);						
+							value = getPropertyValue(id, colids[j], null);
 						}
 					} else {
-						cells[CELL_FIRSTCOL + j][i] = "";
+						value = "";
 					}
+
+					if (value instanceof Component) {
+						((Component) value).setParent(this);
+						visibleComponents.add((Component) value);
+					}
+					cells[CELL_FIRSTCOL + j][i] = value;
+
 				}
 			}
 			id = ((Container.Ordered) items).nextItemId(id);
@@ -1071,16 +1100,50 @@ public class Table extends Select implements Action.Container, Container.Ordered
 
 		return cells;
 	}
-	
+
+	/** Get value of property.
+	 * 
+	 * By default if the table is editable the fieldFactory is used to create
+	 * editors for table cells. Otherwise formatPropertyValue is used to format
+	 * the value representation.
+	 *  
+	 * @see #setFieldFactory(FieldFactory)
+	 * @param rowId Id of the row (same as item Id)
+	 * @param colId Id of the column
+	 * @param property Property to be presented
+	 * @return Object Either formatted value or Component for field.
+	 */
+	protected Object getPropertyValue(
+		Object rowId,
+		Object colId,
+		Property property) {
+		if (this.isEditable() && this.fieldFactory != null) {
+			Field f =
+				this.fieldFactory.createField(
+					getContainerDataSource(),
+					rowId,
+					colId,
+					this);
+			f.setPropertyDataSource(property);
+			return f;
+		}
+
+		return formatPropertyValue(rowId, colId, property);
+	}
+
 	/** Formats table cell property values.
 	 *  By default the property.toString() and return a empty string for
 	 *  null properties.
 	 * 
+	 * @param itemId
 	 * @param property Property to be formatted
 	 * @return String representation of property and its value.
 	 * @since 3.1
 	 */
-	protected String formatPropertyValue(Property property) {
+	protected String formatPropertyValue(
+		Object rowId,
+		Object colId,
+		Property property) {
 		if (property == null) {
 			return "";
 		}
@@ -1305,49 +1368,49 @@ public class Table extends Select implements Action.Container, Container.Ordered
 	public void focus() throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	/**
 	 * @see org.millstone.base.data.Container.Ordered#nextItemId(java.lang.Object)
 	 */
 	public Object nextItemId(Object itemId) {
 		return ((Container.Ordered) items).nextItemId(itemId);
 	}
-	
+
 	/**
 	 * @see org.millstone.base.data.Container.Ordered#prevItemId(java.lang.Object)
 	 */
 	public Object prevItemId(Object itemId) {
 		return ((Container.Ordered) items).prevItemId(itemId);
 	}
-	
+
 	/**
 	 * @see org.millstone.base.data.Container.Ordered#firstItemId()
 	 */
 	public Object firstItemId() {
 		return ((Container.Ordered) items).firstItemId();
 	}
-	
+
 	/**
 	 * @see org.millstone.base.data.Container.Ordered#lastItemId()
 	 */
 	public Object lastItemId() {
 		return ((Container.Ordered) items).lastItemId();
 	}
-	
+
 	/**
 	 * @see org.millstone.base.data.Container.Ordered#isFirstId(java.lang.Object)
 	 */
 	public boolean isFirstId(Object itemId) {
 		return ((Container.Ordered) items).isFirstId(itemId);
 	}
-	
+
 	/**
 	 * @see org.millstone.base.data.Container.Ordered#isLastId(java.lang.Object)
 	 */
 	public boolean isLastId(Object itemId) {
 		return ((Container.Ordered) items).isLastId(itemId);
 	}
-	
+
 	/**
 	 * @see org.millstone.base.data.Container.Ordered#addItemAfter(java.lang.Object)
 	 */
@@ -1355,12 +1418,77 @@ public class Table extends Select implements Action.Container, Container.Ordered
 		throws UnsupportedOperationException {
 		return ((Container.Ordered) items).addItemAfter(previousItemId);
 	}
-	
+
 	/**
 	 * @see org.millstone.base.data.Container.Ordered#addItemAfter(java.lang.Object, java.lang.Object)
 	 */
 	public Item addItemAfter(Object previousItemId, Object newItemId)
 		throws UnsupportedOperationException {
-		return ((Container.Ordered) items).addItemAfter(previousItemId,newItemId);
+		return ((Container.Ordered) items).addItemAfter(
+			previousItemId,
+			newItemId);
 	}
+
+	/** Get the FieldFactory that is used to create editor for table
+	 * cells.
+	 * 
+	 * The FieldFactory is only used if the Table is editable.
+	 * 
+	 * @see #isEditable
+	 * @return FieldFactory used to create the Field instances.
+	 */
+	public FieldFactory getFieldFactory() {
+		return fieldFactory;
+	}
+
+	/** Set the FieldFactory that is used to create editor for table
+	 * cells.
+	 * 
+	 * The FieldFactory is only used if the Table is editable.
+	 * By default the BaseFieldFactory is used.
+	 * 
+	 * @see #isEditable
+	 * @see BaseFieldFactory
+	 * @param fieldFactory The field factory to set
+	 */
+	public void setFieldFactory(FieldFactory fieldFactory) {
+		this.fieldFactory = fieldFactory;
+	}
+
+	/** Is table editable.
+	 * 
+	 * If table is editable a editor of type Field is
+	 * created for each table cell. The assigned FieldFactory is
+	 * used to create the instances.
+	 * 
+	 * To provide custom editors for table cells create a
+	 * class implementins the FieldFactory interface, and assign
+	 * it to table, and set the editable property to true.
+	 * 
+	 * @see Field
+	 * @see FieldFactory
+	 * @return true if table is editable, false oterwise.
+	 */
+	public boolean isEditable() {
+		return editable;
+	}
+
+	/** Set the editable property.
+	 * 
+	 * If table is editable a editor of type Field is
+	 * created for each table cell. The assigned FieldFactory is
+	 * used to create the instances.
+	 * 
+	 * To provide custom editors for table cells create a
+	 * class implementins the FieldFactory interface, and assign
+	 * it to table, and set the editable property to true.
+	 * 
+	 * @see Field
+	 * @see FieldFactory
+	 * @param editable true if table should be editable by user.
+	 */
+	public void setEditable(boolean editable) {
+		this.editable = editable;
+	}
+
 }
