@@ -225,7 +225,7 @@
 
     <!-- Actions  -->
 	<xsl:if test="al or ../../array[@name='collapsedcolumns']">
-	  <TD CLASS="{$class}">
+	  <TD CLASS="{$class}" ALIGN="right">&#160;
      <xsl:for-each select="al">
 	    <xsl:choose>
 	      <xsl:when test="$dhtml">
@@ -240,7 +240,7 @@
           </xsl:otherwise>
         </xsl:choose>
 	</xsl:for-each>
-      &#160;</TD>
+     </TD>
 	</xsl:if>      
     
   </TR>
