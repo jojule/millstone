@@ -386,7 +386,7 @@ public class WebPaintTarget implements PaintTarget {
 	 */
 	public void addVariable(VariableOwner owner, String name, String value)
 		throws PaintException {
-		String code = variableMap.registerVariable(name, String.class, owner);
+		String code = variableMap.registerVariable(name, String.class, value, owner);
 		startTag("string");
 		addAttribute(UIDL_ARG_ID, code);
 		addAttribute(UIDL_ARG_NAME, name);
@@ -402,7 +402,7 @@ public class WebPaintTarget implements PaintTarget {
 	 */
 	public void addVariable(VariableOwner owner, String name, int value)
 		throws PaintException {
-		String code = variableMap.registerVariable(name, Integer.class, owner);
+		String code = variableMap.registerVariable(name, Integer.class, new Integer(value), owner);
 		startTag("integer");
 		addAttribute(UIDL_ARG_ID, code);
 		addAttribute(UIDL_ARG_NAME, name);
@@ -418,7 +418,7 @@ public class WebPaintTarget implements PaintTarget {
 	 */
 	public void addVariable(VariableOwner owner, String name, boolean value)
 		throws PaintException {
-		String code = variableMap.registerVariable(name, Boolean.class, owner);
+		String code = variableMap.registerVariable(name, Boolean.class, new Boolean(value), owner);
 		startTag("boolean");
 		addAttribute(UIDL_ARG_ID, code);
 		addAttribute(UIDL_ARG_NAME, name);
@@ -434,7 +434,7 @@ public class WebPaintTarget implements PaintTarget {
 	 */
 	public void addVariable(VariableOwner owner, String name, String[] value)
 		throws PaintException {
-		String code = variableMap.registerVariable(name, String[].class, owner);
+		String code = variableMap.registerVariable(name, String[].class, value, owner);
 		startTag("array");
 		addAttribute(UIDL_ARG_ID, code);
 		addAttribute(UIDL_ARG_NAME, name);
@@ -452,7 +452,7 @@ public class WebPaintTarget implements PaintTarget {
 	public void addUploadStreamVariable(VariableOwner owner, String name)
 		throws PaintException {
 		String code =
-			variableMap.registerVariable(name, UploadStream.class, owner);
+			variableMap.registerVariable(name, UploadStream.class, null, owner);
 		startTag("uploadstream");
 		addAttribute(UIDL_ARG_ID, code);
 		addAttribute(UIDL_ARG_NAME, name);
