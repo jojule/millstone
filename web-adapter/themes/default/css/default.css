@@ -48,9 +48,9 @@ IMG.icon {vertical-align: middle; }
 DIV.popup 
 {
 	position: absolute;
-	background-color: ffffca;
+	background-color: #ffffca;
 	border: solid 1px #aaaa88;
-	overflow: show;
+	overflow: visible;
 	z-index: 100000;
 }
 
@@ -93,7 +93,7 @@ TD.form-caption {
 
 /* TextField ------------------------------------------------------------- */
 
-INPUT.modified { border: 1px solid black; background-color: fffee0; }
+INPUT.modified { border: 1px solid black; background-color: #fffee0; }
 
 /* Button ---------------------------------------------------------------- */
 
@@ -201,7 +201,7 @@ TABLE.table-cursor { }
 A.tree-node, A.tree-node-selected { color: black; padding: 1px; }
 A.tree-node-selected { background-color: #0059ef; color: white; border: 1px slashed white; }
 A.tree-node:hover, A.tree-node-selected:hover { text-decoration: underline; }
-IMG.tree { margin: 0px; width: 16px; height 16px; }
+IMG.tree { margin: 0px; width: 16px; height: 16px; }
 
 /* Menu Style tree  ----------------------------------------------------- */
 
