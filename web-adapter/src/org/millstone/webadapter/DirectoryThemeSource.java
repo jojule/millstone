@@ -47,7 +47,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-
 /**
  * Theme source for reading themes from a directory on the Filesystem.
  * @author IT Mill Ltd.
@@ -58,7 +57,6 @@ public class DirectoryThemeSource implements ThemeSource {
 
 	private File path;
 	private Theme theme;
-	private long descriptionFileModTime;
 	private WebAdapterServlet webAdapterServlet;
 
 	/** Collection of subdirectory entries */
@@ -71,7 +69,7 @@ public class DirectoryThemeSource implements ThemeSource {
 	 * @throws FileNotFoundException if no theme files are found
 	 */
 	public DirectoryThemeSource(File path, WebAdapterServlet webAdapterServlet)
-		throws FileNotFoundException, IOException {
+		throws ThemeException,FileNotFoundException, IOException {
 
 		this.path = path;
 		this.theme = null;
@@ -84,8 +82,15 @@ public class DirectoryThemeSource implements ThemeSource {
 		// Load description file
 		File description = new File(path, Theme.DESCRIPTIONFILE);
 		if (description.exists()) {
+			try {
 			this.theme = new Theme(description);
-			this.descriptionFileModTime = description.lastModified();
+			} catch (Exception e) {
+				throw new ThemeException(
+					"ServletThemeSource: Failed to load '"
+						+ path
+						+ "': "
+						+ e);			
+			}
 		} else {
 			// There was no description file found. 
 			// Handle subdirectories recursively		
@@ -122,25 +127,17 @@ public class DirectoryThemeSource implements ThemeSource {
 		if (this.theme != null) {
 
 			if (webAdapterServlet.isDebugMode()) {
-				Log.info("Loading theme: " + theme);
+				Log.info("DirectoryThemeSource: Loading XSL from: " + theme);
 			}
 
-			// Get modification time of the description file
-			long modTime =
-				new File(this.path, Theme.DESCRIPTIONFILE).lastModified();
-
-			// If desccription file was modified reload it
-			if (modTime > this.descriptionFileModTime) {
-				File description = new File(path, Theme.DESCRIPTIONFILE);
-				if (description.exists()) {
-					try {
-						this.theme = new Theme(description);
-						this.descriptionFileModTime =
-							description.lastModified();
-					} catch (IOException e) {
-						throw new ThemeException(
-							"Failed to reload theme description" + e);
-					}
+			// Reload the description file
+			File description = new File(path, Theme.DESCRIPTIONFILE);
+			if (description.exists()) {
+				try {
+					this.theme = new Theme(description);
+				} catch (IOException e) {
+					throw new ThemeException(
+						"Failed to reload theme description" + e);
 				}
 			}
 
@@ -170,7 +167,6 @@ public class DirectoryThemeSource implements ThemeSource {
 		return xslFiles;
 
 	}
-
 
 	/**
 	 * @see org.millstone.webadapter.ThemeSource#getModificationTime()
@@ -220,7 +216,7 @@ public class DirectoryThemeSource implements ThemeSource {
 		throws ThemeSource.ThemeException {
 
 		// If this directory contains a theme 
-		// return XSL from this theme	
+		// return resource from this theme	
 		if (this.theme != null) {
 
 			try {
