@@ -50,7 +50,7 @@
   <xsl:variable name="descid" select="generate-id(.)"/>
   <DIV ID="{$descid}" CLASS="popup">
     <xsl:if test="$dhtml">
-      <xsl:attribute name="STYLE">dispay:none;</xsl:attribute>
+      <xsl:attribute name="STYLE">display:none;</xsl:attribute>
       <xsl:attribute name="ONCLICK">hidePopupById('<xsl:value-of select="$descid"/>');</xsl:attribute>
     </xsl:if>
     <xsl:apply-templates/>		 
