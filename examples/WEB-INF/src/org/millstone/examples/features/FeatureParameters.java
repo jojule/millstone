@@ -1,10 +1,6 @@
 package org.millstone.examples.features;
 
 import java.net.Authenticator;
-import java.net.HttpURLConnection;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.URI;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
