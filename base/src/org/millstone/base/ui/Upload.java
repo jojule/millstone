@@ -69,6 +69,7 @@ public class Upload extends AbstractComponent implements Component.Focusable {
 
 	/** Creates a new instance of Upload that redirects the 
 	 * uploaded data to given stream. 
+	 * TODO: Add a default constructor
 	 */
 	public Upload(String caption, Receiver uploadReceiver) {
 		setCaption(caption);
