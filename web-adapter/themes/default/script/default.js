@@ -374,25 +374,38 @@ function toggleElementById(id) {
 
 
 // --------------------------------------------------------------------------
-// Show element properties.
+// Show object's properties.
 //
+// Opens new window showing given objects properties
+// 
 // Params:
 // el   Element to be inspected.
 //
 // returns:
 // --------------------------------------------------------------------------
-function printElementProperties(el) 
+function showObjectProperties(el) 
 { 
-    var result = "" 
-    for (var p in el) 
-        result += "<B>" + p + "</B> = " + el[p] + "<BR>"; 
-  
+    var result = getObjectProperties(el);
 	var w = window.open(); 
-	w.document.write(result); 
+	w.document.write("<pre>"+result+"</pre>"); 
 	w.document.close(); 
 } 
 
-
+// --------------------------------------------------------------------------
+// Get object properties.
+//
+// Params:
+// el   Element to be inspected.
+//
+// returns: String containing objects properties in format name=value, one per line.
+// --------------------------------------------------------------------------
+function getObjectProperties(obj) {
+    var result = "" 
+    for (var p in obj) {
+        result += p + "=" + obj[p] + "\n"; 
+    }
+	return result;
+}
 
 
 
@@ -967,4 +980,149 @@ function calSel(calendarId, dayVariableId, dayElementId, immediate) {
   if (immediate) 
     document.millstone.submit();
 }
- 
+
+// ==========================================================================
+// ==========================================================================
+//
+// Modal dialog functions
+// 
+// ==========================================================================
+
+var dialogWin = new Object();
+var dialogs = new Array();
+
+// --------------------------------------------------------------------------
+// Disable events and focus the latest dialog window.
+// 
+//
+// Params:
+//
+// Return:
+// --------------------------------------------------------------------------
+function focusModal() {
+   var win = dialogs.pop();
+   if (win) {
+     dialogs.push(win);
+   	 win.focus();
+   }
+}
+
+// --------------------------------------------------------------------------
+// Block all user focus events in given window.
+// This is used to disable the opener (parent) of a modal window.
+//
+// Params: Window object to be disabled.
+//
+// Return:
+// --------------------------------------------------------------------------
+function blockEvents(win) {
+   win.document.onclick = focusModal;
+   win.document.forms["millstone"].disable
+   win.onclick = focusModal;
+   win.onfocus = focusModal;
+   win.document.body.onfocus = focusModal;
+   showOverlayLayer(win);
+   //alert("blocked: "+win.name);
+}
+
+// --------------------------------------------------------------------------
+// Unblock all user focus events in given window.
+// This is used to re-enable the opener (parent) of a modal window.
+//
+// Params: Window object to be disabled.
+//
+// Return:
+// --------------------------------------------------------------------------
+function unblockEvents(win) {
+   win.onclick = null;
+   hideOverlayLayer(win);
+   //alert("un-blocked: "+win.name);
+}
+
+// --------------------------------------------------------------------------
+// Make given window as modal window for its opener.
+//
+// Params: Window object to be treated as modal.
+//
+// Return:
+// --------------------------------------------------------------------------
+function makeModal(win) {
+      dialogs.push(win);
+      if (win.opener) {
+          blockEvents(win.opener);
+      }
+	  win.document.body.onunload = cancelModal;	  
+      win.focus();      
+      //alert("opened dialog: "+win.name);   
+}
+
+// --------------------------------------------------------------------------
+// Cancel the modality of given window.
+// Typically this is called unload method of modal window.
+//
+// Params: The modal window object.
+//
+// Return:
+// --------------------------------------------------------------------------
+function cancelModal() {  
+   var win = dialogs.pop();
+   if (win && win.opener) {
+   		unblockEvents(win.opener);
+   }
+   //alert("closed dialog: "+window.name);   
+}
+
+
+// --------------------------------------------------------------------------
+// Create and show an overlay layer for a window .
+// This is used to disable any mouse click actions to given window, and
+// this is typically called for opener (parent) of a modal window to disable
+// the focus shifting using mouse.
+//
+// The layer is only created once, and the subsequent calls to hideOverlayLayer and
+// this function only hide and show it.
+//
+// Params: The window object to add the layer.
+//
+// Return:
+// --------------------------------------------------------------------------
+function showOverlayLayer(win)
+{
+	var layer = null;
+	var left = 0;
+	var top = 0;
+	var id = "ms_overlay";
+	var html = "";
+	
+	layer =win.document.getElementById(id);
+	if (layer == null) {
+		var width =  win.document.body.scrollWidth;
+		var height = win.document.body.scrollHeight;
+		var divhtml = '<div  id=' + id + ' style="visibility:visible;left:' + left + 
+			'px;top:' + top + 'px;width:' + width + 
+			'px;height:' + height + 'px;position:absolute;">' + 
+		html + '</div>';
+		win.document.body.insertAdjacentHTML('beforeEnd', divhtml);
+	}
+	layer = win.document.getElementById(id);
+	if (layer) {
+		showElement(layer);
+	}
+}
+
+
+// --------------------------------------------------------------------------
+// Hide an overlay layer for a window .
+// This is typically called for opener (parent) of a modal window to re-enable
+// the focusing using mouse.
+//
+// Params: The window object containing the the layer.
+//
+// Return:
+// --------------------------------------------------------------------------
+function hideOverlayLayer(win) {
+	var layer = win.document.getElementById("ms_overlay");
+	if (layer) {
+		hideElement(layer);
+	}
+}
