@@ -49,7 +49,9 @@
       </INPUT>
     </xsl:for-each>
   </xsl:if>
-	<!-- Available columns -->
+  
+  <!-- Available columns -->
+  <xsl:if test="$dhtml and (./array[@name='columnorder'] or ./array[@name='collapsedcolumns'])">
 	<DIV id="{$popupid}" CLASS="action-popup" STYLE="display:none;">
 	<!-- Column order -->
 	<xsl:for-each select="./array[@name='columnorder']">
@@ -72,7 +74,7 @@
 			</xsl:attribute>
 		</INPUT>
 	</xsl:for-each>
-	<xsl:for-each select="./visiblecolumns/column">
+	<xsl:for-each select="./visiblecolumns/column">	
 		<DIV CLASS="action-item"
            ONMOUSEOVER="this.className = Millstone.toHighlightClassName(this.className);"
            ONMOUSEOUT="this.className = Millstone.toUnselectedClassName(this.className);">
@@ -97,6 +99,7 @@
 		</DIV>
 	</xsl:for-each>
 	</DIV>
+  </xsl:if>
   
   <!-- Sorting variables -->
   <INPUT TYPE="HIDDEN" ID="{./integer[@name='sortcolumn']/@id}" NAME="{./integer[@name='sortcolumn']/@id}" VALUE="{./integer[@name='sortcolumn']/@value}" />
