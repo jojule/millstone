@@ -8,6 +8,7 @@
 	  <TEXTAREA NAME="{./string[@name='text']/@id}" ID="{./string[@name='text']/@id}"> 
 		<xsl:if test="@modified='true'"><xsl:attribute name="CLASS">modified</xsl:attribute></xsl:if>
 	    <xsl:if test="@readonly='true'"><xsl:attribute name="READONLY">true</xsl:attribute></xsl:if>
+	    <xsl:if test="@enabled='false'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
 		<xsl:if test="@immediate='true' and $dhtml"><xsl:attribute name="onchange">millstoneSubmit()</xsl:attribute></xsl:if>
 		<xsl:if test="not(@immediate='true') and $dhtml"><xsl:attribute name="onchange">this.className='modified'</xsl:attribute></xsl:if>
 		<xsl:if test="@cols"><xsl:attribute name="COLS"><xsl:value-of select="@cols"/></xsl:attribute></xsl:if>
@@ -22,6 +23,7 @@
 	  <INPUT NAME="{./string[@name='text']/@id}" ID="{./string[@name='text']/@id}" VALUE="{./string[@name='text']}"> 
 		<xsl:if test="@modified='true'"><xsl:attribute name="CLASS">modified</xsl:attribute></xsl:if>
 	    <xsl:if test="@readonly='true'"><xsl:attribute name="READONLY">true</xsl:attribute></xsl:if>
+	    <xsl:if test="@enabled='false'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
 		<xsl:if test="@immediate='true' and $dhtml"><xsl:attribute name="onchange">millstoneSubmit()</xsl:attribute></xsl:if>
 		<xsl:if test="not(@immediate='true') and $dhtml"><xsl:attribute name="onchange">this.className='modified'</xsl:attribute></xsl:if>
 		<xsl:if test="@cols"><xsl:attribute name="SIZE"><xsl:value-of select="@cols"/></xsl:attribute></xsl:if>
