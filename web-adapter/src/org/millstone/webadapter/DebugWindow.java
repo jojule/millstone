@@ -99,12 +99,12 @@ public class DebugWindow extends Window {
 		setName(WINDOW_NAME);
 		setServlet(servlet);
 		setSession(session);
+		setBorder(Window.BORDER_NONE);
+		
 
 		// Create control buttons
 		OrderedLayout controls =
 			new OrderedLayout(OrderedLayout.ORIENTATION_HORIZONTAL);
-		Label title = new Label("<h1>Debug</h1>", Label.CONTENT_UIDL);
-		title.setContentMode(Label.CONTENT_XHTML);
 		controls.addComponent(
 			new Button("Restart Application", this, "restartApplication"));
 		controls.addComponent(
@@ -122,48 +122,45 @@ public class DebugWindow extends Window {
 		// Terminal type editor
 		Label terminal =
 			new Label("<h2>Terminal Information</h2> ", Label.CONTENT_XHTML);
-		ItemEditor browser = new ItemEditor(null, "Set", "Discard");
+		Form browser = new Form();
 		browser.setItemDataSource(
 			new BeanItem(WebBrowserProbe.getTerminalType(session)));
 		browser.removeProperty("class");
-		String[] caps = new String[WebBrowser.JAVASCRIPT_VERSIONS.length];
-		for (int i = 0; i < caps.length; i++) {
-			caps[i] = WebBrowser.JAVASCRIPT_VERSIONS[i].toString();
-		}
-		Select s =
-			createSelect(
-				"javaScriptVersion",
-				WebBrowser.JAVASCRIPT_VERSIONS,
-				caps);
-		browser.setPropertyEditor("javaScriptVersion", s);
+		browser.replaceWithOptionList(
+			"javaScriptVersion",
+			WebBrowser.JAVASCRIPT_VERSIONS,
+			WebBrowser.JAVASCRIPT_VERSIONS);
+		browser.replaceWithOptionList(
+			"markupVersion",
+			WebBrowser.MARKUP_VERSIONS,
+			WebBrowser.MARKUP_VERSIONS);
+		browser.setWriteThrough(false);
+		Button setbrowser =
+			new Button("Set terminal information", browser, "commit");
+		setbrowser.dependsOn(browser);
 
-		caps = new String[WebBrowser.MARKUP_VERSIONS.length];
-		for (int i = 0; i < caps.length; i++) {
-			caps[i] = WebBrowser.MARKUP_VERSIONS[i].toString();
-		}
-		s =
-			createSelect(
-				"markupVersion",
-				WebBrowser.MARKUP_VERSIONS,
-				caps);
-		browser.setPropertyEditor("markupVersion", s);
+		// Arrange the UI in tabsheet
+		TabSheet infoTabs = new TabSheet();
+		addComponent(infoTabs);
 
-		// Create disable tab tab
-		tabs.addTab(
-			new Label("Select this tab to disable debug window updates"),
-			"Disable",
-			null);
+		OrderedLayout appInfo = new OrderedLayout();
+		infoTabs.addTab(appInfo, "Application",null);
+		appInfo.addComponent(applicationInfo);
+		appInfo.addComponent(controls);
+		appInfo.addComponent(themeSelector);
+		appInfo.addComponent(new Button("Change theme", this, "commitTheme"));
+		
 
-		// Add all components
-		addComponent(title);
-		addComponent(applicationInfo);
-		addComponent(controls);
-		addComponent(terminal);
-		addComponent(browser);
-		addComponent(themeSelector);
-		addComponent(new Button("Change theme", this, "commitTheme"));
-		addComponent(tabs);
-		addComponent(new Button("Save UIDL", this, "saveUIDL"));
+		OrderedLayout winInfo = new OrderedLayout();
+		infoTabs.addTab(winInfo, "Windows",null);
+		winInfo.addComponent(tabs);
+		winInfo.addComponent(new Button("Save UIDL", this, "saveUIDL"));
+
+		OrderedLayout termInfo = new OrderedLayout();
+		infoTabs.addTab(termInfo, "Terminal",null);
+		termInfo.addComponent(terminal);
+		termInfo.addComponent(browser);
+		termInfo.addComponent(setbrowser);
 
 		// Set the debugged application
 		setDebuggedApplication(debuggedApplication);
