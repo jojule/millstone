@@ -140,7 +140,7 @@ public class IndexedContainer
 	 * 
 	 * @return unmodifiable collection of Property IDs
 	 */
-	public Collection getPropertyIds() {
+	public Collection getContainerPropertyIds() {
 		return Collections.unmodifiableCollection(propertyIds);
 	}
 
@@ -163,7 +163,7 @@ public class IndexedContainer
 	 * 
 	 * @see org.millstone.base.data.Container#getProperty(Object, Object)
 	 */
-	public Property getProperty(Object itemId, Object propertyId) {
+	public Property getContainerProperty(Object itemId, Object propertyId) {
 		if (!items.containsKey(itemId))
 			return null;
 		return new IndexedContainerProperty(itemId, propertyId);
@@ -197,7 +197,7 @@ public class IndexedContainer
 	 * @return <code>true</code> if the operation succeeded,
 	 * <code>false</code> if not
 	 */
-	public boolean addProperty(
+	public boolean addContainerProperty(
 		Object propertyId,
 		Class type,
 		Object defaultValue) {
@@ -217,11 +217,11 @@ public class IndexedContainer
 		// If default value is given, set it
 		if (defaultValue != null)
 			for (Iterator i = itemIds.iterator(); i.hasNext();)
-				getItem(i.next()).getProperty(propertyId).setValue(
+				getItem(i.next()).getItemProperty(propertyId).setValue(
 					defaultValue);
 
 		// Send a change event
-		firePropertySetChange();
+		fireContainerPropertySetChange();
 
 		return true;
 	}
@@ -312,7 +312,7 @@ public class IndexedContainer
 	 * @return <code>true</code> if the operation succeeded,
 	 * <code>false</code> if not
 	 */
-	public boolean removeProperty(Object propertyId) {
+	public boolean removeContainerProperty(Object propertyId) {
 
 		// Fails if the Property is not present
 		if (!propertyIds.contains(propertyId))
@@ -327,7 +327,7 @@ public class IndexedContainer
 			 ((Hashtable) items.get(i.next())).remove(propertyId);
 
 		// Send a change event
-		firePropertySetChange();
+		fireContainerPropertySetChange();
 
 		return true;
 	}
@@ -648,7 +648,7 @@ public class IndexedContainer
 	}
 
 	/** Send a Property set change event to all interested listeners */
-	private void firePropertySetChange() {
+	private void fireContainerPropertySetChange() {
 		if (propertySetChangeListeners != null) {
 			Object[] l = propertySetChangeListeners.toArray();
 			Container.PropertySetChangeEvent event =
@@ -763,7 +763,7 @@ public class IndexedContainer
 		 * @param id identifier of the Property to get
 		 * @return the Property with the given ID or <code>null</code>
 		 */
-		public Property getProperty(Object id) {
+		public Property getItemProperty(Object id) {
 			return new IndexedContainerProperty(itemId, id);
 		}
 
@@ -773,7 +773,7 @@ public class IndexedContainer
 		 * @return unmodifiable collection contaning IDs of the Properties
 		 * stored the Item
 		 */
-		public Collection getPropertyIds() {
+		public Collection getItemPropertyIds() {
 			return Collections.unmodifiableCollection(propertyIds);
 		}
 
@@ -789,7 +789,7 @@ public class IndexedContainer
 
 			for (Iterator i = propertyIds.iterator(); i.hasNext();) {
 				Object propertyId = i.next();
-				retValue += getProperty(propertyId).toString();
+				retValue += getItemProperty(propertyId).toString();
 				if (i.hasNext())
 					retValue += " ";
 			}
@@ -829,7 +829,7 @@ public class IndexedContainer
 		/** Indexed container does not support adding new properties.
 		* @see org.millstone.base.data.Item#addProperty(Object, Property)
 		*/
-		public boolean addProperty(Object id, Property property)
+		public boolean addItemProperty(Object id, Property property)
 			throws UnsupportedOperationException {
 			throw new UnsupportedOperationException(
 				"Indexed container item "
@@ -839,7 +839,7 @@ public class IndexedContainer
 		/** Indexed container does not support removing properties.
 		 * @see org.millstone.base.data.Item#removeProperty(Object)
 		 */
-		public boolean removeProperty(Object id)
+		public boolean removeItemProperty(Object id)
 			throws UnsupportedOperationException {
 			throw new UnsupportedOperationException("Indexed container item does not support property removal");
 		}

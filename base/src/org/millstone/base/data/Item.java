@@ -58,14 +58,14 @@ public interface Item {
 	 * @param id identifier of the Property to get
 	 * @return the Property with the given ID or <code>null</code>
 	 */
-	public Property getProperty(Object id);
+	public Property getItemProperty(Object id);
 
 	/** Gets the collection of IDs of all Properties stored in the Item.
 	 * 
 	 * @return unmodifiable collection containing IDs of the Properties
 	 * stored the Item
 	 */
-	public Collection getPropertyIds();
+	public Collection getItemPropertyIds();
 
 	/** Tries to add a new Property into the Item.
 	 * 
@@ -78,7 +78,7 @@ public interface Item {
 	 * @return <code>true</code> if the operation succeeded,
 	 * <code>false</code> if not
 	 */
-	public boolean addProperty(Object id, Property property)
+	public boolean addItemProperty(Object id, Property property)
 	throws UnsupportedOperationException;
 
 	/** Removes the Property identified by ID from the Item. 
@@ -90,7 +90,7 @@ public interface Item {
 	 * @return <code>true</code> if the operation succeeded
 	 * <code>false</code> if not
 	 */
-	public boolean removeProperty(Object id)
+	public boolean removeItemProperty(Object id)
 	throws UnsupportedOperationException;
 
 	/** Interface implemented by viewer classes capable of using an Item as

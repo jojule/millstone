@@ -470,13 +470,13 @@ public class ContainerHierarchicalWrapper
 	 * @return <code>true</code> if the operation succeeded,
 	 * <code>false</code> if not
 	 */
-	public boolean addProperty(
+	public boolean addContainerProperty(
 		Object propertyId,
 		Class type,
 		Object defaultValue)
 		throws UnsupportedOperationException {
 
-		return container.addProperty(propertyId, type, defaultValue);
+		return container.addContainerProperty(propertyId, type, defaultValue);
 	}
 
 	/** Removes the specified Property from the underlying container and
@@ -487,9 +487,9 @@ public class ContainerHierarchicalWrapper
 	 * @return <code>true</code> if the operation succeeded,
 	 * <code>false</code> if not
 	 */
-	public boolean removeProperty(Object propertyId)
+	public boolean removeContainerProperty(Object propertyId)
 		throws UnsupportedOperationException {
-		return container.removeProperty(propertyId);
+		return container.removeContainerProperty(propertyId);
 	}
 
 	/* Does the container contain the specified Item?
@@ -521,16 +521,16 @@ public class ContainerHierarchicalWrapper
 	 * Don't add a JavaDoc comment here, we use the default documentation
 	 * from implemented interface.
 	 */
-	public Property getProperty(Object itemId, Object propertyId) {
-		return container.getProperty(itemId, propertyId);
+	public Property getContainerProperty(Object itemId, Object propertyId) {
+		return container.getContainerProperty(itemId, propertyId);
 	}
 
 	/* Gets the ID's of all Properties stored in the Container
 	 * Don't add a JavaDoc comment here, we use the default documentation
 	 * from implemented interface.
 	 */
-	public Collection getPropertyIds() {
-		return container.getPropertyIds();
+	public Collection getContainerPropertyIds() {
+		return container.getContainerPropertyIds();
 	}
 
 	/* Gets the data type of all Properties identified by the given Property

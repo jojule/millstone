@@ -245,7 +245,7 @@ public class Table extends Select implements Action.Container {
 			throw new NullPointerException("Can not set visible columns to null value");
 
 		// Check that the new visible columns contains no nulls and properties exist
-		Collection properties = getPropertyIds();
+		Collection properties = getContainerPropertyIds();
 		for (int i = 0; i < visibleColumns.length; i++)
 			if (visibleColumns[i] == null)
 				throw new NullPointerException("Properties must be non-nulls");
@@ -733,7 +733,7 @@ public class Table extends Select implements Action.Container {
 
 		// Fill the item properties
 		for (int i = 0; i < cols.length; i++)
-			item.getProperty(cols[i]).setValue(cells[i]);
+			item.getItemProperty(cols[i]).setValue(cells[i]);
 
 		return itemId;
 	}
@@ -761,7 +761,7 @@ public class Table extends Select implements Action.Container {
 		currentPageFirstItemIndex = 0;
 
 		// Set the visible properties
-		setVisibleColumns(getPropertyIds().toArray());
+		setVisibleColumns(getContainerPropertyIds().toArray());
 
 		// Assure visual refresh
 		refreshCurrentPage();
@@ -1039,7 +1039,7 @@ public class Table extends Select implements Action.Container {
 				Item item = getItem(id);
 				for (int j = 0; j < cols; j++) {
 					if (item != null) {
-						Property p = item.getProperty(colids[j]);
+						Property p = item.getItemProperty(colids[j]);
 						if (Property
 							.ValueChangeNotifier
 							.class
@@ -1175,7 +1175,7 @@ public class Table extends Select implements Action.Container {
 	/**
 	 * @see org.millstone.base.data.Container#removeProperty(Object)
 	 */
-	public boolean removeProperty(Object propertyId)
+	public boolean removeContainerProperty(Object propertyId)
 		throws UnsupportedOperationException {
 
 		// If a visible property is removed, remove the correcponding column
@@ -1194,7 +1194,7 @@ public class Table extends Select implements Action.Container {
 			}
 		}
 
-		return super.removeProperty(propertyId);
+		return super.removeContainerProperty(propertyId);
 	}
 
 	/** Adds a new property to the table and show it as a visible column.
@@ -1205,12 +1205,12 @@ public class Table extends Select implements Action.Container {
 	 * @param type The class of the property
 	 * @param defaultValue The default value given for all existing items
 	 */
-	public boolean addProperty(
+	public boolean addContainerProperty(
 		Object propertyId,
 		Class type,
 		Object defaultValue)
 		throws UnsupportedOperationException {
-		if (!super.addProperty(propertyId, type, defaultValue))
+		if (!super.addContainerProperty(propertyId, type, defaultValue))
 			return false;
 		int lastcol = visibleColumns.length;
 		Object[] newVisCol = new Object[lastcol + 1];
@@ -1232,7 +1232,7 @@ public class Table extends Select implements Action.Container {
 	 * @param columnIcon Icon of the column. If icon is not needed, this should be set null.
 	 * @param columnAlignment Alignment of the column. Null implies align left.
 	 */
-	public boolean addProperty(
+	public boolean addContainerProperty(
 		Object propertyId,
 		Class type,
 		Object defaultValue,
@@ -1240,7 +1240,7 @@ public class Table extends Select implements Action.Container {
 		Resource columnIcon,
 		String columnAlignment)
 		throws UnsupportedOperationException {
-		if (!this.addProperty(propertyId, type, defaultValue))
+		if (!this.addContainerProperty(propertyId, type, defaultValue))
 			return false;
 		int lastcol = visibleColumns.length-1;
 		columnHeaders[lastcol] = columnHeader;

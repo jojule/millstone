@@ -76,6 +76,8 @@ import java.util.Collection;
  */
 public interface Container {
     
+    public final static Object NULL_ITEM_ID = new Object();
+    
     /** Gets the Item with the given Item ID from the Container. If the
      * Container does not contain the requested Item, <code>null</code> is
      * returned.
@@ -91,7 +93,7 @@ public interface Container {
      * 
      * @return unmodifiable collection of Property IDs
      */
-    public Collection getPropertyIds();
+    public Collection getContainerPropertyIds();
     
     /** Gets the ID's of all Items stored in the Container. The ID's are
      * returned as a unmodifiable collection.
@@ -108,7 +110,7 @@ public interface Container {
      * @param propertyId ID of the Property to retrieve
      * @return Property with the given ID or <code>null</code>
      */
-    public Property getProperty(Object itemId, Object propertyId);
+    public Property getContainerProperty(Object itemId, Object propertyId);
  
     /** Gets the data type of all Properties identified by the given Property
      * ID.
@@ -186,7 +188,7 @@ public interface Container {
          * @return <code>true</code> if the operation succeeded,
          * <code>false</code> if not
          */
-        public boolean addProperty(Object propertyId, Class type,
+        public boolean addContainerProperty(Object propertyId, Class type,
         Object defaultValue)
    		throws UnsupportedOperationException;
 
@@ -201,7 +203,7 @@ public interface Container {
          * @return <code>true</code> if the operation succeeded,
          * <code>false</code> if not
          */
-        public boolean removeProperty(Object propertyId)
+        public boolean removeContainerProperty(Object propertyId)
 		throws UnsupportedOperationException;
         
         /** Removes all Items from the Container. 

@@ -77,7 +77,7 @@ implements Item, Item.PropertySetChangeNotifier {
      * @param id identifier of the Property to get
      * @return the Property with the given ID or <code>null</code>
      */
-    public Property getProperty(Object id) {
+    public Property getItemProperty(Object id) {
         return (Property) map.get(id);
     }
     
@@ -86,7 +86,7 @@ implements Item, Item.PropertySetChangeNotifier {
      * @return unmodifiable collection containing IDs of the Properties
      * stored the Item
      */
-    public Collection getPropertyIds() {
+    public Collection getItemPropertyIds() {
         return Collections.unmodifiableCollection(map.keySet());
     }
     
@@ -100,13 +100,13 @@ implements Item, Item.PropertySetChangeNotifier {
      * @return <code>true</code> if the operation succeeded
      * <code>false</code> if not
      */
-    public boolean removeProperty(Object id) {
+    public boolean removeItemProperty(Object id) {
         
         // Cant remove missing properties
         if (map.remove(id) == null) return false;
         
         // Send change events
-        firePropertySetChange();
+        fireItemPropertySetChange();
         
         return true;
     }
@@ -119,7 +119,7 @@ implements Item, Item.PropertySetChangeNotifier {
      * @return <code>true</code> if the operation succeeded,
      * <code>false</code> if not
      */
-    public boolean addProperty(Object id, Property property) {
+    public boolean addItemProperty(Object id, Property property) {
 
         // Cant add a property twice
         if (map.containsKey(id)) return false;
@@ -128,7 +128,7 @@ implements Item, Item.PropertySetChangeNotifier {
         map.put(id,property);
         
         // Send event
-        firePropertySetChange();
+        fireItemPropertySetChange();
         
         return true;
     }
@@ -144,9 +144,9 @@ implements Item, Item.PropertySetChangeNotifier {
     public String toString() {
         String retValue = "";
         
-        for (Iterator i = getPropertyIds().iterator(); i.hasNext();) {
+        for (Iterator i = getItemPropertyIds().iterator(); i.hasNext();) {
             Object propertyId = i.next();
-            retValue += getProperty(propertyId).toString();
+            retValue += getItemProperty(propertyId).toString();
             if (i.hasNext()) retValue += " ";
         }
         
@@ -197,7 +197,7 @@ implements Item, Item.PropertySetChangeNotifier {
     }
     
     /** Send a Property set change event to all interested listeners */
-    private void firePropertySetChange() {
+    private void fireItemPropertySetChange() {
         if (propertySetChangeListeners != null) {
             Object[] l = propertySetChangeListeners.toArray();
             Item.PropertySetChangeEvent event =

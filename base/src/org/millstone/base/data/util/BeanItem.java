@@ -78,7 +78,7 @@ public class BeanItem extends PropertysetItem {
                 String name = pd[i].getName();
                 
                 Property p = new MethodProperty(type,bean,getMethod,setMethod);
-                addProperty(name,p);
+                addItemProperty(name,p);
             }
         } catch (java.beans.IntrospectionException ignored) {}
     }

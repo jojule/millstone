@@ -416,7 +416,7 @@ public class FilesystemContainer implements Container.Hierarchical {
 	 * @param propertyId The property's ID
 	 * @return the requested property's value, or <code>null</code>
 	 */
-	public Property getProperty(Object itemId, Object propertyId) {
+	public Property getContainerProperty(Object itemId, Object propertyId) {
 
 		if (!(itemId instanceof File))
 			return null;
@@ -457,7 +457,7 @@ public class FilesystemContainer implements Container.Hierarchical {
 	 * @return Unmodifiable collection containing all available file
 	 * properties.
 	 */
-	public Collection getPropertyIds() {
+	public Collection getContainerPropertyIds() {
 		return FILE_PROPERTIES;
 	}
 
@@ -553,16 +553,16 @@ public class FilesystemContainer implements Container.Hierarchical {
 		 * Don't add a JavaDoc comment here, we use the default documentation
 		 * from implemented interface.
 		 */
-		public Property getProperty(Object id) {
-			return FilesystemContainer.this.getProperty(file, id);
+		public Property getItemProperty(Object id) {
+			return FilesystemContainer.this.getContainerProperty(file, id);
 		}
 
 		/* Get the IDs of all properties available for this item
 		 * Don't add a JavaDoc comment here, we use the default documentation
 		 * from implemented interface.
 		 */
-		public Collection getPropertyIds() {
-			return FilesystemContainer.this.getPropertyIds();
+		public Collection getItemPropertyIds() {
+			return FilesystemContainer.this.getContainerPropertyIds();
 		}
 
 		/* Calculates a integer hash-code for the Property that's unique
@@ -625,7 +625,7 @@ public class FilesystemContainer implements Container.Hierarchical {
 		/** Filesystem container does not support adding new properties.
 		 * @see org.millstone.base.data.Item#addProperty(Object, Property)
 		 */
-		public boolean addProperty(Object id, Property property)
+		public boolean addItemProperty(Object id, Property property)
 			throws UnsupportedOperationException {
 			throw new UnsupportedOperationException(
 				"Filesystem container "
@@ -635,7 +635,7 @@ public class FilesystemContainer implements Container.Hierarchical {
 		/** Filesystem container does not support removing properties.
 		 * @see org.millstone.base.data.Item#removeProperty(Object)
 		 */
-		public boolean removeProperty(Object id)
+		public boolean removeItemProperty(Object id)
 			throws UnsupportedOperationException {
 			throw new UnsupportedOperationException("Filesystem container does not support property removal");
 		}
@@ -708,7 +708,7 @@ public class FilesystemContainer implements Container.Hierarchical {
 	/**
 	 * @see org.millstone.base.data.Container#addProperty(Object, Class, Object)
 	 */
-	public boolean addProperty(
+	public boolean addContainerProperty(
 		Object propertyId,
 		Class type,
 		Object defaultValue)
@@ -748,7 +748,7 @@ public class FilesystemContainer implements Container.Hierarchical {
 	/**
 	 * @see org.millstone.base.data.Container#removeProperty(Object)
 	 */
-	public boolean removeProperty(Object propertyId)
+	public boolean removeContainerProperty(Object propertyId)
 		throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("File system container does not support this operation");
 	}
