@@ -72,10 +72,10 @@ public class IndexedContainer implements Container, Container.Indexed,
     /* Internal structure *************************************************** */
 
     /** Linked list of ordered Item IDs */
-    private LinkedList itemIds = new LinkedList();
+    private List itemIds = new ArrayList();
 
     /** Linked list of ordered Property IDs */
-    private LinkedList propertyIds = new LinkedList();
+    private List propertyIds = new ArrayList();
 
     /** Property ID to type mapping */
     private Hashtable types = new Hashtable();
@@ -238,7 +238,7 @@ public class IndexedContainer implements Container, Container.Indexed,
             return false;
 
         // Add the Property to Property list and types
-        propertyIds.addLast(propertyId);
+        propertyIds.add(propertyId);
         types.put(propertyId, type);
 
         // If default value is given, set it
@@ -376,8 +376,8 @@ public class IndexedContainer implements Container, Container.Indexed,
      */
     public Object firstItemId() {
         try {
-            return itemIds.getFirst();
-        } catch (NoSuchElementException e) {
+            return itemIds.get(0);
+        } catch (IndexOutOfBoundsException e) {
         }
         return null;
     }
@@ -388,7 +388,11 @@ public class IndexedContainer implements Container, Container.Indexed,
      * @return ID of the last Item in the list
      */
     public Object lastItemId() {
-        return itemIds.getLast();
+        try {
+            return itemIds.get(itemIds.size()-1);
+        } catch (IndexOutOfBoundsException e) {
+        }
+        return null;
     }
 
     /**
