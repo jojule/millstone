@@ -60,4 +60,11 @@ public interface URIHandler {
      */
     public DownloadStream handleURI(URL context, String relativeUri);
 
+	/** URIHandler error event */
+	public interface ErrorEvent extends Terminal.ErrorEvent {
+
+		/** Get the source URIHandler. */
+		public URIHandler getURIHandler();
+
+	}
 }
