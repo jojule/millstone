@@ -312,7 +312,7 @@ public class TextField extends AbstractField {
 	 * 
 	 * <p>The default value is string '(null)'</p>
 	 * 
-	 * @see isNullSettingAllowed()
+	 * @see TextField#isNullSettingAllowed()
 	 * @return String Textual representation for null strings.
 	 */
 	public String getNullRepresentation() {
@@ -332,7 +332,7 @@ public class TextField extends AbstractField {
 	 * 
 	 * @return boolean Should the null-string represenation be allways
 	 * converted to null-values.
-	 * @see getNullRepresentation()
+	 * @see TextField#getNullRepresentation()
 	 */
 	public boolean isNullSettingAllowed() {
 		return nullSettingAllowed;
@@ -346,7 +346,7 @@ public class TextField extends AbstractField {
 	 * 
 	 * <p>The default value is string '(null)'</p>
 	 * 
-	 * @see setNullSettingAllowed(boolean)
+	 * @see TextField#setNullSettingAllowed(boolean)
 	 * @param nullRepresentation Textual representation for null strings.
 	 */
 	public void setNullRepresentation(String nullRepresentation) {
@@ -366,7 +366,7 @@ public class TextField extends AbstractField {
 	 * 
 	 * @param nullSettingAllowed Should the null-string represenation be allways
 	 * converted to null-values.
-	 * @see getNullRepresentation()
+	 * @see TextField#getNullRepresentation()
 	 */
 	public void setNullSettingAllowed(boolean nullSettingAllowed) {
 		this.nullSettingAllowed = nullSettingAllowed;

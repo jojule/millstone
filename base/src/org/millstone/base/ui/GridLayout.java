@@ -208,7 +208,7 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 	 *  By calling this function user can ensure that no more components are
 	 *  added to the right of the previous component.
 	 * 
-	 * @see space()
+	 * @see #space()
 	 */
 	public void newLine() {
 		cursorX = 0;
@@ -218,7 +218,7 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 	/** Move cursor forwards by one. If the cursor goes out of the right grid border,
 	 * move it to next line.
 	 * 
-	 * @see newLine()
+	 * @see #newLine()
 	 */
 	public void space() {
 		cursorX++;

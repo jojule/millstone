@@ -1266,7 +1266,7 @@ public class Table extends Select implements Action.Container {
 	}
 
 	/** Container datasource item set change. Table must flush its buffers on change.
-	 * @see org.millstone.base.data.Container.ItemSetChangeListener#containerItemSetChange(ItemSetChangeEvent)
+	 * @see org.millstone.base.data.Container.ItemSetChangeListener#containerItemSetChange(org.millstone.base.data.Container.ItemSetChangeEvent)
 	 */
 	public void containerItemSetChange(Container.ItemSetChangeEvent event) {
 		pageBuffer = null;
@@ -1274,7 +1274,7 @@ public class Table extends Select implements Action.Container {
 	}
 
 	/** Container datasource property set change. Table must flush its buffers on change.
-	 * @see org.millstone.base.data.Container.PropertySetChangeListener#containerPropertySetChange(PropertySetChangeEvent)
+	 * @see org.millstone.base.data.Container.PropertySetChangeListener#containerPropertySetChange(org.millstone.base.data.Container.PropertySetChangeEvent)
 	 */
 	public void containerPropertySetChange(
 		Container.PropertySetChangeEvent event) {

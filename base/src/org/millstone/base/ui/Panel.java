@@ -354,7 +354,7 @@ public class Panel
 	}
 
 	/** Pass the events from underlying layout forwards.
-	 * @see org.millstone.base.ui.ComponentContainer.ComponentAttachListener#componentAttachedToContainer(ComponentAttachEvent)
+	 * @see org.millstone.base.ui.ComponentContainer.ComponentAttachListener#componentAttachedToContainer(org.millstone.base.ui.ComponentContainer.ComponentAttachEvent)
 	 */
 	public void componentAttachedToContainer(ComponentAttachEvent event) {
 		if (event.getContainer() == layout)
@@ -362,7 +362,7 @@ public class Panel
 	}
 
 	/** Pass the events from underlying layout forwards.
-	 * @see org.millstone.base.ui.ComponentContainer.ComponentDetachListener#componentDetachedFromContainer(ComponentDetachEvent)
+	 * @see org.millstone.base.ui.ComponentContainer.ComponentDetachListener#componentDetachedFromContainer(org.millstone.base.ui.ComponentContainer.ComponentDetachEvent)
 	 */
 	public void componentDetachedFromContainer(ComponentDetachEvent event) {
 		if (event.getContainer() == layout)

@@ -52,7 +52,32 @@ import org.millstone.base.data.Buffered.SourceException;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
 
-public class Form
+/** Form component provides easy way of creating and managing sets fields.
+ * 
+ * <p>Form is a container for fields extending {@link AbstractField} class.
+ * It provides support for any layouts and provides buffering interface for
+ * easy connection of commit- and discard buttons. All the form
+ * fields can be customized by adding validators, setting captions and icons, 
+ * setting immediateness, etc. Also direct mechanism for replacing existing
+ * fields with selections is given.</p>
+ * 
+ * <p>Form provides customizable editor for classes implementing
+ * {@link org.millstone.base.data.Item} interface. Also the form itself
+ * implements this interface for easier connectivity to other items.
+ * To use the form as editor for an item, just connect the item to
+ * form with {@link Form#setItemDataSource(Item)}. If only a part of the
+ * item needs to be edited, {@link Form#setItemDataSource(Item,Collection)}
+ * can be used instead. After the item has been connected to the form,
+ * the automatically created fields can be customized and new fields can
+ * be added. If you need to connect a class that does not implement
+ * {@link org.millstone.base.data.Item} interface, most properties of any
+ * class following bean pattern, can be accessed trough 
+ * {@link org.millstone.base.data.util.BeanItem}.</p>
+ * 
+ * @author IT Mill Ltd.
+ * @version @VERSION@
+ * @since 3.0
+ */public class Form
 	extends AbstractComponent
 	implements Item.Editor, Buffered, Item {
 

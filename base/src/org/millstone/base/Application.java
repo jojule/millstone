@@ -65,8 +65,7 @@ import java.net.URL;
  * class provides all the basic services required by the MillStone
  * framework. These services allow external discovery and manipulation of
  * the user, {@link org.millstone.base.ui.Window windows} and
- * {@link org.millstone.webadapter.Theme themes}, and starting and stopping
- * the application.</p>
+ *  themes, and starting and stopping the application.</p>
  *
  * <p>As mentioned, all MillStone applications must inherit this class.
  * However, this is almost all of what one needs to do to create a fully
