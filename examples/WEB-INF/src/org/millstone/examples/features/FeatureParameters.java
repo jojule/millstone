@@ -75,16 +75,14 @@ public class FeatureParameters
 		info.setCaption("Usage info");
 		l.addComponent(info);
 		try {
-
+			URL u1 = new URL(getApplication().getURL(),"test/uri?test=1&test=2");
+			URL u2 = new URL(getApplication().getURL(),"foo/bar?mary=john&count=3");
+			
 			l.addComponent(
-				new Link(
-					"/examples/features/test/uri?test=1&test=2",
-					new ExternalResource("/examples/features/test/uri?test=1&test=2")));
+				new Link(u1.toString(),new ExternalResource(u1)));
 			l.addComponent(new Label("Or this: "));
 			l.addComponent(
-				new Link(
-					"/examples/features/test/uri?mary=john&count=3",
-					new ExternalResource("/examples/features/test/uri?mary=john&count=3")));
+				new Link(u2.toString(),new ExternalResource(u2)));
 		} catch (Exception e) {
 			System.out.println(
 				"Couldn't get hostname for this machine: " + e.toString());
@@ -122,11 +120,6 @@ public class FeatureParameters
 
 	protected String getTitle() {
 		return "Parameters";
-	}
-
-	protected String getExampleSrc() {
-		return "This is a more advanced example, please see the source of this example, FeatureParameters.java,"
-			+ "as the complete class is a better demonstration then could be given here.";
 	}
 
 	/** Add URI and parametes handlers to window.
