@@ -57,7 +57,7 @@ public class FeatureLink extends Feature {
 		return new String[]{"Link","A link component that can either link to internal or external resources.<br/>"+
 				"<br/>"+
 				"On the demo tab you can try out how the different properties affect "+
-				"the presentation of the component.","link.jpeg"};
+				"the presentation of the component.","link.jpg"};
 	}
 
 }

@@ -53,7 +53,7 @@ public class FeatureGridLayout extends Feature {
 		return new String[]{"Gridlayout","An container that lays out the components it contains in a grid of preset size.<br/>"+
 				"<br/>"+
 				"On the demo tab you can try out how the different properties affect "+
-				"the presentation of the component.","gridlayout.jpeg"};
+				"the presentation of the component.","gridlayout.jpg"};
 	}
 
 }

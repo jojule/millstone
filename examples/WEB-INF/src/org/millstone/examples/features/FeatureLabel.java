@@ -43,7 +43,7 @@ public class FeatureLabel extends Feature {
 		return new String[]{"Label","A simple text label component.<br/>"+
 				"<br/>"+
 				"On the demo tab you can try out how the different properties affect "+
-				"the presentation of the component.","label.jpeg"}; 
+				"the presentation of the component.","label.jpg"}; 
 	}
 
 }

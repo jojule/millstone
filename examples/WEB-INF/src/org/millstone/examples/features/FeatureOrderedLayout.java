@@ -69,7 +69,7 @@ public class FeatureOrderedLayout extends Feature {
 			+ "The legal values for the orientation property are 0,1 and 2. <br/>"
 			+ "<br/>"
 			+ "On the demo tab you can try out how the different properties "+
-			"affect the presentation of the component.","orderedlayout.jpeg"};
+			"affect the presentation of the component.","orderedlayout.jpg"};
 	}
 
 }

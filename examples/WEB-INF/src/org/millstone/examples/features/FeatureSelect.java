@@ -66,7 +66,7 @@ public class FeatureSelect extends Feature {
 			"It is used for selecting either a single or multiple items from a list.<br/>"+
 			"<br/>"+
 			"On the demo tab you can try out how the different properties affect the"+
-			" presentation of the component.","select.jpeg"};
+			" presentation of the component.","select.jpg"};
 	}
 
 }

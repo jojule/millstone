@@ -46,7 +46,7 @@ public class FeatureWindow extends Feature {
 		"<li>Refresing window contents from other windows</li>"+
 		"<li>Resizing windows</li>"+
 		"<li>Scrolling window contents</li>"+
-		"</ul>\n","window.jpeg"};
+		"</ul>\n","window.jpg"};
 	}
 
 	public void addWin() {

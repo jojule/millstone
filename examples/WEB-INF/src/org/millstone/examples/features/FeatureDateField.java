@@ -62,7 +62,7 @@ public class FeatureDateField extends Feature {
 				"<br/>Furthermore a validator may be bound to the component to check and "+
 				"validate the given input.<br/>"+
 				"<br/>On the demo tab you can try out how the different properties affect the "+
-				"presentation of the component.","datefield.jpeg"};
+				"presentation of the component.","datefield.jpg"};
 	}
 
 }
