@@ -340,6 +340,7 @@ public class Window extends Panel implements URIHandler, ParameterHandler {
 			openList.add(
 				new OpenResource(resource, null, -1, -1, BORDER_DEFAULT));
 		}
+		requestRepaint();
 	}
 
 	/* ********************************************************************* */
@@ -352,6 +353,7 @@ public class Window extends Panel implements URIHandler, ParameterHandler {
 			openList.add(
 				new OpenResource(resource, windowName, -1, -1, BORDER_DEFAULT));
 		}
+		requestRepaint();
 	}
 
 	/* ********************************************************************* */
@@ -370,6 +372,7 @@ public class Window extends Panel implements URIHandler, ParameterHandler {
 			openList.add(
 				new OpenResource(resource, windowName, width, height, border));
 		}
+		requestRepaint();		
 	}
 
 	/* ********************************************************************* */
