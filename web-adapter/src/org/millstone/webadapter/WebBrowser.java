@@ -159,7 +159,6 @@ public class WebBrowser implements Terminal {
 		return this.markupVersion;
 	}
 
-
 	/** Get height of the terminal window in pixels
 	 * @return Height of the terminal window
 	 */
@@ -277,7 +276,10 @@ public class WebBrowser implements Terminal {
 	 */
 	private JavaScriptVersion doParseJavaScriptVersion(String js) {
 		for (int i = 0; i < JAVASCRIPT_VERSIONS.length; i++) {
-			if (JAVASCRIPT_VERSIONS[i].name.equals(js))
+			if (JAVASCRIPT_VERSIONS[i]
+				.name
+				.toLowerCase()
+				.startsWith(js.toLowerCase()))
 				return JAVASCRIPT_VERSIONS[i];
 		}
 		return JAVASCRIPT_NONE;
@@ -493,7 +495,6 @@ public class WebBrowser implements Terminal {
 			return name;
 		}
 
-
 		private JavaScriptVersion(String name, int order) {
 			this.name = name;
 			this.order = order;
@@ -508,13 +509,13 @@ public class WebBrowser implements Terminal {
 
 			// ECMA-262 support compare
 			if (other.equals(ECMA_262)) {
-				
+
 				// JScript over 5.0 support ECMA-262
 				if (this.order >= 100) {
 					return (this.order >= JSCRIPT_5_0.order);
 				} else {
-					return (this.order >= JAVASCRIPT_1_3.order);				
-				}				
+					return (this.order >= JAVASCRIPT_1_3.order);
+				}
 			}
 
 			// JavaScript version compare
@@ -523,11 +524,10 @@ public class WebBrowser implements Terminal {
 			}
 
 			// JScript version compare
-			else
-				 if (this.order >= 100 && other.order >= 100) {
+			else if (this.order >= 100 && other.order >= 100) {
 				return (this.order >= other.order);
 			}
-			
+
 			return false;
 
 		}
