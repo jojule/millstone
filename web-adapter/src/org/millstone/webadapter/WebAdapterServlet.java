@@ -123,6 +123,7 @@ public class WebAdapterServlet
 	private static int DEFAULT_MAX_TRANSFORMERS = 1;
 	private static int MAX_BUFFER_SIZE = 64 * 1024;
 	private static String SESSION_ATTR_VARMAP = "varmap";
+	static String SESSION_ATTR_CONTEXT = "millstone_context";
 	static String SESSION_ATTR_APPS = "apps";
 	private static String SESSION_BINDING_LISTENER = "bindinglistener";
 	private static String SESSION_DEFAULT_THEME = "default";
@@ -580,6 +581,7 @@ public class WebAdapterServlet
 						terminalType =
 							WebBrowserProbe.getTerminalType(
 								request.getSession());
+						window.setTerminal(terminalType);
 					}
 
 					// Find theme and initialize TransformerType
@@ -1111,11 +1113,18 @@ public class WebAdapterServlet
 			application.addListener((Application.WindowAttachListener) this);
 			application.addListener((Application.WindowDetachListener) this);
 			application.setLocale(request.getLocale());
-			// TODO Is this a bug as there should only be one application context per session
+
+			// Get application context for this session
+			WebApplicationContext context = (WebApplicationContext)session.getAttribute(SESSION_ATTR_CONTEXT);
+			if (context == null) {
+				context = new WebApplicationContext(session);
+				session.setAttribute(SESSION_ATTR_CONTEXT,context);
+			}
+			
 			application.start(
 				applicationUrl,
 				this.applicationProperties,
-				new WebApplicationContext(session)); 
+				context); 
 
 		} catch (IllegalAccessException e) {
 			Log.error(
