@@ -2,27 +2,25 @@
 <project name="Millstone WebAdapter Release" default="package">
 
 	<!-- Initialize version information for development build-->
-	<target name="init-version"  depends="check-release-version" unless="version">
+	<target name="init-version"  depends="check-release-version" unless="millstone.version">
 		<!-- Create current timestamp and version based on that -->
 		<tstamp/>
-		<property name="version" value="${DSTAMP}" />
+		<property name="millstone.version" value="${DSTAMP}" />
 	</target>
 	
 	<!-- Ensure version information for release build-->
-	<target name="check-release-version" unless="version" if="release">
-		<echo message="You must specify version by setting the 'version' property!"/>
-		<echo message="For example: -Dversion=3.1.1"/>
+	<target name="check-release-version" unless="millstone.version" if="release">
+		<echo message="You must specify version by setting the 'millstone.version' property!"/>
+		<echo message="For example: -Dmillstone.version=3.1.1"/>
 	</target>
 
 	<!-- Initialize environment -->
 	<target name="init-environment" depends="check-millstone-base">
-		<fail message="Servlet Libraries not specified (Use: -Dservlet.jar)" unless="servlet.jar"/>		
-		<fail message="Millstone Base not specified. (Use: -Dmillstone.base.dir)" unless="millstone.base.dir"/>		
 		<property environment="env"/>
 		<echo message="Using JAVA_HOME: ${env.JAVA_HOME}" />	   
 	</target>
 
-	<!-- Ensure version information for release build-->
+	<!-- Ensure the Millstone Base libraries -->
 	<target name="check-millstone-base" unless="millstone.base.dir">
 		<echo message="You must specify the location of Millstone Base libraries!"/>
 		<echo message="For example: -Dmillstone.base.dir=C:/Java/Millstone-Base"/>
@@ -30,6 +28,9 @@
 
 	<!-- Initialize working directories and other properties -->
 	<target name="init" depends="init-version, init-environment">
+   
+   		<!-- Load defaults -->
+   		<property file="build.properties"/>
    
     	<!-- Working directories -->
 		<property name="millstone.wa.src.dir" value="src/"/>
@@ -52,9 +53,9 @@
 		<property name="millstone.wa.impl.vendor" value="IT Mill Ltd"/>
 
 	    <!-- Defaults for jar file names-->
-		<property name="millstone.wa.bin.jar" value="${millstone.wa.dist.dir}/millstone-webadapter-${version}.jar"/>
-		<property name="millstone.wa.src.jar" value="${millstone.wa.dist.dir}/millstone-webadapter-src-${version}.jar"/>
-		<property name="millstone.wa.themes.jar" value="${millstone.wa.dist.dir}/millstone-web-themes-${version}.jar"/>
+		<property name="millstone.wa.bin.jar" value="${millstone.wa.dist.dir}/millstone-webadapter-${millstone.version}.jar"/>
+		<property name="millstone.wa.src.jar" value="${millstone.wa.dist.dir}/millstone-webadapter-src-${millstone.version}.jar"/>
+		<property name="millstone.wa.themes.jar" value="${millstone.wa.dist.dir}/millstone-web-themes-${millstone.version}.jar"/>
 
 		<echo message="Building Millstone WebAdapter"/>
 		<echo message="Source: ${millstone.wa.src.dir}" />
@@ -72,15 +73,15 @@
 
     
     <!-- Create manifest files -->
-	<target name="manifest">
+	<target name="manifest" depends="init">
 		<manifest file="${millstone.wa.bin.manifest.file}">
 			<attribute name="Built-By" value="${user.name}"/>
     		<section name="${millstone.wa.manifest.section}">
       			<attribute name="Specification-Title" value="${millstone.wa.spec.title}"/>
-      			<attribute name="Specification-Version" value="${version}"/>
+      			<attribute name="Specification-Version" value="${millstone.version}"/>
       			<attribute name="Specification-Vendor" value="${millstone.wa.spec.vendor}"/>
       			<attribute name="Implementation-Title" value="${millstone.wa.impl.title}"/>
-      			<attribute name="Implementation-Version" value="${version}"/> 
+      			<attribute name="Implementation-Version" value="${millstone.version}"/> 
       			<attribute name="Implementation-Vendor" value="${millstone.wa.impl.vendor}"/>
     		</section>
 		</manifest>	
@@ -88,10 +89,10 @@
 			<attribute name="Built-By" value="${user.name}"/>
     		<section name="${millstone.wa.manifest.section}">
       			<attribute name="Specification-Title" value="${millstone.wa.spec.title}"/>
-      			<attribute name="Specification-Version" value="${version}"/>
+      			<attribute name="Specification-Version" value="${millstone.version}"/>
       			<attribute name="Specification-Vendor" value="${millstone.wa.spec.vendor}"/>
       			<attribute name="Implementation-Title" value="${millstone.wa.impl.title}"/>
-      			<attribute name="Implementation-Version" value="${version}"/> 
+      			<attribute name="Implementation-Version" value="${millstone.version}"/> 
       			<attribute name="Implementation-Vendor" value="${millstone.wa.impl.vendor}"/>
     		</section>
 		</manifest>
@@ -99,22 +100,24 @@
 			<attribute name="Built-By" value="${user.name}"/>
     		<section name="${millstone.wa.manifest.section}">
       			<attribute name="Specification-Title" value="${millstone.wa.spec.title}"/>
-      			<attribute name="Specification-Version" value="${version}"/>
+      			<attribute name="Specification-Version" value="${millstone.version}"/>
       			<attribute name="Specification-Vendor" value="${millstone.wa.spec.vendor}"/>
       			<attribute name="Implementation-Title" value="${millstone.wa.impl.title}"/>
-      			<attribute name="Implementation-Version" value="${version}"/> 
+      			<attribute name="Implementation-Version" value="${millstone.version}"/> 
       			<attribute name="Implementation-Vendor" value="${millstone.wa.impl.vendor}"/>
     		</section>
 		</manifest>		
 	</target>
 
 	<!-- Compile Millstone Base -->
-	<target name="compile-millstone-base">	
+	<target name="compile-millstone-base" depends="check-millstone-base">	
+		<fail message="Millstone Base not specified. (Use: -Dmillstone.base.dir)" unless="millstone.base.dir"/>		
 		<ant dir="${millstone.base.dir}"/>
 	</target>
 	
 	<!-- Compile the source code -->
 	<target name="compile" depends="init, compile-millstone-base">
+		<fail message="Servlet Libraries not specified (Use: -Dservlet.jar)" unless="servlet.jar"/>		
         <mkdir dir="${millstone.wa.build.dir}"/>
 		<mkdir dir="${millstone.wa.build.classes.dir}"/>
     	<javac srcdir="${millstone.wa.src.dir}" destdir="${millstone.wa.build.classes.dir}"
@@ -145,7 +148,7 @@
         </jar>
 
         <!-- Create source JAR -->
-        <jar jarfile="${millstone.wa.bin.jar}"
+        <jar jarfile="${millstone.wa.src.jar}"
              compress="true"
              manifest="${millstone.wa.src.manifest.file}">
             <fileset dir="${millstone.wa.src.dir}">
@@ -176,7 +179,7 @@
         <mkdir dir="${millstone.wa.dist.src.dir}"/>
 		<copy todir="${millstone.wa.dist.src.dir}">
 	    	<filterset>
-    	       <filter token="VERSION" value="${version}"/>
+    	       <filter token="VERSION" value="${millstone.version}"/>
             </filterset>
             <fileset dir="${millstone.wa.src.dir}">
               <patternset>

@@ -2,16 +2,16 @@
 <project name="Millstone Base Release" default="package">
 
 	<!-- Initialize version information for development build-->
-	<target name="init-version"  depends="check-release-version" unless="version">
+	<target name="init-version"  depends="check-release-version" unless="millstone.version">
 		<!-- Create current timestamp and version based on that -->
 		<tstamp/>
-		<property name="version" value="${DSTAMP}" />
+		<property name="millstone.version" value="${DSTAMP}" />
 	</target>
 	
 	<!-- Ensure version information for release build-->
-	<target name="check-release-version" unless="version" if="release">
-		<echo message="You must specify version by setting the 'version' property!"/>
-		<echo message="For example: -Dversion=3.1.1"/>
+	<target name="check-release-version" unless="millstone.version" if="release">
+		<echo message="You must specify version by setting the 'millstone.version' property!"/>
+		<echo message="For example: -Dmillstone.version=3.1.1"/>
 	</target>
 
 	<!-- Initialize environment -->
@@ -43,8 +43,8 @@
 	 <property name="millstone.base.impl.vendor" value="IT Mill Ltd"/>
 
      <!-- Defaults for jar file names-->
-	 <property name="millstone.base.bin.jar" value="${millstone.base.dist.dir}/millstone-base-${version}.jar"/>
-	 <property name="millstone.base.src.jar" value="${millstone.base.dist.dir}/millstone-base-src-${version}.jar"/>
+	 <property name="millstone.base.bin.jar" value="${millstone.base.dist.dir}/millstone-base-${millstone.version}.jar"/>
+	 <property name="millstone.base.src.jar" value="${millstone.base.dist.dir}/millstone-base-src-${millstone.version}.jar"/>
 
 	<echo message="Building Millstone Base"/>
 	<echo message="Source: ${millstone.base.src.dir}" />
@@ -66,10 +66,10 @@
 			<attribute name="Built-By" value="${user.name}"/>
     		<section name="${millstone.base.manifest.section}">
       			<attribute name="Specification-Title" value="${millstone.base.spec.title}"/>
-      			<attribute name="Specification-Version" value="${version}"/>
+      			<attribute name="Specification-Version" value="${millstone.version}"/>
       			<attribute name="Specification-Vendor" value="${millstone.base.spec.vendor}"/>
       			<attribute name="Implementation-Title" value="${millstone.base.impl.title}"/>
-      			<attribute name="Implementation-Version" value="${version}"/> 
+      			<attribute name="Implementation-Version" value="${millstone.version}"/> 
       			<attribute name="Implementation-Vendor" value="${millstone.base.impl.vendor}"/>
     		</section>
 		</manifest>	
@@ -77,10 +77,10 @@
 			<attribute name="Built-By" value="${user.name}"/>
     		<section name="${millstone.base.manifest.section}">
       			<attribute name="Specification-Title" value="${millstone.base.spec.title}"/>
-      			<attribute name="Specification-Version" value="${version}"/>
+      			<attribute name="Specification-Version" value="${millstone.version}"/>
       			<attribute name="Specification-Vendor" value="${millstone.base.spec.vendor}"/>
       			<attribute name="Implementation-Title" value="${millstone.base.impl.title}"/>
-      			<attribute name="Implementation-Version" value="${version}"/> 
+      			<attribute name="Implementation-Version" value="${millstone.version}"/> 
       			<attribute name="Implementation-Vendor" value="${millstone.base.impl.vendor}"/>
     		</section>
 		</manifest>
@@ -115,7 +115,7 @@
         </jar>
 
         <!-- Create source JAR -->
-        <jar jarfile="${millstone.base.bin.jar}"
+        <jar jarfile="${millstone.base.src.jar}"
              compress="true"
              manifest="${millstone.base.src.manifest.file}">
             <fileset dir="${millstone.base.src.dir}">
@@ -130,7 +130,7 @@
         <mkdir dir="${millstone.base.dist.src.dir}"/>
 		<copy todir="${millstone.base.dist.src.dir}">
 	    	<filterset>
-    	       <filter token="VERSION" value="${version}"/>
+    	       <filter token="VERSION" value="${millstone.version}"/>
             </filterset>
             <fileset dir="${millstone.base.src.dir}">
               <patternset>
