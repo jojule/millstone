@@ -90,8 +90,12 @@ public class TabSheet extends AbstractComponentContainer {
 			tabs.remove(c);
 			tabCaptions.remove(c);
 			if (c.equals(selected)) {
-				selected = (Component) tabs.getFirst();
-				fireSelectedTabChange();
+				if (tabs.isEmpty()) 
+					selected = null;
+				else {
+					selected = (Component) tabs.getFirst();
+					fireSelectedTabChange();
+				}
 			}
 			requestRepaint();
 		}
