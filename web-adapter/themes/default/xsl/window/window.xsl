@@ -10,9 +10,12 @@
       <xsl:call-template name="window-head"/>
     </HEAD>    
     <BODY>
+
+      <!-- Set class by Window style -->
+	  <xsl:if test="string-length(@style) &gt; 0"><xsl:attribute name="CLASS"><xsl:value-of select="@style"/></xsl:attribute></xsl:if>
     
       <!-- Special handling of modal windows -->
-      <xsl:if test="$dhtml and (@style='modal')"><SCRIPT>makeModal(window);</SCRIPT></xsl:if>	 
+      <xsl:if test=$dhtml and (@style='modal')"><SCRIPT>makeModal(window);</SCRIPT></xsl:if>	 
       
 	  <!-- Window resize variable ids -->
       <xsl:variable name="heightid"><xsl:value-of select="./integer[@name='height']/@id"/></xsl:variable>
