@@ -38,6 +38,7 @@
 
 package org.millstone.base.data.util;
 
+import java.util.*;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Iterator;
@@ -350,7 +351,11 @@ public class IndexedContainer
 	 * @return ID of the first Item in the list
 	 */
 	public Object firstItemId() {
-		return itemIds.getFirst();
+		try {
+			return itemIds.getFirst();
+		} catch (NoSuchElementException e) {
+		}
+		return null;
 	}
 
 	/** Gets the ID of the last Item in the list.
