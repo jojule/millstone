@@ -7,23 +7,34 @@
 
 <xsl:template name="client-probe">
 
-    <SCRIPT LANGUAGE="javascript1.1">
+    <script language="javascript1.1">
+<!--
     	var ver11 = "JavaScript 1.1";
-    </SCRIPT>
-    <SCRIPT LANGUAGE="javascript1.2">
+// -->
+    </script>
+    <script language="javascript1.2">
+<!--
     	var ver12 = "JavaScript 1.2";
-    </SCRIPT>
-    <SCRIPT LANGUAGE="javascript1.3">
+// -->
+    </script>
+    <script language="javascript1.3">
+<!--
    		var ver13 = "JavaScript 1.3";
-	</SCRIPT>
-    <SCRIPT LANGUAGE="javascript1.4">
+// -->
+	</script>
+    <script language="javascript1.4">
+<!--
     	var ver14 = "JavaScript 1.4";
-    </SCRIPT>
-    <SCRIPT LANGUAGE="javascript1.5">
+// -->
+    </script>
+    <script language="javascript1.5">
+<!--
     	var ver15 = "JavaScript 1.5";
-    </SCRIPT>
+// -->
+    </script>
 
-    <SCRIPT LANGUAGE="JavaScript">
+    <script language="JavaScript">
+<!--
     	var ver10;
     	var ver11;
     	var ver12;
@@ -47,18 +58,20 @@
     	ver = ver14 ? ver14 : ver;
     	ver = ver15 ? ver15 : ver;
     	ver = jscript ? jscript: ver;
-    </SCRIPT>
+// -->
+    </script>
 
 
     <!-- Form variables -->
 	<xsl:variable name="type">hidden</xsl:variable>
-   	<INPUT ID="wa_clientprobe" NAME="wa_clientprobe" TYPE="{$type}" VALUE="0" />
-   	<INPUT ID="wa_jsversion" NAME="wa_jsversion" TYPE="{$type}" VALUE="" />
-   	<INPUT ID="wa_screenwidth" NAME="wa_screenwidth" TYPE="{$type}" VALUE="" />
-   	<INPUT ID="wa_screenheight" NAME="wa_screenheight" TYPE="{$type}" VALUE="" />
-   	<INPUT ID="wa_javaenabled" NAME="wa_javaenabled" TYPE="{$type}" VALUE="" />
+   	<input id="wa_clientprobe" name="wa_clientprobe" type="{$type}" value="0" />
+   	<input id="wa_jsversion" name="wa_jsversion" type="{$type}" value="" />
+   	<input id="wa_screenwidth" name="wa_screenwidth" type="{$type}" value="" />
+   	<input id="wa_screenheight" name="wa_screenheight" type="{$type}" value="" />
+   	<input id="wa_javaenabled" name="wa_javaenabled" type="{$type}" value="" />
 
-  <SCRIPT LANGUAGE="JavaScript">
+  <script language="JavaScript">
+<!--
 
     function setVariables() {
     	document.millstone.wa_clientprobe.value = "1";
@@ -69,7 +82,8 @@
     }
     
     setVariables();
-  </SCRIPT>
+// -->
+  </script>
 
 </xsl:template>
 
