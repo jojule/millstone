@@ -65,7 +65,7 @@ import org.millstone.base.terminal.Resource;
  * @version @VERSION@
  * @since 3.0
  */
-public class Tree extends Select implements Container.Hierarchical {
+public class Tree extends Select implements Container.Hierarchical, Action.Container {
 
 	/* Static members ***************************************************** */
 
