@@ -1,7 +1,7 @@
 
-document.write("<DIV STYLE='border: 1px solid black; background: #ffffaa;'><b>Debug</b><PRE STYLE='border-top: 1px solid gray;' id='debug'></PRE></DIV>");
+document.write("<hr><b>Debug</b><br/><TEXTAREA STYLE='border: 1px solid gray; background-color: #ffffbb' id='debug' COLS='80' ROWS='10'></TEXTAREA>");
 function debug(message) {
-    document.getElementById("debug").innerHTML = message;
+    document.getElementById("debug").value = message;
 }
 
 // Load updates and return them as xml
@@ -10,6 +10,7 @@ function getChangesUIDL() {
 	x.open("GET", windowUrl + "?xmlHttpRequest=1&repaintAll=1", false);
 	x.send(null);
 	var updates = x.responseXML;
+	debug(x.responseText);
 	delete x;
 	return updates;
 }	
