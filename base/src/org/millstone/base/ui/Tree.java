@@ -283,22 +283,6 @@ public class Tree extends Select implements Container.Hierarchical {
 			// Selections are handled by the select component
 			super.changeVariables(source, variables);
 
-			if (variables.containsKey("newitem")) {
-				
-				String id = (String) variables.get("newitem");
-				
-				// If the new item is in the tree
-				if (containsId(id)) {
-					String parent = (String) variables.get("newitemparent");
-					Object parentId = null;
-					if (parent != null) parentId = itemIdMapper.get(parent);
-					if (parentId != null && containsId(parentId)) setParent(id, parentId);
-					String type = (String) variables.get("newitemtype");
-					setChildrenAllowed(id, (type != null && type.equals("node")));
-
-				}
-			}
-
 			// Actions
 			if (variables.containsKey("action")) {
 
@@ -739,6 +723,17 @@ public class Tree extends Select implements Container.Hierarchical {
 		}
 
 		return visible;
+	}
+
+	/** Adding new items is not supported. 
+	 * @see org.millstone.base.ui.Select#setNewItemsAllowed(boolean)
+	 * @throws UnsupportedOperationException if set to true.
+	 */
+	public void setNewItemsAllowed(boolean allowNewOptions)
+	throws UnsupportedOperationException
+	{
+		if (allowNewOptions)
+			throw new UnsupportedOperationException();
 	}
 
 }

@@ -1282,4 +1282,15 @@ public class Table extends Select implements Action.Container {
 		super.containerPropertySetChange(event);
 	}
 
+	/** Adding new items is not supported. 
+	 * @see org.millstone.base.ui.Select#setNewItemsAllowed(boolean)
+	 * @throws UnsupportedOperationException if set to true.
+	 */
+	public void setNewItemsAllowed(boolean allowNewOptions)
+	throws UnsupportedOperationException
+	{
+		if (allowNewOptions)
+			throw new UnsupportedOperationException();
+	}
+
 }
