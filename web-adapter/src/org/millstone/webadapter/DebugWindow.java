@@ -125,12 +125,12 @@ public class DebugWindow extends Window {
 		Form browser = new Form();
 		browser.setItemDataSource(
 			new BeanItem(WebBrowserProbe.getTerminalType(session)));
-		browser.removeProperty("class");
-		browser.replaceWithOptionList(
+		browser.removeItemProperty("class");
+		browser.replaceWithSelect(
 			"javaScriptVersion",
 			WebBrowser.JAVASCRIPT_VERSIONS,
 			WebBrowser.JAVASCRIPT_VERSIONS);
-		browser.replaceWithOptionList(
+		browser.replaceWithSelect(
 			"markupVersion",
 			WebBrowser.MARKUP_VERSIONS,
 			WebBrowser.MARKUP_VERSIONS);
@@ -172,9 +172,9 @@ public class DebugWindow extends Window {
 		Object[] keys,
 		String[] names) {
 		Select s = new Select(caption);
-		s.addProperty("name", String.class, "");
+		s.addContainerProperty("name", String.class, "");
 		for (int i = 0; i < keys.length; i++) {
-			s.addItem(keys[i]).getProperty("name").setValue(names[i]);
+			s.addItem(keys[i]).getItemProperty("name").setValue(names[i]);
 		}
 		s.setItemCaptionPropertyId("name");
 		return s;
