@@ -334,6 +334,9 @@ public class WebAdapterServlet
 			if (application == null)
 				application = createApplication(request);
 
+			// Is this a download request from application
+			DownloadStream download = null;
+
 			// The rest of the process is synchronized with the application
 			// in order to guarantee that no parallel variable handling is 
 			// made
@@ -351,117 +354,133 @@ public class WebAdapterServlet
 				Map unhandledParameters = variableMap.handleVariables(request);
 
 				// Handle the URI if the application is still running
-				if (application.isRunning()
-					&& handleURI(application, request, response))
-					return;
-
-				// Find the window within the application
-				Window window = null;
 				if (application.isRunning())
-					window = getApplicationWindow(request, application);
+					download = handleURI(application, request, response);
 
-				// Handle the unhandled parameters if the application is still running
-				if (window != null
-					&& unhandledParameters != null
-					&& !unhandledParameters.isEmpty())
-					window.handleParameters(unhandledParameters);
+				// If this is not a download request
+				if (download == null) {
 
-				// Remove application if it has stopped
-				if (!application.isRunning()) {
-					endApplication(request, response, application);
-					return;
-				}
+					// Find the window within the application
+					Window window = null;
+					if (application.isRunning())
+						window = getApplicationWindow(request, application);
 
-				// Return if no window found
-				if (window == null)
-					return;
+					// Handle the unhandled parameters if the application is still running
+					if (window != null
+						&& unhandledParameters != null
+						&& !unhandledParameters.isEmpty())
+						window.handleParameters(unhandledParameters);
 
-				// Get the terminal type for the window
-				WebBrowser terminalType = (WebBrowser) window.getTerminal();
-
-				// Set terminal type for the window, if not already set
-				if (terminalType == null) {
-					terminalType =
-						WebBrowserProbe.getTerminalType(request.getSession());
-				}
-
-				// Find theme and initialize TransformerType
-				UIDLTransformerType transformerType = null;
-				if (window.getTheme() != null) {
-					Theme activeTheme;
-					if ((activeTheme =
-						this.themeSource.getThemeByName(window.getTheme()))
-						!= null) {
-						transformerType =
-							new UIDLTransformerType(terminalType, activeTheme);
-					} else {
-						Log.info(
-							"Theme named '"
-								+ window.getTheme()
-								+ "' not found. Using system default theme.");
+					// Remove application if it has stopped
+					if (!application.isRunning()) {
+						endApplication(request, response, application);
+						return;
 					}
-				}
 
-				// Use default theme if selected theme was not found.
-				if (transformerType == null) {
-					transformerType =
-						new UIDLTransformerType(
-							terminalType,
-							this.themeSource.getThemeByName(
-								this.SESSION_DEFAULT_THEME));
-				}
+					// Return if no window found
+					if (window == null)
+						return;
 
-				transformer =
-					this.transformerFactory.getTransformer(transformerType);
+					// Get the terminal type for the window
+					WebBrowser terminalType = (WebBrowser) window.getTerminal();
 
-				// Set the response type
-				response.setContentType(terminalType.getContentType());
+					// Set terminal type for the window, if not already set
+					if (terminalType == null) {
+						terminalType =
+							WebBrowserProbe.getTerminalType(
+								request.getSession());
+					}
 
-				// Create UIDL writer
-				WebPaintTarget paintTarget =
-					transformer.getPaintTarget(variableMap);
+					// Find theme and initialize TransformerType
+					UIDLTransformerType transformerType = null;
+					if (window.getTheme() != null) {
+						Theme activeTheme;
+						if ((activeTheme =
+							this.themeSource.getThemeByName(window.getTheme()))
+							!= null) {
+							transformerType =
+								new UIDLTransformerType(
+									terminalType,
+									activeTheme);
+						} else {
+							Log.info(
+								"Theme named '"
+									+ window.getTheme()
+									+ "' not found. Using system default theme.");
+						}
+					}
 
-				// Assure that the correspoding debug window will be repainted property
-				// by clearing it before the actual paint.
-				Window debugWindow = application.getDebugWindow();
-				if (debugWindow != null && debugWindow != window) {
-					((DebugWindow) debugWindow).setWindowUIDL(
+					// Use default theme if selected theme was not found.
+					if (transformerType == null) {
+						transformerType =
+							new UIDLTransformerType(
+								terminalType,
+								this.themeSource.getThemeByName(
+									this.SESSION_DEFAULT_THEME));
+					}
+
+					transformer =
+						this.transformerFactory.getTransformer(transformerType);
+
+					// Set the response type
+					response.setContentType(terminalType.getContentType());
+
+					// Create UIDL writer
+					WebPaintTarget paintTarget =
+						transformer.getPaintTarget(variableMap);
+
+					// Assure that the correspoding debug window will be repainted property
+					// by clearing it before the actual paint.
+					Window debugWindow = application.getDebugWindow();
+					if (debugWindow != null && debugWindow != window) {
+						((DebugWindow) debugWindow).setWindowUIDL(
+							window,
+							"Painting...");
+					}
+
+					// Paint window		
+					window.paint(paintTarget);
+					paintTarget.close();
+
+					// Window is now painted
+					windowPainted(application, window);
+
+					// Debug
+					if (debugWindow != null && debugWindow != window) {
+						((DebugWindow) debugWindow).setWindowUIDL(
+							window,
+							paintTarget.getUIDL());
+					}
+
+					// Set the function library state for this thread
+					ThemeFunctionLibrary.setState(
+						application,
 						window,
-						"Painting...");
+						transformerType.getWebBrowser(),
+						request.getSession(),
+						this,
+						transformerType.getTheme().getName());
+
 				}
-
-				// Paint window		
-				window.paint(paintTarget);
-				paintTarget.close();
-
-				// Window is now painted
-				windowPainted(application, window);
-
-				// Debug
-				if (debugWindow != null && debugWindow != window) {
-					((DebugWindow) debugWindow).setWindowUIDL(
-						window,
-						paintTarget.getUIDL());
-				}
-
-				// Set the function library state for this thread
-				ThemeFunctionLibrary.setState(
-					application,
-					window,
-					transformerType.getWebBrowser(),
-					request.getSession(),
-					this,
-					transformerType.getTheme().getName());
-
 			}
 
-			// Transform and output the result to browser
-			// Note that the transform and transfer of the result is
-			// not synchronized with the variable map. This allows
-			// parallel transfers and transforms for better performance,
-			// but requires that all calls from the XSL to java are 
-			// thread-safe
-			transformer.transform(out);
+			// For normal requests, transform the window
+			if (download == null) {
+
+				// Transform and output the result to browser
+				// Note that the transform and transfer of the result is
+				// not synchronized with the variable map. This allows
+				// parallel transfers and transforms for better performance,
+				// but requires that all calls from the XSL to java are 
+				// thread-safe
+				transformer.transform(out);
+			}
+
+			// For download request, transfer the downloaded data
+			else {
+
+				handleDownload(download, request, response);
+			}
 
 		} catch (UIDLTransformerException te) {
 			// Write the error report to client
@@ -501,7 +520,7 @@ public class WebAdapterServlet
 	 *  @return boolean True if the request was handled and further processing
 	 *           should be suppressed, false otherwise.
 	 */
-	private boolean handleURI(
+	private DownloadStream handleURI(
 		Application application,
 		HttpServletRequest request,
 		HttpServletResponse response) {
@@ -510,7 +529,7 @@ public class WebAdapterServlet
 
 		// If no URI is available
 		if (uri == null || uri.length() == 0 || uri.equals("/"))
-			return false;
+			return null;
 
 		// Remove the leading /	
 		while (uri.startsWith("/") && uri.length() > 0)
@@ -520,20 +539,30 @@ public class WebAdapterServlet
 		DownloadStream stream =
 			application.handleURI(application.getURL(), uri);
 
-		// If no stream is returned, continue normally
-		if (stream == null)
-			return false;
+		return stream;
+	}
+
+	/** Handle the requested URI.
+	 *  An application can add handlers to do special processing, when
+	 *  a certain URI is requested. The handlers are invoked before
+	 *  any windows URIs are processed and if a DownloadStream is
+	 *  returned it is sent to the client.
+	 *  @see org.millstone.base.terminal.URIHandler
+	 *  
+	 *  @param application Application owning the URI
+	 *  @param request HTTP request instance
+	 *  @param response HTTP response to write to.
+	 *  @return boolean True if the request was handled and further processing
+	 *           should be suppressed, false otherwise.
+	 */
+	private void handleDownload(
+		DownloadStream stream,
+		HttpServletRequest request,
+		HttpServletResponse response) {
 
 		// Download from given stream
 		InputStream data = stream.getStream();
 		if (data != null) {
-			if (this.debugMode) {
-				Log.info(
-					"Returned data: "
-						+ stream.getContentType()
-						+ " for URI: "
-						+ uri);
-			}
 
 			// Set content type
 			response.setContentType(stream.getContentType());
@@ -576,17 +605,10 @@ public class WebAdapterServlet
 				}
 				out.close();
 			} catch (IOException ignored) {
-
-				// Download failed
-				return true;
 			}
 
-			// Download complete
-			return true;
 		}
 
-		// If the stream could not be opened, continue normally
-		return false;
 	}
 
 	/** Look for default theme JAR file.
