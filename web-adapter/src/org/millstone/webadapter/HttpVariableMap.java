@@ -499,7 +499,8 @@ public class HttpVariableMap {
 												convert(varType, values[0]);
 											variables.put(varName, val);
 											changed
-												|= (val != null && !val.equals(varOldValue));
+												|= ((val == null && varOldValue != null) 
+												|| (val != null && !val.equals(varOldValue)));
 										} else if (
 											values.length == 0
 												&& varType.equals(

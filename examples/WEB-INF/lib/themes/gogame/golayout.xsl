@@ -59,7 +59,7 @@
 		</DIV>
 
 	   	<!-- Stream for listening updates -->
-   		<IFRAME SRC="?SERVER_COMMANDS=1" WIDTH="0" HEIGHT="0" STYLE="display: none;"/>
+   		<IFRAME SRC="?SERVER_COMMANDS=1" WIDTH="0" HEIGHT="0"/>
 	</xsl:if>
 
 

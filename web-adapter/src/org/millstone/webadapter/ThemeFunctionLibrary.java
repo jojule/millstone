@@ -205,18 +205,23 @@ public class ThemeFunctionLibrary {
 	 * 
 	 */
 	static public String windowScript() {
-		return generateWindowScript(window());
+		return generateWindowScript(
+			window(),
+			application(),
+			(WebAdapterServlet) ((Object[]) state.get())[WEBADAPTERSERVLET],
+			browser());
 	}
 
-	static private String generateWindowScript(Window window) {
+	static protected String generateWindowScript(
+		Window window,
+		Application app,
+		WebAdapterServlet wa,
+		WebBrowser browser) {
 
 		StringBuffer script = new StringBuffer();
-		Application app = window.getApplication();
 		LinkedList update = new LinkedList();
 
 		// Add all the windows needto update list
-		WebAdapterServlet wa =
-			(WebAdapterServlet) ((Object[]) state.get())[WEBADAPTERSERVLET];
 		Set dirtyWindows = wa != null ? wa.getDirtyWindows(app) : null;
 		if (dirtyWindows != null)
 			for (Iterator i = dirtyWindows.iterator(); i.hasNext();) {
@@ -232,7 +237,7 @@ public class ThemeFunctionLibrary {
 		// Remove all windows that are in frames, of such frame windows that
 		// will be updated anyway
 		Object[] u = update.toArray();
-		if (u.length > 0 && (window instanceof FrameWindow))
+		if (u.length > 0 && (window != null && window instanceof FrameWindow))
 			u[u.length - 1] = window;
 		for (int i = 0; i < u.length; i++) {
 			try {
@@ -259,13 +264,17 @@ public class ThemeFunctionLibrary {
 		}
 
 		// Set window name
-		script.append(
-			"window.name = \"" + getWindowTargetName(app, window) + "\";\n");
+		if (window != null) {
+			script.append(
+				"window.name = \""
+					+ getWindowTargetName(app, window)
+					+ "\";\n");
+		}
 
 		// Generate window updatescript
 		for (Iterator i = update.iterator(); i.hasNext();) {
 			Window w = (Window) i.next();
-			script.append(getWindowRefreshScript(app, w, browser()));
+			script.append(getWindowRefreshScript(app, w, browser));
 
 			wa.removeDirtyWindow(app, w);
 
@@ -275,7 +284,7 @@ public class ThemeFunctionLibrary {
 		}
 
 		// Close current window if it is not visible
-		if (!window.isVisible())
+		if (window == null || !window.isVisible())
 			script.append("window.close();\n");
 
 		return script.toString();
@@ -417,7 +426,7 @@ public class ThemeFunctionLibrary {
 
 		String url = window.getURL().toString();
 
-		String features = "";
+		String features = "dependent=yes,";
 		int width = window.getWidth();
 		int height = window.getHeight();
 		if (width >= 0)

@@ -39,19 +39,18 @@ package org.millstone.webadapter;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.SoftReference;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+
+import javax.servlet.ServletContext;
 
 /** Theme source for reading themes from a JAR archive.
  *  At this time only jar files are supported and an archive
@@ -60,18 +59,17 @@ import java.util.jar.JarFile;
  * @version @VERSION@
  * @since 3.0
  */
-public class JarThemeSource implements ThemeSource {
+public class ServletThemeSource implements ThemeSource {
 
-	private File file;
-	private JarFile jar;
+	private ServletContext context;
 	private Theme theme;
 	private String path;
-	private String name;
 	private WebAdapterServlet webAdapterServlet;
 	private Cache resourceCache = new Cache();
 
 	/** Collection of subdirectory entries */
 	private Collection subdirs = new LinkedList();
+	private URL descFile;
 
 	/** Creates a new instance of ThemeRepository by reading the themes
 	 * from a local directory.
@@ -79,71 +77,51 @@ public class JarThemeSource implements ThemeSource {
 	 * @param path Path inside the archive to be processed.
 	 * @throws FileNotFoundException if no theme files are found
 	 */
-	public JarThemeSource(
-		File file,
+	public ServletThemeSource(
+		ServletContext context,
 		WebAdapterServlet webAdapterServlet,
 		String path)
-		throws ThemeException, FileNotFoundException, IOException {
+		throws IOException, ThemeException {
 
-		this.file = file;
-		this.jar = new JarFile(file);
 		this.theme = null;
+		this.webAdapterServlet = webAdapterServlet;
+		this.context = context;
+
+		// Format path
 		this.path = path;
-		if (this.path.length() > 0 && !this.path.endsWith("/")) {
+		if ((this.path.length() > 0) && !this.path.endsWith("/")) {
 			this.path = this.path + "/";
 		}
-		this.name = file.getName();
-		if (this.name.toLowerCase().endsWith(".jar")) {
-			this.name = this.name.substring(0, this.name.length() - 4);
-		}
-
-
-		this.webAdapterServlet = webAdapterServlet;
 
 		// Load description file
-		JarEntry entry = jar.getJarEntry(this.path + Theme.DESCRIPTIONFILE);
-		if (entry != null) {
-			try {
-				this.theme = new Theme(jar.getInputStream(entry));
-			} catch (Exception e) {
-				throw new ThemeException(
-					"JarThemeSource: Failed to load '" + path + "': " + e);
-			}
-
-			// Debug info
-			if (webAdapterServlet.isDebugMode()) {
-				Log.debug("Added JarThemeSource: " + this.file + ":" + this.path);
-			}
-
-		} else {
-			// There was no description file found. 
-			// Handle subdirectories recursively		
-			for (Enumeration entries = jar.entries();
-				entries.hasMoreElements();
-				) {
-				JarEntry e = (JarEntry) entries.nextElement();
-				if (e.getName().startsWith(this.path)) {
-					if (e.getName().endsWith("/")
-						&& e.getName().indexOf('/', this.path.length())
-							== (e.getName().length() - 1)) {
-						this.subdirs.add(
-							new JarThemeSource(
-								this.file,
-								this.webAdapterServlet,
-								e.getName()));
-					}
+		this.descFile = context.getResource(this.path + Theme.DESCRIPTIONFILE);
+		InputStream entry =
+			context.getResourceAsStream(this.path + Theme.DESCRIPTIONFILE);
+		try {
+			if (entry != null) {
+				try {
+					this.theme = new Theme(entry);
+				} catch (Exception e) {
+					throw new ThemeException(
+						"ServletThemeSource: Failed to load '"
+							+ path
+							+ "': "
+							+ e);
 				}
-			}
+				entry.close();
 
-			if (this.subdirs.isEmpty()) {
+				// Debug info
 				if (webAdapterServlet.isDebugMode()) {
-					Log.info(
-						"JarThemeSource: Ignoring empty JAR path: "
-							+ this.file
-							+ " path: "
-							+ this.path);
+					Log.debug("Added ServletThemeSource: " + this.path);
 				}
+
+			} else {
+				throw new IllegalArgumentException(
+					"ServletThemeSource: Invalid theme resource: " + path);
 			}
+		} finally {
+			if (entry != null)
+				entry.close();
 		}
 	}
 
@@ -153,62 +131,58 @@ public class JarThemeSource implements ThemeSource {
 	public Collection getXSLStreams(Theme theme, WebBrowser type)
 		throws ThemeException {
 		Collection xslFiles = new LinkedList();
+
 		// If this directory contains a theme 
 		// return XSL from this theme	
 		if (this.theme != null) {
 
 			if (webAdapterServlet.isDebugMode()) {
-				Log.info("JarThemeSource: Loading XSL from: " + theme);
+				Log.info("ServletThemeSource: Loading theme: " + theme);
 			}
 
-			// Reload the theme if JAR has been modified
-			JarEntry entry = jar.getJarEntry(this.path + Theme.DESCRIPTIONFILE);
-			if (entry != null) {
-				try {
-					this.theme = new Theme(jar.getInputStream(entry));
-				} catch (IOException e) {
-					throw new ThemeException(
-						"Failed to read description: "
-							+ this.file
-							+ ":"
-							+ this.path
-							+ Theme.DESCRIPTIONFILE);
+			// Reload the description file
+			InputStream entry =
+				context.getResourceAsStream(this.path + Theme.DESCRIPTIONFILE);
+			try {
+				if (entry != null) {
+					this.theme = new Theme(entry);
 				}
+			} catch (Exception e) {
+				throw new ThemeException(
+					"ServletThemeSource: Failed to load '" + path + "': " + e);
+			} finally {
+				if (entry != null)
+					try {
+						entry.close();
+					} catch (IOException ignored) {
+					}
 			}
 
 			Collection fileNames = theme.getFileNames(type);
 			// Add all XSL file streams
 			for (Iterator i = fileNames.iterator(); i.hasNext();) {
-				entry = jar.getJarEntry(this.path + (String) i.next());
-				try {
-					xslFiles.add(jar.getInputStream(entry));
-				} catch (java.io.FileNotFoundException e) {
-					throw new ThemeException(
-						"XSL File not found: " + this.file + ": " + entry);
-				} catch (java.io.IOException e) {
-					throw new ThemeException(
-						"Failed to read XSL file. " + this.file + ": " + entry);
-				}
+				entry =
+					context.getResourceAsStream(
+						(this.path + (String) i.next()));
+				xslFiles.add(entry);
 			}
 
-		} else {
-
-			// Handle subdirectories in archive: return the first match
-			for (Iterator i = this.subdirs.iterator(); i.hasNext();) {
-				ThemeSource source = (ThemeSource) i.next();
-				if (source.getThemes().contains(theme))
-					xslFiles.addAll(source.getXSLStreams(theme, type));
-			}
 		}
-
 		return xslFiles;
 	}
 
-	/** Return modication time of the jar file.
+	/** Return modication time of the description file.
 	 * @see org.millstone.webadapter.ThemeSource#getModificationTime()
 	 */
 	public long getModificationTime() {
-		return this.file.lastModified();
+		long modTime = 0;
+		try {
+			URLConnection conn = this.descFile.openConnection();
+			modTime = conn.getLastModified();
+		} catch (Exception ignored) {
+			// In case of exceptions, return zero
+		}
+		return modTime;
 	}
 
 	/**
@@ -217,29 +191,38 @@ public class JarThemeSource implements ThemeSource {
 	public InputStream getResource(String resourceId)
 		throws ThemeSource.ThemeException {
 
-		// Return the resource inside the jar file
-		JarEntry entry = jar.getJarEntry(resourceId);
-		if (entry != null)
+		// Check the id
+		String name = this.getName();
+		int namelen = name.length();
+		if (resourceId == null
+			|| !resourceId.startsWith(name + "/")
+			|| resourceId.length() <= (namelen + 1)) {
+			return null;
+		}
+
+		// Find the resource
+		String streamName = this.path + resourceId.substring(namelen + 1);
+		InputStream stream = context.getResourceAsStream(streamName);
+		if (stream != null)
 			try {
 
 				// Try cache
-				byte[] data = (byte[]) resourceCache.get(entry);
+				byte[] data = (byte[]) resourceCache.get(stream);
 				if (data != null)
 					return new ByteArrayInputStream(data);
 
 				// Read data
 				int bufSize = 1024;
 				ByteArrayOutputStream out = new ByteArrayOutputStream(bufSize);
-				InputStream in = jar.getInputStream(entry);
 				byte[] buf = new byte[bufSize];
 				int n = 0;
-				while ((n = in.read(buf)) >= 0) {
+				while ((n = stream.read(buf)) >= 0) {
 					out.write(buf, 0, n);
 				}
 				data = out.toByteArray();
 
 				// Cache data
-				resourceCache.put(entry, data);
+				resourceCache.put(stream, data);
 				return new ByteArrayInputStream(data);
 			} catch (IOException e) {
 			}
@@ -255,11 +238,6 @@ public class JarThemeSource implements ThemeSource {
 		Collection themes = new LinkedList();
 		if (this.theme != null) {
 			themes.add(this.theme);
-		} else {
-			for (Iterator i = this.subdirs.iterator(); i.hasNext();) {
-				ThemeSource source = (ThemeSource) i.next();
-				themes.addAll(source.getThemes());
-			}
 		}
 		return themes;
 	}
@@ -268,7 +246,7 @@ public class JarThemeSource implements ThemeSource {
 	* @see org.millstone.webadapter.ThemeSource#getName()
 	*/
 	public String getName() {
-		return this.name;
+		return this.theme.getName();
 	}
 
 	/**																											 

@@ -217,13 +217,15 @@ public class Theme extends DefaultHandler {
 
 			xr.parse(descriptionSource);
 
+			return;
 		} catch (ParserConfigurationException e) {
-			System.out.println(e);
+			e.printStackTrace();
 		} catch (SAXException e) {
-			System.out.println(e);
+			e.getException().printStackTrace();
 		} catch (IOException e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
+
 	}
 
 	/** Parse start tag in XML stream.
@@ -242,7 +244,11 @@ public class Theme extends DefaultHandler {
 			this.description = "(none)";
 			this.openStrings.push(new StringBuffer());
 		} else if (TAG_EXTENDS.equals(qName)) {
-			this.parentThemes.add(atts.getValue(ATTR_THEME));
+			String themeName = atts.getValue(ATTR_THEME);
+			if (this.name.equals(themeName))
+				throw new IllegalArgumentException(
+					"Theme " + this.name + " extends itself.");
+			this.parentThemes.add(themeName);
 		} else if (TAG_FILE.equals(qName)) {
 			File f = new File(atts.getValue(ATTR_NAME));
 			if (this.openFilesets.isEmpty()) {
@@ -331,7 +337,8 @@ public class Theme extends DefaultHandler {
 		if (TAG_FILESET.equals(qName)) {
 			this.openFilesets.pop();
 		} else if (TAG_DESCRIPTION.equals(qName)) {
-			this.description = ((StringBuffer) this.openStrings.pop()).toString();
+			this.description =
+				((StringBuffer) this.openStrings.pop()).toString();
 		} else if (TAG_REQUIRE.equals(qName)) {
 			this.openRequirements.pop();
 
@@ -407,15 +414,17 @@ public class Theme extends DefaultHandler {
 	 * @return List of filenames belonging to this theme.
 	 */
 	public List getFileNames() {
-		if (files == null) return new LinkedList();
+		if (files == null)
+			return new LinkedList();
 		return files.getFileNames();
 	}
 
 	/** Get list of file names matching WebBrowserType.
 	 * @return list of filenames in this theme supporting the given terminal.
 	 */
-	public List getFileNames(WebBrowser terminal) {		
-		if (files == null) return new LinkedList();
+	public List getFileNames(WebBrowser terminal) {
+		if (files == null)
+			return new LinkedList();
 		return this.files.getFileNames(terminal);
 	}
 
@@ -432,7 +441,7 @@ public class Theme extends DefaultHandler {
 			+ parentThemes
 			+ "]"
 			+ " files={"
-			+ files.toString()
+			+ (files != null ? files.toString() : "null")
 			+ "}";
 	}
 
@@ -494,8 +503,8 @@ public class Theme extends DefaultHandler {
 	 *  Requirement collection introducing methods for
 	 *  combining requirements into single requirement.
 	 * @author IT Mill Ltd.
- 	 * @version @VERSION@
- 	 * @since 3.0
+		 * @version @VERSION@
+		 * @since 3.0
 	 */
 	public interface RequirementCollection extends Requirement {
 
@@ -538,7 +547,7 @@ public class Theme extends DefaultHandler {
 		 * @see java.lang.Object#toString()
 		 */
 		public String toString() {
-			return "not("+requirement+")";
+			return "not(" + requirement + ")";
 		}
 
 	}
@@ -737,9 +746,7 @@ public class Theme extends DefaultHandler {
 		}
 
 		public boolean isMet(WebBrowser terminal) {
-			if (terminal
-				.getMarkupVersion()
-				.supports(this.requiredVersion))
+			if (terminal.getMarkupVersion().supports(this.requiredVersion))
 				return true;
 			Log.info(
 				"Requirement: "
@@ -947,5 +954,5 @@ public class Theme extends DefaultHandler {
 	public String getVersion() {
 		return version;
 	}
-	
+
 }

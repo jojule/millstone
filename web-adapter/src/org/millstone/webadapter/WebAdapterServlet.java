@@ -53,6 +53,7 @@ import javax.servlet.ServletException;
 
 import org.millstone.base.Application;
 import org.millstone.base.ui.Window;
+import org.millstone.webadapter.ThemeSource.ThemeException;
 import org.millstone.base.terminal.Paintable;
 import org.millstone.base.terminal.DownloadStream;
 import org.millstone.base.terminal.ThemeResource;
@@ -61,6 +62,7 @@ import org.millstone.base.terminal.Paintable.RepaintRequestEvent;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -69,10 +71,13 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.WeakHashMap;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -96,6 +101,22 @@ public class WebAdapterServlet
 		Application.WindowDetachListener,
 		Paintable.RepaintRequestListener {
 
+	// Versions
+	private static final int VERSION_MAJOR = 3;
+	private static final int VERSION_MINOR = 0;
+	private static final int VERSION_BUILD = 3;
+	private static final String VERSION =
+		"" + VERSION_MAJOR + "." + VERSION_MINOR + "." + VERSION_BUILD;
+
+	//Configurable parameter names
+	private static final String PARAMETER_DEBUG = "Debug";
+	private static final String PARAMETER_DEFAULT_THEME_JAR = "DefaultThemeJar";
+	private static final String PARAMETER_THEMESOURCE = "ThemeSource";
+	private static final String PARAMETER_THEME_CACHETIME = "ThemeCacheTime";
+	private static final String PARAMETER_MAX_TRANSFORMERS = "MaxTransformers";
+	private static final String PARAMETER_TRANSFORMER_CACHETIME =
+		"TransformerCacheTime";
+
 	private static int DEFAULT_THEME_CACHETIME = 1000 * 60 * 60 * 24;
 	private static int DEFAULT_BUFFER_SIZE = 32 * 1024;
 	private static int DEFAULT_MAX_TRANSFORMERS = 1;
@@ -105,17 +126,24 @@ public class WebAdapterServlet
 	private static String SESSION_BINDING_LISTENER = "bindinglistener";
 	private static String SESSION_DEFAULT_THEME = "default";
 	private static String RESOURCE_URI = "/RES/";
-	private static String THEME_JAR_PREFIX = "millstone-web-themes";
-	private static String THEME_PATH = "/WEB-INF/lib/themes";
+	private static String THEME_DIRECTORY_PATH = "WEB-INF/lib/themes/";
+	private static String THEME_LISTING_FILE =
+		THEME_DIRECTORY_PATH + "themes.txt";
+	private static String DEFAULT_THEME_JAR_PREFIX = "millstone-web-themes";
+	private static String DEFAULT_THEME_JAR =
+		"WEB-INF/lib/" + DEFAULT_THEME_JAR_PREFIX + "-" + VERSION + ".jar";
+	private static String DEFAULT_THEME_TEMP_FILE_PREFIX = "WA_TMP_";
 	private static String SERVER_COMMAND_PARAM = "SERVER_COMMANDS";
 	private static int SERVER_COMMAND_STREAM_MAINTAIN_PERIOD = 15000;
 	private static int SERVER_COMMAND_HEADER_PADDING = 2000;
+
+	// Private fields
 	private Class applicationClass;
 	private Properties applicationProperties;
 	private UIDLTransformerFactory transformerFactory;
 	private CollectionThemeSource themeSource;
 	private String resourcePath = null;
-	private boolean enableBrowserProbe = false;
+	//private boolean enableBrowserProbe = false;
 	private boolean debugMode = false;
 	private int maxConcurrentTransformers;
 	private long transformerCacheTime;
@@ -124,6 +152,7 @@ public class WebAdapterServlet
 	private WeakHashMap applicationToServerCommandStreamLock =
 		new WeakHashMap();
 	private WeakHashMap applicationToLastRequestDate = new WeakHashMap();
+	private List allWindows = new LinkedList();
 
 	/** Called by the servlet container to indicate to a servlet that the
 	 * servlet is being placed into service.
@@ -167,20 +196,16 @@ public class WebAdapterServlet
 		}
 
 		// Get the debug window parameter
-		String debug =
-			applicationProperties.getProperty(DebugWindow.WINDOW_NAME, "false");
+		String debug = getApplicationOrSystemProperty(PARAMETER_DEBUG, "false");
 		// Enable application specific debug
 		this.debugMode = debug.equals("true");
-
-		// Get the default browser parameter
-		String defaultBrowser =
-			applicationProperties.getProperty("browserprobe", "false");
-		this.enableBrowserProbe = defaultBrowser.equals("true");
 
 		// Get the maximum number of simultaneous transformers
 		this.maxConcurrentTransformers =
 			Integer.parseInt(
-				applicationProperties.getProperty("maxtransformers", "-1"));
+				getApplicationOrSystemProperty(
+					PARAMETER_MAX_TRANSFORMERS,
+					"-1"));
 		if (this.maxConcurrentTransformers < 1)
 			this.maxConcurrentTransformers = DEFAULT_MAX_TRANSFORMERS;
 		;
@@ -188,66 +213,50 @@ public class WebAdapterServlet
 		// Get cache time for transformers
 		this.transformerCacheTime =
 			Integer.parseInt(
-				applicationProperties.getProperty(
-					"transformercachetime",
+				getApplicationOrSystemProperty(
+					PARAMETER_TRANSFORMER_CACHETIME,
 					"-1"))
 				* 1000;
 
 		// Get cache time for theme resources
 		this.themeCacheTime =
 			Integer.parseInt(
-				applicationProperties.getProperty("themecachetime", "-1"))
+				getApplicationOrSystemProperty(
+					PARAMETER_THEME_CACHETIME,
+					"-1"))
 				* 1000;
 		if (this.themeCacheTime < 0) {
 			this.themeCacheTime = DEFAULT_THEME_CACHETIME;
 		}
 
-		// Get the theme sources
+		// Add all specified theme sources
 		this.themeSource = new CollectionThemeSource();
-		String themeSources = applicationProperties.getProperty("themesource");
-		if (themeSources != null) {
-			StringTokenizer st = new StringTokenizer(themeSources, ";");
-			while (st.hasMoreTokens()) {
-				File f = new File(st.nextToken());
-				try {
-					if (f.isDirectory()) {
-						this.themeSource.add(new DirectoryThemeSource(f, this));
-					} else {
-						this.themeSource.add(new JarThemeSource(f, this, ""));
-					}
-				} catch (java.io.FileNotFoundException de) {
-					Log.except(
-						"Failed to load the themes from '" + f + "'. Ignoring.",
-						de);
-				} catch (java.io.IOException je) {
-					Log.except("Failed to load the themes from " + f, je);
-				}
-			}
+		List directorySources = getThemeSources();
+		for (Iterator i = directorySources.iterator(); i.hasNext();) {
+			this.themeSource.add((ThemeSource) i.next());
 		}
 
-		// Initialize the default theme sources
-		File f = findDefaultThemeJar();
+		// Add the default theme source
+		String defaultThemeJar =
+			getApplicationOrSystemProperty(
+				PARAMETER_DEFAULT_THEME_JAR,
+				DEFAULT_THEME_JAR);
+		File f = findDefaultThemeJar(defaultThemeJar);
 		try {
 			// Add themes.jar if exists							
 			if (f != null && f.exists())
 				this.themeSource.add(new JarThemeSource(f, this, ""));
+			else {
+				Log.warn("Default theme JAR not found: " + defaultThemeJar);
+			}
 
-		} catch (java.io.FileNotFoundException de) {
-			Log.except("Failed to load themes from " + f, de);
-		} catch (java.io.IOException je) {
-			Log.except("Failed to load the themes from " + f, je);
-		}
-		try {
-			// Add themes directory if exists
-			f = new File(this.getServletContext().getRealPath(THEME_PATH));
-			if (f.exists())
-				this.themeSource.add(new DirectoryThemeSource(f, this));
-
-		} catch (java.io.IOException je) {
-			Log.except("Failed to load the themes from " + f, je);
+		} catch (Exception e) {
+			throw new ServletException(
+				"Failed to load default theme from " + defaultThemeJar,
+				e);
 		}
 
-		// Check themes
+		// Check that at least one themesource was loaded
 		if (this.themeSource.getThemes().size() <= 0) {
 			throw new ServletException("No themes found in specified themesources.");
 		}
@@ -272,6 +281,161 @@ public class WebAdapterServlet
 			throw new ServletException(
 				"Failed to load application class: " + applicationClassName);
 		}
+	}
+
+	/**Get an application or system property value.
+	 * @param parameterName Name or the parameter
+	 * @param defaultValue Default to be used
+	 * @return String value or default if not found
+	 */
+	private String getApplicationOrSystemProperty(
+		String parameterName,
+		String defaultValue) {
+
+		// Try application properties
+		String val = this.applicationProperties.getProperty(parameterName);
+		if (val != null) {
+			return val;
+		}
+
+		// Try lowercased application properties for backward compability with
+		// 3.0.2 and earlier
+		val =
+			this.applicationProperties.getProperty(parameterName.toLowerCase());
+		if (val != null) {
+			return val;
+		}
+
+		// Try system properties
+		String pkgName = this.getClass().getPackage().getName();
+		val = System.getProperty(pkgName + "." + parameterName);
+		if (val != null) {
+			return val;
+		}
+
+		// Try lowercased system properties
+		val = System.getProperty(pkgName + "." + parameterName.toLowerCase());
+		if (val != null) {
+			return val;
+		}
+
+
+
+		return defaultValue;
+	}
+
+	/** Get ThemeSources from given path.
+	 *  Construct the list of avalable themes in path using the following
+	 *  sources:         1. content of THEME_PATH directory (if available) 2.
+	 * The themes   listed in THEME_LIST_FILE 3. "themesource" application
+	 * parameter -  "org. millstone.webadapter. themesource" system property
+	 *  
+	 * @param THEME_DIRECTORY_PATH
+	 * @return List
+	 */
+	private List getThemeSources() throws ServletException {
+
+		List returnValue = new LinkedList();
+
+		// Check the list file in theme directory
+		List sourcePaths = new LinkedList();
+		try {
+			BufferedReader reader =
+				new BufferedReader(
+					new InputStreamReader(
+						this.getServletContext().getResourceAsStream(
+							THEME_LISTING_FILE)));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sourcePaths.add(THEME_DIRECTORY_PATH + "/" + line.trim());
+			}
+			if (this.isDebugMode()) {
+				Log.debug(
+					"Listed "
+						+ sourcePaths.size()
+						+ " themes in "
+						+ THEME_LISTING_FILE
+						+ ". Loading "
+						+ sourcePaths);
+			}
+		} catch (Exception ignored) {
+			// If the file reading fails, just skip to next method
+		}
+
+		// If no file was found or it was empty, 
+		// try to add themes filesystem directory if it is accessible
+		if (sourcePaths.size() <= 0) {
+			if (this.isDebugMode()) {
+				Log.debug(
+					"No themes listed in "
+						+ THEME_LISTING_FILE
+						+ ". Trying to read the content of directory "
+						+ THEME_DIRECTORY_PATH);
+			}
+
+			try {
+				String path =
+					this.getServletContext().getRealPath(THEME_DIRECTORY_PATH);
+				if (path != null) {
+					File f = new File(path);
+					if (f != null && f.exists())
+						returnValue.add(new DirectoryThemeSource(f, this));
+				}
+			} catch (java.io.IOException je) {
+				Log.info(
+					"Theme directory "
+						+ THEME_DIRECTORY_PATH
+						+ " not available. Skipped.");
+			} catch (ThemeException e) {
+				throw new ServletException(
+					"Failed to load themes from " + THEME_DIRECTORY_PATH,
+					e);
+			}
+		}
+
+		// Add the theme sources from application properties
+		String paramValue =
+			getApplicationOrSystemProperty(PARAMETER_THEMESOURCE, null);
+		if (paramValue != null) {
+			StringTokenizer st = new StringTokenizer(paramValue, ";");
+			while (st.hasMoreTokens()) {
+				sourcePaths.add(st.nextToken());
+			}
+		}
+
+		// Construct appropriate theme source instances for each path
+		for (Iterator i = sourcePaths.iterator(); i.hasNext();) {
+			String source = (String) i.next();
+			File sourceFile = new File(source);
+			try {
+
+				// Relative files are treated as streams (to support
+				// resource inside WAR files)
+				if (!sourceFile.isAbsolute()) {
+					returnValue.add(
+						new ServletThemeSource(
+							this.getServletContext(),
+							this,
+							source));
+				} else if (sourceFile.isDirectory()) {
+
+					// Absolute directories are read from filesystem
+					returnValue.add(new DirectoryThemeSource(sourceFile, this));
+				} else {
+
+					// Absolute JAR-files are read from filesystem					
+					returnValue.add(new JarThemeSource(sourceFile, this, ""));
+				}
+			} catch (Exception e) {
+				// Any exception breaks the the init
+				throw new ServletException(
+					"Invalid theme source: " + source,
+					e);
+			}
+		}
+
+		// Return the constructed list of theme sources
+		return returnValue;
 	}
 
 	/** Receives standard HTTP requests from the public service method and
@@ -302,7 +466,7 @@ public class WebAdapterServlet
 					request.getContextPath()
 						+ request.getServletPath()
 						+ RESOURCE_URI;
-						
+
 			// Handle resource requests
 			if (handleResourceRequest(request, response))
 				return;
@@ -366,9 +530,26 @@ public class WebAdapterServlet
 						return;
 					}
 
-					// Return if no window found
-					if (window == null)
+					// Return blank page, if no window found
+					if (window == null) {
+						BufferedWriter page =
+							new BufferedWriter(new OutputStreamWriter(out));
+						page.write("<html><head><script>");
+						page.write(
+							ThemeFunctionLibrary.generateWindowScript(
+								null,
+								application,
+								this,
+								WebBrowserProbe.getTerminalType(
+									request.getSession())));
+						page.write("</script></head><body>");
+						page.write(
+							"The requested window has been removed from application.");
+						page.write("</body></html>");
+						page.close();
+
 						return;
+					}
 
 					// Get the terminal type for the window
 					WebBrowser terminalType = (WebBrowser) window.getTerminal();
@@ -603,19 +784,70 @@ public class WebAdapterServlet
 	/** Look for default theme JAR file.
 	 * @return Jar file or null if not found.
 	 */
-	private File findDefaultThemeJar() {
-		File lib =
-			new File(this.getServletContext().getRealPath("/WEB-INF/lib"));
-		String[] files = lib.list();
-		if (files != null) {
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].toLowerCase().endsWith(".jar")
-					&& files[i].startsWith(THEME_JAR_PREFIX)) {
-					return new File(lib, files[i]);
+	private File findDefaultThemeJar(String themeJarFile) {
+
+		// Try to find the default theme JAR file based on the given path
+		String path = this.getServletContext().getRealPath(themeJarFile);
+		File file = null;
+		if (path != null && (file = new File(path)).exists()) {
+			return file;			
+		}
+		
+		// If we do not have access to individual files, create a temporary
+		// file from named resource.  
+		InputStream defaultTheme =
+			this.getServletContext().getResourceAsStream(themeJarFile);
+
+		// Read the content to temporary file and return it
+		if (defaultTheme != null) {
+			return createTemporaryFile(defaultTheme, ".jar");
+		}
+
+		// Try to find the default theme JAR file based on file naming scheme
+		// NOTE: This is for backward compability with 3.0.2 and earlier.
+		path = this.getServletContext().getRealPath("/WEB-INF/lib");
+		if (path != null) {
+
+			File lib = new File(path);
+			String[] files = lib.list();
+			if (files != null) {
+				for (int i = 0; i < files.length; i++) {
+					if (files[i].toLowerCase().endsWith(".jar")
+						&& files[i].startsWith(DEFAULT_THEME_JAR_PREFIX)) {
+						return new File(lib, files[i]);
+					}
 				}
 			}
 		}
+
+		// If no file was found return null
 		return null;
+	}
+
+	/**Create a temporary file for given stream.
+	 * @param stream Stream to be stored into temporary file.
+	 * @param extension File type extension
+	 * @return File
+	 */
+	private File createTemporaryFile(InputStream stream, String extension) {
+		File tmpFile;
+		try {
+			tmpFile =
+				File.createTempFile(DEFAULT_THEME_TEMP_FILE_PREFIX, extension);
+			FileOutputStream out = new FileOutputStream(tmpFile);
+			byte[] buf = new byte[1024];
+			int bytes = 0;
+			while ((bytes = stream.read(buf)) > 0) {
+				out.write(buf, 0, bytes);
+			}
+			out.close();
+		} catch (IOException e) {
+			System.err.println(
+				"Failed to create temporary file for default theme: " + e);
+			tmpFile = null;
+		}
+
+		return tmpFile;
 	}
 
 	/** Handle theme resource file requests.
@@ -897,9 +1129,23 @@ public class WebAdapterServlet
 			}
 			window = application.getWindow(windowName);
 
-			// By default, we use main window
-			if (window == null)
+			if (window == null) {
+
+				// If the window has existed, and is now removed
+				// send a blank page
+				if (allWindows.contains(windowName))
+					return null;
+
+				// By default, we use main window
 				window = application.getMainWindow();
+			} else if (!window.isVisible()) {
+
+				// Implicitly painting without actually invoking paint()
+				window.requestRepaintRequests();
+
+				// If the window is invisible send a blank page
+				return null;
+			}
 		}
 
 		// Create and open new debug window for application if requested
@@ -974,11 +1220,19 @@ public class WebAdapterServlet
 	 * @see org.millstone.base.Application.WindowAttachListener#windowAttached(Application.WindowAttachEvent)
 	 */
 	public void windowAttached(WindowAttachEvent event) {
-		event.getWindow().addListener((Paintable.RepaintRequestListener) this);
+		Window win = event.getWindow();
+		win.addListener((Paintable.RepaintRequestListener) this);
+
+		// Add to window names
+		allWindows.add(win.getName());
 
 		// Add window to dirty window references if it is visible
-		if (event.getWindow().isVisible())
-			addDirtyWindow(event.getApplication(), event.getWindow());
+		// Or request the window to pass on the repaint requests
+		if (win.isVisible())
+			addDirtyWindow(event.getApplication(), win);
+		else
+			win.requestRepaintRequests();
+
 	}
 
 	/**

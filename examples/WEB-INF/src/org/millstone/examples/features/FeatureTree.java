@@ -38,6 +38,8 @@
 
 package org.millstone.examples.features;
 
+import java.util.Iterator;
+
 import org.millstone.base.ui.*;
 import org.millstone.base.event.Action;
 
@@ -88,6 +90,19 @@ public class FeatureTree extends Feature implements Action.Handler {
 			actionHandlerSwitch.setCaption("Deactivate Actions");
 		}
 	}
+
+	public void expandAll() {
+		for (Iterator i = t.rootItemIds().iterator();i.hasNext();) {
+			t.expandItemsRecursively(i.next());
+		}
+	}
+	
+	public void collapseAll() {
+		for (Iterator i = t.rootItemIds().iterator();i.hasNext();) {		
+			t.collapseItemsRecursively(i.next());
+		}		
+	}
+	
 	protected Component getDemoComponent() {
 
 		OrderedLayout l = new OrderedLayout();
@@ -120,6 +135,10 @@ public class FeatureTree extends Feature implements Action.Handler {
 
 		// Actions
 		l.addComponent(this.actionHandlerSwitch);
+		
+		// Expand and Collapse buttons 
+		l.addComponent(new Button("Expand All",this,"expandAll"));
+		l.addComponent(new Button("Collapse All",this,"collapseAll"));
 
 		// Properties
 		PropertyPanel p = new PropertyPanel(t);

@@ -35,7 +35,7 @@
    Primary source for MillStone information and releases: www.millstone.org
 
    ********************************************************************** */
-   
+
 package org.millstone.webadapter;
 
 import java.io.InputStream;
@@ -43,7 +43,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 
 /** Theme source for consisting of collection of other theme sources.
  * This class is used to implement the retrieval of themes
@@ -55,8 +54,7 @@ import java.util.List;
  */
 public class CollectionThemeSource implements ThemeSource {
 
-	private Collection sources = new LinkedList();
-
+	private List sources = new LinkedList();
 
 	/**
 	 * @see org.millstone.webadapter.ThemeSource#getName()
@@ -81,7 +79,7 @@ public class CollectionThemeSource implements ThemeSource {
 			if (source.getThemes().contains(theme))
 				xslFiles.addAll(source.getXSLStreams(theme, type));
 		}
-		
+
 		return xslFiles;
 	}
 
@@ -98,9 +96,9 @@ public class CollectionThemeSource implements ThemeSource {
 				throw new ThemeSource.ThemeException(
 					"Parent theme not found for name: " + name);
 			}
-		}		
+		}
 		return xslFiles;
-	}	
+	}
 
 	/**
 	 * @see org.millstone.webadapter.ThemeSource#getModificationTime()
@@ -124,7 +122,7 @@ public class CollectionThemeSource implements ThemeSource {
 		int delim = resourceId.indexOf("/");
 		String subResourceId = "";
 		String themeName = "";
-		if (delim < resourceId.length() - 1) {
+		if (delim >=0 && delim < resourceId.length() - 1) {
 			subResourceId = resourceId.substring(delim + 1);
 			themeName = resourceId.substring(0, delim);
 		}
@@ -135,7 +133,7 @@ public class CollectionThemeSource implements ThemeSource {
 			Theme t = this.getThemeByName(themeName);
 			if (t != null) {
 				themes.add(t.getName());
-				themes.addAll(t.getParentThemes());
+				addAllParents(themes, t);
 			}
 		}
 
@@ -156,7 +154,26 @@ public class CollectionThemeSource implements ThemeSource {
 			}
 		}
 
-		throw new ThemeException("Theme resource not found:" + subResourceId+ " in themes "+themes);
+		throw new ThemeException(
+			"Theme resource not found:"
+				+ subResourceId
+				+ " in themes "
+				+ themes);
+	}
+	/** Recusrivelu get list of parent themes in inheritace order.
+	 *  
+	 * @param t Theme which parents should be listed
+	 * @return Collection of themes in inheritance order.
+	 */
+	private void addAllParents(List list, Theme t) {
+		if (t == null)
+			return;
+
+		List parents = t.getParentThemes();
+		list.addAll(parents);
+		for (Iterator i = parents.iterator(); i.hasNext();) {
+			addAllParents(list, this.getThemeByName((String) i.next()));
+		}
 	}
 
 	/**
@@ -189,5 +206,5 @@ public class CollectionThemeSource implements ThemeSource {
 	public void add(ThemeSource source) {
 		this.sources.add(source);
 	}
-	
+
 }
