@@ -12,10 +12,24 @@ public class FeatureTree extends Feature implements Action.Handler {
 
 	private Tree t;
 
+	private boolean actionsActive = false;
+	private Button actionHandlerSwitch = new Button("Activate actions",this,"toggleActions");
+
 	public FeatureTree() {
 		super();
 	}
 
+	public void toggleActions() {
+		if (actionsActive) {
+			t.removeActionHandler(this);
+			actionsActive = false;	
+			actionHandlerSwitch.setCaption("Activate Actions");
+		} else {
+			t.addActionHandler(this);
+			actionsActive = true;	
+			actionHandlerSwitch.setCaption("Deactivate Actions");
+		}
+	}
 	protected Component getDemoComponent() {
 
 		OrderedLayout l = new OrderedLayout();
@@ -34,9 +48,6 @@ public class FeatureTree extends Feature implements Action.Handler {
 		    t.setParent("Child Four "+i,"Child Three "+i);
 		   	t.setChildrenAllowed("Child Four "+i, false);
 		}
-
-		// Handle actions for the tree
-		t.addActionHandler(this);
 
 		show.addComponent(t);
 		l.addComponent(show);
@@ -59,6 +70,8 @@ public class FeatureTree extends Feature implements Action.Handler {
 					"multiSelect",
 					"writeThrough",
 					"readThrough"},alternateEditors));
+
+		l.addComponent(this.actionHandlerSwitch);
 
 		return l;
 	}

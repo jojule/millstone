@@ -11,8 +11,23 @@ public class FeatureTable extends Feature implements Action.Handler {
 
 	private Table t;
 
+	private boolean actionsActive = false;
+	private Button actionHandlerSwitch =
+		new Button("Activate actions", this, "toggleActions");
 	public FeatureTable() {
 		super();
+	}
+
+	public void toggleActions() {
+		if (actionsActive) {
+			t.removeActionHandler(this);
+			actionsActive = false;
+			actionHandlerSwitch.setCaption("Activate Actions");
+		} else {
+			t.addActionHandler(this);
+			actionsActive = true;
+			actionHandlerSwitch.setCaption("Deactivate Actions");
+		}
 	}
 
 	protected Component getDemoComponent() {
@@ -71,9 +86,6 @@ public class FeatureTable extends Feature implements Action.Handler {
 		t.setPageLength(10);
 		l.addComponent(t);
 
-		// Handle the table actions
-		t.addActionHandler(this);
-
 		// Configuration
 		Hashtable alternateEditors = new Hashtable();
 
@@ -124,15 +136,17 @@ public class FeatureTable extends Feature implements Action.Handler {
 		alternateEditors.put("style", u);
 
 		l.addComponent(
-			 createPropertyPanel(t,
-			new String[] {
-				"multiSelect",
-				"pageLength",
-				"selectable",
-				"columnHeaderMode",
-				"rowHeaderMode"},
-			alternateEditors));
+			createPropertyPanel(
+				t,
+				new String[] {
+					"multiSelect",
+					"pageLength",
+					"selectable",
+					"columnHeaderMode",
+					"rowHeaderMode" },
+				alternateEditors));
 
+		l.addComponent(this.actionHandlerSwitch);
 		return l;
 	}
 
