@@ -1226,7 +1226,7 @@ public class IndexedContainer implements Container, Container.Indexed,
     }
 
     /* Support cloning of the IndexedContainer cleanly */
-    protected Object clone() throws CloneNotSupportedException {
+    public Object clone() throws CloneNotSupportedException {
 
         IndexedContainer nc = new IndexedContainer();
         
