@@ -142,15 +142,16 @@
     <!-- Target for generation manifest file
   			parameters: name,title -->
     <target name="generate-manifest">
-		<manifest file="${manifest-dir}/${name}">
+		<manifest file="${manifest-dir}/${file}">
     		<attribute name="Built-By" value="${user.name}"/>
-    		<section name="common">
-      		<attribute name="Specification-Title" value="${title}"/>
+    		<section name="${name}">
+      		<!-- <attribute name="Name" value="${name}"/> -->
+      		<attribute name="Specification-Title" value="${spec-title}"/>
       		<attribute name="Specification-Version" value="${version}"/>
-      		<attribute name="Specification-Vendor" value="Millstone.org"/>
-      		<attribute name="Implementation-Title" value="common"/>
-      		<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
-      		<attribute name="Implementation-Vendor" value="Millstone.org"/>
+      		<attribute name="Specification-Vendor" value="IT Mill Ltd"/>
+      		<attribute name="Implementation-Title" value="${impl-title}"/>
+      		<attribute name="Implementation-Version" value="${version}"/> 
+      		<attribute name="Implementation-Vendor" value="IT Mill Ltd"/>
     		</section>
 		</manifest>
     </target>
@@ -161,12 +162,16 @@
 
     <target name="base" depends="init-output-dir">
 		<antcall target="generate-manifest">
-			<param name="name" value="millstone-base-src.mf"/>
-			<param name="title" value="Millstone Base"/>
+			<param name="file" value="millstone-base-src.mf"/>
+			<param name="name" value="org/millstone/base"/>
+			<param name="spec-title" value="Millstone Base"/>
+			<param name="impl-title" value="org.millstone.base"/>
 	  	</antcall>
 	  	<antcall target="generate-manifest">
-			<param name="name" value="millstone-base-bin.mf"/>
-			<param name="title" value="Millstone Base"/>
+			<param name="file" value="millstone-base-bin.mf"/>
+			<param name="name" value="org/millstone/base"/>
+			<param name="spec-title" value="Millstone Base"/>
+			<param name="impl-title" value="org.millstone.base"/>
 	  	</antcall>
         <ant antfile="release/build/build-base.xml" inheritAll="true" />
     </target>
@@ -175,16 +180,22 @@
 
     <target name="webadapter" depends="base">
 		<antcall target="generate-manifest">
-			<param name="name" value="millstone-webadapter-bin.mf"/>
-			<param name="title" value="Millstone Web Adapter"/>
+			<param name="file" value="millstone-webadapter-bin.mf"/>
+			<param name="name" value="org/millstone/webadapter"/>
+			<param name="spec-title" value="Millstone Web Adapter"/>
+			<param name="impl-title" value="org.millstone.webadapter"/>
 	  	</antcall>
 	  	<antcall target="generate-manifest">
-			<param name="name" value="millstone-webadapter-src.mf"/>
-			<param name="title" value="Millstone Web Adapter"/>
+			<param name="file" value="millstone-webadapter-src.mf"/>
+			<param name="name" value="org/millstone/webadapter"/>
+			<param name="spec-title" value="Millstone Web Adapter"/>
+			<param name="impl-title" value="org.millstone.webadapter"/>
 	  	</antcall>
 	  	<antcall target="generate-manifest">
-			<param name="name" value="millstone-web-themes.mf"/>
-			<param name="title" value="Millstone Web Adapter"/>
+			<param name="file" value="millstone-web-themes.mf"/>
+			<param name="name" value="org/millstone/webadapter/themes"/>
+			<param name="spec-title" value="Millstone Web Adapter Themes"/>
+			<param name="impl-title" value="org.millstone.webadapter.themes"/>
 	  	</antcall>
        <ant antfile="release/build/build-webadapter.xml" inheritAll="true" />
     </target>
@@ -200,8 +211,10 @@
 
     <target name="examples" depends="init-output-dir,base,webadapter">
   	  	<antcall target="generate-manifest">
-			<param name="name" value="millstone-examples.mf"/>
-			<param name="title" value="Millstone Examples"/>
+			<param name="file" value="millstone-examples.mf"/>
+			<param name="name" value="org/millstone/examples"/>
+			<param name="spec-title" value="Millstone Examples"/>
+			<param name="impl-title" value="org.millstone.examples"/>
 	  	</antcall>
        <ant antfile="release/build/build-examples.xml" inheritAll="true" />
     </target>

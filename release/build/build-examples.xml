@@ -76,9 +76,9 @@
 	<!-- Copy example binary -->
 	<copy file="${work-dir}/examples/${examples-jar-name}" todir="${output-dir}/lib"/>
 
-        <!-- Copy the sources to distribution -->
-	<mkdir dir="${output-dir}/examples/src" />
-	<copy  todir="${output-dir}/examples/src">
+    <!-- Copy the sources to distribution -->
+	<mkdir dir="${output-dir}/src/examples" />
+	<copy  todir="${output-dir}/src/examples">
             <fileset dir="${root-dir}/examples/WEB-INF/src">
               <patternset>
                 <include name="org/millstone/examples/**/*.java"/>

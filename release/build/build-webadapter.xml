@@ -83,6 +83,15 @@
             </fileset>
 	</copy> 
 
+    <!-- Copy the sources to distribution -->
+	<mkdir dir="${output-dir}/src/web-adapter" />
+	<copy  todir="${output-dir}/src/web-adapter">
+            <fileset dir="${root-dir}/web-adapter/src">
+              <patternset>
+                <include name="org/millstone/webadapter/**/*.java"/>
+              </patternset>
+            </fileset>
+	</copy>
 
     </target>
 
