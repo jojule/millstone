@@ -115,7 +115,7 @@
         ACTION="{wa:getFormAction()}">
 		
         <xsl:if test="$dhtml">
-			<xsl:attribute name="onsubmit">form_submit()</xsl:attribute>
+			<xsl:attribute name="ONSUBMIT">form_submit()</xsl:attribute>
 		</xsl:if>
 		
   	    <!-- Window size variables -->
