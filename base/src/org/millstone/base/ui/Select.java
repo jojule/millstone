@@ -210,6 +210,9 @@ public class Select
 	 */
 	public void paintContent(PaintTarget target) throws PaintException {
 
+		// Paint field properties
+		super.paintContent(target);
+
 		// Paint select attributes
 		if (isMultiSelect())
 			target.addAttribute("selectmode", "multi");
