@@ -339,7 +339,7 @@ public interface Container {
     }
 
     /** Interface for Container classes whose Items can be sorted. */
-    public interface Sortable extends Container {
+    public interface Sortable extends Ordered {
 
         /**
          * Sort method.
