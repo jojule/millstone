@@ -20,6 +20,10 @@ public interface Field
 
 	void setCaption(String caption);
 
+	String getDescription();
+	
+	void setDescription(String caption);
+
 	/** An <code>Event</code> object specifying the Field whose value
 	 * has been changed.
 	 * @author IT Mill Ltd.
