@@ -514,6 +514,11 @@ public class WebAdapterServlet
 				// If this is not a download request
 				if (download == null) {
 
+					// Window renders are not cacheable
+					response.setHeader("Cache-Control", "no-cache");
+					response.setHeader("Pragma", "no-cache");
+					response.setDateHeader("Expires", 0);
+	
 					// Find the window within the application
 					Window window = null;
 					if (application.isRunning())
