@@ -38,7 +38,10 @@
 
 package org.millstone.base.terminal;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /** Class for combining multiple error messages together.
  *
@@ -49,7 +52,7 @@ import java.util.HashSet;
 public class CompositeErrorMessage implements ErrorMessage {
 
 	/** Array of all the errors */
-	private ErrorMessage[] errors;
+	private List errors;
 
 	/** Level of the error */
 	private int level;
@@ -58,31 +61,38 @@ public class CompositeErrorMessage implements ErrorMessage {
 	 * 
 	 * @param errorMessages Array of error messages that are listed togeter. 
 	 * Nulls are ignored, but at least one message is required.
-	 */
+	 * @throws NullPointerException if errorMessages is null.
+	 * 	 * @throws IllegalArgumentException if the array was empty. 	 
+	  */
 	public CompositeErrorMessage(ErrorMessage[] errorMessages) {
-		int count = 0;
-		HashSet set = new HashSet();
-		for (int i = 0; i < errorMessages.length; i++) 
-			if (errorMessages[i] != null && !set.contains(errorMessages[i])) {
-					set.add(errorMessages[i]);
-					count++;
-				}
-		
-		if (count == 0)
+		errors = new ArrayList(errorMessages.length);
+		level = Integer.MIN_VALUE;
+
+		for (int i = 0; i < errorMessages.length; i++) {
+			addErrorMessage(errorMessages[i]);
+		}
+
+		if (errors.size() == 0)
 			throw new IllegalArgumentException("Composite error message must have at least one error");
 
+	}
+
+	/** Constructor for CompositeErrorMessage.
+	 * @param errorMessages Collection of error messages that are listed
+	 * togeter. At least one message is required.
+	 * @throws NullPointerException if the collection is null.
+	 * @throws IllegalArgumentException if the collection was empty.
+	 */
+	public CompositeErrorMessage(Collection errorMessages) {
+		errors = new ArrayList(errorMessages.size());
 		level = Integer.MIN_VALUE;
-		errors = new ErrorMessage[count];
-		int index = 0;
-		set.clear();
-		for (int i = 0; i < errorMessages.length; i++)
-			if (errorMessages[i] != null && !set.contains(errorMessages[i])) {
-				errors[index++] = errorMessages[i];
-				set.add(errorMessages[i]);
-				int l = errorMessages[i].getErrorLevel();
-				if (l > level)
-					level = l;
-			}
+
+		for (Iterator i = errorMessages.iterator(); i.hasNext();) {
+			addErrorMessage((ErrorMessage) i.next());
+		}
+
+		if (errors.size() == 0)
+			throw new IllegalArgumentException("Composite error message must have at least one error");
 	}
 
 	/** The error level is the largest error level in 
@@ -92,10 +102,28 @@ public class CompositeErrorMessage implements ErrorMessage {
 		return level;
 	}
 
+	/** Add a error message into this composite message.
+	 *  Updates the level field.
+	 * @param error The error message to be added. Duplicate errors are ignored.
+	 */
+	private void addErrorMessage(ErrorMessage error) {
+		if (error != null && !errors.contains(error)) {
+			this.errors.add(error);
+			int l = error.getErrorLevel();
+			if (l > level)
+				level = l;
+		}
+	}
+
+	/** Get Error Iterator. */
+	public Iterator iterator() {
+		return errors.iterator();
+	}
+
 	public void paint(PaintTarget target) throws PaintException {
 
-		if (errors.length == 1)
-			errors[0].paint(target);
+		if (errors.size() == 1)
+			 ((ErrorMessage) errors.iterator().next()).paint(target);
 		else {
 			target.startTag("error");
 
@@ -111,8 +139,9 @@ public class CompositeErrorMessage implements ErrorMessage {
 				target.addAttribute("level", "system");
 
 			// Paint all the exceptions
-			for (int i = 0; i < errors.length; i++)
-				errors[i].paint(target);
+			for (Iterator i = errors.iterator(); i.hasNext();) {
+				((ErrorMessage) i.next()).paint(target);
+			}
 
 			target.endTag("error");
 		}
@@ -134,4 +163,20 @@ public class CompositeErrorMessage implements ErrorMessage {
 	public void requestRepaintRequests() {
 	}
 
+	/** Returns a comma separated list of the error messages.
+	 * @return String, comma separated list of error messages.
+	 */
+	public String toString() {
+		String retval = "[";
+		int pos = 0;
+		for (Iterator i = errors.iterator(); i.hasNext();) {
+			if (pos > 0)
+				retval += ",";
+			pos++;
+			retval += i.next().toString();
+		}
+		retval += "]";
+
+		return retval;
+	}
 }
