@@ -67,7 +67,6 @@ import org.millstone.base.terminal.Resource;
  */
 public class Tree extends Select implements Container.Hierarchical {
 
-	
 	/* Static members ***************************************************** */
 
 	private static final Method EXPAND_METHOD;
@@ -155,7 +154,7 @@ public class Tree extends Select implements Container.Hierarchical {
 	/** Expand items recursively
 	 * 
 	 * Expands all the children recursively starting from an item.
-	 * 
+	 * Operation succeeds only if all expandable items are expanded.
 	 * @return True iff the expand operation succeeded
 	 */
 	public boolean expandItemsRecursively(Object startItemId) {
@@ -169,9 +168,12 @@ public class Tree extends Select implements Container.Hierarchical {
 		// Expand recursively
 		while (!todo.isEmpty()) {
 			Object id = todo.pop();
-			result = result && expandItem(id);
-			if (hasChildren(id))
+			if (areChildrenAllowed(id) && !expandItem(id)) {
+				result = false;
+			}
+			if (hasChildren(id)) {
 				todo.addAll(getChildren(id));
+			}
 		}
 
 		return result;
@@ -197,7 +199,7 @@ public class Tree extends Select implements Container.Hierarchical {
 	/** Collapse items recursively
 	 * 
 	 * Collapse all the children recursively starting from an item.
-	 * 
+	 * Operation succeeds only if all expandable items are collapsed.
 	 * @return True iff the collapse operation succeeded
 	 */
 	public boolean collapseItemsRecursively(Object startItemId) {
@@ -211,9 +213,12 @@ public class Tree extends Select implements Container.Hierarchical {
 		// Collapse recursively
 		while (!todo.isEmpty()) {
 			Object id = todo.pop();
-			result = result && collapseItem(id);
-			if (hasChildren(id))
+			if (areChildrenAllowed(id) && !collapseItem(id)) {
+				result = false;
+			}
+			if (hasChildren(id)) {
 				todo.addAll(getChildren(id));
+			}
 		}
 
 		return result;
@@ -257,11 +262,11 @@ public class Tree extends Select implements Container.Hierarchical {
 	public void changeVariables(Object source, Map variables) {
 
 		try {
-		
+
 			// Collapse nodes
 			if (variables.containsKey("collapse")) {
 				String[] keys = (String[]) variables.get("collapse");
-				for (int i=0; i<keys.length; i++) {
+				for (int i = 0; i < keys.length; i++) {
 					Object id = itemIdMapper.get(keys[i]);
 					if (id != null)
 						collapseItem(id);
@@ -271,7 +276,7 @@ public class Tree extends Select implements Container.Hierarchical {
 			// Expand nodes
 			if (variables.containsKey("expand")) {
 				String[] keys = (String[]) variables.get("expand");
-				for (int i=0; i<keys.length; i++) {
+				for (int i = 0; i < keys.length; i++) {
 					Object id = itemIdMapper.get(keys[i]);
 					if (id != null)
 						expandItem(id);
@@ -388,7 +393,9 @@ public class Tree extends Select implements Container.Hierarchical {
 						ahi.hasNext();
 						) {
 						Action[] aa =
-							((Action.Handler) ahi.next()).getActions(itemId,this);
+							((Action.Handler) ahi.next()).getActions(
+								itemId,
+								this);
 						if (aa != null)
 							for (int ai = 0; ai < aa.length; ai++) {
 								String akey = actionMapper.key(aa[ai]);
@@ -432,8 +439,10 @@ public class Tree extends Select implements Container.Hierarchical {
 		target.addVariable(this, "selected", selectedKeys);
 
 		// Expand and collapse
-		target.addVariable(this, "expand", new String[] {});
-		target.addVariable(this, "collapse", new String[] {});
+		target.addVariable(this, "expand", new String[] {
+		});
+		target.addVariable(this, "collapse", new String[] {
+		});
 
 		// New items
 		target.addVariable(this, "newitem", new String[] {
@@ -594,9 +603,9 @@ public class Tree extends Select implements Container.Hierarchical {
 
 	/** Collapse event 
 	 * @author IT Mill Ltd.
- 	 * @version @VERSION@
- 	 * @since 3.0
- 	 */
+		 * @version @VERSION@
+		 * @since 3.0
+		 */
 	public class CollapseEvent extends Component.Event {
 
 		private Object collapsedItemId;
@@ -619,7 +628,7 @@ public class Tree extends Select implements Container.Hierarchical {
 
 	/** Collapse event listener 
 	 * @author IT Mill Ltd.
- 	 * @version @VERSION@
+		 * @version @VERSION@
 	 * @since 3.0
 	 */
 	public interface CollapseListener {
@@ -728,8 +737,7 @@ public class Tree extends Select implements Container.Hierarchical {
 	 * @throws UnsupportedOperationException if set to true.
 	 */
 	public void setNewItemsAllowed(boolean allowNewOptions)
-	throws UnsupportedOperationException
-	{
+		throws UnsupportedOperationException {
 		if (allowNewOptions)
 			throw new UnsupportedOperationException();
 	}
@@ -738,9 +746,7 @@ public class Tree extends Select implements Container.Hierarchical {
 	 * @see org.millstone.base.ui.AbstractField#focus()
 	 * @throws UnsupportedOperationException if invoked.
 	 */
-	public void focus() 
-	throws UnsupportedOperationException
-	{
+	public void focus() throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}
 
