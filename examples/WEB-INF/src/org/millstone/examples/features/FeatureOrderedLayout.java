@@ -65,11 +65,9 @@ public class FeatureOrderedLayout extends Feature {
 		ap.replaceWithSelect(
 			"orientation",
 			new Object[] {
-				new Integer(OrderedLayout.ORIENTATION_FLOW),
 				new Integer(OrderedLayout.ORIENTATION_HORIZONTAL),
 				new Integer(OrderedLayout.ORIENTATION_VERTICAL)},
 			new Object[] {
-				"Flow layout",
 				"Horizontal",
 				"Vertical"});
 		Select themes = (Select) p.getField("style");

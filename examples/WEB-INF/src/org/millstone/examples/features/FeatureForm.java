@@ -117,9 +117,9 @@ public class FeatureForm
 
 				if (value.equals("Two columns (2x1 GridLayout)"))
 					formLayout = new GridLayout(2, 1);
-				if (value.equals("Flow (OrderedLayout flow-orientation)"))
+				if (value.equals("Horizontal (OrderedLayout)"))
 					formLayout =
-						new OrderedLayout(OrderedLayout.ORIENTATION_FLOW);
+						new OrderedLayout(OrderedLayout.ORIENTATION_HORIZONTAL);
 
 				createDemo();
 				resetLayout.setValue(null);

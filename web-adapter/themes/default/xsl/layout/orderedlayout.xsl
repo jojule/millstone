@@ -5,12 +5,6 @@
 
 <!-- STYLE: default -->
 
-<xsl:template match="orderedlayout[@orientation='flow']" mode="core">
-  <xsl:for-each select="*">
-    <xsl:apply-templates select="."/>
-  </xsl:for-each>
-</xsl:template>
-
 <xsl:template match="orderedlayout[@orientation='horizontal']" mode="core">
   <xsl:if test="child::*">
     <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
@@ -61,34 +55,6 @@
   </xsl:if>
 </xsl:template>
 
-
-<xsl:template match="orderedlayout[(@orientation='flow') and (@style='form')]" mode="core">
-  <xsl:for-each select="*">
-    <TABLE BORDER="0">
-      <TR CLASS="form-caption">
-        <TD>
-	      <xsl:if test="not(local-name()!='button' and @type='switch') and local-name()!='link' and @caption">
-		    <NOBR CLASS="caption">
-  		      <xsl:if test="@icon"><IMG SRC="{@icon}" /></xsl:if>
-	          <xsl:value-of select="@caption"/>
-		    </NOBR>
-		  </xsl:if>
-		  <xsl:if test="not(@caption) and @icon"><IMG SRC="{@icon}" /></xsl:if>
-		  <xsl:if test="not(@caption) and not(@icon)"><IMG SRC="" WIDTH="0" HEIGHT="0" /></xsl:if>
-        </TD>
-      </TR>
-      <TR>
-        <TD><xsl:apply-templates select="." mode="core"/></TD>
-      </TR>
-      <TR>
-        <TD>      
-          <xsl:for-each select="./error"><xsl:apply-templates select="." mode="error"/></xsl:for-each>
-          <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
-        </TD>
-      </TR>
-    </TABLE>
-  </xsl:for-each>
-</xsl:template>
 
 <xsl:template match="orderedlayout[(@orientation='horizontal') and (@style='form')]" mode="core">
   <xsl:if test="./child::*">
