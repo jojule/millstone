@@ -162,6 +162,9 @@
             <xsl:if test="@selected='true'">
               <xsl:attribute name="CHECKED">CHECKED</xsl:attribute>
             </xsl:if>
+            <xsl:if test="../../@readonly='true'">
+              <xsl:attribute name="DISABLED">true</xsl:attribute>
+            </xsl:if>
           </INPUT>
         </TD>
       </xsl:otherwise>
