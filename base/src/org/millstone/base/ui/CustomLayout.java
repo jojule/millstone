@@ -127,6 +127,16 @@ public class CustomLayout extends AbstractComponentContainer implements Layout {
 		return slots.values().iterator();
 	}
 
+	/** Get child-component by its location.
+	 * 
+	 * @param location The name of the location where the requested 
+	 *         component resides
+	 * @return Component in the given location or null if not found.
+	 */
+	public Component getComponent(String location) {
+		return (Component) slots.get(location);
+	}
+
 	/** Paint the content of this component.
 	 * @param event PaintEvent.
 	 * @throws PaintException The paint operation failed.
