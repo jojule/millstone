@@ -39,6 +39,7 @@
 
 package org.millstone.base.data;
 
+
 import org.millstone.base.terminal.ErrorMessage;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
