@@ -18,6 +18,8 @@ public abstract class Feature extends CustomComponent {
 
 	private TabSheet ts;
 
+	private boolean initialized = false;
+
 	/** These are properties common to all features. */
 	private String[] commonProperties = new String[]{"enabled","visible","caption","readOnly",
 																						 "immediate","disabled","description","style"};
@@ -28,6 +30,9 @@ public abstract class Feature extends CustomComponent {
 	}
 
 	public void attach() {
+
+		if (initialized) return;
+		initialized = true;
 
 		// Optional description
 		String[] desc = getDescriptionXHTML();
