@@ -944,7 +944,8 @@ public class Table extends Select implements Action.Container,
         if (isMultiSelect())
             selectedKeys = new String[((Set) getValue()).size()];
         else
-            selectedKeys = new String[(getValue() == null && getNullSelectionItemId() == null? 0 : 1)];
+            selectedKeys = new String[(getValue() == null
+                    && getNullSelectionItemId() == null ? 0 : 1)];
         int keyIndex = 0;
 
         // Table attributes
@@ -1226,8 +1227,10 @@ public class Table extends Select implements Action.Container,
         if (this.isEditable() && this.fieldFactory != null) {
             Field f = this.fieldFactory.createField(getContainerDataSource(),
                     rowId, colId, this);
-            f.setPropertyDataSource(property);
-            return f;
+            if (f != null) {
+                f.setPropertyDataSource(property);
+                return f;
+            }
         }
 
         return formatPropertyValue(rowId, colId, property);
@@ -1663,7 +1666,8 @@ public class Table extends Select implements Action.Container,
         }
     }
 
-    /** Get the currently sorted column property ID. 
+    /**
+     * Get the currently sorted column property ID.
      * 
      * @return Container property id of the currently sorted column.
      */
@@ -1671,9 +1675,11 @@ public class Table extends Select implements Action.Container,
         return this.sortContainerPropertyId;
     }
 
-    /** Set the currently sorted column property id.
+    /**
+     * Set the currently sorted column property id.
      * 
-     * @param propertyId Container property id of the currently sorted column.
+     * @param propertyId
+     *            Container property id of the currently sorted column.
      */
     public void setSortContainerPropertyId(Object propertyId) {
         if ((this.sortContainerPropertyId != null && !this.sortContainerPropertyId
@@ -1684,7 +1690,8 @@ public class Table extends Select implements Action.Container,
         }
     }
 
-    /** Get index of the currently sorted visible column.
+    /**
+     * Get index of the currently sorted visible column.
      * 
      * @return Index of the currently sorted visible column.
      */
@@ -1701,30 +1708,37 @@ public class Table extends Select implements Action.Container,
         return -1;
     }
 
-    /** Set index of the currently sorted visible column.
+    /**
+     * Set index of the currently sorted visible column.
      * 
-     * @param i Index of the currently sorted visible column.
+     * @param i
+     *            Index of the currently sorted visible column.
      */
-   private void setSortColumnIndex(int i) {
+    private void setSortColumnIndex(int i) {
         Object[] c = getVisibleColumns();
         if (c != null && i >= 0 && i < c.length) {
             setSortContainerPropertyId(c[i]);
         }
     }
 
-   /** Is the table currently sorted in ascending order.
-    * 
-    * @return <code>true</code> if ascending, <code>false</code> if descending
-    */
+    /**
+     * Is the table currently sorted in ascending order.
+     * 
+     * @return <code>true</code> if ascending, <code>false</code> if
+     *         descending
+     */
     public boolean isSortAscending() {
         return this.sortAscending;
     }
 
-    /** Set the table in ascending order.
+    /**
+     * Set the table in ascending order.
      * 
-     * @param ascending <code>true</code> if ascending, <code>false</code> if descending
+     * @param ascending
+     *            <code>true</code> if ascending, <code>false</code> if
+     *            descending
      */
-     public void setSortAscending(boolean ascending) {
+    public void setSortAscending(boolean ascending) {
         if (this.sortAscending != ascending) {
             this.sortAscending = ascending;
             sort();
