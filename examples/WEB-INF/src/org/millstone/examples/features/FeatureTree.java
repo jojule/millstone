@@ -58,8 +58,8 @@ public class FeatureTree extends Feature implements Action.Handler {
 		Select s =
 			createSelect(
 				"Style",
-				new String[] { "", "menu","dropmenu" },
-				new String[] { "Default", "Menu","Dropmenu" });
+				new String[] { "", "menu" },
+				new String[] { "Default", "Menu" });
 
 		alternateEditors.put("style", s);
 		
