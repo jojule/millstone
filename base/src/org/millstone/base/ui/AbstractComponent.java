@@ -116,7 +116,7 @@ public abstract class AbstractComponent
 
 	/** List of repaint request listeners or null if not listened at all */
 	private LinkedList repaintRequestListeners = null;
-	
+
 	/** Are all the repaint listeners notified about recent changes ? */
 	private boolean repaintRequestListenersNotified = false;
 
@@ -262,7 +262,7 @@ public abstract class AbstractComponent
 	 * from implemented interface.
 	 */
 	public void setVisible(boolean visible) {
-		
+
 		if (this.visible != visible) {
 			this.visible = visible;
 			// Instead of requesting repaint normally we 
@@ -454,36 +454,36 @@ public abstract class AbstractComponent
 	public final void paint(PaintTarget target) throws PaintException {
 
 		if (isVisible()) {
-			target.startTag(this.getTag());
-			if (getStyle() != null && getStyle().length() > 0)
-				target.addAttribute("style", getStyle());
-			if (isReadOnly())
-				target.addAttribute("readonly", true);
-			if (isImmediate())
-				target.addAttribute("immediate", true);
-			if (!isEnabled())
-				target.addAttribute("disabled", true);
-			if (getCaption() != null)
-				target.addAttribute("caption", getCaption());
-			if (getIcon() != null)
-				target.addAttribute("icon", getIcon());
+			if (!target.startTag(this, this.getTag())) {
+				if (getStyle() != null && getStyle().length() > 0)
+					target.addAttribute("style", getStyle());
+				if (isReadOnly())
+					target.addAttribute("readonly", true);
+				if (isImmediate())
+					target.addAttribute("immediate", true);
+				if (!isEnabled())
+					target.addAttribute("disabled", true);
+				if (getCaption() != null)
+					target.addAttribute("caption", getCaption());
+				if (getIcon() != null)
+					target.addAttribute("icon", getIcon());
 
-			paintContent(target);
-	
-			String desc = getDescription();
-			if (desc != null && description.length() > 0) {
-				target.startTag("description");
-				target.addUIDL(getDescription());
-				target.endTag("description");
+				paintContent(target);
+
+				String desc = getDescription();
+				if (desc != null && description.length() > 0) {
+					target.startTag("description");
+					target.addUIDL(getDescription());
+					target.endTag("description");
+				}
+
+				ErrorMessage error = getErrorMessage();
+				if (error != null)
+					error.paint(target);
 			}
-			
-			ErrorMessage error = getErrorMessage();
-			if (error != null)
-				error.paint(target);
-
 			target.endTag(this.getTag());
 		}
-		
+
 		repaintRequestListenersNotified = false;
 	}
 
@@ -502,47 +502,50 @@ public abstract class AbstractComponent
 
 	/* Documentation copied from interface */
 	public void requestRepaint() {
-		
+
 		// The effect of the repaint request is identical to case where a
 		// child requests repaint
 		childRequestedRepaint(null);
 	}
 
-
 	/* Documentation copied from interface */
 	public void childRequestedRepaint(Collection alreadyNotified) {
 
 		// Invisible components do not need repaints
-		if (!isVisible()) return;
+		if (!isVisible())
+			return;
 
 		fireRequestRepaintEvent(alreadyNotified);
 	}
 
 	/** Fire repaint request event */
 	private void fireRequestRepaintEvent(Collection alreadyNotified) {
-		
+
 		// Notify listeners only once
 		if (!repaintRequestListenersNotified) {
 
 			// Notify the listeners
-			if (repaintRequestListeners != null && !repaintRequestListeners.isEmpty()) {
+			if (repaintRequestListeners != null
+				&& !repaintRequestListeners.isEmpty()) {
 				Object[] listeners = repaintRequestListeners.toArray();
 				RepaintRequestEvent event = new RepaintRequestEvent(this);
-				for (int i=0; i<listeners.length; i++) {
-					if (alreadyNotified == null) 
+				for (int i = 0; i < listeners.length; i++) {
+					if (alreadyNotified == null)
 						alreadyNotified = new LinkedList();
 					if (!alreadyNotified.contains(listeners[i])) {
-						((RepaintRequestListener)listeners[i]).repaintRequested(event);
+						((RepaintRequestListener) listeners[i])
+									.repaintRequested(
+							event);
 						alreadyNotified.add(listeners[i]);
+						repaintRequestListenersNotified = true;
 					}
 				}
 			}
 
-			repaintRequestListenersNotified = true;
-			
 			// Notify the parent
 			Component parent = getParent();
-			if (parent != null) parent.childRequestedRepaint(alreadyNotified);
+			if (parent != null)
+				parent.childRequestedRepaint(alreadyNotified);
 		}
 	}
 

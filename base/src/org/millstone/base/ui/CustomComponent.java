@@ -323,9 +323,10 @@ public class CustomComponent implements Component {
 		if (isVisible()) {
 			String type = getComponentType();
 			if (type != null) {
-				target.startTag("component");
-				target.addAttribute("type", type);
-				root.paint(target);
+				if (!target.startTag(this, "component")) {
+					target.addAttribute("type", type);
+					root.paint(target);
+				}
 				target.endTag("component");
 			} else
 				root.paint(target);

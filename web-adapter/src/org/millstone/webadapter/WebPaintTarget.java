@@ -42,6 +42,7 @@ import org.millstone.base.Application;
 import org.millstone.base.terminal.ApplicationResource;
 import org.millstone.base.terminal.ExternalResource;
 import org.millstone.base.terminal.PaintException;
+import org.millstone.base.terminal.Paintable;
 import org.millstone.base.terminal.Resource;
 import org.millstone.base.terminal.ThemeResource;
 import org.millstone.base.terminal.VariableOwner;
@@ -535,6 +536,28 @@ public class WebPaintTarget implements PaintTarget {
 			this.endTag("uidl");
 			this.closed = true;
 		}
+	}
+	
+	/**  Print element start tag of a paintable section.
+	 * Starts a paintable section using the given tag. The PaintTarget may
+	 * implement a caching scheme, that checks the paintable has actually
+	 * changed or can a cached version be used instead. This method should call
+	 * the startTag method. <p>  If the Paintable is found in cache and this
+	 * function returns true it may omit the content and close the tag, in which
+	 * case cached content should be used.
+	 * </p><b>Note:</b> Web adapter does not currently implement caching and
+	 * this function always returns false.
+	 * @param paintable The paintable to start
+	 * @param tagName The name of the start tag
+	 * @return false
+	 * @see org.millstone.base.terminal.PaintTarget#startTag(Paintable, String),
+	 * #startTag(String)
+	 * @since 3.1
+	 */
+	public boolean startTag(Paintable paintable, String tag)
+		throws PaintException {
+			startTag(tag);
+		return false;
 	}
 
 }
