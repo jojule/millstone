@@ -69,6 +69,15 @@ public class KeyMapper {
 
         return key;
     }
+
+	/** Check if the key belongs to a new id. 
+	 * <p>Usage of new id:s are specific to components, but for example Select
+	 * component uses newItemId:s for selection of newly added items in 
+	 * <code>allowNewItems</code>-mode
+	 */ 
+	public boolean isNewIdKey(String key) {
+		return "NEW".equals(key);
+	}
     
     /** Retrieve object with the key*/
     public Object get(String key) {
