@@ -36,7 +36,7 @@
 
         <!-- Capture resize events -->
 		<xsl:if test="$dhtml and $heightid and $widthid">
-		  <xsl:attribute name="onResize">window_resize();</xsl:attribute>
+		  <xsl:attribute name="onResize">window_onresize();</xsl:attribute>
 		</xsl:if>     
         
         <!-- Capture scroll events -->
@@ -70,30 +70,22 @@
 			</xsl:if>     
 
 			// Invoke all registered listeners
-			 if (typeof millstoneEventManager != 'undefined') {    
-	    		millstoneEventManager.loadCallback();
-	    	}
-
+			Millstone.windows.onload();
 	    }
 
-	    function window_onunload() {
-	    
+	    function window_onunload() {	    
 			// Invoke all registered listeners	    
-			 if (typeof millstoneEventManager != 'undefined') {    
-	    		millstoneEventManager.unloadCallback();
-	    	}
+			Millstone.windows.onunload();
 	    }
 	    
-	    function form_submit() {
+	    function form_onsubmit() {
 	    
-			// Invoke all registered listeners	    
-			 if (typeof millstoneEventManager != 'undefined') {    
-	    		millstoneEventManager.submitCallback();
-	    	}
+			// Invoke all registered listeners			
+			Millstone.windows.onsubmit();
 	    }	    
 	    
 	    <!-- Resize script -->
-	    function window_resize() {
+	    function window_onresize() {
 	    	var w,h;	    	
 			if (window.innerWidth) {
 				w = window.innerWidth;
@@ -115,7 +107,7 @@
         ACTION="{wa:getFormAction()}">
 		
         <xsl:if test="$dhtml">
-			<xsl:attribute name="ONSUBMIT">form_submit()</xsl:attribute>
+			<xsl:attribute name="ONSUBMIT">form_onsubmit()</xsl:attribute>
 		</xsl:if>
 		
   	    <!-- Window size variables -->
@@ -128,8 +120,15 @@
         <xsl:if test="$dhtml and $scrolldownid and $scrollleftid">
           <INPUT TYPE="HIDDEN" ID="{$scrolldownid}" NAME="{$scrolldownid}" VALUE="{./integer[@name='scrolldown']/@value}"/>
           <INPUT TYPE="HIDDEN" ID="{$scrollleftid}" NAME="{$scrollleftid}" VALUE="{./integer[@name='scrollleft']/@value}"/>
-        </xsl:if>     
-       
+        </xsl:if>
+             
+	    <!-- Focused component variable -->
+        <xsl:if test="./string[@name='focused']">
+		  <SCRIPT LANGUAGE="JavaScript">
+            Millstone.focusable.windowFocusVariableInputId = '<xsl:value-of select="./string[@name='focused']/@id"/>';
+		  </SCRIPT>
+        </xsl:if>  
+               
 		<!-- Probe client features -->
   		<xsl:choose>
   		  <xsl:when test="wa:probeClient()">
@@ -149,6 +148,11 @@
         <xsl:if test="$dhtml">
         	<xsl:apply-templates mode="popup"/>
         </xsl:if>
+
+		<!-- Focus -->
+        <xsl:if test="./string[@name='focused']">
+            <INPUT TYPE="HIDDEN" ID="{./string[@name='focused']/@id}" NAME="{./string[@name='focused']/@id}" VALUE="{./string[@name='focused']}"/>
+        </xsl:if> 
 
       </FORM>
     </BODY>
@@ -173,6 +177,11 @@
     </xsl:if>
 
     <xsl:if test="$dhtml">
+	    <SCRIPT LANGUAGE="Javascript" SRC="{wa:resource('script/commons.js')}"/>
+	    <SCRIPT LANGUAGE="Javascript" SRC="{wa:resource('script/logger.js')}"/>
+	    <SCRIPT LANGUAGE="Javascript" SRC="{wa:resource('script/events.js')}"/>
+	    <SCRIPT LANGUAGE="Javascript" SRC="{wa:resource('script/focusable.js')}"/>
+	    <SCRIPT LANGUAGE="Javascript" SRC="{wa:resource('script/window.js')}"/>
 	    <SCRIPT LANGUAGE="Javascript" SRC="{wa:resource('script/millstone.js')}"/>
 	    <SCRIPT LANGUAGE="Javascript">
 		
@@ -195,6 +204,9 @@
 
 <!-- Do not output text by default in popups mode -->
 <xsl:template match="text()" mode="popup"></xsl:template>
+
+<!-- Do not output text by default -->
+<xsl:template match="window/string"></xsl:template>
 
 </xsl:stylesheet>
 

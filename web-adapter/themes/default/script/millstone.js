@@ -22,12 +22,35 @@ MillstoneUtils.prototype.submit = function() {
 
 	// Manually call this beacause it is not
 	// called automatically ???
-	if (form_submit) {
-   		form_submit();
+	if (typeof form_onsubmit != 'undefined') {
+   		form_onsubmit();
    	}
     this.showHourglassCursor();
 	document.millstone.submit();
 }
+
+// Window component javascript
+
+MillstoneUtils.prototype.form_submit = function() {
+	 // Invoke all registered listeners	    
+	 if (typeof millstoneEventManager != 'undefined') {
+		millstoneEventManager.submitCallback();
+	}
+}	    
+
+
+MillstoneUtils.prototype.window_onunload = function() {    
+	// Invoke all registered listeners	    
+	if (typeof millstoneEventManager != 'undefined') {    
+	    		millstoneEventManager.unloadCallback();
+	}
+}
+
+
+MillstoneUtils.prototype.setFocusedFromActiveElement = function() {
+	elementFocused(document.activeElement);
+}
+
 
 // --------------------------------------------------------------------------
 // Get variable
@@ -39,7 +62,7 @@ MillstoneUtils.prototype.submit = function() {
 // --------------------------------------------------------------------------
 
 MillstoneUtils.prototype.getVarById = function(id) {
-  e = document.getElementById(id);
+  var e = document.getElementById(id);
   if (e) {
     return e.value; 
   }
@@ -518,7 +541,7 @@ MillstoneUtils.prototype.showPopupById = function(popupId, clientX, clientY) {
 	this.activePopups[popupCount++] = popupId;
 	
 	// Safari given clientX,Y in relation to body
-	if (safari) {
+	if (this.safari) {
 	   clientX = clientX - document.body.scrollLeft;
 	   clientY = clientY - document.body.scrollTop;
 	}
@@ -577,7 +600,6 @@ MillstoneUtils.prototype.hidePopupById = function(id) {
 // returns:
 // --------------------------------------------------------------------------
 MillstoneUtils.prototype.hideAllPopups = function() {
-
 	// Do not immediately remove the popup
 	if (this.skipNextHideAll) {
 		this.skipNextHideAll = false;
@@ -838,7 +860,7 @@ MillstoneUtils.prototype.getCalendarMonth = function(year, month, weekBegin) {
 	cal[4] = new Array(7);
 	cal[5] = new Array(7);
 	
-	var daysInMonth = getDaysInMonth(year,month);
+	var daysInMonth = this.getDaysInMonth(year,month);
 	var calDate = new Date(year, month, 1);
 	var weekDayOfFirst = (calDate.getDay()-weekBegin+7)%7;	
 	var vardate = 1;
@@ -880,18 +902,18 @@ MillstoneUtils.prototype.updateCalendar = function(calendarId, yearId, monthId, 
   if (calendarId != '') {;
 
 	var iWeekBegin = parseInt(weekBegin); 	
-	var iYear = parseInt(getVarById(yearId)); 	
-	var iMonth = parseInt(getVarById(monthId))-1; 
-	var iDay = parseInt(getVarById(dayId));
+	var iYear = parseInt(this.getVarById(yearId)); 	
+	var iMonth = parseInt(this.getVarById(monthId))-1; 
+	var iDay = parseInt(this.getVarById(dayId));
 	
 	// Round the date to last available in month
-   	if (iDay > getDaysInMonth(iYear,iMonth)) {
-   		iDay = getDaysInMonth(iYear,iMonth);
-   		setVarById(dayId,iDay);
+   	if (iDay > this.getDaysInMonth(iYear,iMonth)) {
+   		iDay = this.getDaysInMonth(iYear,iMonth);
+   		this.setVarById(dayId,iDay);
    	}
 	
 	// Get the calendar for month
-	cal = getCalendarMonth(iYear, iMonth, iWeekBegin);
+	cal = this.getCalendarMonth(iYear, iMonth, iWeekBegin);
 	
 	for (week = 0; week < 6; week++) {
 		for (day = 0; day < 7; day++) {	        			
@@ -914,7 +936,7 @@ MillstoneUtils.prototype.updateCalendar = function(calendarId, yearId, monthId, 
    	}
    	
    	// Visually select the day   	
-	calendarDaySelect(calendarId, iDay)   	
+	this.calendarDaySelect(calendarId, iDay)   	
 	
   }
 
@@ -939,7 +961,7 @@ MillstoneUtils.prototype.calendarUnselectAll = function(calendarId) {
 		for (day = 0; day < 7; day++) {
 		    el = document.getElementById(calendarId+"_"+week+"_"+day);
 		    if (el) {
-			   el.className = toUnselectedClassName(el.className);				   
+			   el.className = this.toUnselectedClassName(el.className);				   
 			} else {
 			    el = document.getElementById(calendarId+"_"+week+"_"+day);
 			    if (el) {
@@ -968,7 +990,7 @@ MillstoneUtils.prototype.calendarDaySelect = function(calendarId, dayNumber) {
 		    if (el) {
 		       var iDay = parseInt(el.innerText);		       
 			   if (!isNaN(iDay) && (iDay == dayNumber)) {				      
-				   el.className = toSelectedClassName(el.className);
+				   el.className = this.toSelectedClassName(el.className);
 				   return;				   			   		
 			   }
 			}
@@ -988,13 +1010,13 @@ MillstoneUtils.prototype.calendarDaySelect = function(calendarId, dayNumber) {
 MillstoneUtils.prototype.calSel = function(calendarId, dayVariableId, dayElementId, immediate) {
  
 	// Visually unselect all
-	calendarUnselectAll(calendarId);
+	this.calendarUnselectAll(calendarId);
 
 	// Select the current one
 	var dayElement = document.getElementById(dayElementId);
 	if (dayElement && (dayElement.innerText || dayElement.innerHTML)) {
-		setVarById(dayVariableId,dayElement.innerText);
-		dayElement.className= toSelectedClassName(dayElement.className);
+		this.setVarById(dayVariableId,dayElement.innerText);
+		dayElement.className= this.toSelectedClassName(dayElement.className);
 	}	
 	
   // Submit if in immediate mode  
@@ -1211,6 +1233,10 @@ var millstoneEventManager = new MillstoneEventManager();
 // Returns nothing
 // --------------------------------------------------------------------------
 function MillstoneUtils() {
+
+	// Is the debug mode enabled?
+	this.debug = true;
+
 	// Globals for handling browser differences
 	this.ie5 = document.all && document.getElementById;
 	this.ns6 = document.getElementById && !document.all;
@@ -1225,8 +1251,23 @@ function MillstoneUtils() {
 	this.popupCount = 0;
 	this.skipNextHideAll = false;
 	
-	// Hide popups on untargeted clicks 
-	if (this.ie5 || this.ns6) {
-		document.onclick = new function() {}; //this.hideAllPopups();
+	
+	// Create instances for other required classes
+	this.commons = new MillstoneCommonUtils();
+	this.logger = new MillstoneLogger();
+	this.events = new MillstoneEventUtils();
+	this.focusable = new MillstoneFocusableUtils(this.events);
+	this.windows = new MillstoneWindowUtils();	
+
+	// Add handler for otherwise unhandled clicks
+	var f = function() { Millstone.hideAllPopups() };
+	if (window.document['onclick'] == null) {
+		window.document['onclick'] = f;
+	} else {
+		window.document['onclick'] = (document['onclick']).andThen(f);		
 	}
 }
+
+
+
+
