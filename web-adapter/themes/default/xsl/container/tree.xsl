@@ -97,7 +97,7 @@
 
             <xsl:choose>
               <xsl:when test="$dhtml">           
-            	<IMG ID="img{$childid}" BORDER="0" CLASS="{$class}">
+            	<IMG HEIGHT="13" WIDTH="13" ID="img{$childid}" BORDER="0" CLASS="{$class}">
             	<xsl:attribute name="ONCLICK">treeExpClick('<xsl:value-of select="$expandid"/>','<xsl:value-of select="$collapseid"/>','<xsl:value-of select="@key"/>','<xsl:value-of select="$root/@immediate"/>')</xsl:attribute>
             	<xsl:choose>
               	  <xsl:when test="@expanded">
@@ -194,7 +194,7 @@
 		<xsl:attribute name="BACKGROUND"><xsl:value-of select="wa:resource('img/tree/dots.gif')"/></xsl:attribute>
 	  </xsl:if>
 
-      <IMG BORDER="0" CLASS="{$class}" ALT="">
+      <IMG HEIGHT="13" WIDTH="13" BORDER="0" CLASS="{$class}" ALT="">
         <xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/leaf.gif')"/></xsl:attribute>
       </IMG>
     </TD>
@@ -358,7 +358,7 @@
               <xsl:when test="$dhtml">           
                <A>
              	<xsl:attribute name="HREF">javascript:treeExpClick('<xsl:value-of select="$expandid"/>','<xsl:value-of select="$collapseid"/>','<xsl:value-of select="@key"/>','<xsl:value-of select="$root/@immediate"/>')</xsl:attribute>
-            	<IMG ID="img{$childid}" BORDER="0" CLASS="tree-menu-exp">
+            	<IMG HEIGHT="13" WIDTH="13" ID="img{$childid}" BORDER="0" CLASS="tree-menu-exp">
             	<xsl:choose>
               	  <xsl:when test="@expanded">
                 	<xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/menu/expanded.gif')"/></xsl:attribute>
@@ -445,7 +445,7 @@
     </xsl:if>
     
     <TABLE border="0" cellpadding="0" cellspacing="0"><TR><TD> <!-- This fixes the rendering in ie -->
-      <IMG ALT="" SRC="{wa:resource('img/tree/menu/leaf.gif')}" ID="img{$childid}" BORDER="0" CLASS="tree-menu-exp"/>
+      <IMG HEIGHT="13" WIDTH="13" ALT="" SRC="{wa:resource('img/tree/menu/leaf.gif')}" ID="img{$childid}" BORDER="0" CLASS="tree-menu-exp"/>
       </TD><TD>
       <!-- Actions Icon and caption -->
       <xsl:call-template name="tree-caption">
