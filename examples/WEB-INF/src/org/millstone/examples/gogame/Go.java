@@ -25,7 +25,7 @@ public class Go
 
 	// The players can have a current game.
 	static {
-		players.addProperty("Current game", Game.class, null);
+		players.addContainerProperty("Current game", Game.class, null);
 	}
 
 	// The layout
@@ -95,7 +95,7 @@ public class Go
 			// Add user to player list.
 			Item user = players.addItem(name);
 			((Property.ValueChangeNotifier) 
-				user.getProperty("Current game")).addListener(this);
+				user.getItemProperty("Current game")).addListener(this);
 
 			// Update visible components
 			layout.removeComponent(loginName);
@@ -121,7 +121,7 @@ public class Go
 	 * @see org.millstone.base.event.Action.Handler
 	 */
 	public Action[] getActions(Object target, Object source) {
-		Property p = players.getProperty(target, "Current game");
+		Property p = players.getContainerProperty(target, "Current game");
 		if (p != null && target != null && !target.equals(getUser())) {
 			Game game = (Game) p.getValue();
 			if (game == null) {
@@ -139,13 +139,13 @@ public class Go
 	 */
 	public void handleAction(Action action, Object sender, Object target) {
 		if (action == challengeAction) {
-			Property p = players.getProperty(target, "Current game");
+			Property p = players.getContainerProperty(target, "Current game");
 			if (p != null && target != null && !target.equals(getUser())) {
 				Game game = (Game) p.getValue();
 				if (game == null) {
 					game = new Game(9, (String) getUser(), (String) target);
 					p.setValue(game);
-					players.getProperty(getUser(), "Current game").setValue(
+					players.getContainerProperty(getUser(), "Current game").setValue(
 						game);
 				}
 			}
