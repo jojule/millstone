@@ -50,8 +50,10 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -456,6 +458,7 @@ public class WebAdapterServlet
 		UIDLTransformer transformer = null;
 		HttpVariableMap variableMap = null;
 		OutputStream out = response.getOutputStream();
+        HashSet currentlyDirtyWindowsForThisApplication = new HashSet();
 		try {
 
 			// If the resource path is unassigned, initialize it
@@ -631,6 +634,12 @@ public class WebAdapterServlet
 					window.paint(paintTarget);
 					paintTarget.close();
 
+                    // For exception handling, memorize the current dirty status
+                    Collection dirtyWindows = (Collection) applicationToDirtyWindowSetMap
+                            .get(application);
+                    currentlyDirtyWindowsForThisApplication
+                            .addAll(dirtyWindows);
+
 					// Window is now painted
 					windowPainted(application, window);
 
@@ -678,21 +687,30 @@ public class WebAdapterServlet
 
 		} catch (UIDLTransformerException te) {
 			
-			try{			
-			
-			// Write the error report to client
-			response.setContentType("text/html");
-			BufferedWriter err =
-				new BufferedWriter(new OutputStreamWriter(out));
-			err.write(
-				"<html><head><title>Application Internal Error</title></head><body>");
-			err.write("<h1>" + te.getMessage() + "</h1>");
-			err.write(te.getHTMLDescription());
-			err.write("</body></html>");
-			err.close();
+			try {			
+    			// Write the error report to client
+    			response.setContentType("text/html");
+    			BufferedWriter err =
+    				new BufferedWriter(new OutputStreamWriter(out));
+    			err.write(
+    				"<html><head><title>Application Internal Error</title></head><body>");
+    			err.write("<h1>" + te.getMessage() + "</h1>");
+    			err.write(te.getHTMLDescription());
+    			err.write("</body></html>");
+    			err.close();
 			} catch (Throwable t) {
 				Log.except("Failed to write error page: "+t+". Original exception was: ",te);
 			}
+
+            // Add previously dirty windows to dirtyWindowList in order
+            // to make sure that eventually they are repainted
+            Application currentApplication = getApplication(request);
+            for (Iterator iter = currentlyDirtyWindowsForThisApplication
+                    .iterator(); iter.hasNext();) {
+                Window dirtyWindow = (Window) iter.next();
+                addDirtyWindow(currentApplication, dirtyWindow);
+            }
+            
 		} catch (Throwable e) {
 			// Re-throw other exceptions
 			throw new ServletException(e);
