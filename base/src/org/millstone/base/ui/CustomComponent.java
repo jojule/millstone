@@ -318,7 +318,7 @@ public class CustomComponent implements Component {
 		if (root == null)
 			throw new IllegalStateException(
 				"Composition root must be set to"
-					+ " non-null value before the component can be painted");
+					+ " non-null value before the "+getClass().getName()+" can be painted");
 
 		if (isVisible()) {
 			String type = getComponentType();
