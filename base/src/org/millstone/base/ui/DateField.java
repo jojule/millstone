@@ -55,7 +55,6 @@ import org.millstone.base.terminal.ErrorMessage;
 import org.millstone.base.terminal.SystemError;
 import org.millstone.base.terminal.PaintTarget;
 
-
 /** <p>A date editor component that can be bound to any bindable Property.
  * that is compatible with java.util.Date.
  *
@@ -221,7 +220,7 @@ public class DateField extends AbstractField {
 						this,
 						"month",
 						currentDate != null
-							? calendar.get(Calendar.MONTH)+1
+							? calendar.get(Calendar.MONTH) + 1
 							: -1);
 					break;
 				case RESOLUTION_YEAR :
@@ -260,36 +259,51 @@ public class DateField extends AbstractField {
 
 				// Old and new dates
 				Date oldDate = (Date) getValue();
-				Date newDate;
+				Date newDate = null;
 
 				// Get the new date in parts
+				// Null values are converted to negative values.
 				int year =
 					variables.containsKey("year")
-						? ((Integer) variables.get("year")).intValue()
+						? (variables.get("year") == null
+							? -1
+							: ((Integer) variables.get("year")).intValue())
 						: 0;
 				int month =
 					variables.containsKey("month")
-						? ((Integer) variables.get("month")).intValue()-1
+						? (variables.get("month") == null
+							? -1
+							: ((Integer) variables.get("month")).intValue() - 1)
 						: 0;
 				int day =
 					variables.containsKey("day")
-						? ((Integer) variables.get("day")).intValue()
+						? (variables.get("day") == null
+							? -1
+							: ((Integer) variables.get("day")).intValue())
 						: 1;
 				int hour =
 					variables.containsKey("hour")
-						? ((Integer) variables.get("hour")).intValue()
+						? (variables.get("hour") == null
+							? -1
+							: ((Integer) variables.get("hour")).intValue())
 						: 0;
 				int min =
 					variables.containsKey("min")
-						? ((Integer) variables.get("min")).intValue()
+						? (variables.get("min") == null
+							? -1
+							: ((Integer) variables.get("min")).intValue())
 						: 0;
 				int sec =
 					variables.containsKey("sec")
-						? ((Integer) variables.get("sec")).intValue()
+						? (variables.get("sec") == null
+							? -1
+							: ((Integer) variables.get("sec")).intValue())
 						: 0;
 				int msec =
 					variables.containsKey("msec")
-						? ((Integer) variables.get("msec")).intValue()
+						? (variables.get("msec") == null
+							? -1
+							: ((Integer) variables.get("msec")).intValue())
 						: 0;
 
 				// If any of the components is < 0, the date should be null
@@ -315,8 +329,10 @@ public class DateField extends AbstractField {
 			}
 
 		} catch (Throwable e) {
-			if (e instanceof ErrorMessage) setComponentError((ErrorMessage)e);
-			else setComponentError(new SystemError(e));
+			if (e instanceof ErrorMessage)
+				setComponentError((ErrorMessage) e);
+			else
+				setComponentError(new SystemError(e));
 		}
 	}
 
