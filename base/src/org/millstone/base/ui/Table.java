@@ -1366,7 +1366,9 @@ public class Table extends Select implements Action.Container,
                             + currentColumn);
                     continue;
                 }
-                if (iscomponent[currentColumn] || iseditable) {
+                if ((iscomponent[currentColumn] || iseditable)
+                        && Component.class
+                                .isInstance(cells[CELL_FIRSTCOL + currentColumn][i])) {
                     Component c = (Component) cells[CELL_FIRSTCOL
                             + currentColumn][i];
                     if (c == null)
