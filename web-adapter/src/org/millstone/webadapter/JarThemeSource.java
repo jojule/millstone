@@ -148,7 +148,7 @@ public class JarThemeSource implements ThemeSource {
 	}
 
 	/**
-	 * @see org.millstone.webadapter.ThemeSource#getXSLFiles(Theme, WebBrowser)
+	 * @see org.millstone.webadapter.ThemeSource#getXSLStreams(Theme, WebBrowser)
 	 */
 	public Collection getXSLStreams(Theme theme, WebBrowser type)
 		throws ThemeException {
