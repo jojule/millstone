@@ -124,7 +124,7 @@ public class UIDLTransformer {
 
 		// Instantiate a XSL TransformerFactory.
 		javax.xml.transform.TransformerFactory xsltFactory =
-			javax.xml.transform.TransformerFactory.newInstance();
+		javax.xml.transform.TransformerFactory.newInstance();
 
 		// Register error handler
 		errorHandler = new TransformerErrorHandler();
@@ -138,9 +138,10 @@ public class UIDLTransformer {
 
 			// Create XML reader for concatenating
 			// multiple XSL files as one.
-			
+
 			XMLReader xmlReader =
-				new XSLReader(parser,
+				new XSLReader(
+					parser,
 					themes.getXSLStreams(
 						type.getTheme(),
 						type.getWebBrowser()));
@@ -157,8 +158,11 @@ public class UIDLTransformer {
 
 				// Ensure HTML output
 				uidlTransformer.setOutputProperty(
-					OutputKeys.METHOD,
-					org.apache.xalan.serialize.Method.HTML);
+					OutputKeys.METHOD,"html");
+
+				// Ensure no indent
+				uidlTransformer.setOutputProperty(
+					OutputKeys.INDENT,"no");
 			}
 
 			// Check if transform itself failed, meaning either
@@ -249,7 +253,7 @@ public class UIDLTransformer {
 			XMLReader reader =
 				org.xml.sax.helpers.XMLReaderFactory.createXMLReader();
 			reader.setErrorHandler(this.errorHandler);
-			
+
 			// Validate if requested. We validate the UIDL separately,
 			// toget the SAXExceptions instead of TransformerExceptions.
 			// This is required to get the line numbers right.
@@ -335,15 +339,14 @@ public class UIDLTransformer {
 								((javax.xml.transform.TransformerException) e)
 									.getMessageAndLocation());
 						r += line != null
-							? " (line:" + line.intValue()+")"
+							? " (line:" + line.intValue() + ")"
 							: " (line unknown)";
 						r += "<br />\n";
 					} else {
 						Integer line = (Integer) errorToRowMap.get(e);
-						r += " - "
-							+ WebPaintTarget.escapeXML(e.toString());
+						r += " - " + WebPaintTarget.escapeXML(e.toString());
 						r += line != null
-							? " (line:" + line.intValue()+")"
+							? " (line:" + line.intValue() + ")"
 							: " (line unknown)";
 						r += "<br />\n";
 
