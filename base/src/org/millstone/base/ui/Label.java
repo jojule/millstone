@@ -94,6 +94,10 @@ public class Label
 	 */
 	public static final int CONTENT_XHTML = 3;
 
+	/** Content mode, where the label contains well-formed or well-balanced XML. 
+	 * Each of the root elements must have their default namespace specified.
+	 */
+	public static final int CONTENT_XML = 4;
 
 	/** The default content mode is plain text */
 	public static final int CONTENT_DEFAULT = CONTENT_TEXT;
@@ -173,6 +177,9 @@ public class Label
 			target.addText(toString());
 			target.endTag("pre");
 		}
+		else if (contentMode == CONTENT_XML) {
+			target.addXMLSection("data", toString(),null);
+		}
 
 	}
 
@@ -244,7 +251,7 @@ public class Label
 	 * @param namespace The namespace to set
 	 */
 	public void setContentMode(int contentMode) {
-		if (contentMode >= CONTENT_TEXT && contentMode <= CONTENT_XHTML)
+		if (contentMode >= CONTENT_TEXT && contentMode <= CONTENT_XML)
 			this.contentMode = contentMode;
 	}
 
