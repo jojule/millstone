@@ -15,8 +15,16 @@
     <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
     <xsl:if test="@readonly='true'"><xsl:attribute name="READONLY">true</xsl:attribute></xsl:if>
   </INPUT>
-  <xsl:for-each select="./error"><xsl:apply-templates select="." mode="popup"/></xsl:for-each>
-  <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
+  <xsl:choose>
+    <xsl:when test="$dhtml">
+      <xsl:for-each select="./error"><xsl:apply-templates select="." mode="error"/></xsl:for-each>
+      <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:if test="./error"><BR /><xsl:apply-templates select="./error" mode="inline"/></xsl:if>
+      <xsl:if test="./description"><BR /><xsl:apply-templates select="./description" mode="inline"/></xsl:if>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <!-- Link style -->
@@ -24,7 +32,7 @@
 <xsl:template match="button[@icon and $dhtml]|button[@style='link' and $dhtml]">
   <DIV CLASS="button">
     <xsl:apply-templates select="." mode="core"/>
-    <xsl:for-each select="./error"><xsl:apply-templates select="." mode="popup"/></xsl:for-each>
+    <xsl:for-each select="./error"><xsl:apply-templates select="." mode="error"/></xsl:for-each>
     <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
   </DIV>
 </xsl:template>
@@ -51,8 +59,16 @@
       <xsl:value-of select="@caption"/>
 	</SPAN>
   </NOBR>
-  <xsl:for-each select="./error"><xsl:apply-templates select="." mode="popup"/></xsl:for-each>
-  <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
+  <xsl:choose>
+    <xsl:when test="$dhtml">
+      <xsl:for-each select="./error"><xsl:apply-templates select="." mode="error"/></xsl:for-each>
+      <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:if test="./error"><BR /><xsl:apply-templates select="./error" mode="inline"/></xsl:if>
+      <xsl:if test="./description"><BR /><xsl:apply-templates select="./description" mode="inline"/></xsl:if>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <xsl:template match="button[@type='switch']" mode="core">
