@@ -747,7 +747,7 @@ public class Select
 			this.allowNewOptions = allowNewOptions;
 
 			requestRepaint();
-		};
+		}
 	}
 
 	/** Override the caption of an item.
