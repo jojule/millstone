@@ -170,9 +170,10 @@ public class Panel
 		layout.paint(target);
 		target.addVariable(this, "height", getHeight());
 		target.addVariable(this, "width", getWidth());
-		if (isScrollable())
+		if (isScrollable()) {
 			target.addVariable(this, "scrollleft", getScrollOffsetX());
-		target.addVariable(this, "scrolldown", getScrollOffsetY());
+			target.addVariable(this, "scrolldown", getScrollOffsetY());
+		}
 	}
 
 	/** Get component UIDL tag.
