@@ -24,6 +24,7 @@ WebAdapter:
   The XSL/T processor to be used is selected based on system properties.
   The Web Adapeter has been tested with J2SDK1.4.1(Xalan) and 
   Saxon 6.5.2 and 7.3.
+- Fixed potential NullPointerException in WebBrowser equality check.
 - Removed unused import statements from several classes.
 
 Default Theme:
