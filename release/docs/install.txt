@@ -20,7 +20,8 @@
 2.	Installing
 2.1.	Installing the Millstone examples WAR
 2.1.1.	Installing the Millstone examples WAR on Tomcat
-2.1.2.	Installing the Millstone examples WAR on jo!
+2.1.2.	Installing the Millstone examples WAR on Sun ONE
+2.1.3.	Installing the Millstone examples WAR on jo!
 2.2.	Installing your own Millstone application
 2.3.    Configuration of the applications
 
@@ -98,12 +99,72 @@ Tomcat is used in the official Reference Implementation for the Java Servlet
 and JavaServer Pages technologies and is the default server used by Millstone 
 developers.
 
-This section is unfortionatly to be done. The procedure is similar to that
-of jo!, described in section 2.1.2, but you might want to edit the server.xml, 
-and the WAR location is different.
+  1. Download Tomcat installer for your platform from 
+     Tomcat website at http://jakarta.apache.org/tomcat/
+  
+  2. Install Tomcat according to the included installation
+     instructions.
+     
+  3. Copy millstone-examples war-file to webapp-directory of
+     the tomcat. 
+     
+  4. Modify the server.xml found in $TOMCAT_HOME/conf. In default
+     installation this is not required, but if you wantto change
+     the context parameters or URI you may wish modify them.
+     If you do, ensure the tomcat is unpackWars="true" parameter 
+     is specified for Host-element. This makes the tomcat to first 
+     extract the WAR-archive, and it is required by the Web Adapter.
+     For complete reference about available options refer to
+     Tomcat documentation at http://jakarta.apache.org/tomcat/.     
+
+  5. Start Tomcat(follow the instructions included in Tomcat
+     documentation as necessary). The examples are accessible through 
+     default URL http://<host>:<port>/<Examples WAR name>/
+     for example: http://localhost:8080/millstone-examples-3.0/
+     
+  6. Some examples are not very usable without little more
+     configuration. Especially the stoneplayer requires
+     an extra parameter to be specified for MP3-directory
+     to be accessible. You can do this in web.xml of
+     the examples:
+     
+       <servlet>
+          <servlet-name>stoneplayer</servlet-name>
+
+	   [...]
+
+ 	   <init-param>
+	      <param-name>mp3path</param-name>
+	      <param-value>c:\music\</param-value>
+	   </init-param>
+
+       </servlet>
+
+     Or you can specify it as servlet parameter in the
+     server.xml found under $TOMCAT_HOME/conf:
+     
+       <Context path="/examples" docBase="[ ... ]" >
+  
+         [ ... ]
+      
+           <!-- Default MP3 Source -->
+           <Parameter name="mp3path" value="c:\music" />
+
+         [ ... ]
+	 
+       </Context>
+	  
+
+2.1.2 Installing the Millstone examples WAR on Sun ONE
+------------------------------------------------------
+
+Examples are packaged as standard web application.
+
+Intallation instructions for Sun ONE Application Server
+can be found at: http://docs.sun.com/source/816-7150-10/index.html
 
 
-2.1.2 Installing the Millstone examples WAR on jo!
+2.1.3 Installing the Millstone examples WAR on jo!
 --------------------------------------------------
 
 jo! is an easy to use web server released under the LGPL license. jo! has
