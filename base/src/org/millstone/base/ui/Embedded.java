@@ -171,6 +171,7 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	 */
 	public void setParameter(String name, String value) {
 		parameters.put(name, value);
+		requestRepaint();
 	}
 
 	/** Get the value of an object parameter.
@@ -187,6 +188,7 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	 */
 	public void removeParameter(String name) {
 		parameters.remove(name);
+		requestRepaint();
 	}
 
 	/** Get embedded object parameter names.
@@ -234,7 +236,11 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	 * @param codebase The codebase to set
 	 */
 	public void setCodebase(String codebase) {
-		this.codebase = codebase;
+		if (codebase != this.codebase
+			|| (codebase != null && !codebase.equals(this.codebase))) {
+			this.codebase = codebase;
+			requestRepaint();
+		}
 	}
 
 	/**
@@ -242,7 +248,11 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	 * @param codetype The codetype to set
 	 */
 	public void setCodetype(String codetype) {
-		this.codetype = codetype;
+		if (codetype != this.codetype
+			|| (codetype != null && !codetype.equals(this.codetype))) {
+			this.codetype = codetype;
+			requestRepaint();
+		}
 	}
 
 	/**
@@ -250,7 +260,11 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	 * @param mimeType The mimeType to set
 	 */
 	public void setMimeType(String mimeType) {
-		this.mimeType = mimeType;
+		if (mimeType != this.mimeType
+			|| (mimeType != null && !mimeType.equals(this.mimeType))) {
+			this.mimeType = mimeType;
+			requestRepaint();
+		}
 	}
 
 	/**
@@ -258,7 +272,11 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	 * @param standby The standby to set
 	 */
 	public void setStandby(String standby) {
-		this.standby = standby;
+		if (standby != this.standby
+			|| (standby != null && !standby.equals(this.standby))) {
+			this.standby = standby;
+			requestRepaint();
+		}
 	}
 
 	/**
@@ -284,7 +302,10 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	 * @param height The height in units specified by heightUnits property.
 	 */
 	public void setHeight(int height) {
-		this.height = height;
+		if (this.height != height) {
+			this.height = height;
+			requestRepaint();
+		}
 	}
 
 	/** Sets the visual width of the object.
@@ -292,7 +313,10 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	 * @param width The width in units specified by widthUnits property.
 	 */
 	public void setWidth(int width) {
-		this.width = width;
+		if (this.width != width) {
+			this.width = width;
+			requestRepaint();
+		}
 	}
 
 	/**
@@ -308,7 +332,11 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	 * @param classId The classId to set
 	 */
 	public void setClassId(String classId) {
-		this.classId = classId;
+		if (classId != this.classId
+			|| (classId != null && !classId.equals(classId))) {
+			this.classId = classId;
+			requestRepaint();
+		}
 	}
 
 	/** Get the resource contained in the embedded object.
@@ -358,7 +386,10 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	public void setType(int type) {
 		if (type != TYPE_OBJECT && type != TYPE_IMAGE)
 			throw new IllegalArgumentException("Unsupported type");
-		this.type = type;
+		if (type != this.type) {
+			this.type = type;
+			requestRepaint();
+		}
 	}
 
 	/**
@@ -374,7 +405,11 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	 * @param archive The archive string to set
 	 */
 	public void setArchive(String archive) {
-		this.archive = archive;
+		if (archive != this.archive
+			|| (archive != null && !archive.equals(this.archive))) {
+			this.archive = archive;
+			requestRepaint();
+		}
 	}
 
 	/**Get height property units.
@@ -397,8 +432,9 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	 * @see org.millstone.base.terminal.Sizeable#setHeightUnits(int)
 	 */
 	public void setHeightUnits(int units) {
-		if (units <= Sizeable.UNITS_PERCENTAGE) {
+		if (units >= 0 && units <= Sizeable.UNITS_PERCENTAGE && this.heightUnits != units) {
 			this.heightUnits = units;
+			requestRepaint();
 		}
 	}
 
@@ -406,8 +442,9 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	 * @see org.millstone.base.terminal.Sizeable#setWidthUnits(int)
 	 */
 	public void setWidthUnits(int units) {
-		if (units <= Sizeable.UNITS_PERCENTAGE) {
+		if (units >= 0 && units <= Sizeable.UNITS_PERCENTAGE && this.widthUnits != units) {
 			this.widthUnits = units;
+			requestRepaint();
 		}
 	}
 
