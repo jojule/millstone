@@ -80,8 +80,8 @@ public class FeatureEmbedded extends Feature {
 					"height",
 					"widthUnits",
 					"heightUnits",
-					"codeBase",
-					"codeType",
+					"codebase",
+					"codetype",
 					"archive",
 					"mimeType",
 					"standby",
@@ -108,9 +108,13 @@ public class FeatureEmbedded extends Feature {
 			new Object[] { "null", "Millstone logo" });
 		p.addProperties("Embedded Properties", ap);
 		p.getField("standby").setDescription(
-			"The text to display while loading the object");
-		p.getField("codeBase").setDescription(
-			"root-path used to access resources with relative paths");
+			"The text to display while loading the object.");
+		p.getField("codebase").setDescription(
+			"root-path used to access resources with relative paths.");
+		p.getField("codetype").setDescription(
+			"MIME-type of the code.");
+		p.getField("classId").setDescription(
+			"Unique object id. This can be used for example to identify windows components.");
 		l.addComponent(p);
 
 		return l;

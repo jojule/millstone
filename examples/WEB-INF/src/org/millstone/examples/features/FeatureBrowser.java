@@ -112,7 +112,6 @@ public class FeatureBrowser
 		registerFeature("/UI Components/Layouts/Window", new FeatureWindow());
 		registerFeature("/UI Components/Layouts/Frame Window", new FeatureFrameWindow());
 		registerFeature("/UI Components/Data handling/Embedded Objects", new FeatureEmbedded());
-		registerFeature("/UI Components/Data handling/XML and XHTML", new FeatureLabel());
 		registerFeature("/UI Components/Data handling/Upload", new FeatureFileTransfer());
 		registerFeature("/Data Model/Properties", new Feature());
 		registerFeature("/Data Model/Items", new Feature());

@@ -67,6 +67,7 @@ public class PropertyPanel
 	private Object objectToConfigure;
 	private BeanItem config;
 
+	/** Contruct new property panel for configuring given object. */
 	public PropertyPanel(Object objectToConfigure) {
 		super();
 
@@ -91,8 +92,8 @@ public class PropertyPanel
 			addSelectProperties();
 		if (objectToConfigure instanceof AbstractField)
 			addFieldProperties();
-		if ((objectToConfigure instanceof AbstractComponentContainer) && 
-		!(objectToConfigure instanceof FrameWindow))
+		if ((objectToConfigure instanceof AbstractComponentContainer)
+			&& !(objectToConfigure instanceof FrameWindow))
 			addComponentContainerProperties();
 
 		// The list of all properties
@@ -114,44 +115,60 @@ public class PropertyPanel
 		addComponent(allProperties);
 	}
 
+	/** Add a formful of properties to property panel */
 	public void addProperties(String propertySetCaption, Form properties) {
+
+		// Create new panel containing the form
 		Panel p = new Panel();
 		p.setCaption(propertySetCaption);
 		p.setStyle("light");
 		p.addComponent(properties);
 		formsLayout.addComponent(p);
+
+		// Setup buffering
 		setButton.dependsOn(properties);
 		discardButton.dependsOn(properties);
 		properties.setWriteThrough(false);
 		properties.setReadThrough(true);
+
+		// Maintain property lists
 		forms.add(properties);
 		updatePropertyList();
 	}
 
+	/** Handle all button clicks for this panel */
 	public void buttonClick(Button.ClickEvent event) {
 
+		// Commit all changed on all forms
 		if (event.getButton() == setButton) {
 			for (Iterator i = forms.iterator(); i.hasNext();)
 				 ((Form) i.next()).commit();
 		}
 
+		// Discard all changed on all forms
 		if (event.getButton() == discardButton) {
 			for (Iterator i = forms.iterator(); i.hasNext();)
 				 ((Form) i.next()).discard();
 		}
 
+		// Show property list
 		if (event.getButton() == showAllProperties) {
 			allProperties.setVisible(
 				((Boolean) showAllProperties.getValue()).booleanValue());
 		}
-
 	}
 
+	/** Recreate property list contents */
 	public void updatePropertyList() {
+
 		allProperties.removeAllItems();
+
+		// Collect demoed properties
 		HashSet listed = new HashSet();
 		for (Iterator i = forms.iterator(); i.hasNext();)
 			listed.addAll(((Form) i.next()).getItemPropertyIds());
+
+		// Resolve all properties
 		BeanInfo info;
 		try {
 			info = Introspector.getBeanInfo(objectToConfigure.getClass());
@@ -159,6 +176,8 @@ public class PropertyPanel
 			throw new RuntimeException(e);
 		}
 		PropertyDescriptor[] pd = info.getPropertyDescriptors();
+
+		// Fill the table
 		for (int i = 0; i < pd.length; i++) {
 			allProperties.addItem(
 				new Object[] {
@@ -170,7 +189,10 @@ public class PropertyPanel
 		}
 	}
 
+	/** Add basic properties implemented most often by abstract component */
 	private void addBasicComponentProperties() {
+
+		// Set of properties
 		Form set =
 			createBeanPropertySet(
 				new String[] {
@@ -182,11 +204,15 @@ public class PropertyPanel
 					"readOnly",
 					"componentError",
 					"immediate",
-					 "style"});
+					"style" });
+
+		// Icon
 		set.replaceWithSelect(
 			"icon",
 			new Object[] { null, new ThemeResource("icon/files/file.gif")},
 			new Object[] { "No icon", "Sample icon" });
+
+		// Component error
 		Throwable sampleException;
 		try {
 			throw new NullPointerException("sample exception");
@@ -211,6 +237,8 @@ public class PropertyPanel
 				"Sample text error",
 				"Sample Formatted error",
 				"Sample System Error" });
+
+		// Style
 		set
 			.replaceWithSelect(
 				"style",
@@ -218,22 +246,77 @@ public class PropertyPanel
 				new Object[] { "Default" })
 			.setNewItemsAllowed(true);
 
+		// Set up descriptions
+		set.getField("caption").setDescription(
+			"Component caption is the title of the component. Usage of the caption is optional and the "
+				+ "exact behavior of the propery is defined by the component. Setting caption null "
+				+ "or empty disables the caption.");
+		set.getField("enabled").setDescription(
+			"Enabled property controls the usage of the component. If the component is disabled (enabled=false),"
+				+ " it can not receive any events from the terminal. In most cases it makes the usage"
+				+ " of the component easier, if the component visually looks disbled (for example is grayed), "
+				+ "when it can not be used.");
+		set.getField("icon").setDescription(
+			"Icon of the component selects the main icon of the component. The usage of the icon is identical "
+				+ "to caption and in most components caption and icon are kept together. Icons can be "
+				+ "loaded from any resources (see Terminal/Resources for more information). Some components "
+				+ "contain more than just the captions icon. Those icons are controlled through their "
+				+ "own properties.");
+		set.getField("visible").setDescription(
+			"Visibility property says if the component is renreded or not. Invisible components are implicitly "
+				+ "disabled, as there is no visible user interface to send event.");
+		set.getField("description").setDescription(
+			"Description is designed to allow easy addition of short tooltips, like this. Like the caption,"
+				+ " setting description null or empty disables the description.");
+		set.getField("readOnly").setDescription(
+			"Those components that have internal state that can be written are settable to readOnly-mode,"
+				+ " where the object can only be read, not written.");
+		set.getField("componentError").setDescription(
+			"Millstone supports extensive error reporting. One part of the error reporting are component"
+				+ " errors that can be controlled by the programmer. This example only contains couple of "
+				+ "sample errors; to get the full picture, read browse ErrorMessage-interface implementors "
+				+ "API documentation.");
+		set.getField("immediate").setDescription(
+			"Not all terminals can send the events immediately to server from all action. Web is the most "
+				+ "typical environment where many events (like textfield changed) are not sent to server, "
+				+ "before they are explicitly submitted. Setting immediate property true (by default this "
+				+ "is false for most components), the programmer can assure that the application is"
+				+ " notified as soon as possible about the value change in this component.");
+		set.getField("style").setDescription(
+			"Themes specify the overall looks of the user interface. In addition component can have a set of "
+				+ "styles, that can be visually very different (like datefield calendar- and text-styles), "
+				+ "but contain the same logical functionality. As a rule of thumb, theme specifies if a "
+				+ "component is blue or yellow and style determines how the component is used.");
+
+		// Add created fields to property panel
 		addProperties("Component Basics", set);
 	}
 
+	/** Add properties for selecting */
 	private void addSelectProperties() {
 		Form set =
 			createBeanPropertySet(
 				new String[] { "multiSelect", "newItemsAllowed" });
 		addProperties("Select Properties", set);
+
+		set.getField("multiSelect").setDescription(
+			"Specified if multiple items can be selected at once.");
+		set.getField("newItemsAllowed").setDescription(
+			"Select component (but not Tree or Table) can allow the user to directly "+
+			"add new items to set of options. The new items are constrained to be "+
+			"strings and thus feature only applies to simple lists.");
 	}
 
+	/** Field special properties */
 	private void addFieldProperties() {
 		Form set = new Form(new GridLayout(2, 1));
 		set.addField("focus", new Button("Focus", objectToConfigure, "focus"));
+		set.getField("focus").setDescription("Focus the cursor to this field. Not all "+
+		"components and/or terminals support this feature.");
 		addProperties("Field Features", set);
 	}
 
+	/** Add and remove some miscellaneous example component to/from component container */
 	private void addComponentContainerProperties() {
 		Form set = new Form(new GridLayout(2, 1));
 
@@ -258,19 +341,23 @@ public class PropertyPanel
 		addProperties("ComponentContainer Features", set);
 	}
 
+	/** Value change listener for listening selections */
 	public void valueChange(Property.ValueChangeEvent event) {
 
+		// Adding components to component container
 		if (event.getProperty() == addComponent) {
-
 			String value = (String) addComponent.getValue();
 
 			if (value != null) {
+				// TextField component
 				if (value.equals("Text field"))
 					(
 						(
 							AbstractComponentContainer) objectToConfigure)
 								.addComponent(
 						new TextField("Test field"));
+	
+				// DateField time style 
 				if (value.equals("Time")) {
 					DateField d = new DateField("Time", new Date());
 					d.setDescription(
@@ -283,6 +370,8 @@ public class PropertyPanel
 								.addComponent(
 						d);
 				}
+				
+				// Date field calendar style
 				if (value.equals("Calendar")) {
 					DateField c = new DateField("Calendar", new Date());
 					c.setDescription(
@@ -295,6 +384,8 @@ public class PropertyPanel
 								.addComponent(
 						c);
 				}
+				
+				// Select option group style
 				if (value.equals("Option group")) {
 					Select s = new Select("Options");
 					s.setDescription("Select-component with optiongroup-style");
@@ -316,7 +407,9 @@ public class PropertyPanel
 		}
 	}
 
-	public Form createBeanPropertySet(String names[]) {
+	/** Helper function for creating forms from array of propety names.
+	 */
+	protected Form createBeanPropertySet(String names[]) {
 
 		Form set = new Form(new GridLayout(2, 1));
 
@@ -329,6 +422,7 @@ public class PropertyPanel
 		return set;
 	}
 
+	/** Find a field from all forms */
 	public AbstractField getField(Object propertyId) {
 		for (Iterator i = forms.iterator(); i.hasNext();) {
 			Form f = (Form) i.next();
