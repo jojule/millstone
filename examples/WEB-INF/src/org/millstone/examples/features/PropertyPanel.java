@@ -85,6 +85,8 @@ public class PropertyPanel extends Panel implements Button.ClickListener {
 		addBasicComponentProperties();
 		if (objectToConfigure instanceof Select)
 			addSelectProperties();
+		if (objectToConfigure instanceof AbstractField)
+			addFieldProperties();
 
 		// The list of all properties
 		addComponent(showAllProperties);
@@ -192,6 +194,12 @@ public class PropertyPanel extends Panel implements Button.ClickListener {
 					"multiSelect",
 					"newItemsAllowed"  });
 		addProperties("Select properties", set);
+	}
+
+	private void addFieldProperties() {
+		Form set = new Form();
+		set.addField("focus",new Button("Focus",objectToConfigure,"focus"));
+		addProperties("Field features", set);
 	}
 
 	public Form createBeanPropertySet(String names[]) {
