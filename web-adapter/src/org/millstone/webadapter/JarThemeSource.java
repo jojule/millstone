@@ -217,6 +217,13 @@ public class JarThemeSource implements ThemeSource {
 	public InputStream getResource(String resourceId)
 		throws ThemeSource.ThemeException {
 
+		// Strip off the theme name prefix from resource id
+		if (this.theme != null && 
+				this.theme.getName() != null && 
+				resourceId.startsWith(this.theme.getName()+"/")){
+			resourceId = resourceId.substring(this.theme.getName().length()+1);
+		}
+		
 		// Return the resource inside the jar file
 		JarEntry entry = jar.getJarEntry(resourceId);
 		if (entry != null)
