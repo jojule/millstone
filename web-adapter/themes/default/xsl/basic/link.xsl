@@ -19,7 +19,7 @@
 	<A>
 	  <xsl:if test="not(@disabled='true')">
         <xsl:choose> 
-          <xsl:when test="$dhtml and (string-length(@target) &gt; 0)">
+          <xsl:when test="$dhtml and (string-length(@name) &gt; 0)">
             <xsl:attribute name="HREF">javascript:openWindow('<xsl:value-of select="@src"
             />','<xsl:value-of select="@name"
             />',<xsl:choose><xsl:when test="@width"><xsl:value-of select="@width"/></xsl:when><xsl:otherwise>-1</xsl:otherwise></xsl:choose
