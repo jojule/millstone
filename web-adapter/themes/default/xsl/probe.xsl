@@ -8,33 +8,33 @@
 <xsl:template name="client-probe">
 
     <script language="javascript1.1">
-<!--
+<xsl:comment>
     	var ver11 = "JavaScript 1.1";
-// -->
+// </xsl:comment>
     </script>
     <script language="javascript1.2">
-<!--
+<xsl:comment>
     	var ver12 = "JavaScript 1.2";
-// -->
+// </xsl:comment>
     </script>
     <script language="javascript1.3">
-<!--
+<xsl:comment>
    		var ver13 = "JavaScript 1.3";
-// -->
+// </xsl:comment>
 	</script>
     <script language="javascript1.4">
-<!--
+<xsl:comment>
     	var ver14 = "JavaScript 1.4";
-// -->
+// </xsl:comment>
     </script>
     <script language="javascript1.5">
-<!--
+<xsl:comment>
     	var ver15 = "JavaScript 1.5";
-// -->
+// </xsl:comment>
     </script>
 
     <script language="JavaScript">
-<!--
+<xsl:comment>
     	var ver10;
     	var ver11;
     	var ver12;
@@ -58,7 +58,7 @@
     	ver = ver14 ? ver14 : ver;
     	ver = ver15 ? ver15 : ver;
     	ver = jscript ? jscript: ver;
-// -->
+// </xsl:comment>
     </script>
 
 
@@ -71,7 +71,7 @@
    	<input id="wa_javaenabled" name="wa_javaenabled" type="{$type}" value="" />
 
   <script language="JavaScript">
-<!--
+<xsl:comment>
 
     function setVariables() {
     	document.millstone.wa_clientprobe.value = "1";
@@ -82,7 +82,7 @@
     }
     
     setVariables();
-// -->
+// </xsl:comment>
   </script>
 
 </xsl:template>
