@@ -105,8 +105,17 @@
         <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
         <xsl:if test="@icon"><IMG SRC="{@icon}"/></xsl:if>
         <xsl:value-of select="@caption"/>
-        <xsl:for-each select="./error"><xsl:apply-templates select="." mode="popup"/></xsl:for-each>
-        <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
+        <xsl:choose>
+          <xsl:when test="$dhtml">
+            <xsl:for-each select="./error"><xsl:apply-templates select="." mode="dhtml"/></xsl:for-each>
+            <xsl:for-each select="./description"><xsl:apply-templates select="." mode="dhtml"/></xsl:for-each>
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:for-each select="./error"><xsl:apply-templates select="." mode="inline"/></xsl:for-each>
+            <xsl:for-each select="./description"><xsl:apply-templates select="." mode="inline"/></xsl:for-each>
+          </xsl:otherwise>
+        </xsl:choose>
+
         <!-- Avoid empty cells (which are mistreated by browsers) 
              by adding an 'nbsp' to end of cell. -->
         <xsl:apply-templates select="." mode="core"
@@ -118,7 +127,7 @@
 	  <TD>
 	    <xsl:choose>
 	      <xsl:when test="$dhtml">
-            <xsl:apply-templates select=".">
+            <xsl:apply-templates select="." mode="dhtml">
               <xsl:with-param name="actionlistid" select="$actionlistid" />
             </xsl:apply-templates>   
           </xsl:when>

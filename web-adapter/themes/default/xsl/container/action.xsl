@@ -2,10 +2,7 @@
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
-<!-- Do not output text by default in popups mode -->
-<xsl:template match="text()" mode="popup"></xsl:template>
-
-<xsl:template match="actions[$dhtml]" mode="popup">
+<xsl:template match="actions" mode="popup">
   <xsl:variable name="actionlistid"><xsl:value-of select="generate-id(.)" /></xsl:variable>
   <xsl:variable name="actionvariableid"><xsl:value-of select="./string[@name='action']/@id"/></xsl:variable>
 
@@ -29,7 +26,7 @@
 </xsl:template>
 
 
-<xsl:template match="al[$dhtml]">
+<xsl:template match="al" mode="dhtml">
   <xsl:param name="actionlistid" />
 
   <xsl:variable name="itemid"><xsl:value-of select="../@key"/></xsl:variable>

@@ -7,8 +7,16 @@
     <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
     <xsl:attribute name="CLASS">link<xsl:if test="./@style">-<xsl:value-of select="./@style"/></xsl:if></xsl:attribute>    
       <xsl:apply-templates select="." mode="core"/>
-      <xsl:for-each select="./error"><xsl:apply-templates select="." mode="popup"/></xsl:for-each>
-      <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
+      <xsl:choose>
+        <xsl:when test="$dhtml">
+          <xsl:for-each select="./error"><xsl:apply-templates select="." mode="dhtml"/></xsl:for-each>
+          <xsl:for-each select="./description"><xsl:apply-templates select="." mode="dhtml"/></xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:for-each select="./error"><xsl:apply-templates select="." mode="inline"/></xsl:for-each>
+          <xsl:for-each select="./description"><xsl:apply-templates select="." mode="inline"/></xsl:for-each>
+        </xsl:otherwise>
+      </xsl:choose>
   </DIV>
 </xsl:template>
 

@@ -89,5 +89,8 @@
 
 </xsl:template>
 
+<!-- Do not output text by default in popups mode -->
+<xsl:template match="text()" mode="popup"></xsl:template>
+
 </xsl:stylesheet>
 

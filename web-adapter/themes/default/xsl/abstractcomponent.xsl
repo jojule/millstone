@@ -13,8 +13,8 @@
       </NOBR>
       <xsl:choose>
         <xsl:when test="$dhtml">
-          <xsl:for-each select="./error"><xsl:apply-templates select="." mode="error"/></xsl:for-each>
-          <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
+          <xsl:for-each select="./error"><xsl:apply-templates select="." mode="dhtml"/></xsl:for-each>
+          <xsl:for-each select="./description"><xsl:apply-templates select="." mode="dhtml"/></xsl:for-each>
         </xsl:when>
         <xsl:otherwise>
           <xsl:if test="./error"><BR /><xsl:apply-templates select="./error" mode="inline"/></xsl:if>
@@ -37,7 +37,7 @@
 
 <xsl:template match="description"/>
 
-<xsl:template match="description[$dhtml]" mode="description">
+<xsl:template match="description" mode="dhtml">
   <xsl:variable name="descid" select="generate-id(.)"/>
   <A ONCLICK="showPopupById('{$descid}',event.clientX,event.clientY);">	
     <IMG> 
@@ -69,7 +69,7 @@
 
 <xsl:template match="error"/>
 
-<xsl:template match="error[$dhtml]" mode="error">
+<xsl:template match="error" mode="dhtml">
   <xsl:variable name="errid" select="generate-id(.)"/>
   <A ONCLICK="showPopupById('{$errid}',event.clientX-4,event.clientY-4);">	
     <xsl:call-template name="error-icon">
