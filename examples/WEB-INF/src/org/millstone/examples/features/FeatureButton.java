@@ -29,7 +29,7 @@ public class FeatureButton extends Feature {
 		Select s =
 			createSelect(
 				"Style",
-				new String[] { "default", "link" },
+				new String[] { "", "link" },
 				new String[] { "Default", "Link" });
 
 		alternateEditors.put("style", s);

@@ -42,7 +42,7 @@ public class FeatureParameters
 				new ExternalResource("/examples/features/test/uri?test=1&test=2")));
 			l.addComponent(new Label("Or this: "));
 			l.addComponent(new Link("/examples/features/test/uri?mary=john&count=3",
-				new ExternalResource(":8080/examples/features/test/uri?mary=john&count=3")));
+				new ExternalResource("/examples/features/test/uri?mary=john&count=3")));
 		} catch (Exception e) {
 			System.out.println("Couldn't get hostname for this machine: "+e.toString());
 			e.printStackTrace();	

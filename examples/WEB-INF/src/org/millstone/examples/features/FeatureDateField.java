@@ -47,7 +47,7 @@ public class FeatureDateField extends Feature {
 		Select s =
 			createSelect(
 				"Style",
-				new String[] { "default", "text", "calendar" },
+				new String[] { "", "text", "calendar" },
 				new String[] { "Default", "Text", "Calendar" });
 
 		alternateEditors.put("style", s);

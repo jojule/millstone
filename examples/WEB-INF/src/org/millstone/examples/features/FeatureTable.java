@@ -130,7 +130,7 @@ public class FeatureTable extends Feature implements Action.Handler {
 		Select u =
 			createSelect(
 				"Style",
-				new String[] { "default", "list" },
+				new String[] { "", "list" },
 				new String[] { "Default", "List" });
 
 		alternateEditors.put("style", u);

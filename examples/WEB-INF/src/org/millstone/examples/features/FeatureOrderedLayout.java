@@ -48,7 +48,7 @@ public class FeatureOrderedLayout extends Feature {
 		Select t =
 			createSelect(
 				"Style",
-				new String[] { "default", "form" },
+				new String[] { "", "form" },
 				new String[] { "Default", "Form" });
 		alternateEditors.put("style", t);
 

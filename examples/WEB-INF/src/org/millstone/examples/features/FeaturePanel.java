@@ -27,7 +27,7 @@ public class FeaturePanel extends Feature {
 		Select t =
 			createSelect(
 				"Style",
-				new String[] { "default", "light","strong" },
+				new String[] { "", "light","strong" },
 				new String[] { "Default", "Light","Strong" });
 
 		alternateEditors.put("style", t);

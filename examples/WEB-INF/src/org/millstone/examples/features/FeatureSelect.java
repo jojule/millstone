@@ -36,7 +36,7 @@ public class FeatureSelect extends Feature {
 		Select t =
 			createSelect(
 				"Style",
-				new String[] { "default", "optiongroup" },
+				new String[] { "", "optiongroup" },
 				new String[] { "Default", "Optiongroup" });
 
 		alternateEditors.put("style", t);
