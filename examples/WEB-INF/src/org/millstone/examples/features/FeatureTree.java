@@ -48,6 +48,30 @@ import java.util.Hashtable;
 
 public class FeatureTree extends Feature implements Action.Handler {
 
+	private static final String[] firstnames =
+		new String[] {
+			"John",
+			"Mary",
+			"Joe",
+			"Sarah",
+			"Jeff",
+			"Jane",
+			"Peter",
+			"Marc",
+			"Josie",
+			"Linus" };
+	private static final String[] lastnames =
+		new String[] {
+			"Torvalds",
+			"Smith",
+			"Jones",
+			"Beck",
+			"Sheridan",
+			"Picard",
+			"Hill",
+			"Fielding",
+			"Einstein" };
+
 	private Tree t;
 
 	private boolean actionsActive = false;
@@ -73,61 +97,66 @@ public class FeatureTree extends Feature implements Action.Handler {
 
 		OrderedLayout l = new OrderedLayout();
 
+		// Create names
 		Panel show = new Panel("Tree component");
-		t = new Tree("Caption");
-		for (int i = 0; i < 10; i++) {
-			t.addItem("Parent " + i);
-			t.addItem("Child One " + i);
-			t.setParent("Child One " + i, "Parent " + i);
-			t.addItem("Child Two " + i);
-			t.setParent("Child Two " + i, "Child One " + i);
-			t.addItem("Child Three " + i);
-			t.setParent("Child Three " + i, "Child Two " + i);
-			t.addItem("Child Four " + i);
-			t.setParent("Child Four " + i, "Child Three " + i);
-			t.setChildrenAllowed("Child Four " + i, false);
+		String[] names = new String[100];
+		for (int i = 0; i < names.length; i++)
+			names[i] =
+				firstnames[(int) (Math.random() * (firstnames.length - 1))]
+					+ " "
+					+ lastnames[(int) (Math.random() * (lastnames.length - 1))];
+
+		// Create tree
+		t = new Tree("Family Tree");
+		for (int i = 0; i < 100; i++) {
+			t.addItem(names[i]);
+			String parent = names[(int) (Math.random() * (names.length - 1))];
+			if (t.containsId(parent))
+				t.setParent(names[i], parent);
 		}
+
+		// Forbid childless people to have children (makes them leaves)
+		for (int i = 0; i < 100; i++)
+			if (!t.hasChildren(names[i]))
+				t.setChildrenAllowed(names[i], false);
 
 		show.addComponent(t);
 		l.addComponent(show);
 
-		// Configuration
-		Hashtable alternateEditors = new Hashtable();
-
-		Select s =
-			createSelect(
-				"Style",
-				new String[] { "", "menu" },
-				new String[] { "Default", "Menu" });
-
-		alternateEditors.put("style", s);
-
-		l.addComponent(
-			createPropertyPanel(
-				t,
-				new String[] {
-					"selectable",
-					"multiSelect",
-					"writeThrough",
-					"readThrough" },
-				alternateEditors));
-
+		// Actions
 		l.addComponent(this.actionHandlerSwitch);
+
+		// Properties
+		PropertyPanel p = new PropertyPanel(t);
+		Form ap = p.createBeanPropertySet(new String[] { "selectable" });
+		Select themes = (Select) p.getField("style");
+		themes
+			.addItem("menu")
+			.getItemProperty(themes.getItemCaptionPropertyId())
+			.setValue("menu");
+		p.addProperties("Tree Properties", ap);
+		p.getField("newItemsAllowed").setEnabled(false);
+		p.getField("focus").setEnabled(false);
+		l.addComponent(p);
 
 		return l;
 	}
 
 	protected String getExampleSrc() {
-		return "t = new Tree(\"Caption\");\n"
-			+ "for (int i=0;i<10;i++) {\n"
-			+ " t.addItem(\"Parent \"+i);"
-			+ " t.addItem(\"Child\"+i);\n"
-			+ "t.setParent(\"Child\"+i, \"Parent \"+i);\n"
-			+ "t.setChildrenAllowed(\"Child \"+i, false);";
+		return "// Create tree\n"
+			+ "t = new Tree(\"Family Tree\");\n"
+			+ "for (int i = 0; i < 100; i++) {\n"
+			+ "	t.addItem(names[i]);\n"
+			+ "	String parent = names[(int) (Math.random() * (names.length - 1))];\n"
+			+ "	if (t.containsId(parent)) \n"
+			+ "		t.setParent(names[i],parent);\n"
+			+ "}\n\n"
+			+ "// Forbid childless people to have children (makes them leaves)\n"
+			+ "for (int i = 0; i < 100; i++)\n"
+			+ "	if (!t.hasChildren(names[i]))\n"
+			+ "		t.setChildrenAllowed(names[i], false);\n";
 	}
-	/**
-	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
-	 */
+
 	protected String getDescriptionXHTML() {
 		return "A tree is a natural way to represent datasets that have hierarchical relationships, like for instance a filesystems. "
 			+ "Millstone features a versatile and powerfull Tree component that works much like the tree components "
@@ -154,25 +183,16 @@ public class FeatureTree extends Feature implements Action.Handler {
 
 	private Action[] actions = new Action[] { ACTION1, ACTION2, ACTION3 };
 
-	/**
-	 * @see org.millstone.base.event.Action.Handler#getActions(Object)
-	 */
 	public Action[] getActions(Object target, Object sender) {
 		return actions;
 	}
 
-	/**
-	 * @see org.millstone.base.event.Action.Handler#handleAction(Action, Object, Object)
-	 */
 	public void handleAction(Action action, Object sender, Object target) {
 		t.setDescription(
 			"Last action clicked was '"
 				+ action.getCaption()
 				+ "' on item '"
-				+ t.getItem(target).getItemProperty(
-					FilesystemContainer.PROPERTY_NAME)
+				+ target
 				+ "'");
-
 	}
-
 }

@@ -197,7 +197,7 @@ public class PropertyPanel extends Panel implements Button.ClickListener {
 	}
 
 	private void addFieldProperties() {
-		Form set = new Form();
+		Form set = new Form(new GridLayout(2,1));
 		set.addField("focus",new Button("Focus",objectToConfigure,"focus"));
 		addProperties("Field features", set);
 	}

@@ -112,8 +112,8 @@ public class FeatureTable extends Feature implements Action.Handler {
 		for (int j = 0; j < 50; j++) {
 			t.addItem(
 				new Object[] {
-					firstnames[(int) (Math.random() * 9)],
-					lastnames[(int) (Math.random() * 9)],
+					firstnames[(int) (Math.random() * (firstnames.length-1))],
+					lastnames[(int) (Math.random() * (lastnames.length-1))],
 					new Integer((int) (Math.random() * 80)),
 					eyecolors[(int) (Math.random() * 3)],
 					haircolors[(int) (Math.random() * 4)] },
@@ -170,6 +170,8 @@ public class FeatureTable extends Feature implements Action.Handler {
 			.getItemProperty(themes.getItemCaptionPropertyId())
 			.setValue("list");
 		p.addProperties("Table Properties", ap);
+		p.getField("newItemsAllowed").setEnabled(false);
+		p.getField("focus").setEnabled(false);
 		l.addComponent(p);
 
 		return l;
