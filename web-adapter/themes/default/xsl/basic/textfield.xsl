@@ -5,7 +5,7 @@
 <xsl:template match="textfield" mode="core">
   <xsl:choose>
     <xsl:when test="@multiline='true' and not(@secret='true')">
-	  <TEXTAREA name="{./string[@name='text']/@id}" ID="{./string[@name='text']/@id}"> 
+	  <TEXTAREA NAME="{./string[@name='text']/@id}" ID="{./string[@name='text']/@id}"> 
 		<xsl:if test="@modified='true'"><xsl:attribute name="CLASS">modified</xsl:attribute></xsl:if>
 	    <xsl:if test="@readonly='true'"><xsl:attribute name="READONLY">true</xsl:attribute></xsl:if>
 		<xsl:if test="@immediate='true' and $dhtml"><xsl:attribute name="onchange">millstone.submit()</xsl:attribute></xsl:if>
@@ -30,6 +30,7 @@
     </xsl:otherwise>
   </xsl:choose>
 
+  <!-- Set focus to field -->
   <xsl:if test="@focus='true' and $dhtml">
     <SCRIPT>document.millstone.<xsl:value-of select="./string[@name='text']/@id"/>.focus()</SCRIPT>
   </xsl:if>

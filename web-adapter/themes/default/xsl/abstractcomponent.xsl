@@ -22,8 +22,14 @@
         </xsl:otherwise>
       </xsl:choose>
       <BR />
-    </xsl:if>
-    <xsl:apply-templates select="." mode="core"/>
+    </xsl:if>    
+    <xsl:apply-templates select="." mode="core"/>    
+    <!-- Immediate buttons -->
+    <xsl:if test="@immediate='true' and not($dhtml)">
+      <xsl:if test="local-name()='textfield' or local-name()='datefield' or local-name()='upload' or local-name()='select'">      
+         <INPUT STYLE="margin:4px; vertical-align: bottom;" TYPE="image" src="{wa:resource('img/immediate.gif')}" />
+      </xsl:if>    
+    </xsl:if>    
   </DIV>
 </xsl:template>
 

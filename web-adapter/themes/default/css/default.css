@@ -97,7 +97,7 @@ INPUT.modified { border: 1px solid black; background-color: #fffee0; }
 
 /* Button ---------------------------------------------------------------- */
 
-A.button, NOBR.button {
+A.button-link, NOBR.button {
 	font-weight: bold;
 	color: #0059ef;
 	cursor: pointer; 

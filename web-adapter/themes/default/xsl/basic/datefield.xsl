@@ -153,8 +153,15 @@
          </xsl:when>        
        </xsl:choose>
       </INPUT>
+      
+  	  <!-- Set focus to year field -->
+  	  <xsl:if test="../@focus='true' and $dhtml">
+        <SCRIPT>document.millstone.<xsl:value-of select="@id"/>.focus()</SCRIPT>
+  	  </xsl:if>
+      
     </xsl:otherwise>
   </xsl:choose>
+
   
 </xsl:template>
 

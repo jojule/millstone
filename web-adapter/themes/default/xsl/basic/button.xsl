@@ -3,18 +3,25 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 <xsl:template match="button" mode="core">
-   <INPUT CLASS="button" TYPE="SUBMIT" NAME="set:{./boolean/@id}=true" VALUE=" {@caption} ">
+   <INPUT CLASS="button" TYPE="SUBMIT" ID="{./boolean/@id}" NAME="set:{./boolean/@id}=true" VALUE=" {@caption} ">
+   	 <xsl:attribute name="CLASS">button<xsl:if test="string-length(./@style) &gt; 0">-<xsl:value-of select="./@style"/></xsl:if></xsl:attribute>    
 	 <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
 	 <xsl:if test="@readonly='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
    </INPUT>
+   
+  <!-- Set focus to field -->
+  <xsl:if test="@focus='true' and $dhtml">
+    <SCRIPT>document.getElementById('<xsl:value-of select="./boolean/@id"/>').focus()</SCRIPT>
+  </xsl:if>
+   
 </xsl:template>
 
 <xsl:template match="button">
-  <INPUT  TYPE="SUBMIT" NAME="set:{./boolean/@id}=true" VALUE=" {@caption} ">
-  	<xsl:attribute name="CLASS">button<xsl:if test="./@style">-<xsl:value-of select="./@style"/></xsl:if></xsl:attribute>    
-    <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
-    <xsl:if test="@readonly='true'"><xsl:attribute name="READONLY">true</xsl:attribute></xsl:if>
-  </INPUT>
+
+  <!-- Core button -->
+  <xsl:apply-templates select="." mode="core"/>
+    
+  <!-- descriptions and errors -->  
   <xsl:choose>
     <xsl:when test="$dhtml">
       <xsl:for-each select="./error"><xsl:apply-templates select="." mode="error"/></xsl:for-each>
@@ -30,7 +37,7 @@
 <!-- Link style -->
 
 <xsl:template match="button[@icon and $dhtml]|button[@style='link' and $dhtml]">
-  <DIV CLASS="button">
+  <DIV CLASS="button-link">
     <xsl:apply-templates select="." mode="core"/>
     <xsl:for-each select="./error"><xsl:apply-templates select="." mode="error"/></xsl:for-each>
     <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
@@ -38,7 +45,7 @@
 </xsl:template>
 
 <xsl:template match="button[@icon and $dhtml]|button[@style='link' and $dhtml]" mode="core">
-  <A CLASS="button">
+  <A CLASS="button-link">
     <xsl:if test="not(@disabled)"><xsl:attribute name="HREF">javascript:setVarById('<xsl:value-of select="./boolean/@id"/>','true',true)</xsl:attribute></xsl:if>
     <xsl:if test="@disabled"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
    	<xsl:if test="@icon"><IMG class="icon" SRC="{@icon}" /></xsl:if>
@@ -79,6 +86,12 @@
     <xsl:if test="./boolean/@value='true'"><xsl:attribute name="CHECKED">true</xsl:attribute></xsl:if>
     <xsl:if test="@readonly='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
    </INPUT>
+
+  <!-- Set focus to field -->
+  <xsl:if test="@focus='true' and $dhtml">
+    <SCRIPT>document.getElementById('<xsl:value-of select="./boolean/@id"/>').focus()</SCRIPT>
+  </xsl:if>
+   
 </xsl:template>
 
 </xsl:stylesheet>
