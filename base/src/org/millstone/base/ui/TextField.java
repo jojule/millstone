@@ -83,7 +83,7 @@ public class TextField extends AbstractField {
 	private boolean secret = false;
 
 	/** Null representation. */
-	private String nullRepresentation = "(null)";
+	private String nullRepresentation = "null";
 
 	/** Is setting to null from non-null value allowed by setting with 
 	 * null representation */
@@ -310,7 +310,7 @@ public class TextField extends AbstractField {
 	 * null value with this string. If the null representation is set null (not 'null' string),
 	 * painting null value throws exception.</p>
 	 * 
-	 * <p>The default value is string '(null)'</p>
+	 * <p>The default value is string 'null'</p>
 	 * 
 	 * @see TextField#isNullSettingAllowed()
 	 * @return String Textual representation for null strings.
@@ -344,7 +344,7 @@ public class TextField extends AbstractField {
 	 * null value with this string. If the null representation is set null (not 'null' string),
 	 * painting null value throws exception.</p>
 	 * 
-	 * <p>The default value is string '(null)'</p>
+	 * <p>The default value is string 'null'</p>
 	 * 
 	 * @see TextField#setNullSettingAllowed(boolean)
 	 * @param nullRepresentation Textual representation for null strings.
