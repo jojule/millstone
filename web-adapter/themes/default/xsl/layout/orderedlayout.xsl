@@ -51,6 +51,10 @@
 		    <xsl:if test="not(@caption) and @icon"><IMG SRC="{@icon}" /></xsl:if>
           </TD>
           <TD><xsl:apply-templates select="." mode="core"/></TD>
+          <TD>      
+            <xsl:for-each select="./error"><xsl:apply-templates select="." mode="error"/></xsl:for-each>
+            <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
+          </TD>
         </TR>
       </xsl:for-each>
     </TABLE>
@@ -76,6 +80,12 @@
       <TR>
         <TD><xsl:apply-templates select="." mode="core"/></TD>
       </TR>
+      <TR>
+        <TD>      
+          <xsl:for-each select="./error"><xsl:apply-templates select="." mode="error"/></xsl:for-each>
+          <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
+        </TD>
+      </TR>
     </TABLE>
   </xsl:for-each>
 </xsl:template>
@@ -93,6 +103,8 @@
 		      </NOBR>
 		    </xsl:if>
 		    <xsl:if test="not(@caption) and @icon"><IMG SRC="{@icon}" /></xsl:if>
+            <xsl:for-each select="./error"><xsl:apply-templates select="." mode="error"/></xsl:for-each>
+            <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
           </TD>
         </xsl:for-each>
       </TR>
