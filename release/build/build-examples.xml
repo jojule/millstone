@@ -1,0 +1,171 @@
+<?xml version="1.0"?>
+
+<project name="Millstone Base Release" default="package">
+
+    <target name="checks" >
+	<condition property="codeformatter.missing">
+	    <not><available classname="Java2Html"/></not>
+	</condition>
+    </target>
+    
+    <target name="init" unless="version" depends="checks">
+    	<fail message="Cannot run this script separately. Run 'build.xml' instead." />    
+    </target>
+
+
+    <target name="fail-formatter-missing" if="codeformatter.missing">
+        <echo message="Code syntax highlighter not found. "/> 
+	<fail message="The Java2Html JAR must be in your classpath."/>
+    </target>       
+    
+    
+    <target name="checkout" if="release" depends="init">
+	<!-- Do the CVS checkout -->
+    	<echo message="Checking out MillStone ${version} from ${cvs-root} with tag ${cvs-tag} to ${checkout-dir}" />
+	<delete dir="${checkout-dir}/examples"/>
+	<mkdir dir="${checkout-dir}"/>
+	<cvs cvsRoot="${cvs-root}" package="examples" tag="${cvs-tag}"
+	   dest="${checkout-dir}"/> 	
+    </target>    
+
+
+    <target name="compile" depends="checkout">
+        
+        <mkdir dir="${work-dir}/examples"/>     
+    	<javac srcdir="${root-dir}/examples/WEB-INF/src" destdir="${work-dir}/examples" 
+	     deprecation="on" optimize="${optimize}"
+             classpath="${classpath}:${output-dir}/lib/${base-bin-jar-name}:${root-dir}/examples/WEB-INF/lib/jl011.jar">
+	    <include name="org/millstone/examples/*"/>
+	    <include name="org/millstone/examples/stoneplayer/**"/>
+	    <include name="org/millstone/examples/features/**"/>
+	    <include name="org/millstone/examples/gogame/**"/>
+	</javac>	
+	
+    </target>
+    
+    
+    <target name="jar" depends="compile">
+    
+        <!-- Copy image resources -->
+	<copy  todir="${work-dir}/examples/">
+            <fileset dir="${root-dir}/examples/WEB-INF/src">
+              <patternset>
+                <include name="org/millstone/examples/**/*.jpg"/>
+                <include name="org/millstone/examples/**/*.gif"/>
+              </patternset>
+            </fileset>
+	</copy>
+
+        <!-- Create Examples JAR -->
+        <jar jarfile="${work-dir}/examples/${examples-jar-name}"
+             compress="true"
+             manifest="${manifest-dir}/millstone-examples.mf">
+            <fileset dir="${work-dir}/examples">
+              <patternset>
+                <include name="org/millstone/examples/**/*.class"/>
+                <include name="org/millstone/examples/**/*.jpg"/>
+                <include name="org/millstone/examples/**/*.gif"/>
+              </patternset>
+            </fileset>
+        </jar>
+
+    </target>
+
+    <target name="package" depends="jar,fail-formatter-missing">
+
+	<!-- Copy example binary -->
+	<copy file="${work-dir}/examples/${examples-jar-name}" todir="${output-dir}/lib"/>
+
+        <!-- Copy the sources to distribution -->
+	<mkdir dir="${output-dir}/examples/src" />
+	<copy  todir="${output-dir}/examples/src">
+            <fileset dir="${root-dir}/examples/WEB-INF/src">
+              <patternset>
+                <include name="org/millstone/examples/**/*.java"/>
+              </patternset>
+            </fileset>
+	</copy>
+       
+
+	<!-- Create WAR content  -->
+	<property name="war-dir" value="${work-dir}/examples/war"/>
+    
+    	<delete dir="${war-dir}"/>
+	<mkdir dir="${war-dir}"/>
+	
+	<copy todir="${war-dir}">
+            <fileset dir="${root-dir}/examples">
+              <patternset>
+		<include name="*.html"/>
+		<include name="millstoneorg.css"/>
+               	<include name="img/*.gif"/>
+		
+               	<include name="WEB-INF/src/**/*.java"/>
+               	<include name="docs/**"/>
+
+               	<include name="WEB-INF/lib/*.jar"/>
+
+              	<include name="WEB-INF/lib/**/*.xsl"/>
+               	<include name="WEB-INF/lib/**/*.xml"/>
+               	<include name="WEB-INF/lib/**/*.css"/>
+               	<include name="WEB-INF/lib/**/*.js"/>
+               	<include name="WEB-INF/lib/**/*.gif"/>
+               	<include name="WEB-INF/lib/**/*.png"/>
+               	<include name="WEB-INF/lib/**/*.jpg"/>
+
+              </patternset>
+            </fileset>
+	</copy>    
+	
+	<!-- Copy Millstone JARs to lib -->
+	<copy todir="${war-dir}/WEB-INF/lib">
+            <fileset dir="${output-dir}/lib">
+              <patternset>
+                <include name="${base-bin-jar-name}"/>
+                <include name="${examples-jar-name}"/>
+                <include name="${webadapter-bin-jar-name}"/>
+		<include name="${web-themes-jar-name}"/>
+              </patternset>
+            </fileset>
+	</copy>   
+
+	<!-- Copy java sources to documentation -->
+	<mkdir dir="${war-dir}/docs/sources"/>
+	<copy todir="${war-dir}/docs/sources">
+            <fileset dir="${root-dir}/examples/WEB-INF/src">
+              <patternset>
+                <include name="**/*.java"/>
+              </patternset>
+            </fileset>
+	</copy>   
+
+	<!-- Apply source code syntax highlighting -->
+	<apply executable="java" dir="${war-dir}/docs/sources" dest="${war-dir}/docs/sources" parallel="false">
+  		<arg value="Java2Html"/>
+  		<srcfile/>		
+ 		<targetfile/>
+		<fileset dir="${war-dir}/docs/sources">
+			<patternset>
+      			<include name="**/*.java"/>
+    			</patternset>
+		</fileset>
+		<mapper type="glob" from="*.java" to="*.html"/>
+	</apply>
+ 
+ 	<!-- Create the WAR archive -->
+        <war warfile="${work-dir}/examples/${examples-war-name}"
+	     webxml="${root-dir}/examples/WEB-INF/web.xml">
+            <fileset dir="${war-dir}"/>
+        </war>
+	
+	<!-- Copy WAR archive to distribution -->
+	<copy todir="${output-dir}/lib" 
+	file="${work-dir}/examples/${examples-war-name}"/>
+	
+	<!-- Delete temporaty directory -->
+	<delete dir="${war-dir}"/>
+  
+    </target>
+
+
+</project>

@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+
+<project name="Millstone Release" basedir="../.." default="all">
+
+    <!-- Default build target -->
+    <target name="all" depends="package" description="Build all">
+    </target>
+
+    <!-- Initialization - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <target name="pre-init">
+        
+	<!-- Create current timestamp -->
+	<tstamp/>
+	
+        <!-- Directories -->
+        <property name="work-dir" value="release/build/work"/>
+        <property name="original-manifests" value="release/manifest"/>
+        <property name="tmp-dir" value="${work-dir}/tmp"/>
+        <property name="checkout-dir" value="${work-dir}/checkout"/>
+
+	<!-- Are the compiler optimizations on/off -->
+	<property name="optimize" value="off"/>
+	
+        <!-- Fixed CVS properties -->
+	<property name="cvs-root" value=":pserver:anonymous@cvs.millstone.sourceforge.net:/cvsroot/millstone"/>
+		
+    </target>
+
+    
+    <target name="check-version" unless="version" if="release">
+        <echo message="You must specify version by setting the 'version' property!"/>
+        <echo message="For example: -Dversion=3.0.1"/>
+    </target>
+
+
+    <target name="check-tag" unless="version" if="release">
+        <echo message="You must specify CVS tag by setting the 'cvs-tag' property!"/>
+        <echo message="For example: -Dcvs-tag=version-3_0_1"/>
+    </target>
+
+
+    <target name="init-release" depends="pre-init,check-version,check-tag" if="release">
+
+        <!-- Set release base directory -->
+        <property name="root-dir" value="${checkout-dir}" />
+
+    	<echo message="Creating MillStone ${version} from ${cvs-root} with tag ${cvs-tag} to ${checkout-dir}" />
+        <input message="Press Return key to continue..." />
+	
+    </target>
+
+
+    <target name="init-development" depends="pre-init" unless="release">
+
+        <!-- MillStone version -->
+	<property name="version" value="${DSTAMP}.${TSTAMP}" />
+
+      <property name="root-dir" value="." />
+        
+    	<echo message="Preparing for development snapshot."/>
+	<echo message="You can build releases by setting the 'release' property to true."/>
+    </target>
+
+
+    <target name="init" depends="init-development,init-release">
+
+        <property name="target-name" value="millstone-${version}"/>
+        <property name="release-docs" value="${basedir}/release/docs"/>
+
+	<!-- Directories -->
+        <property name="output-dir" value="${work-dir}/${target-name}"/>
+        <property name="manifest-dir" value="${work-dir}/compiled-manifests"/>
+      
+        <!-- Destination files -->
+        <property name="package-file-name" value="${target-name}.zip"/>	
+        <property name="base-bin-jar-name" value="millstone-base-${version}.jar"/>
+        <property name="base-src-jar-name" value="millstone-base-src-${version}.jar"/>
+        <property name="webadapter-bin-jar-name" value="millstone-webadapter-${version}.jar"/>
+        <property name="webadapter-src-jar-name" value="millstone-webadapter-src-${version}.jar"/>	
+        <property name="web-themes-jar-name" value="millstone-web-themes-${version}.jar"/>
+        <property name="examples-jar-name" value="millstone-examples-${version}.jar"/>
+        <property name="examples-war-name" value="millstone-examples-${version}.war"/>
+
+        <echo message="Prepared to build MillStone ${version} packages"/>
+    </target>
+
+
+
+    <!-- Intialize Working Directory -->
+
+    <target name="init-work-dir" depends="init"
+            description="Create release working Sirectory structure">
+
+    	<!-- Create working directory -->
+        <mkdir dir="${work-dir}" />
+	
+	<!-- Create versioned manifest files -->
+        <copy todir="${manifest-dir}">
+	    <filterset>
+    	       <filter token="VERSION" value="${version}"/>
+            </filterset>
+            <fileset dir="${original-manifests}">
+                <include name="*.mf"/>
+            </fileset>
+        </copy>
+    </target>
+    
+
+
+    <!-- Initialize Output Directory -->
+    
+    <target name="init-output-dir" depends="init-work-dir"
+            description="Create release working Sirectory structure">
+
+        <!-- Copy/filter core documentation to correct places -->
+        <copy todir="${output-dir}">
+	    <filterset>
+    	       <filter token="VERSION" value="${version}"/>
+            </filterset>
+            <fileset dir="${release-docs}">
+                <include name="readme.txt"/>
+                <include name="install.txt"/>
+                <include name="license.txt"/>
+                <include name="release-notes.txt"/>
+                <include name="changes.txt"/>
+            </fileset>
+        </copy>
+
+
+        <!-- Create Output Directory Hierarchy -->
+        <mkdir dir="${output-dir}/docs/apidocs" />
+        <mkdir dir="${output-dir}/src" />
+        <mkdir dir="${output-dir}/lib" />
+        <mkdir dir="${output-dir}/webthemes" />
+
+
+        <!-- FIXME: Copy specifications to correct places
+        <copy todir="${output-dir}/docs">
+            <fileset dir="${docs-dir}">
+                <include name="specification/*.dtd"/>
+            </fileset>
+        </copy>
+	-->
+    </target>
+    
+    <!-- Base - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <target name="base" depends="init-output-dir">
+        <ant antfile="release/build/build-base.xml" inheritAll="true" />
+    </target>
+    
+    <!-- Web adapter- - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <target name="webadapter" depends="base">
+        <ant antfile="release/build/build-webadapter.xml" inheritAll="true" />
+    </target>
+
+
+    <!-- API Documentation- - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <target name="apidocs" depends="base,webadapter">
+        <ant antfile="release/build/build-docs.xml" inheritAll="true" />
+    </target>
+
+    <!-- Examples - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <target name="examples" depends="init-output-dir,base,webadapter">
+        <ant antfile="release/build/build-examples.xml" inheritAll="true" />
+    </target>
+
+
+    <!-- ZIP Package creation - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <target name="package" depends="init-output-dir,apidocs,base,webadapter,examples">
+        <zip zipfile="${work-dir}/${package-file-name}">
+	     <fileset dir="${work-dir}">
+              <patternset>
+                <include name="${target-name}/**"/>
+              </patternset>
+            </fileset>
+	 </zip>
+    </target>
+    
+
+
+    <!-- Cleaning up the mess - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <target name="clean" depends="init">
+        <echo message="Deleting build directory"/>
+        <delete dir="${work-dir}" />
+    </target>
+    
+</project>

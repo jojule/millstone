@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+
+<project name="Millstone Docs Release" default="all">
+
+    <!-- Default collective target -->
+    <target name="all" depends="specification,apidocs"/>
+    
+    <target name="init" unless="version">
+    	<fail message="Cannot run this script separately. Run 'build.xml' instead." />    
+    </target>
+
+    <target name="checkout" if="release" depends="init">
+	<!-- Do the CVS checkout -->
+    	<echo message="Checking out MillStone ${version} from ${cvs-root} with tag ${cvs-tag} to ${checkout-dir}" />
+	<delete dir="${checkout-dir}/docs"/>
+	<mkdir dir="${checkout-dir}"/>
+	<cvs cvsRoot="${cvs-root}" package="docs" tag="${cvs-tag}"
+	   dest="${checkout-dir}"/> 	
+    </target>
+
+
+
+    <target name="apidocs" depends="checkout">
+   
+        <!-- Version the files -->
+	<mkdir dir="${work-dir}/docsrc/"/>   
+	<filter token="VERSION" value="${version}"/>
+        <copy todir="${work-dir}/docsrc/" filtering="true">
+           <fileset dir="${root-dir}/base/src"/>	
+        </copy>
+        <copy todir="${work-dir}/docsrc/" filtering="true">
+            <fileset dir="${root-dir}/web-adapter/src"/>	
+        </copy>
+    
+        <!-- Run Javadoc -->
+        <javadoc packagenames="org.millstone.base.*,org.millstone.webadapter" 
+                 destdir="${output-dir}/docs/apidocs"
+                 Windowtitle="Millstone(tm) Documentation - version ${version}" 
+                 Doctitle="Millstone(tm) Documentation - version ${version}" >
+            <sourcepath>
+                <pathelement location="${work-dir}/docsrc"/>
+            </sourcepath>
+	    <bottom><![CDATA[<i>Copyright &#169; 2000,2001,2002 IT Mill Ltd. All Rights
+                Reserved.</i>]]></bottom>
+        </javadoc>
+        <delete dir="${work-dir}/docsrc"/>
+    </target>
+
+    <target name="specification" depends="checkout">
+        <copy todir="${output-dir}/docs/" filtering="true">
+            <fileset dir="${root-dir}/docs">
+	        <include name="specification/*.dtd" />
+	    </fileset>
+        </copy>
+    </target>
+
+
+
+</project>
