@@ -295,6 +295,26 @@ public interface Container {
         
     }
  
+    /** Interface for Container classes whose Items can be sorted. */
+    public interface Sortable extends Container {
+
+    	/**
+    	 * Sort method.
+    	 * @param propertyId The ID of container property, which values are used to
+    	 * sort the items in container.
+    	 * @param ascending Use <code>true</code> to sort in ascending order,
+    	 * <code>false</code> to use descending order.
+    	 */
+    	void sort(Object[] propertyId, boolean[] ascending);	
+    	
+    	/** Get the container property IDs, which  can be used to sort the item.
+    	 * Return the sortable field ids.
+    	 * @return Collection of Objects
+    	 */
+    	Collection getSortableContainerPropertyIds();
+    	
+    }    
+    
     /** Interface for Container classes whose Items can be indexed. */
     public interface Indexed extends Ordered {
      
