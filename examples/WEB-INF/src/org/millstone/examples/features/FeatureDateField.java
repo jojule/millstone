@@ -2,17 +2,33 @@ package org.millstone.examples.features;
 
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Locale;
 
 import org.millstone.base.data.util.BeanItem;
+import org.millstone.base.data.util.MethodProperty;
 import org.millstone.base.ui.*;
 
 public class FeatureDateField extends Feature {
 
 	public FeatureDateField() {
-		super();
+		super();		
 	}
 
 	protected Component getDemoComponent() {
+
+		// Create locale selector
+		Select selector = new Select("Application Locale");
+		selector.addProperty("name",String.class,"");
+		selector.setItemCaptionPropertyId("name");
+		Locale[] locales = Locale.getAvailableLocales();
+		for (int i = 0; i < locales.length; i++) {
+			selector.addItem(locales[i]).getProperty("name").setValue(locales[i].getDisplayName());		
+		}
+		selector.setImmediate(true);
+		selector.setPropertyDataSource(new MethodProperty(this.getApplication(),"locale"));
+		
+		Panel localePanel = new Panel("Extra options");
+		localePanel.addComponent(selector);
 
 		OrderedLayout l = new OrderedLayout();
 
@@ -49,6 +65,7 @@ public class FeatureDateField extends Feature {
 					"style" },
 				alternateEditors));
 
+		l.addComponent(localePanel);
 		return l;
 	}
 

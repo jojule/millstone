@@ -32,10 +32,11 @@ public class FeatureParameters
 			new Label(
 				"To test this feature, try to "
 					+ "add some get parameters to URL. For example if you have "
-					+ "the feature browser installed in your local host, try url: "
-					+ "http://localhost:8080/examples/features/test/uri?test=1&test=2");
+					+ "the feature browser installed in your local host, try url: ");
 		info.setCaption("Usage info");
 		l.addComponent(info);
+		l.addComponent(new Link("http://localhost:8080/examples/features/test/uri?test=1&test=2",
+			new ExternalResource("http://localhost:8080/examples/features/test/uri?test=1&test=2")));
 
 		// URI 
 		Panel p1 = new Panel("URI Handler");

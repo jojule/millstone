@@ -92,7 +92,7 @@ public class FeatureTable extends Feature implements Action.Handler {
 					"ID" });
 		alternateEditors.put("columnHeaderMode", s);
 
-		Select t =
+		Select ts =
 			createSelect(
 				"Row Header Mode",
 				new Integer[] {
@@ -113,7 +113,7 @@ public class FeatureTable extends Feature implements Action.Handler {
 					"Index",
 					"Item",
 					"Property" });
-		alternateEditors.put("rowHeaderMode", t);
+		alternateEditors.put("rowHeaderMode", ts);
 
 		Select u =
 			createSelect(

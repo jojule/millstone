@@ -44,13 +44,13 @@ public class FeatureTree extends Feature implements Action.Handler {
 		// Configuration
 		Hashtable alternateEditors = new Hashtable();
 		
-		Select t =
+		Select s =
 			createSelect(
 				"Style",
 				new String[] { "default", "menu","dropmenu" },
 				new String[] { "Default", "Menu","Dropmenu" });
 
-		alternateEditors.put("style", t);
+		alternateEditors.put("style", s);
 		
 		l.addComponent(
 			 createPropertyPanel(t,

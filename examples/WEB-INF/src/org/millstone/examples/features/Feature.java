@@ -18,6 +18,9 @@ public abstract class Feature extends CustomComponent {
 
 	private TabSheet ts;
 
+	/** These are properties common to all features. FIXME */
+	private String[] commonProperties = new String[]{"enabled","visible"};
+
 	public Feature() {
 		ts = new TabSheet();
 		setCompositionRoot(ts);
@@ -72,7 +75,7 @@ public abstract class Feature extends CustomComponent {
 		String[] propertyNames,
 		Hashtable alternateEditors) {
 
-		Panel properties = new Panel("Properties",new GridLayout(2, 20));
+		Panel properties = new Panel("Properties",new GridLayout(2, 1));
 
 		try {
 			
@@ -88,6 +91,14 @@ public abstract class Feature extends CustomComponent {
 			// Add all the bean properties as MethodProperties to this Item
 			for (int k = 0; k < propertyNames.length; k++) {
 				for (int i = 0; i < pd.length; i++) {
+					if (i == (pd.length-1) && !propertyNames[k].equals(pd[i].getName())) {
+						System.out.println("!!! Property : "+	propertyNames[k] + " was not found in object!!");
+						System.out.print("Available properties in object are: ");
+						for (int y=0;y<pd.length;y++) {
+							System.out.print(pd[y].getName()+" ");
+						}
+						System.out.print("\n");
+					}
 					// Skip till we find the property in question from bean property descriptor array.
 					if (!propertyNames[k].equals(pd[i].getName())) {
 						continue;
@@ -117,6 +128,7 @@ public abstract class Feature extends CustomComponent {
 						else
 							fields.add(new TextField(captionize(name), p));
 					}
+					break;
 				}
 			}
 
