@@ -857,9 +857,9 @@ public class WebAdapterServlet
 		Application application)
 		throws IOException {
 
-		URL logoutUrl = application.getLogoutURL();
+		String logoutUrl = application.getLogoutURL();
 		if (logoutUrl == null)
-			logoutUrl = application.getURL();
+			logoutUrl = application.getURL().toString();
 
 		HttpSession session = request.getSession();
 		if (session != null) {
@@ -869,7 +869,7 @@ public class WebAdapterServlet
 				applications.remove(application);
 		}
 
-		response.sendRedirect(response.encodeRedirectURL(logoutUrl.toString()));
+		response.sendRedirect(response.encodeRedirectURL(logoutUrl));
 	}
 
 	/** Get the existing application or create a new one.
