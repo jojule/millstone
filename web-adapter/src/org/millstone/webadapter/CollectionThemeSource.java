@@ -54,7 +54,7 @@ import java.util.List;
  */
 public class CollectionThemeSource implements ThemeSource {
 
-	private Collection sources = new LinkedList();
+	private List sources = new LinkedList();
 
 	/**
 	 * @see org.millstone.webadapter.ThemeSource#getName()
