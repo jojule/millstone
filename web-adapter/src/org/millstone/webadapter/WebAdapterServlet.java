@@ -909,6 +909,8 @@ public class WebAdapterServlet
 						application,
 						request.getSession(false),
 						this);
+				debugWindow.setWidth(370);
+				debugWindow.setHeight(480);
 				application.addWindow(debugWindow);
 			} catch (Exception e) {
 				throw new ServletException(
