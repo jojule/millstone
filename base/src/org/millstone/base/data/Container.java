@@ -344,10 +344,18 @@ public interface Container {
         /**
          * Sort method.
          * 
+         * Sort the container items.
+         * 
          * @param propertyId
-         *            The ID of container property, which values are used to
-         *            sort the items in container.
+         *            Array of container property IDs, which values are used to
+         *            sort the items in container as primary, secondary, ... 
+         * 			 sorting criterion. All of the item IDs must be in the 
+         *            collection returned by <code>getSortableContainerPropertyIds()</code>
          * @param ascending
+         *  			Array of sorting order flags corresponding to each property ID
+         *  			used in sorting. If this array is shorter than propertyId array,
+         *           ascending order is assumed for items where the order is not 
+         *           specified.
          *            Use <code>true</code> to sort in ascending order,
          *            <code>false</code> to use descending order.
          */
@@ -355,9 +363,8 @@ public interface Container {
 
         /**
          * Get the container property IDs, which can be used to sort the item.
-         * Return the sortable field ids.
          * 
-         * @return Collection of Objects
+         * @return The sortable field ids.
          */
         Collection getSortableContainerPropertyIds();
 
