@@ -48,7 +48,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
 /**
  * The WebBrowserProbe uses JavaScript to determine the capabilities
  * of the client browser.
@@ -224,7 +223,7 @@ public class WebBrowserProbe {
 			Log.except("Failed to generate client check page.", e);
 		}
 	}
-	
+
 	/** Determine HTML version based on user agent. 
 	 *  @param agent HTTP User-Agent request header.
 	 *  @return new WebBrowser instance initialized based on agent features.
@@ -234,38 +233,123 @@ public class WebBrowserProbe {
 		if (agent == null)
 			return res;
 
+		// Set the agent string
 		res.setBrowserApplication(agent);
-		boolean isMac = (agent.indexOf("Mac") >= 0) ? true : false;
-		boolean NS4 = (agent.indexOf("MSIE 4") >= 0) ? true : false;
-		boolean IEmac =
-			((agent.indexOf("MSIE") >= 0) && (isMac)) ? true : false;
-		boolean IE4 = ((agent.indexOf("MSIE 4.") >= 0)) ? true : false;
-		boolean IE5 = ((agent.indexOf("MSIE 5.") >= 0)) ? true : false;
-		boolean IE6 = ((agent.indexOf("MSIE 6.") >= 0)) ? true : false;
-		boolean ver4 = (NS4 || IE4 || IE5 || IE6) ? true : false;
-		boolean NS6 = (agent.indexOf("Netscape") >= 0) ? true : false;
 
-		boolean IE4plus = IE4 || IE5 || IE6;
-		boolean IE5plus = IE5 || IE6;
-		int IEMajor = 0;
-
-		if (IE4plus) {
-			int start = agent.indexOf("MSIE");
-			int end = agent.indexOf(".", start);
-			IEMajor = Integer.parseInt(agent.substring(start + 5, end));
-			IE5plus = (IEMajor >= 5) ? true : false;
-		}
+		// Konqueror
+		if (agent.indexOf("Konqueror") >= 0) {
+			res.setJavaScriptVersion(WebBrowser.JSCRIPT_5_6);
+			res.setJavaEnabled(true);
+			res.setFrameSupport(true);
+		} 
 		
-		// Version 4 browser defaults
-		if (ver4 || NS6) {
-			res.setMarkupLanguageVersion(WebBrowser.MARKUP_HTML_4_0);
-			res.setCssSupported(true);
+		// Opera
+		else if (
+			(agent.indexOf("Opera 6.") >= 0)
+				|| (agent.indexOf("Opera 5.") >= 0)
+				|| (agent.indexOf("Opera 4.") >= 0)) {
+			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_3);
+			res.setJavaEnabled(true);
+			res.setFrameSupport(true);
+		} else if (agent.indexOf("Opera 3.") >= 0) {
+			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_3);
+			res.setJavaEnabled(false);
+			res.setFrameSupport(true);
+		} 
+		
+		// OmniWeb
+		else if (agent.indexOf("OmniWeb") >= 0) {
+			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_3);
+			res.setJavaEnabled(true);
 			res.setFrameSupport(true);
 		}
 
-		// Support javascript on all "Mozilla" browsers
-		if (agent.indexOf("Mozilla") >=0) {
+		// Mosaic
+		else if (agent.indexOf("Mosaic") >= 0) {
+			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_3);
+			res.setJavaEnabled(true);
+			res.setFrameSupport(true);
+		}
+
+		// Lynx
+		else if (agent.indexOf("Lynx") >= 0) {
+			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_NONE);
+			res.setJavaEnabled(false);
+			res.setFrameSupport(true);
+		}
+
+		// Microsoft Browsers
+		// See Microsoft documentation for details:
+		// http://msdn.microsoft.com/library/default.asp?url=/library/
+		//        en-us/script56/html/js56jsoriversioninformation.asp
+		else if (agent.indexOf("MSIE 6.") >= 0) {
+			res.setJavaScriptVersion(WebBrowser.JSCRIPT_5_6);
+			res.setJavaEnabled(true);
+			res.setFrameSupport(true);
+		} else if (agent.indexOf("MSIE 5.5") >= 0) {
+			res.setJavaScriptVersion(WebBrowser.JSCRIPT_5_5);
+			res.setJavaEnabled(true);
+			res.setFrameSupport(true);
+		} else if (agent.indexOf("MSIE 5.") >= 0) {
+			res.setJavaScriptVersion(WebBrowser.JSCRIPT_5_0);
+			res.setJavaEnabled(true);
+			res.setFrameSupport(true);
+		} else if (agent.indexOf("MSIE 4.") >= 0) {
+			res.setJavaScriptVersion(WebBrowser.JSCRIPT_3_0);
+			res.setJavaEnabled(true);
+			res.setFrameSupport(true);
+		} else if (agent.indexOf("MSIE 3.") >= 0) {
+			res.setJavaScriptVersion(WebBrowser.JSCRIPT_1_0);
+			res.setJavaEnabled(true);
+			res.setFrameSupport(true);
+		} else if (agent.indexOf("MSIE 2.") >= 0) {
+			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_NONE);
+			res.setJavaEnabled(false);
+			if (agent.indexOf("Mac") >= 0) {
+				res.setFrameSupport(true);
+			} else {
+				res.setFrameSupport(false);
+			}
+		}
+
+		// Netscape browsers
+		else if (agent.indexOf("Netscape6") >= 0) {
+			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_5);
+			res.setJavaEnabled(true);
+			res.setFrameSupport(true);
+		} else if (
+			(agent.indexOf("Mozilla/4.06") >= 0)
+				|| (agent.indexOf("Mozilla/4.7") >= 0)) {
+			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_3);
+			res.setJavaEnabled(true);
+			res.setFrameSupport(true);
+		} else if (agent.indexOf("Mozilla/4.") >= 0) {
+			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_2);
+			res.setJavaEnabled(true);
+			res.setFrameSupport(true);
+		} else if (agent.indexOf("Mozilla/3.") >= 0) {
+			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_1);
+			res.setJavaEnabled(true);
+			res.setFrameSupport(true);
+		} else if (agent.indexOf("Mozilla/2.") >= 0) {
 			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_0);
+			res.setJavaEnabled(true);
+			res.setFrameSupport(true);
+		}
+
+		// Mozilla Open-Source Browsers		
+		else if (agent.indexOf("Mozilla/5.") >= 0) {
+			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_5);
+			res.setJavaEnabled(true);
+			res.setFrameSupport(true);
+		}
+
+		// Unknown browser
+		else {
+			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_UNCHECKED);
+			res.setJavaEnabled(false);
+			res.setMarkupLanguageVersion(WebBrowser.MARKUP_UNKNOWN);
+			res.setFrameSupport(false);
 		}
 
 		return res;
@@ -282,7 +366,7 @@ public class WebBrowserProbe {
 		WebBrowser res = probe(request.getHeader("User-Agent"));
 
 		// Client locales
-		Collection  locales = res.getLocales();
+		Collection locales = res.getLocales();
 		for (Enumeration e = request.getLocales(); e.hasMoreElements();) {
 			locales.add(e.nextElement());
 		}
@@ -311,12 +395,6 @@ public class WebBrowserProbe {
 			res.setScreenHeight(Integer.parseInt(val));
 		}
 
-		//CSS support
-		val = request.getParameter("css");
-		if (val != null) {
-			res.setCssSupported(Boolean.valueOf(val).booleanValue());
-		}
-
 		//Frame support
 		val = request.getParameter("frames");
 		if (val != null) {
@@ -324,5 +402,5 @@ public class WebBrowserProbe {
 		}
 
 		return res;
-	}	
+	}
 }

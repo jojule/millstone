@@ -35,7 +35,7 @@
    Primary source for MillStone information and releases: www.millstone.org
 
    ********************************************************************** */
-   
+
 package org.millstone.webadapter;
 
 import org.millstone.base.terminal.Paintable;
@@ -91,9 +91,6 @@ public class WebBrowser implements Terminal {
 	/** Holds value of property markupLanguageVersion. */
 	private HTMLVersion markupLanguageVersion = MARKUP_HTML_3_2;
 
-	/** Holds value of property CSS support. */
-	private boolean cssSupported = false;
-
 	/** Pixel width of the terminal screen */
 	private int screenWidth = -1;
 
@@ -115,13 +112,13 @@ public class WebBrowser implements Terminal {
 	 */
 	public WebBrowser() {
 	}
-	
-    /** Get name of the default theme
-     * @return Name of the terminal window
-     */    
-    public String getDefaultTheme() {
-    	return "default";
-    }	
+
+	/** Get name of the default theme
+	 * @return Name of the terminal window
+	 */
+	public String getDefaultTheme() {
+		return "default";
+	}
 
 	/** Get the name and version of the web browser application.
 	 *
@@ -217,9 +214,6 @@ public class WebBrowser implements Terminal {
 		// Return catenation of the properties
 		return "Browser:"
 			+ this.browserApplication
-			+ ", "
-			+ "CSS:"
-			+ this.cssSupported
 			+ ", "
 			+ "Locales:"
 			+ localeString
@@ -346,20 +340,6 @@ public class WebBrowser implements Terminal {
 		this.performClientCheck = value;
 	}
 
-	/** Check if Cascading Stylesheets are supported.
-	 * @return boolean
-	 */
-	public boolean isCssSupported() {
-		return cssSupported;
-	}
-
-	/** Sets the css supported property.
-	 * @param cssSupported The css supported to set
-	 */
-	public void setCssSupported(boolean cssSupported) {
-		this.cssSupported = cssSupported;
-	}
-
 	/** Check if web browser supports Java.
 	 * @return boolean
 	 */
@@ -423,7 +403,7 @@ public class WebBrowser implements Terminal {
 	 */
 	public void setScreenWidth(int screenWidth) {
 		this.screenWidth = screenWidth;
-	}	
+	}
 
 	/*
 	 * Consts defining the supported markup language versions 
@@ -523,10 +503,36 @@ public class WebBrowser implements Terminal {
 		}
 
 		/** Check compability with other JavaScript version.
-		 *  @return true if this is compatible with the other, false otherwise
+		 *  Use this like:
+		 *  <code>boolean isEcma = someVersion.supports(ECMA_262);</code>
+		 *  @return true if this supports the other, false otherwise
 		 */
 		public boolean supports(JavaScriptVersion other) {
-			return (this.order >= other.order);
+
+			// ECMA-262 support compare
+			if (other.equals(ECMA_262)) {
+				
+				// JScript over 5.0 support ECMA-262
+				if (this.order >= 100) {
+					return (this.order >= JSCRIPT_5_0.order);
+				} else {
+					return (this.order >= JAVASCRIPT_1_3.order);				
+				}				
+			}
+
+			// JavaScript version compare
+			else if (this.order < 100 && other.order < 100) {
+				return (this.order >= other.order);
+			}
+
+			// JScript version compare
+			else
+				 if (this.order >= 100 && other.order >= 100) {
+				return (this.order >= other.order);
+			}
+			
+			return false;
+
 		}
 
 	}
@@ -547,13 +553,19 @@ public class WebBrowser implements Terminal {
 	public static final JavaScriptVersion JAVASCRIPT_1_5 =
 		DEFAULT.new JavaScriptVersion("JavaScript 1.5", 15);
 	public static final JavaScriptVersion JSCRIPT_1_0 =
-		DEFAULT.new JavaScriptVersion("JScript 1.0", 1);
+		DEFAULT.new JavaScriptVersion("JScript 1.0", 110);
 	public static final JavaScriptVersion JSCRIPT_3_0 =
-		DEFAULT.new JavaScriptVersion("JScript 3.0", 3);
+		DEFAULT.new JavaScriptVersion("JScript 3.0", 130);
+	public static final JavaScriptVersion JSCRIPT_4_0 =
+		DEFAULT.new JavaScriptVersion("JScript 4.0", 140);
 	public static final JavaScriptVersion JSCRIPT_5_0 =
-		DEFAULT.new JavaScriptVersion("JScript 5.0", 5);
-	public static final JavaScriptVersion ECMASCRIPT =
-		DEFAULT.new JavaScriptVersion("ECMA-262", 6);
+		DEFAULT.new JavaScriptVersion("JScript 5.0", 150);
+	public static final JavaScriptVersion JSCRIPT_5_5 =
+		DEFAULT.new JavaScriptVersion("JScript 5.5", 155);
+	public static final JavaScriptVersion JSCRIPT_5_6 =
+		DEFAULT.new JavaScriptVersion("JScript 5.6", 55);
+	public static final JavaScriptVersion ECMA_262 =
+		DEFAULT.new JavaScriptVersion("ECMA-262", 262);
 
 	public static final JavaScriptVersion[] JAVASCRIPT_VERSIONS =
 		new JavaScriptVersion[] {
@@ -568,5 +580,5 @@ public class WebBrowser implements Terminal {
 			JSCRIPT_1_0,
 			JSCRIPT_3_0,
 			JSCRIPT_5_0,
-			ECMASCRIPT };
+			ECMA_262 };
 }
