@@ -38,8 +38,6 @@
 
 package org.millstone.base.terminal;
 
-import org.millstone.base.terminal.Paintable.RepaintRequestListener;
-
 /** Interface for rendering error messages to terminal. All the visible errors
  * shown to user must implement this interface.
  *

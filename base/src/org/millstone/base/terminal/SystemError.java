@@ -40,7 +40,6 @@ package org.millstone.base.terminal;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import org.millstone.base.event.ListenerMethod;
 
 /** System error is a runtime exception caused by error in system. The system
  * error can be shown to the user as it implements ErrorMessage interface,
