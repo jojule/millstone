@@ -1,4 +1,5 @@
 package org.millstone.base.ui;
+import org.millstone.base.data.Container;
 import org.millstone.base.data.Property;
 import org.millstone.base.data.Item;
 
@@ -38,4 +39,15 @@ public interface FieldFactory {
 	 * @return Field The field suitable for editing the specified data.
 	 */
 	Field createField(Item item, Object propertyId, Component uiContext);
+
+	/** Creates field based on the container item id and property id.
+	 *
+	 * @param container Container where the property belongs to.
+	 * @param itemId The item Id.
+	 * @param propertyId Id of the property.
+	 * @param uiContext The component where the field is presented.
+	 * @return Field The field suitable for editing the specified data.
+	 */
+	Field createField(Container container, Object itemId, Object propertyId, Component uiContext);
+
 }

@@ -2,6 +2,7 @@ package org.millstone.base.ui;
 
 import java.util.Date;
 
+import org.millstone.base.data.Container;
 import org.millstone.base.data.Item;
 import org.millstone.base.data.Property;
 
@@ -75,6 +76,17 @@ public class BaseFieldFactory implements FieldFactory {
 	 */
 	public Field createField(Item item, Object propertyId, Component uiContext) {
 		return createField(item.getItemProperty(propertyId),uiContext);
+	}
+	
+	/**
+	 * @see org.millstone.base.ui.FieldFactory#createField(org.millstone.base.data.Container, java.lang.Object, java.lang.Object, org.millstone.base.ui.Component)
+	 */
+	public Field createField(
+		Container container,
+		Object itemId,
+		Object propertyId,
+		Component uiContext) {
+		return createField(container.getContainerProperty(itemId,propertyId),uiContext);
 	}
 	
 }
