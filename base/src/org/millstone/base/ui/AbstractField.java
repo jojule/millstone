@@ -205,8 +205,9 @@ public abstract class AbstractField
 			currentBufferedSourceException = null;
 			repaintNeeded = true;
 		}
-		
-		if (repaintNeeded) requestRepaint();
+
+		if (repaintNeeded)
+			requestRepaint();
 	}
 
 	/* Update the value from the data source.
@@ -448,7 +449,7 @@ public abstract class AbstractField
 
 		// Get the value from source
 		try {
-			value = dataSource.getValue();
+			value = dataSource != null ? dataSource.getValue() : value;
 			modified = false;
 		} catch (Throwable e) {
 			currentBufferedSourceException =
@@ -457,9 +458,7 @@ public abstract class AbstractField
 		}
 
 		// Listen the new data source if possible
-		if (dataSource != null
-			&& Property.ValueChangeNotifier.class.isAssignableFrom(
-				dataSource.getClass()))
+		if (dataSource instanceof Property.ValueChangeNotifier)
 			 ((Property.ValueChangeNotifier) dataSource).addListener(this);
 
 		// Copy the validators from the data source
@@ -786,7 +785,7 @@ public abstract class AbstractField
 		focus = true;
 		requestRepaint();
 	}
-	
+
 	/** Create field by the type of the property.
 	 * 
 	 * <p>This returns most suitable field type for editing property of 
@@ -797,13 +796,14 @@ public abstract class AbstractField
 	public static AbstractField constructField(Class propertyType) {
 
 		// Null typed properties can not be edited
-		if (propertyType == null) return null;	
-		
+		if (propertyType == null)
+			return null;
+
 		// Date field
 		if (Date.class.isAssignableFrom(propertyType)) {
 			return new DateField();
 		}
-		
+
 		// Boolean field
 		if (Boolean.class.isAssignableFrom(propertyType)) {
 			Button button = new Button("");
@@ -811,7 +811,7 @@ public abstract class AbstractField
 			button.setImmediate(false);
 			return button;
 		}
-		
+
 		// Text field is used by default
 		return new TextField();
 	}
