@@ -377,10 +377,10 @@ MillstoneUtils.prototype.isElementVisible = function(element) {
 // --------------------------------------------------------------------------
 MillstoneUtils.prototype.toggleElement = function(element) {
         if (element != null) {
-        	if (isElementVisible(element)) {
-				hideElement(element);
+        	if (this.isElementVisible(element)) {
+				this.hideElement(element);
 			} else {
-				showElement(element);
+				this.showElement(element);
 			}
         }
 }
@@ -393,7 +393,7 @@ MillstoneUtils.prototype.toggleElement = function(element) {
 //
 // --------------------------------------------------------------------------
 MillstoneUtils.prototype.hideElementById = function(id) {
-    	hideElement(document.getElementById(id));
+    	this.hideElement(document.getElementById(id));
 }
 
 // --------------------------------------------------------------------------
@@ -404,7 +404,7 @@ MillstoneUtils.prototype.hideElementById = function(id) {
 //
 // --------------------------------------------------------------------------
 MillstoneUtils.prototype.showElementById = function(id) {
-    	showElement(document.getElementById(id));
+    	this.showElement(document.getElementById(id));
 }
 
 // --------------------------------------------------------------------------
@@ -415,7 +415,7 @@ MillstoneUtils.prototype.showElementById = function(id) {
 //
 // --------------------------------------------------------------------------
 MillstoneUtils.prototype.toggleElementById = function(id) {
-    	toggleElement(document.getElementById(id));
+    	this.toggleElement(document.getElementById(id));
 }
 
 
