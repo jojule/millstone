@@ -365,7 +365,7 @@ public class WebPaintTarget implements PaintTarget {
 	public void addAttribute(String name, String value) throws PaintException {
 		// In case of null data output nothing:
 		if ((value == null) || (name == null))
-			throw new NullPointerException("Parameters must be non-null strings");
+			throw new NullPointerException("Parameters must be non-null strings ("+name+"="+value+")");
 
 		//Ensure that the target is open
 		if (this.closed)
