@@ -104,6 +104,7 @@ public class UIDLTransformerFactory {
 		if (cacheTime >= 0)
 			this.cacheTime = cacheTime;
 		this.spoolManager = new SpoolManager(this.cacheTime);
+		this.spoolManager.setDaemon(true);
 		//Enable manager only if time > 0
 		if (this.cacheTime > 0)
 			this.spoolManager.start();
