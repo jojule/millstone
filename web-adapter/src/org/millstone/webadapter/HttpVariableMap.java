@@ -47,7 +47,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 import java.util.List;
@@ -72,9 +71,9 @@ import java.util.Iterator;
 public class HttpVariableMap {
 
 	// Id <-> (Owner,Name) mapping
-	private Map idToNameMap = new Hashtable();
-	private Map idToTypeMap = new Hashtable();
-	private Map idToOwnerMap = new Hashtable();
+	private Map idToNameMap = new HashMap();
+	private Map idToTypeMap = new HashMap();
+	private Map idToOwnerMap = new HashMap();
 	private Map ownerToNameToIdMap = new WeakHashMap();
 	private Object mapLock = new Object();
 
@@ -99,13 +98,9 @@ public class HttpVariableMap {
 			if (type.equals(String.class))
 				return value;
 
-			throw new ClassCastException("Unsupported type");
-		} catch (java.lang.ClassCastException e) {
-			throw e;
+			throw new ClassCastException("Unsupported type: "+type.getName());
 		} catch (NumberFormatException e) {
-			throw new ClassCastException(e + "Invalid value: '" + value + "'");
-		} catch (java.lang.Exception e) {
-			throw new ClassCastException("" + e);
+			return null;
 		}
 	}
 
@@ -130,9 +125,9 @@ public class HttpVariableMap {
 		synchronized (mapLock) {
 
 			// Check if the variable is already mapped
-			Hashtable nameToIdMap = (Hashtable) ownerToNameToIdMap.get(owner);
+			HashMap nameToIdMap = (HashMap) ownerToNameToIdMap.get(owner);
 			if (nameToIdMap == null) {
-				nameToIdMap = new Hashtable();
+				nameToIdMap = new HashMap();
 				ownerToNameToIdMap.put(owner, nameToIdMap);
 			}
 			String id = (String) nameToIdMap.get(name);
@@ -156,7 +151,7 @@ public class HttpVariableMap {
 		synchronized (mapLock) {
 
 			// Get the id
-			Hashtable nameToIdMap = (Hashtable) ownerToNameToIdMap.get(owner);
+			HashMap nameToIdMap = (HashMap) ownerToNameToIdMap.get(owner);
 			if (nameToIdMap == null)
 				return;
 			String id = (String) nameToIdMap.get(name);
@@ -182,10 +177,10 @@ public class HttpVariableMap {
 	private class ParameterContainer {
 
 		/** Construct the mapping: listener to set of listened parameter names */
-		private Hashtable parameters = new Hashtable();
+		private HashMap parameters = new HashMap();
 
 		/** Parameter values */
-		private Hashtable values = new Hashtable();
+		private HashMap values = new HashMap();
 
 		/** Multipart parser used for parsing the request */
 		private ServletMultipartRequest parser = null;
@@ -435,7 +430,7 @@ public class HttpVariableMap {
 			// Handle all parameters for listener
 			Set params = parcon.getParameters(listener);
 			if (params != null) { // Name value mapping
-				Map variables = new Hashtable();
+				Map variables = new HashMap();
 				for (Iterator pi = params.iterator(); pi.hasNext();) {
 					// Get the name of the parameter
 					String param = (String) pi.next();
