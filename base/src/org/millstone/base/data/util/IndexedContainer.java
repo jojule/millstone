@@ -70,7 +70,7 @@ import org.millstone.base.data.Property;
 
 public class IndexedContainer implements Container, Container.Indexed,
         Container.ItemSetChangeNotifier, Container.PropertySetChangeNotifier,
-        Property.ValueChangeNotifier, Container.Sortable, Comparator {
+        Property.ValueChangeNotifier, Container.Sortable, Comparator, Cloneable {
 
     /* Internal structure *************************************************** */
 
