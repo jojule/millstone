@@ -125,9 +125,11 @@ public class FeatureTable extends Feature implements Action.Handler {
 			p.createBeanPropertySet(
 				new String[] {
 					"pageLength",
+					"rowHeaderMode",
 					"selectable",
 					"columnHeaderMode",
-					"rowHeaderMode" });
+					"columnCollapsingAllowed",
+					"columnReorderingAllowed"});
 		ap.replaceWithSelect(
 			"columnHeaderMode",
 			new Object[] {
