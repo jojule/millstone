@@ -38,6 +38,7 @@
 
 package org.millstone.base.ui;
 
+import org.millstone.base.terminal.ErrorMessage;
 import org.millstone.base.terminal.Resource;
 import org.millstone.base.terminal.Paintable;
 import org.millstone.base.terminal.VariableOwner;
@@ -94,22 +95,6 @@ public interface Component extends Paintable, VariableOwner {
 	 */
 	public void setEnabled(boolean enabled);
 
-	/** <p>Tests if the component is in immediate mode or not. Being in
-	 * immediate mode means that all changes in the UI to the component are
-	 * required to be sent back from the terminal immediately when they
-	 * occur.</p>
-	 * 
-	 * <p><strong>Note:</strong> <code>Component</code> does not include a
-	 * set-method for the immediateness property. This is because not all
-	 * components wish to offer the functionality. Such components are never
-	 * in the immediate mode, thus they always return <code>false</code> in
-	 * {@link #isImmediate()}.</p>
-	 * 
-	 * @return <code>true</code> if the component is in immediate mode,
-	 * <code>false</code> if not
-	 */
-	public boolean isImmediate();
-
 	/** Tests if the component is visible or not. Visibility defines if the
 	 * component is shown in the UI or not. Default is <code>true</code>.
 	 * 
@@ -117,7 +102,7 @@ public interface Component extends Paintable, VariableOwner {
 	 * <code>false</code> if not
 	 */
 	public boolean isVisible();
-	
+
 	/** Sets the components visibility status. Visibility defines if the
 	 * component is shown in the UI or not.
 	 * 
@@ -229,7 +214,7 @@ public interface Component extends Paintable, VariableOwner {
 	 *          can be determined from the containing parent.
 	 */
 	public Locale getLocale();
-	
+
 	/** The children must call this method when they need repainting. The call must be 
 	 * made event in the case the children sent the repaint request themselves.
 	 * @param alreadyNotified A collection of repaint request listeners that have been
@@ -239,7 +224,7 @@ public interface Component extends Paintable, VariableOwner {
 	 * as empty collection.
 	 */
 	public void childRequestedRepaint(Collection alreadyNotified);
-	
+
 	/* Component event framework *************************************** */
 
 	/** Superclass of all component originated <code>Event</code>s. */
@@ -276,5 +261,38 @@ public interface Component extends Paintable, VariableOwner {
 	 * @param listener the listener to be removed
 	 */
 	public void removeListener(Component.Listener listener);
-	
+
+	/** Class of all component originated <code>ErrorEvent</code>s. */
+	public class ErrorEvent extends Event {
+
+		private ErrorMessage message;
+		private Throwable throwable;
+
+		/** Constructs a new event with a specified source component.
+			*
+			* @param source source component of the event
+			*/
+		public ErrorEvent(
+			ErrorMessage message,
+			Component component) {
+			super(component);
+			this.message = message;
+		}
+
+		/** Return the error message */
+		public ErrorMessage getErrorMessage() {
+			return this.message;
+		}
+	}
+
+	/** Listener interface for receiving <code>Component.Errors</code>s */
+	public interface ErrorListener extends EventListener {
+
+		/** Notifies the listener of a component error.
+			*
+			* @param event the event that has occured
+			*/
+		public void componentError(Component.ErrorEvent event);
+	}
+
 }
