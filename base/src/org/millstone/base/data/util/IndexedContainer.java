@@ -51,7 +51,8 @@ import org.millstone.base.data.Container;
 import org.millstone.base.data.Item;
 import org.millstone.base.data.Property;
 
-/** Indexed container implementation.
+/**
+ * Indexed container implementation.
  * <p>
  * A list implementation of the org.millstone.base.data.Container interface. A
  * list is a ordered collection wherein the user has a precise control over
@@ -67,7 +68,7 @@ import org.millstone.base.data.Property;
 
 public class IndexedContainer implements Container, Container.Indexed,
         Container.ItemSetChangeNotifier, Container.PropertySetChangeNotifier,
-        Property.ValueChangeNotifier {
+        Property.ValueChangeNotifier, Container.Sortable, Comparator {
 
     /* Internal structure *************************************************** */
 
@@ -110,6 +111,12 @@ public class IndexedContainer implements Container, Container.Indexed,
 
     /** List of all container Item set change event listeners */
     private LinkedList itemSetChangeListeners = null;
+
+    /** Temporary store for sorting property ids */
+    private Object[] sortPropertyId;
+
+    /** Temporary store for sorting direction */
+    private boolean[] sortDirection;
 
     /* Container constructors *********************************************** */
 
@@ -389,7 +396,7 @@ public class IndexedContainer implements Container, Container.Indexed,
      */
     public Object lastItemId() {
         try {
-            return itemIds.get(itemIds.size()-1);
+            return itemIds.get(itemIds.size() - 1);
         } catch (IndexOutOfBoundsException e) {
         }
         return null;
@@ -1137,5 +1144,84 @@ public class IndexedContainer implements Container, Container.Indexed,
             return IndexedContainer.this;
         }
 
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.millstone.base.data.Container.Sortable#sort(java.lang.Object[],
+     *      boolean[])
+     */
+    public synchronized void sort(Object[] propertyId, boolean[] ascending) {
+
+        // Remove any non-sortable property ids
+        ArrayList ids = new ArrayList();
+        ArrayList orders = new ArrayList();
+        Collection sortable = getSortableContainerPropertyIds();
+        for (int i = 0; i < propertyId.length; i++)
+            if (sortable.contains(propertyId[i])) {
+                ids.add(propertyId[i]);
+                orders.add(new Boolean(i < ascending.length ? ascending[i]
+                        : true));
+            }
+
+        if (ids.size() == 0)
+            return;
+        sortPropertyId = ids.toArray();
+        sortDirection = new boolean[orders.size()];
+        for (int i = 0; i < sortDirection.length; i++)
+            sortDirection[i] = ((Boolean) orders.get(i)).booleanValue();
+
+        // Sort
+        Collections.sort(this.itemIds, this);
+        fireContentsChange();
+
+        // Remove temporary references
+        sortPropertyId = null;
+        sortDirection = null;
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.millstone.base.data.Container.Sortable#getSortableContainerPropertyIds()
+     */
+    public Collection getSortableContainerPropertyIds() {
+
+        LinkedList list = new LinkedList();
+        for (Iterator i = this.propertyIds.iterator(); i.hasNext();) {
+            Object id = i.next();
+            if (id instanceof Comparable)
+                list.add(id);
+        }
+
+        return list;
+    }
+
+    /**
+     * Compare two items for sorting.
+     * 
+     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     * @see #sort((java.lang.Object[], boolean[])
+     */
+    public int compare(Object o1, Object o2) {
+
+        for (int i = 0; i < sortPropertyId.length; i++) {
+
+            Object p1 = getContainerProperty(o1, this.sortPropertyId[i])
+                    .getValue();
+            Object p2 = getContainerProperty(o2, this.sortPropertyId[i])
+                    .getValue();
+
+            int r = 0;
+            if (p1 != null && p2 != null)
+                r = this.sortDirection[i] ? ((Comparable) p1).compareTo(p2)
+                        : -((Comparable) p1).compareTo(p2);
+            if (r != 0)
+                return r;
+        }
+
+        return 0;
     }
 }
