@@ -1111,10 +1111,11 @@ public class WebAdapterServlet
 			application.addListener((Application.WindowAttachListener) this);
 			application.addListener((Application.WindowDetachListener) this);
 			application.setLocale(request.getLocale());
+			// TODO Is this a bug as there should only be one application context per session
 			application.start(
 				applicationUrl,
 				this.applicationProperties,
-				new WebApplicationContext(session));
+				new WebApplicationContext(session)); 
 
 		} catch (IllegalAccessException e) {
 			Log.error(
