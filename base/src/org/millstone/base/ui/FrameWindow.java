@@ -353,7 +353,7 @@ public class FrameWindow extends Window {
 				if (f instanceof Frameset) 
 					((Frameset)f).setApplication(application);
 				else if (f.window != null)
-					f.window.setApplication(application);
+					application.addWindow(f.window);
 			}
 		}
 	}
