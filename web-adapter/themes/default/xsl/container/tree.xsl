@@ -11,9 +11,11 @@
 
     <!-- Create dummy images for expanded/collapsed state -->
     <!-- These are used in javascript to change the images -->
-    <IMG ID="{array[@name='collapse']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/menu/expanded.gif')}" ALT=""/>  
-    <IMG ID="{array[@name='expand']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/menu/collapsed.gif')}" ALT=""/>  
-
+    <xsl:if test="$dhtml">
+      <IMG HEIGHT="0" WIDTH="0" ID="{array[@name='collapse']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/menu/expanded.gif')}" ALT=""/>  
+      <IMG HEIGHT="0" WIDTH="0" ID="{array[@name='expand']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/menu/collapsed.gif')}" ALT=""/>  
+    </xsl:if>
+    
     <!-- Actions -->
     <xsl:variable name="actionlistid"><xsl:value-of select="generate-id(./actions)"/></xsl:variable>
 
@@ -42,8 +44,10 @@
 
   <!-- Create dummy images for expanded/collapsed state -->
   <!-- These are used in javascript to change the images -->
-  <IMG ID="{array[@name='collapse']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/expanded.gif')}"/>  
-  <IMG ID="{array[@name='expand']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/collapsed.gif')}"/>  
+    <xsl:if test="$dhtml">
+      <IMG HEIGHT="0" WIDTH="0" ID="{array[@name='collapse']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/menu/expanded.gif')}" ALT=""/>  
+      <IMG HEIGHT="0" WIDTH="0" ID="{array[@name='expand']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/menu/collapsed.gif')}" ALT=""/>  
+    </xsl:if>
 
   <!-- Actions -->
   <xsl:variable name="actionlistid"><xsl:value-of select="generate-id(./actions)"/></xsl:variable>
@@ -235,7 +239,6 @@
       
         <!-- DHTML/Javascript selection -->
         <xsl:when test="$dhtml">
-   		<NOBR>
   		  <A>      
     		<!-- Current selection state -->
     		<xsl:attribute name="CLASS"><xsl:value-of select="$class" /></xsl:attribute>    
@@ -247,12 +250,10 @@
       		  <xsl:if test="@icon"><IMG class="icon" SRC="{@icon}" BORDER="0" /></xsl:if>
       		  <xsl:value-of select="@caption" />
   		  </A>              
-   		</NOBR>
       	</xsl:when>
       	
       	<!-- Non-DHTML/Javascript version uses submit for selection -->
       	<xsl:otherwise>
-   		  <NOBR>
    		    <xsl:if test="@icon"><IMG class="icon" SRC="{@icon}" BORDER="0" /></xsl:if>
             <!-- Radiobutton or button for selection -->
             <INPUT>
@@ -302,7 +303,6 @@
              <xsl:if test="not($root/@immediate='true')">
                <xsl:value-of select="@caption" />
              </xsl:if>
-      	  </NOBR>
       	</xsl:otherwise>
       </xsl:choose>
     </xsl:when>
@@ -396,8 +396,7 @@
   		<xsl:with-param name="actionlistid"><xsl:value-of select="$actionlistid"/></xsl:with-param>
         <xsl:with-param name="selectedvar" select="$selectedvar"/>
         <xsl:with-param name="root" select="$root"/>
-      </xsl:call-template>
-    
+      </xsl:call-template>    
     </NOBR>
   </DIV>
   <xsl:if test="node|leaf">
@@ -441,8 +440,9 @@
       <xsl:variable name="selid"><xsl:value-of select="$selectedvar/@id"/>_<xsl:value-of select="@key"/></xsl:variable>  
       <xsl:attribute name="ID"><xsl:value-of select="$selid"/></xsl:attribute>
     </xsl:if>
-    <NOBR>
-      <IMG ALT="" SRC="{wa:resource('img/tree/menu/leaf.gif')}" ID="img{$childid}" BORDER="0" CLASS="{$class}-exp"/>          
+    
+    <DIV> <!-- This div fixes the rendering in ie -->
+      <IMG ALT="" SRC="{wa:resource('img/tree/menu/leaf.gif')}" ID="img{$childid}" BORDER="0" CLASS="{$class}-exp"/>
       <!-- Actions Icon and caption -->
       <xsl:call-template name="tree-caption">
   		<xsl:with-param name="class"><xsl:value-of select="$class"/>-<xsl:value-of select="$level" /><xsl:if test="@selected">-selected</xsl:if></xsl:with-param>
@@ -450,8 +450,7 @@
         <xsl:with-param name="selectedvar" select="$selectedvar"/>
         <xsl:with-param name="root" select="$root"/>
       </xsl:call-template>
-    
-    </NOBR>
+    </DIV>
   </DIV>
 </xsl:template>
 
