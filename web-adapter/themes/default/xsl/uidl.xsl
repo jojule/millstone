@@ -8,7 +8,7 @@
 <xsl:output method="html" doctype-public="-//W3C//DTD HTML 4.0 Transitional//EN"/>
 
 <!-- Calculate some browser dependant variables for use in templates -->
-<xsl:variable name="dhtml" select="browser:supports(wa:browser(),browser:parseJavaScriptVersion('JavaScript 1.0'))"/> 
+<xsl:variable name="dhtml" select="browser:supports(wa:browser(),browser:parseJavaScriptVersion('ECMA-262'))"/> 
 
 <xsl:variable name="maxtablewidth">
   <xsl:choose>
