@@ -161,11 +161,6 @@ public class DateField extends AbstractField {
 	public void paintContent(PaintTarget target) throws PaintException {
 		super.paintContent(target);
 
-		// Add min / max dates if validators exists for them
-		if (getValidators() != null) {
-			throw new UnsupportedOperationException("Validator support not implemented for DateField");
-		}
-
 		// Print the value in gregorian calendar
 		Calendar calendar = new GregorianCalendar();
 		Date currentDate = (Date) getValue();
