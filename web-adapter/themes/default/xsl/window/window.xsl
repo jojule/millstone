@@ -12,7 +12,7 @@
     <BODY>
     
       <!-- Special handling of modal windows -->
-      <xsl:if test="($dhtml='true') and (@style='modal')"><SCRIPT>makeModal(window);</SCRIPT></xsl:if>	 
+      <xsl:if test="$dhtml and (@style='modal')"><SCRIPT>makeModal(window);</SCRIPT></xsl:if>	 
       
 	  <!-- Window resize variable ids -->
       <xsl:variable name="heightid"><xsl:value-of select="./integer[@name='height']/@id"/></xsl:variable>
