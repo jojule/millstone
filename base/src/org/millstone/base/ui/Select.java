@@ -41,7 +41,7 @@ package org.millstone.base.ui;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -127,10 +127,10 @@ public class Select
 	protected KeyMapper itemIdMapper = new KeyMapper();
 
 	/** Item icons */
-	private Hashtable itemIcons = new Hashtable();
+	private HashMap itemIcons = new HashMap();
 
 	/** Item captions */
-	private Hashtable itemCaptions = new Hashtable();
+	private HashMap itemCaptions = new HashMap();
 
 	/** Item caption mode */
 	private int itemCaptionMode = ITEM_CAPTION_MODE_EXPLICIT_DEFAULTS_ID;
