@@ -150,7 +150,7 @@
            <xsl:attribute name="ONCHANGE">updateCalendar('<xsl:value-of select="$calendarid"/>','<xsl:value-of select="@id"/>','<xsl:value-of select="$monthid"/>','<xsl:value-of select="$dayid"/>','<xsl:value-of select="$weekbegin"/>','<xsl:value-of select="../@immediate"/>');</xsl:attribute>
          </xsl:when>
          <xsl:when test="$dhtml and (../@immediate)">
-           <xsl:attribute name="ONCHANGE">document.millstone.submit();</xsl:attribute>
+           <xsl:attribute name="ONCHANGE">millstoneSubmit();</xsl:attribute>
          </xsl:when>        
        </xsl:choose>
       </INPUT>
@@ -190,7 +190,7 @@
       - <INPUT TYPE="text" SIZE="2" MAXLENGTH="2" ID="{@id}" NAME="{@id}" VALUE="{$value}" CLASS="{$class}-m">
         <xsl:if test="../@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
         <xsl:if test="$dhtml and (../@immediate)">
-            <xsl:attribute name="ONCHANGE">document.millstone.submit();</xsl:attribute>
+            <xsl:attribute name="ONCHANGE">millstoneSubmit();</xsl:attribute>
         </xsl:if>
       </INPUT>
     </xsl:otherwise>
@@ -252,7 +252,7 @@
         <xsl:if test="../@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
 
         <xsl:if test="$dhtml and (../@immediate)">
-            <xsl:attribute name="ONCHANGE">document.millstone.submit();</xsl:attribute>
+            <xsl:attribute name="ONCHANGE">millstoneSubmit();</xsl:attribute>
         </xsl:if>
       </INPUT>
     </xsl:otherwise>
@@ -275,7 +275,7 @@
 
         <!-- calendar is updated on change -->
         <xsl:if test="$dhtml and (../@immediate)">
-          <xsl:attribute name="ONCHANGE">document.millstone.submit();</xsl:attribute>
+          <xsl:attribute name="ONCHANGE">millstoneSubmit();</xsl:attribute>
         </xsl:if>
         
     	<!-- Generate days for selector -->          
@@ -339,7 +339,7 @@
       <INPUT TYPE="text" SIZE="2" MAXLENGTH="2" ID="{@id}" NAME="{@id}" VALUE="{$value}" CLASS="{$class}-h">
         <xsl:if test="../@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
         <xsl:if test="$dhtml and (../@immediate)">
-            <xsl:attribute name="ONCHANGE">document.millstone.submit();</xsl:attribute>
+            <xsl:attribute name="ONCHANGE">millstoneSubmit();</xsl:attribute>
         </xsl:if>        
       </INPUT>
     </xsl:otherwise>
@@ -366,7 +366,7 @@
        : <INPUT TYPE="text" SIZE="2" MAXLENGTH="2" ID="{@id}" NAME="{@id}" VALUE="{$value}" CLASS="{$class}-min">
          <xsl:if test="../@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
          <xsl:if test="$dhtml and (../@immediate)">
-            <xsl:attribute name="ONCHANGE">document.millstone.submit();</xsl:attribute>
+            <xsl:attribute name="ONCHANGE">millstoneSubmit();</xsl:attribute>
          </xsl:if>
       </INPUT>
     </xsl:otherwise>
@@ -394,7 +394,7 @@
          <xsl:if test="../@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
 
         <xsl:if test="$dhtml and (../@immediate)">
-            <xsl:attribute name="ONCHANGE">document.millstone.submit();</xsl:attribute>
+            <xsl:attribute name="ONCHANGE">millstoneSubmit();</xsl:attribute>
         </xsl:if>
       </INPUT>
     </xsl:otherwise>
@@ -422,7 +422,7 @@
          <xsl:if test="../@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
 
         <xsl:if test="$dhtml and (../@immediate)">
-            <xsl:attribute name="ONCHANGE">document.millstone.submit();</xsl:attribute>
+            <xsl:attribute name="ONCHANGE">millstoneSubmit();</xsl:attribute>
         </xsl:if>
       </INPUT>
     </xsl:otherwise>

@@ -31,6 +31,9 @@
 	    <!-- Run onload-script -->
         <xsl:attribute name="onload">window_onload();</xsl:attribute>
 
+	    <!-- Run onunload-script -->
+        <xsl:attribute name="onunload">window_onunload();</xsl:attribute>
+
         <!-- Capture resize events -->
 		<xsl:if test="$dhtml and $heightid and $widthid">
 		  <xsl:attribute name="onResize">window_resize();</xsl:attribute>
@@ -65,8 +68,30 @@
 			<xsl:if test="$scrolldownid and $scrollleftid">
 			  window.scrollTo(<xsl:value-of select="./integer[@name='scrollleft']/@value"/>,<xsl:value-of select="./integer[@name='scrolldown']/@value"/>);
 			</xsl:if>     
+
+			// Invoke all registered listeners
+			 if (typeof millstoneEventManager != 'undefined') {    
+	    		millstoneEventManager.loadCallback();
+	    	}
+
 	    }
-	      
+
+	    function window_onunload() {
+	    
+			// Invoke all registered listeners	    
+			 if (typeof millstoneEventManager != 'undefined') {    
+	    		millstoneEventManager.unloadCallback();
+	    	}
+	    }
+	    
+	    function form_submit() {
+	    
+			// Invoke all registered listeners	    
+			 if (typeof millstoneEventManager != 'undefined') {    
+	    		millstoneEventManager.submitCallback();
+	    	}
+	    }	    
+	    
 	    <!-- Resize script -->
 	    function window_resize() {
 	    	var w,h;	    	
@@ -87,7 +112,11 @@
       
       <!-- Main form -->
       <FORM NAME="millstone" METHOD="POST" ACCEPT-CHARSET="UTF-8" ENCTYPE="multipart/form-data">
-
+		
+        <xsl:if test="$dhtml">
+			<xsl:attribute name="onsubmit">form_submit()</xsl:attribute>
+		</xsl:if>
+		
   	    <!-- Window size variables -->
         <xsl:if test="$dhtml and $heightid and $widthid">
           <INPUT TYPE="HIDDEN" ID="{$widthid}" NAME="{$widthid}" VALUE="{./integer[@name='width']/@value}"/>

@@ -26,6 +26,7 @@
       </INPUT></xsl:if>
       <xsl:if test="string-length(@caption) &gt; 0">
       <INPUT CLASS="button" TYPE="SUBMIT" ID="{./boolean/@id}" NAME="set:{./boolean/@id}=true" VALUE=" {@caption} ">
+        <xsl:attribute name="ONCLICK">showHourglassCursor()</xsl:attribute>    
         <xsl:attribute name="CLASS">button<xsl:if test="string-length(./@style) &gt; 0">-<xsl:value-of select="./@style"/></xsl:if></xsl:attribute>    
    	    <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
         <xsl:if test="@readonly='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
@@ -107,7 +108,7 @@
   <INPUT TYPE="HIDDEN" NAME="declare:{./boolean/@id}" VALUE="" />
   <INPUT TYPE="CHECKBOX" ID="{./boolean/@id}" NAME="{./boolean/@id}">
     <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
-    <xsl:if test="@immediate='true' and $dhtml"><xsl:attribute name="onclick">millstone.submit()</xsl:attribute></xsl:if>
+    <xsl:if test="@immediate='true' and $dhtml"><xsl:attribute name="onclick">millstoneSubmit()</xsl:attribute></xsl:if>
     <xsl:if test="./boolean/@value='true'"><xsl:attribute name="CHECKED">true</xsl:attribute></xsl:if>
     <xsl:if test="@readonly='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
    </INPUT>
