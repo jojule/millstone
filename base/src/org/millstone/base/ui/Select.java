@@ -136,7 +136,7 @@ public class Select
 	private Hashtable itemCaptions = new Hashtable();
 
 	/** Item caption mode */
-	private int itemCaptionMode = ITEM_CAPTION_MODE_ID;
+	private int itemCaptionMode = ITEM_CAPTION_MODE_EXPLICIT_DEFAULTS_ID;
 
 	/** Item caption source property id */
 	private Object itemCaptionPropertyId = null;
