@@ -310,6 +310,16 @@ public class Tree extends Select implements Container.Hierarchical, Action.Conta
 	 */
 	public void paintContent(PaintTarget target) throws PaintException {
 
+		// Focus control id
+		if (this.getFocusableId() > 0) {
+			target.addAttribute("focusid", this.getFocusableId());
+		}
+
+		// The tab ordering number
+		if (this.getTabIndex() > 0)
+			target.addAttribute("tabindex", this.getTabIndex());
+
+
 		// Paint tree attributes
 		if (isSelectable())
 			target.addAttribute(

@@ -66,6 +66,8 @@ public class Upload extends AbstractComponent implements Component.Focusable {
 
 	/** The output of the upload is redirected to this receiver. */
 	private Receiver receiver;
+	
+	private long focusableId = -1;
 
     /* TODO: Add a default constructor, receive to temp file. */
     
@@ -74,6 +76,7 @@ public class Upload extends AbstractComponent implements Component.Focusable {
 	 * 
 	 */
 	public Upload(String caption, Receiver uploadReceiver) {
+		this.focusableId = Window.getNewFocusableId(this);
 		setCaption(caption);
 		receiver = uploadReceiver;
 	}
@@ -400,19 +403,31 @@ public class Upload extends AbstractComponent implements Component.Focusable {
 	 * @see org.millstone.base.ui.Component.Focusable#focus()
 	 */
 	public void focus() {
-		this.focus = true;
+		Window w = getWindow();
+		if (w != null) {
+			w.setFocusedComponent(this);
+		}
 	}
+	
 	/**
 	 * @see org.millstone.base.ui.Component.Focusable#getTabIndex()
 	 */
 	public int getTabIndex() {
 		return this.tabIndex;
 	}
+	
 	/**
 	 * @see org.millstone.base.ui.Component.Focusable#setTabIndex(int)
 	 */
 	public void setTabIndex(int tabIndex) {
 		this.tabIndex = tabIndex;
+	}
+	
+	/**
+	 * @see org.millstone.base.ui.Component.Focusable#getFocusableId()
+	 */
+	public long getFocusableId() {
+		return this.focusableId;
 	}
 
 }

@@ -48,8 +48,10 @@ import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.Application;
 
+import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Iterator;
@@ -94,6 +96,9 @@ public class Window extends Panel implements URIHandler, ParameterHandler {
 
 	/** Window border mode */
 	private int border = BORDER_DEFAULT;
+	
+	/** Focused component */
+	private Focusable focusedComponent;
 
 	/* ********************************************************************* */
 
@@ -312,7 +317,7 @@ public class Window extends Panel implements URIHandler, ParameterHandler {
 		throws PaintException {
 
 		// Set the window name
-		target.addAttribute("name", getName());
+		target.addAttribute("name", getName());		
 
 		// Mark main window
 		if (getApplication() != null && this == getApplication().getMainWindow())
@@ -329,6 +334,13 @@ public class Window extends Panel implements URIHandler, ParameterHandler {
 
 		// Contents of the window panel is painted
 		super.paintContent(target);
+
+		// Set focused component
+		if (this.focusedComponent != null)
+			target.addVariable(this,"focused", ""+this.focusedComponent.getFocusableId());
+		else
+			target.addVariable(this,"focused", "");
+		
 	}
 
 	/* ********************************************************************* */
@@ -555,6 +567,52 @@ public class Window extends Panel implements URIHandler, ParameterHandler {
 
 			target.endTag("open");
 		}
+	}
+
+	/**
+	 * @see org.millstone.base.terminal.VariableOwner#changeVariables(java.lang.Object, java.util.Map)
+	 */
+	public void changeVariables(Object source, Map variables) {
+		super.changeVariables(source, variables);
+
+		// Get focused component
+		String focusedId = (String) variables.get("focused");
+		if (focusedId != null) {
+			long id = Long.parseLong(focusedId);
+			this.focusedComponent = Window.getFocusableById(id);
+		}
+
+	}
+
+	/**
+	 * Method setFocusedComponent.
+	 * @param abstractField
+	 */
+	public void setFocusedComponent(Component.Focusable focusable) {
+		this.focusedComponent = focusable;
+	}
+	
+	/* Focusable id generator ****************************************** */
+
+	private static long lastUsedFocusableId = 0;
+	private static Map focusableComponents = new HashMap();
+
+	public static long getNewFocusableId(Component.Focusable focusable) {
+		long newId =  ++lastUsedFocusableId;
+		WeakReference ref = new WeakReference(focusable);
+		focusableComponents.put(new Long(newId),ref);
+		return newId;
+	}
+
+	public static Component.Focusable getFocusableById(long focusableId) {
+		WeakReference ref = (WeakReference)focusableComponents.get(new Long(focusableId));
+		if (ref != null) {
+			Object o = ref.get();
+			if (o != null) {
+				return (Component.Focusable)o;
+			}
+		}
+		return null;
 	}
 
 }
