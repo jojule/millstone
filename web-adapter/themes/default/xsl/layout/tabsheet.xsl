@@ -5,7 +5,7 @@
 <xsl:template match="tabsheet" mode="core">
   <xsl:variable name="selectid" select="string[@name='selected']/@id" />
   <xsl:if test="$dhtml">
-    <INPUT TYPE="hidden" NAME="{$selectid}" VALUE="{string[@id=$selectid]/value}"/>
+    <INPUT TYPE="hidden" ID="{$selectid}" NAME="{$selectid}" VALUE="{string[@name='selected']}"/>
   </xsl:if>
   <TABLE CELLPADDING="0" CELLSPACING="0" BORDER="0">
     <TR>
