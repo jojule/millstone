@@ -269,7 +269,11 @@ public class DirectoryThemeSource implements ThemeSource {
 	 * @see org.millstone.webadapter.ThemeSource#getName()
 	 */
 	public String getName() {
-		return this.path.getName();
+		if (this.theme != null) {
+			return this.theme.getName();
+		} else {
+			return this.path.getName();
+		}
 	}
 
 	/**

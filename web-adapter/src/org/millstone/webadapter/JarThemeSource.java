@@ -268,7 +268,11 @@ public class JarThemeSource implements ThemeSource {
 	* @see org.millstone.webadapter.ThemeSource#getName()
 	*/
 	public String getName() {
-		return this.name;
+		if (this.theme != null) {
+			return this.theme.getName();
+		} else {
+			return this.name;
+		}
 	}
 
 	/**																											 
