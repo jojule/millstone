@@ -152,6 +152,7 @@ public class WebBrowserProbe {
 			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_3);
 			res.setJavaEnabled(true);
 			res.setFrameSupport(true);
+					res.setMarkupVersion(WebBrowser.MARKUP_HTML_4_0);
 		} else if (agent.indexOf("Opera 3.") >= 0) {
 			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_3);
 			res.setJavaEnabled(false);
@@ -170,6 +171,7 @@ public class WebBrowserProbe {
 			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_3);
 			res.setJavaEnabled(true);
 			res.setFrameSupport(true);
+			res.setMarkupVersion(WebBrowser.MARKUP_HTML_2_0);
 		}
 
 		// Lynx
@@ -187,20 +189,24 @@ public class WebBrowserProbe {
 			res.setJavaScriptVersion(WebBrowser.JSCRIPT_5_6);
 			res.setJavaEnabled(true);
 			res.setFrameSupport(true);
+			res.setMarkupVersion(WebBrowser.MARKUP_HTML_4_0);
 		} else if (agent.indexOf("MSIE 5.5") >= 0) {
 			res.setJavaScriptVersion(WebBrowser.JSCRIPT_5_5);
 			res.setJavaEnabled(true);
 			res.setFrameSupport(true);
+			res.setMarkupVersion(WebBrowser.MARKUP_HTML_4_0);
 		} else if (agent.indexOf("MSIE 5.") >= 0) {
 			res.setJavaScriptVersion(WebBrowser.JSCRIPT_5_0);
 			res.setJavaEnabled(true);
 			res.setFrameSupport(true);
+			res.setMarkupVersion(WebBrowser.MARKUP_HTML_4_0);
 		} else if (agent.indexOf("MSIE 4.") >= 0) {
 			res.setJavaScriptVersion(WebBrowser.JSCRIPT_3_0);
 			res.setJavaEnabled(true);
 			res.setFrameSupport(true);
+			res.setMarkupVersion(WebBrowser.MARKUP_HTML_4_0);
 		} else if (agent.indexOf("MSIE 3.") >= 0) {
-			res.setJavaScriptVersion(WebBrowser.JSCRIPT_1_0);
+			res.setJavaScriptVersion(WebBrowser.JSCRIPT_3_0);
 			res.setJavaEnabled(true);
 			res.setFrameSupport(true);
 		} else if (agent.indexOf("MSIE 2.") >= 0) {
@@ -218,12 +224,14 @@ public class WebBrowserProbe {
 			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_5);
 			res.setJavaEnabled(true);
 			res.setFrameSupport(true);
+			res.setMarkupVersion(WebBrowser.MARKUP_HTML_4_0);
 		} else if (
 			(agent.indexOf("Mozilla/4.06") >= 0)
 				|| (agent.indexOf("Mozilla/4.7") >= 0)) {
 			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_3);
 			res.setJavaEnabled(true);
 			res.setFrameSupport(true);
+					res.setMarkupVersion(WebBrowser.MARKUP_HTML_4_0);
 		} else if (agent.indexOf("Mozilla/4.") >= 0) {
 			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_2);
 			res.setJavaEnabled(true);
@@ -243,6 +251,7 @@ public class WebBrowserProbe {
 			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_5);
 			res.setJavaEnabled(true);
 			res.setFrameSupport(true);
+			res.setMarkupVersion(WebBrowser.MARKUP_HTML_4_0);
 		}
 
 		// Unknown browser
@@ -316,13 +325,6 @@ public class WebBrowserProbe {
 				} catch (NumberFormatException e) {
 					res.setScreenHeight(-1);
 				}
-			}
-		}
-		//Frame support
-		if (params.containsKey("wa_frames")) {
-			String val = ((String[]) params.get("wa_frames"))[0];
-			if (val != null) {
-				res.setFrameSupport(Boolean.valueOf(val).booleanValue());
 			}
 		}
 
