@@ -199,7 +199,7 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	}
 
 	/**
-	 * Returns the codebase, the root of all relative path mentions.
+	 * Returns the codebase, the root-path used to access resources with relative paths.
 	 * @return String
 	 */
 	public String getCodebase() {
@@ -232,7 +232,7 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	}
 
 	/**
-	 * Sets the codebase, the root used in all relative path mentions.
+	 * Sets the codebase, the root-path used to access resources with relative paths.
 	 * @param codebase The codebase to set
 	 */
 	public void setCodebase(String codebase) {
