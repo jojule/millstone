@@ -161,7 +161,7 @@ public class Tree extends Select implements Container.Hierarchical, Action.Conta
 
 		boolean result = true;
 
-		// Initial TODO
+		// Initial stack
 		Stack todo = new Stack();
 		todo.add(startItemId);
 
@@ -206,7 +206,7 @@ public class Tree extends Select implements Container.Hierarchical, Action.Conta
 
 		boolean result = true;
 
-		// Initial TODO
+		// Initial stack
 		Stack todo = new Stack();
 		todo.add(startItemId);
 

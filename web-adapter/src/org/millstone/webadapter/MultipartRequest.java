@@ -618,8 +618,6 @@ public class MultipartRequest
 			else
 			{
 				strLine = new String(blockOfBytes, 0, read, charEncoding);
-
-				// TODO: Improve performance by getting both the name and filename from strLine in one go...
 				strName = trimQuotes(getValue("name", strLine));
 				// If this is not null, it indicates that we are processing a filename.
 				strFilename = trimQuotes(getValue("filename", strLine));
