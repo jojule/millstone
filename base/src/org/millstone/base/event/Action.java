@@ -99,9 +99,10 @@ public class Action {
 	
 		/** Returns the list of actions applicable to this handler.
 		 *
-		 * @param target The target handler to list actions for
-		 * @param sender The party that would be sending the actions. Most of this
-		 * is the action container.
+		 * @param target The target handler to list actions for. For item 
+		 * containers this is the item id.
+		 * @param sender The party that would be sending the actions. 
+		 * Most of this is the action container.
 		 */
 		public Action[] getActions(Object target, Object sender);
 		
@@ -109,8 +110,10 @@ public class Action {
 		 * may just discard the action if it's not suitable.
 		 * 
 		 * @param action The action to be handled
-		 * @param sender The sender of the action. This is most often the action container.
-		 * @param target The target of the <code>action</code>
+		 * @param sender The sender of the action. This is most often the 
+		 * action container.
+		 * @param target The target of the <code>action</code>. For item 
+		 * containers this is the item id.
 		 */
 		public void handleAction(Action action, Object sender, Object target);
 	}
