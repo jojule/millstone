@@ -23,7 +23,7 @@
 	<property name="optimize" value="off"/>
 	
         <!-- Fixed CVS properties -->
-	<property name="cvs-root" value=":pserver:anonymous@cvs.millstone.sourceforge.net:/cvsroot/millstone"/>
+	<property name="cvs-root" value=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/millstone"/>
 
         <!-- Environment -->
 	<property environment="env"/>
