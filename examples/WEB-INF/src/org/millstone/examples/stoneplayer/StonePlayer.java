@@ -258,8 +258,8 @@ public class StonePlayer extends org.millstone.base.Application {
 			}
 
 			if (tree != null) {
-				tree.setMultiSelect(true);
 				tree.setItemCaptionMode(tree.ITEM_CAPTION_MODE_ITEM);
+				tree.setSelectable(false);
 				tree.setItemIconPropertyId(FilesystemContainer.PROPERTY_ICON);
 				tree.addActionHandler(this);
 				addComponent(tree);
