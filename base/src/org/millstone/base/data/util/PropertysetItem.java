@@ -39,12 +39,14 @@
 
 package org.millstone.base.data.util;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.EventObject;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Collections;
+import java.util.List;
+
 import org.millstone.base.data.Item;
 import org.millstone.base.data.Property;
 
@@ -63,8 +65,11 @@ implements Item, Item.PropertySetChangeNotifier {
     /* Private representation of the item *********************************** */
     
     /** Mapping from property id to property */
-    private Hashtable map = new Hashtable();
+    private HashMap map = new HashMap();
     
+	/** List of all property ids to maintain the order */
+    private List list = new LinkedList();
+
     /** List of property set modification listeners */
     private LinkedList propertySetChangeListeners = null;
     
@@ -87,7 +92,7 @@ implements Item, Item.PropertySetChangeNotifier {
      * stored the Item
      */
     public Collection getItemPropertyIds() {
-        return Collections.unmodifiableCollection(map.keySet());
+        return Collections.unmodifiableCollection(list);
     }
     
     /* Item.Managed methods ************************************************* */
@@ -103,7 +108,10 @@ implements Item, Item.PropertySetChangeNotifier {
     public boolean removeItemProperty(Object id) {
         
         // Cant remove missing properties
-        if (map.remove(id) == null) return false;
+        if (map.remove(id) == null) {
+        	return false;
+        }
+        list.remove(id);
         
         // Send change events
         fireItemPropertySetChange();
@@ -126,6 +134,7 @@ implements Item, Item.PropertySetChangeNotifier {
         
         // Put the property to map
         map.put(id,property);
+        list.add(id);
         
         // Send event
         fireItemPropertySetChange();
