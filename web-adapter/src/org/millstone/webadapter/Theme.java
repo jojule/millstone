@@ -881,7 +881,7 @@ public class Theme extends DefaultHandler {
 				// Recursively add included filesets if they are
 				// supported
 				if (f instanceof Fileset) {
-					list.addAll(((Fileset) f).getFileNames());
+					list.addAll(((Fileset) f).getFileNames(terminal));
 
 				} else {
 					list.add(f.getName());
