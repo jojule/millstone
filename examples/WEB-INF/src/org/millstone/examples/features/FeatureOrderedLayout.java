@@ -56,6 +56,7 @@ public class FeatureOrderedLayout extends Feature {
 		// Example panel
 		Panel show = new Panel("OrderedLayout component");
 		OrderedLayout ol = new OrderedLayout();
+		for (int i=1;i<5; i++) ol.addComponent(new TextField("Test component "+i));
 		show.addComponent(ol);
 		l.addComponent(show);
 
