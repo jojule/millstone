@@ -39,7 +39,6 @@
 package org.millstone.ajaxadapter.browser;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Writer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -100,14 +99,6 @@ public abstract class WebBrowser implements Terminal {
         return new UnsupportedBrowser(userAgentHeader);
     }
 
-    public void createAjaxClient(HttpServletRequest request,
-            HttpServletResponse response, Window window) throws IOException {
-
-        // TODO Return application
-        Writer w = response.getWriter();
-
-        w.write("<html><head><title>" + window.getCaption()
-                + "</title></head><body><h1>Loading...</h1></body></html>");
-        w.close();
-    }
+    public abstract void createAjaxClient(HttpServletRequest request,
+            HttpServletResponse response, Window window) throws IOException;
 }

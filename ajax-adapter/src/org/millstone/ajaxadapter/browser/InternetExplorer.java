@@ -39,6 +39,14 @@ Primary source for MillStone information and releases: www.millstone.org
 
 package org.millstone.ajaxadapter.browser;
 
+import java.io.IOException;
+import java.io.Writer;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.millstone.base.ui.Window;
+
 /** Internet Explorer specific terminal implementation of terminal interface.
  * 
  * (stage drafting and planning)
@@ -47,4 +55,14 @@ package org.millstone.ajaxadapter.browser;
  */
 public class InternetExplorer extends WebBrowser {
 
+    public void createAjaxClient(HttpServletRequest request,
+            HttpServletResponse response, Window window) throws IOException {
+
+        Writer w = response.getWriter();
+
+        // TODO Unimplemented
+        w.write("<html><head><title>" + window.getCaption()
+                + "</title></head><body><h1>Internet Explorer support is not yet done...</h1></body></html>");
+        w.close();
+    }
 }
