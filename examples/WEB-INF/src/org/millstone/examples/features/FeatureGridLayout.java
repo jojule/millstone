@@ -54,7 +54,7 @@ public class FeatureGridLayout extends Feature {
 		OrderedLayout l = new OrderedLayout();
 
 		// Example panel
-		Panel show = new Panel("OrderedLayout component");
+		Panel show = new Panel("GridLayout component");
 		GridLayout gl = new GridLayout(3, 3);
 		DateField cal = new DateField("Test component 1",new Date());
 		cal.setStyle("calendar");
