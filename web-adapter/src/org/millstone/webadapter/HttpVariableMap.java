@@ -43,8 +43,6 @@ import org.millstone.base.terminal.VariableOwner;
 import org.millstone.base.terminal.UploadStream;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -57,7 +55,6 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.Iterator;
 
@@ -98,7 +95,7 @@ public class HttpVariableMap {
 			if (type.equals(String.class))
 				return value;
 
-			throw new ClassCastException("Unsupported type: "+type.getName());
+			throw new ClassCastException("Unsupported type: " + type.getName());
 		} catch (NumberFormatException e) {
 			return null;
 		}
@@ -292,7 +289,8 @@ public class HttpVariableMap {
 			// set-array:name=value1,value2,value3,...
 			else if (name.startsWith("set-array:")) {
 				int equalsIndex = name.indexOf('=');
-				if (equalsIndex < 0) return;
+				if (equalsIndex < 0)
+					return;
 
 				StringTokenizer commalist =
 					new StringTokenizer(name.substring(equalsIndex + 1), ",");
@@ -453,16 +451,18 @@ public class HttpVariableMap {
 						// Upload events
 						if (varType.equals(UploadStream.class)) {
 							if (parser != null
-								&& parser.getFileParameter(param, parser.FILENAME)
+								&& parser.getFileParameter(
+									param,
+									MultipartRequest.FILENAME)
 									!= null) {
 								String filename =
 									(String) parser.getFileParameter(
 										param,
-										parser.FILENAME);
+										MultipartRequest.FILENAME);
 								String contentType =
 									(String) parser.getFileParameter(
 										param,
-										parser.CONTENT_TYPE);
+										MultipartRequest.CONTENT_TYPE);
 								UploadStream upload =
 									new HttpUploadStream(
 										varName,

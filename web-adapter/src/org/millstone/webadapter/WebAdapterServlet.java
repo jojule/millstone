@@ -52,18 +52,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.millstone.base.Application;
-import org.millstone.base.ui.Component;
 import org.millstone.base.ui.Window;
-import org.millstone.base.ui.Link;
-import org.millstone.base.terminal.ClassResource;
-import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.Paintable;
 import org.millstone.base.terminal.DownloadStream;
 import org.millstone.base.terminal.ThemeResource;
-import org.millstone.base.terminal.FileResource;
 import org.millstone.base.terminal.Paintable.RepaintRequestEvent;
 
-import java.rmi.ServerException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,15 +65,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.WeakHashMap;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -412,7 +403,7 @@ public class WebAdapterServlet
 							new UIDLTransformerType(
 								terminalType,
 								this.themeSource.getThemeByName(
-									this.SESSION_DEFAULT_THEME));
+									WebAdapterServlet.SESSION_DEFAULT_THEME));
 					}
 
 					transformer =

@@ -2,18 +2,14 @@ package org.millstone.examples.stoneplayer;
 
 import org.millstone.base.ui.*;
 import org.millstone.base.event.*;
-import org.millstone.base.terminal.ClassResource;
 import org.millstone.base.terminal.FileResource;
 import org.millstone.base.terminal.ThemeResource;
-import org.millstone.base.Application;
 import org.millstone.base.data.Property;
 import org.millstone.base.data.util.FilesystemContainer;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
 
 /** Shared MP3 jukebox.
  *
@@ -258,7 +254,7 @@ public class StonePlayer extends org.millstone.base.Application {
 			}
 
 			if (tree != null) {
-				tree.setItemCaptionMode(tree.ITEM_CAPTION_MODE_ITEM);
+				tree.setItemCaptionMode(Tree.ITEM_CAPTION_MODE_ITEM);
 				tree.setSelectable(false);
 				tree.setItemIconPropertyId(FilesystemContainer.PROPERTY_ICON);
 				tree.addActionHandler(this);

@@ -38,9 +38,7 @@
 
 package org.millstone.examples.features;
 
-import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.ui.*;
-import org.millstone.base.Application;
 
 public class FeatureWindow extends Feature {
 	Button addButton = new Button("Add to application", this, "addWin");

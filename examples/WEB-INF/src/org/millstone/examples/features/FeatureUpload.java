@@ -44,9 +44,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.millstone.base.terminal.StreamResource;
-import org.millstone.base.ui.Button;
 import org.millstone.base.ui.Component;
-import org.millstone.base.ui.Embedded;
 import org.millstone.base.ui.Label;
 import org.millstone.base.ui.Link;
 import org.millstone.base.ui.OrderedLayout;

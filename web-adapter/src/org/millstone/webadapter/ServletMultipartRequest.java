@@ -38,7 +38,6 @@
    
 package org.millstone.webadapter;
 
-import java.io.PrintWriter;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;

@@ -38,19 +38,8 @@
 
 package org.millstone.examples.features;
 
-import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.terminal.ClassResource;
 import org.millstone.base.ui.*;
-
-import java.beans.Introspector;
-import java.beans.BeanInfo;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
-import java.util.Hashtable;
-import java.util.Vector;
-
-import org.millstone.base.data.Property;
-import org.millstone.base.data.util.MethodProperty;
 
 public class Feature extends CustomComponent {
 

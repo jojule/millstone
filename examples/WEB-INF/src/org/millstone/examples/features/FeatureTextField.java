@@ -38,7 +38,6 @@
 
 package org.millstone.examples.features;
 
-import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.ui.*;
 
 public class FeatureTextField extends Feature {

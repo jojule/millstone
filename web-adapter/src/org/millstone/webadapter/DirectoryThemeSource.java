@@ -38,19 +38,15 @@
 
 package org.millstone.webadapter;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.SequenceInputStream;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.millstone.webadapter.ThemeSource.ThemeException;
 
 /**
  * Theme source for reading themes from a directory on the Filesystem.

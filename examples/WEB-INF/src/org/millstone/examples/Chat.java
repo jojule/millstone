@@ -4,12 +4,8 @@ import java.io.*;
 import java.util.*;
 import java.lang.ref.WeakReference;
 
-import org.millstone.base.terminal.ExternalResource;
-import org.millstone.base.terminal.PaintException;
-import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.StreamResource;
 import org.millstone.base.ui.*;
-import org.millstone.base.data.*;
 
 /** Chat example application.
  * 

@@ -38,15 +38,12 @@
 
 package org.millstone.webadapter;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**

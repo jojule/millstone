@@ -38,16 +38,12 @@
    
 package org.millstone.webadapter;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.SequenceInputStream;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.millstone.webadapter.ThemeSource.ThemeException;
 
 /** Theme source for consisting of collection of other theme sources.
  * This class is used to implement the retrieval of themes

@@ -40,7 +40,6 @@ package org.millstone.examples.features;
 
 import java.util.Date;
 
-import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.ui.*;
 
 public class FeatureGridLayout extends Feature {

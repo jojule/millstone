@@ -38,9 +38,6 @@
 
 package org.millstone.examples.features;
 
-import java.util.Hashtable;
-
-import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.ui.*;
 
 public class FeatureOrderedLayout extends Feature {

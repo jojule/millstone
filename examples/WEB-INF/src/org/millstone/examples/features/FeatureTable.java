@@ -38,10 +38,6 @@
 
 package org.millstone.examples.features;
 
-import java.util.Hashtable;
-
-import org.millstone.base.data.Item;
-import org.millstone.base.data.util.*;
 import org.millstone.base.ui.*;
 import org.millstone.base.event.Action;
 
