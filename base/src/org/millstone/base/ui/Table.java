@@ -857,7 +857,7 @@ public class Table extends Select implements Action.Container, Container.Ordered
 					target.addAttribute("icon", icons[i]);
 				String head = heads[i];
 				if (head == null && colHeadMode != COLUMN_HEADER_MODE_EXPLICIT)
-					head = visibleColumns[i].toString();
+					head = colids[i].toString();
 				if (head == null)
 					head = "";
 				target.addAttribute("caption", head);
@@ -895,7 +895,7 @@ public class Table extends Select implements Action.Container, Container.Ordered
 			}
 			if (actionHandlers != null || isSelectable()) {
 				target.addAttribute("key", (String) cells[CELL_KEY][i]);
-				if (isSelected(itemId)) {
+				if (isSelected(itemId) && keyIndex < selectedKeys.length) {
 					target.addAttribute("selected", true);
 					selectedKeys[keyIndex++] = (String) cells[CELL_KEY][i];
 				}
@@ -1040,8 +1040,11 @@ public class Table extends Select implements Action.Container, Container.Ordered
 							c.setParent(this);
 							visibleComponents.add(c);
 							cells[CELL_FIRSTCOL + j][i] = c;
-						} else
-							cells[CELL_FIRSTCOL + j][i] = p.toString();
+						} else if (p != null) {
+							cells[CELL_FIRSTCOL + j][i] = formatPropertyValue(p);
+						} else {
+							cells[CELL_FIRSTCOL + j][i] = formatPropertyValue(null);						
+						}
 					} else {
 						cells[CELL_FIRSTCOL + j][i] = "";
 					}
@@ -1067,6 +1070,21 @@ public class Table extends Select implements Action.Container, Container.Ordered
 			pageBuffer = cells;
 
 		return cells;
+	}
+	
+	/** Formats table cell property values.
+	 *  By default the property.toString() and return a empty string for
+	 *  null properties.
+	 * 
+	 * @param property Property to be formatted
+	 * @return String representation of property and its value.
+	 * @since 3.1
+	 */
+	protected String formatPropertyValue(Property property) {
+		if (property == null) {
+			return "";
+		}
+		return property.toString();
 	}
 
 	/* Action container *************************************************** */
