@@ -126,9 +126,6 @@ public abstract class Application implements URIHandler {
 	/** Main window of the application. */
 	private Window mainWindow = null;
 
-	/** Debug window of the application. */
-	private Window debugWindow = null;
-
 	/** The application's URL. */
 	private URL applicationUrl;
 
@@ -418,20 +415,6 @@ public abstract class Application implements URIHandler {
 
 		addWindow(mainWindow);
 		this.mainWindow = mainWindow;
-	}
-
-	/** Returns the debugWindow.
-	 * @return Window
-	 */
-	public Window getDebugWindow() {
-		return debugWindow;
-	}
-
-	/** Sets the debugWindow.
-	 * @param debugWindow The debugWindow to set
-	 */
-	public void setDebugWindow(Window debugWindow) {
-		this.debugWindow = debugWindow;
 	}
 
 	/** Returns an enumeration of all the names in this application.
