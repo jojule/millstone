@@ -90,7 +90,7 @@ public class UIDLPaintTarget implements PaintTarget {
 
     private OutputStream output;
 
-    private PaintListener cache;
+private ApplicationManager manager; 
 
     private String paintableId;
 
@@ -101,11 +101,11 @@ public class UIDLPaintTarget implements PaintTarget {
      * @param out
      *            A character-output stream.
      */
-    public UIDLPaintTarget(VariableMap variableMap, PaintListener cache,
+    public UIDLPaintTarget(VariableMap variableMap, ApplicationManager manager,
             OutputStream output) throws PaintException {
 
         // Set the cache
-        this.cache = cache;
+        this.manager = manager;
 
         // Set the variable map
         this.variableMap = variableMap;
@@ -630,9 +630,9 @@ public class UIDLPaintTarget implements PaintTarget {
     public boolean startTag(Paintable paintable, String tag)
             throws PaintException {
         startTag(tag);
-        String cacheId = cache.getCacheId(paintable);
-            cacheId = cache.add(paintable);
-        addAttribute("id", cacheId);
+        String id = manager.getPaintableId(paintable);
+        paintable.addListener(manager);
+        addAttribute("id", id);
         return false;
     }
 

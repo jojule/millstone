@@ -43,6 +43,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -55,15 +57,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.millstone.ajaxadapter.browser.Firefox;
 import org.millstone.base.Application;
+import org.millstone.base.Application.WindowAttachEvent;
+import org.millstone.base.Application.WindowDetachEvent;
 import org.millstone.base.terminal.DownloadStream;
 import org.millstone.base.terminal.Paintable;
 import org.millstone.base.terminal.Terminal;
+import org.millstone.base.terminal.Paintable.RepaintRequestEvent;
 import org.millstone.base.ui.Window;
 
 /**
  * @author IT Mill Ltd, Joonas Lehtinen
  */
-public class ApplicationManager {
+public class ApplicationManager implements Paintable.RepaintRequestListener,
+Application.WindowAttachListener, Application.WindowDetachListener {
 
     private static String GET_PARAM_VARIABLE_CHANGES = "changeVariables";
 
@@ -71,9 +77,13 @@ public class ApplicationManager {
 
     private static String GET_PARAM_UI_CHANGES_FORMAT = "format";
 
-    private WeakHashMap applicationToPaintListenerMap = new WeakHashMap();
+        private WeakHashMap applicationToVariableMapMap = new WeakHashMap();
 
-    private WeakHashMap applicationToVariableMapMap = new WeakHashMap();
+    private HashSet dirtyPaintabletSet = new HashSet();
+
+    private WeakHashMap paintableIdMap = new WeakHashMap();
+    
+    private int idSequence = 0;
 
     private Application application;
 
@@ -90,28 +100,15 @@ public class ApplicationManager {
         }
         return vm;
     }
-
-    private PaintListener getPaintListener() {
-        PaintListener pl = (PaintListener) applicationToPaintListenerMap
-                .get(application);
-        if (pl == null) {
-            pl = new PaintListener();
-            applicationToPaintListenerMap.put(application, pl);
-        }
-        return pl;
-    }
-
     public void takeControl() {
-        PaintListener pl = getPaintListener();
-        application.addListener((Application.WindowAttachListener) pl);
-        application.addListener((Application.WindowDetachListener) pl);
+        application.addListener((Application.WindowAttachListener) this);
+        application.addListener((Application.WindowDetachListener) this);
 
     }
 
     public void releaseControl() {
-        PaintListener pl = getPaintListener();
-        application.removeListener((Application.WindowAttachListener) pl);
-        application.removeListener((Application.WindowDetachListener) pl);
+        application.removeListener((Application.WindowAttachListener) this);
+        application.removeListener((Application.WindowDetachListener) this);
     }
 
     public void handleXmlHttpRequest(HttpServletRequest request,
@@ -184,7 +181,7 @@ public class ApplicationManager {
 
                     // Create UIDL writer
                     UIDLPaintTarget phoneTerminal = new UIDLPaintTarget(
-                            getVariableMap(), getPaintListener(), out);
+                            getVariableMap(), this, out);
 
                     // Paint components
                     Set paintables;
@@ -192,7 +189,7 @@ public class ApplicationManager {
                         paintables = new LinkedHashSet();
                         paintables.add(window);
                     } else
-                        paintables = getPaintListener().getDirtyComponents();
+                        paintables = getDirtyComponents();
                     if (paintables != null) {
                         for (Iterator i = (new ArrayList(paintables))
                                 .iterator(); i.hasNext();) {
@@ -200,10 +197,10 @@ public class ApplicationManager {
                             phoneTerminal.startTag("change");
                             phoneTerminal.addAttribute("format", "uidl");
                             phoneTerminal.addAttribute("pid",
-                                    getPaintListener().getCacheId(p));
+                                    getPaintableId(p));
                             p.paint(phoneTerminal);
                             phoneTerminal.endTag("change");
-                            getPaintListener().paintablePainted(p);
+                            paintablePainted(p);
                         }
                         phoneTerminal.close();
                     }
@@ -302,9 +299,46 @@ public class ApplicationManager {
      * @param window
      * @return
      */
-    public String getPaintableId(Window window) {
+    public synchronized String getPaintableId(Paintable paintable) {
 
-        // TODO Needs implementation
-        return "271987398329";
+        String id = (String) paintableIdMap.get(paintable);
+        if (id == null) {
+            id = Integer.toString(idSequence++);
+            paintableIdMap.put(paintable,id);
+        }
+        
+        return id;
     }
+    
+    public synchronized Set getDirtyComponents() {
+        return Collections.unmodifiableSet(dirtyPaintabletSet);
+
+    }
+
+    public synchronized void clearDirtyComponents() {
+        dirtyPaintabletSet.clear();
+    }
+
+    public void repaintRequested(RepaintRequestEvent event) {
+        dirtyPaintabletSet.add(event.getPaintable());
+    }
+
+    public void paintablePainted(Paintable p) {
+        dirtyPaintabletSet.remove(p);
+        p.requestRepaintRequests();
+    }
+
+    public boolean isDirty(Paintable paintable) {
+        return (dirtyPaintabletSet.contains(paintable));
+    }
+
+    public void windowAttached(WindowAttachEvent event) {
+        event.getWindow().addListener(this);
+        dirtyPaintabletSet.add(event.getWindow());
+    }
+
+    public void windowDetached(WindowDetachEvent event) {
+        event.getWindow().removeListener(this);
+    }
+
 }

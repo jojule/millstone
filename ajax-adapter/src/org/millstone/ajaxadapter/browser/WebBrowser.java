@@ -38,11 +38,11 @@
 
 package org.millstone.ajaxadapter.browser;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringBufferInputStream;
-import java.io.Writer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -114,9 +114,9 @@ public abstract class WebBrowser implements Terminal {
         InputStream is = getClass().getResourceAsStream("theme.xsl");
         if (is == null) {
             response.setContentType("text/plain");
-            is = new StringBufferInputStream(
+            is = new ByteArrayInputStream((
                     "Theme not found (resource theme.xsl not found for class "
-                            + getClass().getName() );
+                            + getClass().getName()).getBytes());
         }
 
         OutputStream os = response.getOutputStream();
