@@ -48,7 +48,6 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.StringTokenizer;
 import org.millstone.base.data.Container;
-import org.millstone.base.data.Item;
 import org.millstone.base.data.util.ContainerHierarchicalWrapper;
 import org.millstone.base.event.*;
 import org.millstone.base.terminal.PaintException;
@@ -57,7 +56,6 @@ import org.millstone.base.terminal.SystemError;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.KeyMapper;
 import org.millstone.base.terminal.Resource;
-import org.millstone.base.terminal.URIHandler;
 
 /** MenuTree component.
  *  MenuTree can be used to select an item (or multiple items)
@@ -606,7 +604,7 @@ public class Tree extends Select implements Container.Hierarchical {
 		/** New instance of options change event
 		 * @param source Source of the event.
 		 */
-		public CollapseEvent(Component source, Object collapsetItemId) {
+		public CollapseEvent(Component source, Object collapsedItemId) {
 			super(source);
 			this.collapsedItemId = collapsedItemId;
 		}
