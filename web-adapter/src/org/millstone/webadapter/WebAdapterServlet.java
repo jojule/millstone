@@ -347,7 +347,7 @@ public class WebAdapterServlet
 							THEME_LISTING_FILE)));
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				sourcePaths.add(THEME_DIRECTORY_PATH + "/" + line.trim());
+				sourcePaths.add(THEME_DIRECTORY_PATH + line.trim());
 			}
 			if (this.isDebugMode()) {
 				Log.debug(
