@@ -7,10 +7,31 @@
     <HEAD>
       <xsl:call-template name="window-head"/>
     </HEAD>
-    <BODY>	         
+    <BODY>	 
+    
+	  <!-- Window scrolling events and initialization -->
+	  <xsl:variable name="scrolldownid"><xsl:value-of select="./integer[@name='scrolldown']/@id"/></xsl:variable>
+	  <xsl:variable name="scrollleftid"><xsl:value-of select="./integer[@name='scrollleft']/@id"/></xsl:variable>
+      <xsl:if test="$dhtml and $scrolldownid and $scrollleftid">
+        <xsl:attribute name="onscroll">setVarById('<xsl:value-of select="$scrolldownid"/>',document.body.scrollTop,false);setVarById('<xsl:value-of select="$scrollleftid"/>',document.body.scrollLeft,false)</xsl:attribute>
+        <xsl:attribute name="onload">document.body.scrollTop = <xsl:value-of select="./integer[@name='scrolldown']/@value"/>; document.body.scrollLeft = <xsl:value-of select="./integer[@name='scrollleft']/@value"/></xsl:attribute>
+      </xsl:if>     
+      
+      <!-- Main form -->
       <FORM NAME="millstone" METHOD="POST" ACCEPT-CHARSET="UTF-8" ENCTYPE="multipart/form-data">
+
+  	    <!-- Window scrolling variables -->
+        <xsl:if test="$dhtml and $scrolldownid and $scrollleftid">
+          <INPUT TYPE="HIDDEN" ID="{$scrolldownid}" NAME="{$scrolldownid}" VALUE="{./integer[@name='scrolldown']/@value}"/>
+          <INPUT TYPE="HIDDEN" ID="{$scrollleftid}" NAME="{$scrollleftid}" VALUE="{./integer[@name='scrollleft']/@value}"/>
+        </xsl:if>     
+
+        <!-- Sub component -->
         <xsl:apply-templates/>
+        
+        <!-- Popup layers -->
         <xsl:apply-templates mode="popup"/>
+
       </FORM>
     </BODY>
   </HTML>
@@ -43,17 +64,6 @@
 		    <!-- Refresh other windows -->
 	    	<xsl:value-of select="wa:windowScript()"/>
 
-			<!-- Resize and scroll this window -->
-			<!-- FIXME 
-			<xsl:choose>
-		 	    <xsl:when test="(./scrolldown) or (./scrollleft)">
-						    
-			    </xsl:when>
-	    		<xsl:otherwise>
-	    		
-			    </xsl:otherwise>
-		    </xsl:choose>
-			-->
 	    </SCRIPT>
     </xsl:if>
 
