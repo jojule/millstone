@@ -44,6 +44,6 @@ package org.millstone.ajaxadapter.browser;
  * 
  * @author IT Mill Ltd, Joonas Lehtinen
  */
-public class Mozilla extends AbstractBrowser {
+public class Firefox extends AbstractBrowser {
 
 }

@@ -90,9 +90,14 @@ public abstract class AbstractBrowser implements Terminal {
 
     public static AbstractBrowser getBrowser(String userAgentHeader) {
 
-        // TODO More meaningful implementation is needed
-        System.out.println("User agent: " + userAgentHeader);
-        return new Mozilla();
+        if (userAgentHeader.matches(".*Safari.*")) 
+            return new Safari();
+        if (userAgentHeader.matches(".*Internet Explorer.*")) 
+            return new InternetExplorer();
+        if (userAgentHeader.matches(".*Firefox.*")) 
+            return new Firefox();
+        
+        return new UnsupportedBrowser(userAgentHeader);
     }
 
     public void createAjaxClient(HttpServletRequest request,
