@@ -78,8 +78,12 @@ public class BaseFieldFactory implements FieldFactory {
 	 * @see org.millstone.base.ui.FieldFactory#createField(Item, Object, Component)
 	 */
 	public Field createField(Item item, Object propertyId, Component uiContext) {
-		if (item != null)
-			return createField(item.getItemProperty(propertyId),uiContext);
+		if (item != null && propertyId != null){
+			Field f= createField(item.getItemProperty(propertyId),uiContext);
+			if (f instanceof AbstractComponent)
+				((AbstractComponent)f).setCaption(propertyId.toString());
+			return f;
+		}
 		else
 			return null;
 	}
