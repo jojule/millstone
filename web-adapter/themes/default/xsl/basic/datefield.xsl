@@ -84,7 +84,9 @@
         <xsl:variable name="dayid"><xsl:value-of select="./integer[@name='day']/@id"/></xsl:variable>  
         <SCRIPT LANGUAGE="JavaScript">
             updateCalendar('<xsl:value-of select="$calendarid"/>','<xsl:value-of select="$yearid"/>','<xsl:value-of select="$monthid"/>','<xsl:value-of select="$dayid"/>','<xsl:value-of select="$weekbegin"/>');
-            calendarDaySelect('<xsl:value-of select="$calendarid"/>',<xsl:value-of select="./integer[@name='day']/@value"/>);
+            <xsl:if test="./integer[@name='day']">
+                calendarDaySelect('<xsl:value-of select="$calendarid"/>',<xsl:value-of select="./integer[@name='day']/@value"/>);
+             </xsl:if>
         </SCRIPT>
       </TD>
 
