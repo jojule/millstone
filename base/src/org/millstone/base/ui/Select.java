@@ -629,7 +629,7 @@ public class Select
 					// Ignored
 				}
 			}
-
+			//TODO: This should be conditional
 			fireValueChange();
 		}
 	}
