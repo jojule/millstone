@@ -43,6 +43,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.Collection;
+
+import javax.swing.RepaintManager;
+
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.ErrorMessage;
@@ -176,17 +179,10 @@ public abstract class AbstractField
 			&& !dataSource.isReadOnly()) {
 			Object newValue = getValue();
 			try {
+
 				// Commit the value to datasource 
 				dataSource.setValue(newValue);
 
-				// The abstract field is not modified anymore
-				modified = false;
-
-				// If successful, remove set the buffering state to be ok
-				if (currentBufferedSourceException != null) {
-					currentBufferedSourceException = null;
-					requestRepaint();
-				}
 			} catch (Throwable e) {
 
 				// Set the buffering state
@@ -198,6 +194,22 @@ public abstract class AbstractField
 				throw currentBufferedSourceException;
 			}
 		}
+
+		boolean repaintNeeded = false;
+
+		// The abstract field is not modified anymore
+		if (modified) {
+			modified = false;
+			repaintNeeded = true;
+		}
+
+		// If successful, remove set the buffering state to be ok
+		if (currentBufferedSourceException != null) {
+			currentBufferedSourceException = null;
+			repaintNeeded = true;
+		}
+		
+		if (repaintNeeded) requestRepaint();
 	}
 
 	/* Update the value from the data source.
@@ -349,14 +361,14 @@ public abstract class AbstractField
 			// If invalid values are not allowed, the value must be checked
 			if (!isInvalidAllowed()) {
 				Collection v = getValidators();
-				if (v != null) 
-				for (Iterator i=v.iterator();i.hasNext();)
-					((Validator)i.next()).validate(newValue);
+				if (v != null)
+					for (Iterator i = v.iterator(); i.hasNext();)
+						 ((Validator) i.next()).validate(newValue);
 			}
 
 			// Change the value        
 			value = newValue;
-			modified = true;
+			modified = dataSource != null;
 
 			// In write trough mode , try to commit
 			if (isWriteThrough()
@@ -370,11 +382,6 @@ public abstract class AbstractField
 					// The buffer is now unmodified
 					modified = false;
 
-					// If successful, remove set the buffering state to be ok
-					if (currentBufferedSourceException != null) {
-						currentBufferedSourceException = null;
-						requestRepaint();
-					}
 				} catch (Throwable e) {
 
 					// Set the buffering state
@@ -385,6 +392,12 @@ public abstract class AbstractField
 					// Throw the source exception
 					throw currentBufferedSourceException;
 				}
+			}
+
+			// If successful, remove set the buffering state to be ok
+			if (currentBufferedSourceException != null) {
+				currentBufferedSourceException = null;
+				requestRepaint();
 			}
 
 			// Fire value change
@@ -454,10 +467,10 @@ public abstract class AbstractField
 
 		// Copy the validators from the data source
 		if (dataSource instanceof Validatable) {
-			Collection validators = ((Validatable)dataSource).getValidators();
+			Collection validators = ((Validatable) dataSource).getValidators();
 			if (validators != null)
-			for (Iterator i=validators.iterator(); i.hasNext();) 
-				addValidator((Validator) i.next());
+				for (Iterator i = validators.iterator(); i.hasNext();)
+					addValidator((Validator) i.next());
 		}
 
 		// Fire value change if the value has changed
@@ -634,8 +647,8 @@ public abstract class AbstractField
 	/** An <code>Event</code> object specifying the Property whose value
 	 * has been changed.
 	 * @author IT Mill Ltd.
- 	 * @version @VERSION@
- 	 * @since 3.0
+		 * @version @VERSION@
+		 * @since 3.0
 	 */
 	public class ValueChangeEvent
 		extends Component.Event
@@ -708,8 +721,8 @@ public abstract class AbstractField
 	/** An <code>Event</code> object specifying the Property whose read-only
 	 * status has changed.
 	 * @author IT Mill Ltd.
- 	 * @version @VERSION@
- 	 * @since 3.0
+		 * @version @VERSION@
+		 * @since 3.0
 	 */
 	public class ReadOnlyStatusChangeEvent
 		extends Component.Event
@@ -767,13 +780,13 @@ public abstract class AbstractField
 	 * have changed
 	 */
 	public void valueChange(Property.ValueChangeEvent event) {
-		if (isReadThrough() || !isModified()) 
+		if (isReadThrough() || !isModified())
 			fireValueChange();
 	}
 
 	/** Ask the terminal to place the cursor to this field. */
 	public void focus() {
 		focus = true;
-		requestRepaint();	
+		requestRepaint();
 	}
 }
