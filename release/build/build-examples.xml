@@ -89,6 +89,10 @@
                	<include name="img/*.gif"/>
 		
                	<include name="WEB-INF/src/**/*.java"/>
+               	<include name="WEB-INF/src/**/*.jpg"/>
+               	<include name="WEB-INF/src/**/*.png"/>
+               	<include name="WEB-INF/src/**/*.gif"/>
+		
                	<include name="docs/**"/>
 
                	<include name="WEB-INF/lib/*.jar"/>
