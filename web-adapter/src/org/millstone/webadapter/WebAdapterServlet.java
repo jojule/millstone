@@ -799,14 +799,17 @@ public class WebAdapterServlet
 			response.setContentType(stream.getContentType());
 
 			// Set cache headers
-			if (stream.getCacheTime() <= 0) {
+			long cacheTime = stream.getCacheTime();
+			if (cacheTime <= 0) {
 				response.setHeader("Cache-Control", "no-cache");
 				response.setHeader("Pragma", "no-cache");
 				response.setDateHeader("Expires", 0);
 			} else {
+				response.setHeader("Cache-Control", "public");
+				response.setHeader("Cache-Control", "max-age="+cacheTime/1000);
 				response.setDateHeader(
 					"Expires",
-					System.currentTimeMillis() + stream.getCacheTime());
+					System.currentTimeMillis() + cacheTime);
 			}
 
 			// Copy download stream parameters directly
@@ -950,6 +953,8 @@ public class WebAdapterServlet
 
 				// Use default cache time for theme resources
 				if (this.themeCacheTime > 0) {
+					response.setHeader("Cache-Control", "public");
+					response.setHeader("Cache-Control", "max-age="+this.themeCacheTime/1000);
 					response.setDateHeader(
 						"Expires",
 						System.currentTimeMillis() + this.themeCacheTime);
@@ -962,6 +967,7 @@ public class WebAdapterServlet
 					out.write(buffer, 0, bytesRead);
 				}
 				out.close();
+				data.close();
 			} else {
 				response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			}
