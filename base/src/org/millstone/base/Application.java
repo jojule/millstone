@@ -160,7 +160,7 @@ public abstract class Application implements URIHandler {
 	
 	/** URL the user is redirected to on application close or
 	 * null if application is just closed */
-	private URL logoutURL = null;
+	private String logoutURL = null;
 
 	/** Gets a window by name. Returns <code>null</code>
 	 * if the application is not running or it does not contain a window
@@ -730,7 +730,7 @@ public abstract class Application implements URIHandler {
 	 * 
 	 * @return URL
 	 */
-	public URL getLogoutURL() {
+	public String getLogoutURL() {
 		return logoutURL;
 	}
 
@@ -742,7 +742,7 @@ public abstract class Application implements URIHandler {
 	 * 
 	 * @param logoutURL The logoutURL to set
 	 */
-	public void setLogoutURL(URL logoutURL) {
+	public void setLogoutURL(String logoutURL) {
 		this.logoutURL = logoutURL;
 	}
 

@@ -48,6 +48,7 @@ import java.util.List;
 import org.millstone.base.Application;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
+import org.millstone.base.terminal.Resource;
 
 /** <p>An application frame window component. This component implements a
  * window that contains a hierarchical set of frames. Each frame can contain
@@ -129,6 +130,9 @@ public class FrameWindow extends Window {
 		/** Window connected to frame or null */
 		private Window window;
 
+		/** Window connected to frame or null */
+		private Resource resource;
+
 		/** String representation of the width */
 		private String width = "*";
 
@@ -145,6 +149,11 @@ public class FrameWindow extends Window {
 		/** Window connected to frame */
 		public Window getWindow() {
 			return window;
+		}
+
+		/** Resource connected to frame */
+		public Resource getResource() {
+			return resource;
 		}
 
 		/** Absolute width/height of the frame in pixels */
@@ -172,7 +181,10 @@ public class FrameWindow extends Window {
 		/** Paint the frame */
 		private void paint(PaintTarget target) throws PaintException {
 			target.startTag("frame");
-			target.addAttribute("src", getURL().toString());
+			if (getResource() != null)
+				target.addAttribute("src", getResource());
+			else
+				target.addAttribute("src", getURL().toString());
 			target.addAttribute("name", getName());
 			target.endTag("frame");
 		}
@@ -229,6 +241,14 @@ public class FrameWindow extends Window {
 			return newFrame(url,name,size());
 		}
 
+		/** Create new frame containing a resource.
+		 * 
+		 * <p>The new frame will be put in the end of the frames list..</p>
+		 */
+		public Frame newFrame(Resource resource, String name) {
+			return newFrame(resource,name,size());
+		}
+
 		/** Create new frame containing a url.
 		 * 
 		 * <p>The new frame will be put before the frame identified
@@ -239,6 +259,22 @@ public class FrameWindow extends Window {
 		public Frame newFrame(URL url, String name, int index) {
 			Frame f = new Frame();
 			f.url = url;
+			f.name = name;
+			frames.add(index, f);
+			requestRepaint();
+			return f;
+		}
+
+		/** Create new frame containing a resource.
+		 * 
+		 * <p>The new frame will be put before the frame identified
+		 * by the given index. The indexes of the frame previously in the 
+		 * given position and all the positions after it are incremented
+		 * by one.</p>
+		 */
+		public Frame newFrame(Resource resource, String name, int index) {
+			Frame f = new Frame();
+			f.resource = resource;
 			f.name = name;
 			frames.add(index, f);
 			requestRepaint();
