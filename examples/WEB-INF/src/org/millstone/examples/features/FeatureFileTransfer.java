@@ -56,7 +56,7 @@ public class FeatureFileTransfer
 					"caption",
 					"immediate",
 					"description" ,
-					"style"}));
+					"style"},null));
 		download_window.setVisible(false);
 		l.addComponent(download_window);
 		

@@ -1,5 +1,7 @@
 package org.millstone.examples.features;
 
+import java.util.Hashtable;
+
 import org.millstone.base.data.Item;
 import org.millstone.base.data.util.*;
 import org.millstone.base.ui.*;
@@ -19,10 +21,32 @@ public class FeatureTable extends Feature implements Action.Handler {
 
 		IndexedContainer ic = new IndexedContainer();
 
-		String[] firstnames = new String[]{"John","Mary","Joe","Sarah","Jeff","Jane","Peter","Marc","Josie","Linus"};
-		String[] lastnames = new String[]{"Torvalds","Smith","Jones","Beck","Sheridan","Picard","Hill","Fielding","Einstein"};
-		String[] eyecolors = new String[]{"Blue","Green","Brown"};
-		String[] haircolors = new String[]{"Brown","Black","Red","Blonde"};
+		String[] firstnames =
+			new String[] {
+				"John",
+				"Mary",
+				"Joe",
+				"Sarah",
+				"Jeff",
+				"Jane",
+				"Peter",
+				"Marc",
+				"Josie",
+				"Linus" };
+		String[] lastnames =
+			new String[] {
+				"Torvalds",
+				"Smith",
+				"Jones",
+				"Beck",
+				"Sheridan",
+				"Picard",
+				"Hill",
+				"Fielding",
+				"Einstein" };
+		String[] eyecolors = new String[] { "Blue", "Green", "Brown" };
+		String[] haircolors =
+			new String[] { "Brown", "Black", "Red", "Blonde" };
 
 		ic.addProperty("Firstname", String.class, "");
 		ic.addProperty("Lastname", String.class, "");
@@ -32,11 +56,16 @@ public class FeatureTable extends Feature implements Action.Handler {
 
 		for (int j = 0; j < 50; j++) {
 			Item i = ic.getItem(ic.addItem());
-			i.getProperty("Firstname").setValue(firstnames[(int)(Math.random()*9)]);
-			i.getProperty("Lastname").setValue(lastnames[(int)(Math.random()*9)]);
-			i.getProperty("Age").setValue(new Integer((int)(Math.random()*80)));
-			i.getProperty("Eyecolor").setValue(eyecolors[(int)(Math.random()*3)]);
-			i.getProperty("Haircolor").setValue(haircolors[(int)(Math.random()*4)]);
+			i.getProperty("Firstname").setValue(
+				firstnames[(int) (Math.random() * 9)]);
+			i.getProperty("Lastname").setValue(
+				lastnames[(int) (Math.random() * 9)]);
+			i.getProperty("Age").setValue(
+				new Integer((int) (Math.random() * 80)));
+			i.getProperty("Eyecolor").setValue(
+				eyecolors[(int) (Math.random() * 3)]);
+			i.getProperty("Haircolor").setValue(
+				haircolors[(int) (Math.random() * 4)]);
 		}
 		t = new Table("Table component", ic);
 		t.setPageLength(10);
@@ -46,20 +75,7 @@ public class FeatureTable extends Feature implements Action.Handler {
 		t.addActionHandler(this);
 
 		// Configuration
-		ItemEditor cpp =
-			(ItemEditor) createPropertyPanel(t,
-				new String[] {
-					"enabled",
-					"visible",
-					"multiSelect",
-					"pageLength",
-					"immediate",
-					"selectable",
-					"columnHeaderMode",
-					"rowHeaderMode",
-					"caption",
-					"style",
-					"description" });
+		Hashtable alternateEditors = new Hashtable();
 
 		Select s =
 			createSelect(
@@ -74,7 +90,7 @@ public class FeatureTable extends Feature implements Action.Handler {
 					"Explicit defaults ID",
 					"Hidden",
 					"ID" });
-		cpp.setPropertyEditor("columnHeaderMode", s);
+		alternateEditors.put("columnHeaderMode", s);
 
 		Select t =
 			createSelect(
@@ -97,17 +113,32 @@ public class FeatureTable extends Feature implements Action.Handler {
 					"Index",
 					"Item",
 					"Property" });
-		cpp.setPropertyEditor("rowHeaderMode", t);
+		alternateEditors.put("rowHeaderMode", t);
 
 		Select u =
 			createSelect(
 				"Style",
 				new String[] { "default", "list" },
 				new String[] { "Default", "List" });
-		u.setNewItemsAllowed(true);
-		cpp.setPropertyEditor("style", u);
 
-		l.addComponent(cpp);
+		alternateEditors.put("style", u);
+
+		l.addComponent(
+			 createPropertyPanel(t,
+			new String[] {
+				"enabled",
+				"visible",
+				"multiSelect",
+				"pageLength",
+				"immediate",
+				"selectable",
+				"columnHeaderMode",
+				"rowHeaderMode",
+				"caption",
+				"style",
+				"description" },
+			alternateEditors));
+
 		return l;
 	}
 
@@ -130,16 +161,16 @@ public class FeatureTable extends Feature implements Action.Handler {
 	protected String[] getDescriptionXHTML() {
 		return new String[] {
 			"Table",
-			"The Table feature caters for displaying large volumes of tabular data, "+
-			"in multiple pages where needed.<br/><br/> "+
-			"Selection of the displayed data is supported both in selecting exclusively one row "+
-			"or multiple rows at the same time. For each row, there may be a set of actions associated, "+
-			"depending on the skin implementation these actions may be displayed either as a drop-down "+
-			"menu for each row or a set of command buttons. <br/><br/>"+
-			"As with all Millstone data-components , so also the Table may be bound to an underlying "+
-			"datasource, such as for instance a database table.<br/><br/>"+
-		    "On the demo tab you can try out how the different properties "+
-			"affect the presentation of the component.",
+			"The Table feature caters for displaying large volumes of tabular data, "
+				+ "in multiple pages where needed.<br/><br/> "
+				+ "Selection of the displayed data is supported both in selecting exclusively one row "
+				+ "or multiple rows at the same time. For each row, there may be a set of actions associated, "
+				+ "depending on the skin implementation these actions may be displayed either as a drop-down "
+				+ "menu for each row or a set of command buttons. <br/><br/>"
+				+ "As with all Millstone data-components , so also the Table may be bound to an underlying "
+				+ "datasource, such as for instance a database table.<br/><br/>"
+				+ "On the demo tab you can try out how the different properties "
+				+ "affect the presentation of the component.",
 			"table.jpg" };
 	}
 

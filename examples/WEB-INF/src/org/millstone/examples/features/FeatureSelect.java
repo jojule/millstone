@@ -1,5 +1,6 @@
 package org.millstone.examples.features;
 
+import java.util.Hashtable;
 import java.util.Vector;
 
 import org.millstone.base.data.util.BeanItem;
@@ -30,30 +31,31 @@ public class FeatureSelect extends Feature {
 		l.addComponent(show);
 
 		// Configuration
-		ItemEditor cpp = 
-			(ItemEditor)createPropertyPanel(
-				s,
-				new String[] {
-					"enabled",
-					"visible",
-					"readOnly",
-					"writeThrough",
-					"readThrough",
-					"immediate",
-					"multiSelect",
-					"newItemsAllowed",
-					"style",
-					"caption",
-					"description" });
+		Hashtable alternateEditors = new Hashtable();
 
 		Select t =
 			createSelect(
 				"Style",
 				new String[] { "default", "optiongroup" },
 				new String[] { "Default", "Optiongroup" });
-		t.setNewItemsAllowed(true);
-		cpp.setPropertyEditor("style", t);
-		l.addComponent(cpp);
+
+		alternateEditors.put("style", t);
+
+		l.addComponent(
+			createPropertyPanel(s,
+			new String[] {
+				"enabled",
+				"visible",
+				"readOnly",
+				"writeThrough",
+				"readThrough",
+				"immediate",
+				"multiSelect",
+				"newItemsAllowed",
+				"style",
+				"caption",
+				"description" },
+			alternateEditors));
 
 		return l;
 	}
@@ -71,13 +73,13 @@ public class FeatureSelect extends Feature {
 	protected String[] getDescriptionXHTML() {
 		return new String[] {
 			"Select",
-			"The select feature embodies  two different modes of item selection.  "+
-			"Firstly it presents the single selection mode which is usually represented as "+
-			"either a drop-down menu or a radio-group of switches, secondly it "+
-			"allows for multiple item selection, this is usually represented as either a "+
-			"listbox of selectable items or as a group of checkboxes.<br/><br/>"+
-			"On the demo tab you can try out how the different properties affect the"+
-			" presentation of the component.",
+			"The select feature embodies  two different modes of item selection.  "
+				+ "Firstly it presents the single selection mode which is usually represented as "
+				+ "either a drop-down menu or a radio-group of switches, secondly it "
+				+ "allows for multiple item selection, this is usually represented as either a "
+				+ "listbox of selectable items or as a group of checkboxes.<br/><br/>"
+				+ "On the demo tab you can try out how the different properties affect the"
+				+ " presentation of the component.",
 			"select.jpg" };
 	}
 

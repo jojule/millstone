@@ -99,7 +99,7 @@ public class FeatureWindow extends Feature {
 					"scrollOffsetX",
 					"scrollOffsetY",
 					"border",
-					"caption"});
+					"caption"},null);
 				
 				demoComponent.addComponent(conf);
 			}

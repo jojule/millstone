@@ -4,6 +4,16 @@ import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.terminal.ClassResource;
 import org.millstone.base.ui.*;
 
+import java.beans.Introspector;
+import java.beans.BeanInfo;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
+import java.util.Hashtable;
+import java.util.Vector;
+
+import org.millstone.base.data.Property;
+import org.millstone.base.data.util.MethodProperty;
+
 public abstract class Feature extends CustomComponent {
 
 	private TabSheet ts;
@@ -59,23 +69,81 @@ public abstract class Feature extends CustomComponent {
 
 	protected Component createPropertyPanel(
 		Object objectToConfigure,
-		String[] propertyNames) {
+		String[] propertyNames,
+		Hashtable alternateEditors) {
 
-		ItemEditor properties = new ItemEditor("Properties", "Set", null);
-		properties.setItemDataSource(new BeanItem(objectToConfigure));
-		Object[] ids = properties.getPropertyIds().toArray();
-		for (int i = 0; i < ids.length; i++) {
-			boolean found = false;
-			for (int j = 0; j < propertyNames.length; j++)
-				if (ids[i].equals(propertyNames[j]))
-					found = true;
-			if (!found)
-				properties.removeProperty(ids[i]);
+		Panel properties = new Panel("Properties",new GridLayout(2, 20));
+
+		try {
+			
+			// Create bean information
+			BeanInfo info =
+				Introspector.getBeanInfo(objectToConfigure.getClass());
+			PropertyDescriptor[] pd = info.getPropertyDescriptors();
+
+			Vector checkBoxes = new Vector();
+			Vector fields = new Vector();
+			Vector others = new Vector();
+
+			// Add all the bean properties as MethodProperties to this Item
+			for (int k = 0; k < propertyNames.length; k++) {
+				for (int i = 0; i < pd.length; i++) {
+					// Skip till we find the property in question from bean property descriptor array.
+					if (!propertyNames[k].equals(pd[i].getName())) {
+						continue;
+					}
+					Method getMethod = pd[i].getReadMethod();
+					Method setMethod = pd[i].getWriteMethod();
+					Class type = pd[i].getPropertyType();
+					String name = pd[i].getName();
+
+					Property p =
+						new MethodProperty(
+							type,
+							objectToConfigure,
+							getMethod,
+							setMethod);
+
+					if (alternateEditors != null && alternateEditors.containsKey(name)) {
+						Property.Editor editor = (Property.Editor)alternateEditors.get(name);
+						editor.setPropertyDataSource(p);
+						others.add(editor);
+					} else {
+						// Create a field of appropriate type
+						if (java.util.Date.class.isAssignableFrom(p.getType()))
+							others.add(new DateField(captionize(name), p));
+						else if (Boolean.class.isAssignableFrom(p.getType()))
+							checkBoxes.add(new Button(captionize(name), p));
+						else
+							fields.add(new TextField(captionize(name), p));
+					}
+				}
+			}
+
+			for (int i = 0; i < checkBoxes.size(); i++) {
+				properties.addComponent((Component) checkBoxes.get(i));
+			}
+			if ((checkBoxes.size() % 2) != 0) {properties.addComponent(new Label(""));}
+
+			for (int i = 0; i < fields.size(); i++) {
+				properties.addComponent((Component) fields.get(i));
+			}
+			if ((fields.size() % 2) != 0) {properties.addComponent(new Label(""));}
+
+			for (int i=0;i<others.size();i++) {
+				properties.addComponent((Component)others.get(i));	
+			}
+			if ((others.size() % 2) != 0) {properties.addComponent(new Label(""));}			
+
+		} catch (java.beans.IntrospectionException ignored) {
 		}
 
-		((OrderedLayout)properties.getLayout()).setStyle("form");
-
+		properties.addComponent(new Button("Set"));
 		return properties;
+	}
+
+	private String captionize(String s) {
+		return (s.substring(0,1).toUpperCase())+s.substring(1,s.length());
 	}
 
 	protected Select createSelect(
@@ -85,18 +153,14 @@ public abstract class Feature extends CustomComponent {
 		Select s = new Select(caption);
 		s.addProperty("name", String.class, "");
 		for (int i = 0; i < keys.length; i++) {
-		 if (Integer.class.isAssignableFrom(keys[i].getClass())) {
-			s
-				.addItem((Integer)keys[i])
-				.getProperty("name")
-				.setValue(names[i]);
-		 }
-		 if (String.class.isAssignableFrom(keys[i].getClass())) {
-		 	s
-				.addItem((String)keys[i])
-				.getProperty("name")
-				.setValue(names[i]);	
-		 }		 
+			if (Integer.class.isAssignableFrom(keys[i].getClass())) {
+				s.addItem((Integer) keys[i]).getProperty("name").setValue(
+					names[i]);
+			}
+			if (String.class.isAssignableFrom(keys[i].getClass())) {
+				s.addItem((String) keys[i]).getProperty("name").setValue(
+					names[i]);
+			}
 		}
 		s.setItemCaptionPropertyId("name");
 		return s;

@@ -1,5 +1,7 @@
 package org.millstone.examples.features;
 
+import java.util.Hashtable;
+
 import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.terminal.Sizeable;
 import org.millstone.base.ui.*;
@@ -29,11 +31,32 @@ public class FeatureEmbedded extends Feature {
 		show.addComponent(emb);
 		l.addComponent(show);
 
+		Hashtable alternateEditors = new Hashtable();
+		
+		Select s = new Select("heightUnits");
+		s.addProperty("name", String.class, "");
+		s.setItemCaptionPropertyId("name");
+		for (int i = 0; i < Sizeable.UNIT_SYMBOLS.length; i++) {
+			s.addItem(new Integer(i)).getProperty("name").setValue(
+				Sizeable.UNIT_SYMBOLS[i]);
+
+		}
+		alternateEditors.put("heightUnits",s);
+
+		s = new Select("widthUnits");
+		s.addProperty("name", String.class, "");
+		s.setItemCaptionPropertyId("name");
+		for (int i = 0; i < Sizeable.UNIT_SYMBOLS.length; i++) {
+			s.addItem(new Integer(i)).getProperty("name").setValue(
+				Sizeable.UNIT_SYMBOLS[i]);
+
+		}
+		
+		alternateEditors.put("widthUnits", s);
+
 		// Configuration
-		ItemEditor cpp;
 		l.addComponent(
-			cpp =
-				(ItemEditor) createPropertyPanel(emb,
+				createPropertyPanel(emb,
 					new String[] {
 						"enabled",
 						"visible",
@@ -45,27 +68,9 @@ public class FeatureEmbedded extends Feature {
 						"height",
 						"widthUnits",
 						"heightUnits" ,
-						"style"}));
+						"style"},alternateEditors));
 
-		Select s = new Select("heightUnits");
-		s.addProperty("name", String.class, "");
-		s.setItemCaptionPropertyId("name");
-		for (int i = 0; i < Sizeable.UNIT_SYMBOLS.length; i++) {
-			s.addItem(new Integer(i)).getProperty("name").setValue(
-				Sizeable.UNIT_SYMBOLS[i]);
-
-		}
-		cpp.setPropertyEditor("heightUnits", s);
-
-		s = new Select("widthUnits");
-		s.addProperty("name", String.class, "");
-		s.setItemCaptionPropertyId("name");
-		for (int i = 0; i < Sizeable.UNIT_SYMBOLS.length; i++) {
-			s.addItem(new Integer(i)).getProperty("name").setValue(
-				Sizeable.UNIT_SYMBOLS[i]);
-
-		}
-		cpp.setPropertyEditor("widthUnits", s);
+		
 
 		return l;
 	}

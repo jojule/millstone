@@ -6,6 +6,7 @@ import org.millstone.base.data.util.ObjectProperty;
 import org.millstone.base.ui.*;
 import org.millstone.base.event.Action;
 import java.io.File;
+import java.util.Hashtable;
 
 public class FeatureTree extends Feature implements Action.Handler {
 
@@ -35,8 +36,18 @@ public class FeatureTree extends Feature implements Action.Handler {
 		l.addComponent(show);
 
 		// Configuration
-		ItemEditor cpp =
-			(ItemEditor) createPropertyPanel(t,
+		Hashtable alternateEditors = new Hashtable();
+		
+		Select t =
+			createSelect(
+				"Style",
+				new String[] { "default", "menu","dropmenu" },
+				new String[] { "Default", "Menu","Dropmenu" });
+
+		alternateEditors.put("style", t);
+		
+		l.addComponent(
+			 createPropertyPanel(t,
 				new String[] {
 					"enabled",
 					"visible",
@@ -48,16 +59,7 @@ public class FeatureTree extends Feature implements Action.Handler {
 					"readThrough",
 					"caption",
 					"style",
-					"description" });
-
-		Select t =
-			createSelect(
-				"Style",
-				new String[] { "default", "menu","dropmenu" },
-				new String[] { "Default", "Menu","Dropmenu" });
-		t.setNewItemsAllowed(true);
-		cpp.setPropertyEditor("style", t);
-		l.addComponent(cpp);
+					"description" },alternateEditors));
 
 		return l;
 	}

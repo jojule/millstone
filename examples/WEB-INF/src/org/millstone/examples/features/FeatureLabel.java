@@ -29,7 +29,7 @@ public class FeatureLabel extends Feature {
 					"visible",
 					"caption",
 					"description",
-					"style" }));
+					"style" },null));
 
 		return l;
 	}

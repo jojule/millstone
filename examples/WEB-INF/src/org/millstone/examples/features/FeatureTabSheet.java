@@ -33,7 +33,7 @@ public class FeatureTabSheet extends Feature {
 					"visible",
 					"caption",
 					"description",
-					"style" }));
+					"style" },null));
 
 		return l;
 	}

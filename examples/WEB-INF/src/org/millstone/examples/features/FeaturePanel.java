@@ -1,5 +1,7 @@
 package org.millstone.examples.features;
 
+import java.util.Hashtable;
+
 import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.ui.*;
 
@@ -20,9 +22,18 @@ public class FeaturePanel extends Feature {
 		l.addComponent(show);
 
 		// Configuration
+		Hashtable alternateEditors = new Hashtable();
 
-		ItemEditor cpp =
-			(ItemEditor) createPropertyPanel(show,
+		Select t =
+			createSelect(
+				"Style",
+				new String[] { "default", "light","strong" },
+				new String[] { "Default", "Light","Strong" });
+
+		alternateEditors.put("style", t);
+
+		l.addComponent(
+		 createPropertyPanel(show,
 				new String[] {
 					"enabled",
 					"visible",
@@ -30,17 +41,7 @@ public class FeaturePanel extends Feature {
 					"style",
 					"width",
 					"height",
-					"description" });
-
-		Select t =
-			createSelect(
-				"Style",
-				new String[] { "default", "light","strong" },
-				new String[] { "Default", "Light","Strong" });
-		t.setNewItemsAllowed(true);
-		cpp.setPropertyEditor("style", t);
-
-		l.addComponent(cpp);
+					"description" },alternateEditors));
 
 		return l;
 	}

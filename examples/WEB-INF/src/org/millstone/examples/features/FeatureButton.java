@@ -1,5 +1,7 @@
 package org.millstone.examples.features;
 
+import java.util.Hashtable;
+
 import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.terminal.ClassResource;
 import org.millstone.base.ui.*;
@@ -22,10 +24,19 @@ public class FeatureButton extends Feature {
 		show.addComponent(b);
 		l.addComponent(show);
 
+		Hashtable alternateEditors = new Hashtable();
+
+		Select s =
+			createSelect(
+				"Style",
+				new String[] { "default", "link" },
+				new String[] { "Default", "Link" });
+
+		alternateEditors.put("style", s);
+
 		// Configuration
-		ItemEditor cpp = 
-			(ItemEditor)createPropertyPanel(
-				b,
+		l.addComponent(
+			createPropertyPanel(b,
 				new String[] {
 					"enabled",
 					"visible",
@@ -34,16 +45,8 @@ public class FeatureButton extends Feature {
 					"style",
 					"switchMode",
 					"caption",
-					"description" });
-
-		Select s =
-			createSelect(
-				"Style",
-				new String[] { "default", "link"},
-				new String[] { "Default", "Link"});
-		s.setNewItemsAllowed(true);
-		cpp.setPropertyEditor("style", s);
-		l.addComponent(cpp);
+					"description" },
+				alternateEditors));
 
 		return l;
 	}
@@ -60,9 +63,9 @@ public class FeatureButton extends Feature {
 		new ClassResource("button.gif", this.getApplication());
 		return new String[] {
 			"Button",
-		    "In Millstone, buttons may function either as a pushbuttons or switches. (checkboxes)<br/><br/>"+
-		    "On the demo tab you can try out how the different properties affect "+
-			"the presentation of the component.",
+			"In Millstone, buttons may function either as a pushbuttons or switches. (checkboxes)<br/><br/>"
+				+ "On the demo tab you can try out how the different properties affect "
+				+ "the presentation of the component.",
 			"button.gif" };
 	}
 

@@ -36,7 +36,7 @@ public class FeatureTextField extends Feature {
 					"caption",
 					"description",
 					"secret",
-					"style" }));
+					"style" },null));
 
 		return l;
 	}
