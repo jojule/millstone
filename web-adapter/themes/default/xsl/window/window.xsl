@@ -69,6 +69,18 @@
 			  window.scrollTo(<xsl:value-of select="./integer[@name='scrollleft']/@value"/>,<xsl:value-of select="./integer[@name='scrolldown']/@value"/>);
 			</xsl:if>     
 
+			<!-- Open new windows -->
+		    <xsl:for-each select="open">
+				Millstone.openWindow('<xsl:value-of select="@src"
+		          />','<xsl:value-of select="wa:getWindowTargetName(@name)"
+		          />',<xsl:choose><xsl:when test="@width"><xsl:value-of select="@width"/></xsl:when><xsl:otherwise>-1</xsl:otherwise></xsl:choose
+		          >,<xsl:choose><xsl:when test="@height"><xsl:value-of select="@height"/></xsl:when><xsl:otherwise>-1</xsl:otherwise></xsl:choose
+		          >,'<xsl:value-of select="@border" />');
+		    </xsl:for-each>
+		    
+		    <!-- Refresh other windows -->
+	    	<xsl:value-of select="wa:windowScript()"/>
+	    	
 			// Invoke all registered listeners
 			Millstone.windows.onload();
 	    }
@@ -183,21 +195,6 @@
 	    <SCRIPT LANGUAGE="Javascript" SRC="{wa:resource('script/focusable.js')}"/>
 	    <SCRIPT LANGUAGE="Javascript" SRC="{wa:resource('script/window.js')}"/>
 	    <SCRIPT LANGUAGE="Javascript" SRC="{wa:resource('script/millstone.js')}"/>
-	    <SCRIPT LANGUAGE="Javascript">
-		
-			<!-- Open new windows -->
-		    <xsl:for-each select="open">
-				Millstone.openWindow('<xsl:value-of select="@src"
-		          />','<xsl:value-of select="wa:getWindowTargetName(@name)"
-		          />',<xsl:choose><xsl:when test="@width"><xsl:value-of select="@width"/></xsl:when><xsl:otherwise>-1</xsl:otherwise></xsl:choose
-		          >,<xsl:choose><xsl:when test="@height"><xsl:value-of select="@height"/></xsl:when><xsl:otherwise>-1</xsl:otherwise></xsl:choose
-		          >,'<xsl:value-of select="@border" />');
-		    </xsl:for-each>
-		    
-		    <!-- Refresh other windows -->
-	    	<xsl:value-of select="wa:windowScript()"/>
-
-	    </SCRIPT>
     </xsl:if>
 
 </xsl:template>
