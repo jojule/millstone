@@ -50,6 +50,8 @@
 	<echo message="Source: ${millstone.base.src.dir}" />
 	<echo message="Build: ${millstone.base.build.dir}" />
 	<echo message="Output: ${millstone.base.dist.dir}" />
+	<echo message="Debug: ${millstone.debug}" />
+	<echo message="Optimize: ${millstone.optimize}" />
       
    </target>
 
@@ -91,7 +93,7 @@
         <mkdir dir="${millstone.base.build.dir}"/>
 		<mkdir dir="${millstone.base.build.classes.dir}"/>
     	<javac srcdir="${millstone.base.src.dir}" destdir="${millstone.base.build.classes.dir}"
-	     deprecation="on" optimize="${optimize}"
+	     deprecation="on" debug="${millstone.debug}" optimize="${millstone.optimize}"
              classpath="${classpath}" >
 	     	<include name="org/millstone/base/**"/>
 		</javac>
