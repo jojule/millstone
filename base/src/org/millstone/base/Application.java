@@ -38,6 +38,7 @@
 
 package org.millstone.base;
 
+import org.millstone.base.service.ApplicationContext;
 import org.millstone.base.terminal.*;
 import org.millstone.base.terminal.ApplicationResource;
 import org.millstone.base.terminal.DownloadStream;
@@ -108,6 +109,9 @@ public abstract class Application
 	/** Random window name generator */
 	private static Random nameGenerator = new Random();
 
+	/** Application context the application is running in */
+	private ApplicationContext context;
+	
 	/** The current user or <code>null</code> if no user has logged in. */
 	private Object user;
 
@@ -322,11 +326,13 @@ public abstract class Application
 	 * 
 	 * @param applicationUrl The URL the application should respond to
 	 * @param applicationProperties Application properties as specified by the adapter.
+	 * @param context The context application will be running in
 	 * 
 	 */
-	public void start(URL applicationUrl, Properties applicationProperties) {
+	public void start(URL applicationUrl, Properties applicationProperties, ApplicationContext context) {
 		this.applicationUrl = applicationUrl;
 		this.properties = applicationProperties;
+		this.context = context;
 		init();
 		applicationIsRunning = true;
 	}
@@ -748,4 +754,14 @@ public abstract class Application
 					new SystemError(e));
 		}
 	}
+	
+	/** Get application context.
+	 * 
+	 * The application context is the environment where the application 
+	 * is running in.
+	 */
+	public ApplicationContext getContext() {
+		return context;
+	}
+	
 }

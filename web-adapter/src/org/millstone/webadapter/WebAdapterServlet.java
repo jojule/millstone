@@ -1062,7 +1062,10 @@ public class WebAdapterServlet
 			application.addListener((Application.WindowAttachListener) this);
 			application.addListener((Application.WindowDetachListener) this);
 			application.setLocale(request.getLocale());
-			application.start(applicationUrl, this.applicationProperties);
+			application.start(
+				applicationUrl,
+				this.applicationProperties,
+				new WebApplicationContext(this, session));
 
 		} catch (IllegalAccessException e) {
 			Log.error(
