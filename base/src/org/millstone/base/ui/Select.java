@@ -415,14 +415,16 @@ public class Select
 			// If the return value is not a set
 			if (retValue == null)
 				return new HashSet();
-			if (!Set.class.isAssignableFrom(retValue.getClass())) {
+			if (retValue instanceof Set) {
+				return Collections.unmodifiableSet((Set) retValue);								
+			} else if (retValue instanceof Collection) {
+					return new HashSet((Collection)retValue);								
+			} else {
 				Set s = new HashSet();
 				if (items.containsId(retValue))
 					s.add(retValue);
 				return s;
 			}
-
-			return Collections.unmodifiableSet((Set) retValue);
 
 		} else
 			return retValue;
