@@ -315,7 +315,7 @@ public class Window extends Panel implements URIHandler, ParameterHandler {
 		target.addAttribute("name", getName());
 
 		// Mark main window
-		if (this == getApplication().getMainWindow())
+		if (getApplication() != null && this == getApplication().getMainWindow())
 			target.addAttribute("main", true);
 
 		// Open requested resource
