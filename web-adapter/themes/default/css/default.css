@@ -190,8 +190,15 @@ TD.table-row-header
 TR.table, TR.table-unselected, TR.table-selected { 
 	border: dotted 1px #7fabf6; 
 	background-color: #fcfcfc; 
+	cursor: pointer; 
+	cursor: hand; 
 }
-TR.table-selected { background-color: #0059ef; color: white; }
+TR.table-list-selected,TR.table-list {
+	cursor: pointer; 
+	cursor: hand; 
+}
+
+TR.table-selected, TR.table-list-selected { background-color: #0059ef; color: white; }
 TD.table { padding: 2px; border-top: dotted 1px #7fabf6; }
 TD.table-select { border: 0px; margin: 0px; spacing: 0px; background-color: #7fabf6;}
 INPUT.table-select { border: 0px; margin: 0px;  }
