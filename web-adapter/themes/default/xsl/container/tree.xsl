@@ -224,7 +224,7 @@
   <xsl:param name="actionlistid"/>
   <xsl:param name="root"/>
 
-
+  <NOBR>
   <!-- Action lists in javascript mode-->
   <xsl:if test="$dhtml">
     <xsl:apply-templates select="./al">
@@ -322,7 +322,9 @@
       <xsl:with-param name="actionsvar" select="$root/actions" />
     </xsl:apply-templates>   
   </xsl:if>
-
+  
+  </NOBR>
+  
 </xsl:template>
 
 
@@ -351,12 +353,12 @@
       <xsl:attribute name="ID"><xsl:value-of select="$selid"/></xsl:attribute>
     </xsl:if>
     
-    <NOBR>
+    <TABLE border="0" cellpadding="0" cellspacing="0"><TR><TD>
             <xsl:choose>
               <xsl:when test="$dhtml">           
                <A>
              	<xsl:attribute name="HREF">javascript:treeExpClick('<xsl:value-of select="$expandid"/>','<xsl:value-of select="$collapseid"/>','<xsl:value-of select="@key"/>','<xsl:value-of select="$root/@immediate"/>')</xsl:attribute>
-            	<IMG ID="img{$childid}" BORDER="0" CLASS="{$class}">
+            	<IMG ID="img{$childid}" BORDER="0" CLASS="tree-menu-exp">
             	<xsl:choose>
               	  <xsl:when test="@expanded">
                 	<xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/menu/expanded.gif')"/></xsl:attribute>
@@ -389,7 +391,8 @@
                 </INPUT>
           	  </xsl:otherwise>
           	</xsl:choose>
-          	   
+      
+      </TD><TD>   	   
       <!-- Icon and caption -->
       <xsl:call-template name="tree-caption">
   		<xsl:with-param name="class"><xsl:value-of select="$class"/>-<xsl:value-of select="$level" /><xsl:if test="@selected">-selected</xsl:if></xsl:with-param>
@@ -397,7 +400,7 @@
         <xsl:with-param name="selectedvar" select="$selectedvar"/>
         <xsl:with-param name="root" select="$root"/>
       </xsl:call-template>    
-    </NOBR>
+    </TD></TR></TABLE>
   </DIV>
   <xsl:if test="node|leaf">
     <DIV CLASS="{$class}-{$level}-child">
@@ -441,8 +444,9 @@
       <xsl:attribute name="ID"><xsl:value-of select="$selid"/></xsl:attribute>
     </xsl:if>
     
-    <DIV> <!-- This div fixes the rendering in ie -->
-      <IMG ALT="" SRC="{wa:resource('img/tree/menu/leaf.gif')}" ID="img{$childid}" BORDER="0" CLASS="{$class}-exp"/>
+    <TABLE border="0" cellpadding="0" cellspacing="0"><TR><TD> <!-- This fixes the rendering in ie -->
+      <IMG ALT="" SRC="{wa:resource('img/tree/menu/leaf.gif')}" ID="img{$childid}" BORDER="0" CLASS="tree-menu-exp"/>
+      </TD><TD>
       <!-- Actions Icon and caption -->
       <xsl:call-template name="tree-caption">
   		<xsl:with-param name="class"><xsl:value-of select="$class"/>-<xsl:value-of select="$level" /><xsl:if test="@selected">-selected</xsl:if></xsl:with-param>
@@ -450,7 +454,7 @@
         <xsl:with-param name="selectedvar" select="$selectedvar"/>
         <xsl:with-param name="root" select="$root"/>
       </xsl:call-template>
-    </DIV>
+    </TD></TR></TABLE>
   </DIV>
 </xsl:template>
 
