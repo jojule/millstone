@@ -175,4 +175,28 @@ extends AbstractComponent implements ComponentContainer {
 	protected void fireComponentDetachEvent(Component component) {
 		fireEvent(new ComponentAttachEvent(this,component));
 	}
+	
+	/** This only implements the events and component parent calls. The extending
+	 * classes must implement component list maintenance and call this method 
+	 * after component list maintenance.
+	 * @see org.millstone.base.ui.ComponentContainer#addComponent(Component)
+	 */
+	public void addComponent(Component c) {
+		c.setParent(this);
+		if (getApplication() != null)
+			c.attach();
+		fireComponentAttachEvent(c);
+	}
+
+	/** This only implements the events and component parent calls. The extending
+	 * classes must implement component list maintenance and call this method 
+	 * before component list maintenance.
+	 * @see org.millstone.base.ui.ComponentContainer#removeComponent(Component)
+	 */
+	public void removeComponent(Component c) {
+		if (getApplication() != null)
+			c.detach();
+		c.setParent(null);
+		fireComponentDetachEvent(c);
+	}
 }

@@ -84,13 +84,12 @@ public class TabSheet extends AbstractComponentContainer {
 	 * @param c The component to be removed.
 	 */
 	public void removeComponent(Component c) {
-		if (c != null) {
+		if (c != null && tabs.contains(c)) {
+			super.removeComponent(c);
 			tabs.remove(c);
 			tabCaptions.remove(c);
-			c.setParent(null);
 			if (c.equals(selected))
 				selected = (Component) tabs.getFirst();
-			fireComponentDetachEvent(c);
 			requestRepaint();
 		}
 	}
@@ -115,12 +114,11 @@ public class TabSheet extends AbstractComponentContainer {
 			tabCaptions.put(c, caption != null ? caption : "");
 			if (icon != null)
 				tabIcons.put(c, icon);
-			c.setParent(this);
 			if (selected == null)
 				selected = c;
+			super.addComponent(c);
+			requestRepaint();
 		}
-		fireComponentAttachEvent(c);
-		requestRepaint();
 	}
 
 	/** Get component UIDL tag.

@@ -101,8 +101,7 @@ public class OrderedLayout
 	 */
 	public void addComponent(Component c) {
 		components.add(c);
-		c.setParent(this);
-		fireComponentAttachEvent(c);
+		super.addComponent(c);
 		requestRepaint();
 	}
 
@@ -112,8 +111,7 @@ public class OrderedLayout
 	 */
 	public void addComponentAsFirst(Component c) {
 		components.addFirst(c);
-		c.setParent(this);
-		fireComponentAttachEvent(c);
+		super.addComponent(c);
 		requestRepaint();
 	}
 
@@ -121,9 +119,8 @@ public class OrderedLayout
 	 * @param c The component to be removed.
 	 */
 	public void removeComponent(Component c) {
+		super.removeComponent(c);
 		components.remove(c);
-		c.setParent(null);
-		fireComponentDetachEvent(c);
 		requestRepaint();
 	}
 
