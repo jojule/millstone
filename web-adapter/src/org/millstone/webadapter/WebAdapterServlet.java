@@ -72,6 +72,7 @@ import java.util.Iterator;
 import java.util.WeakHashMap;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -97,6 +98,7 @@ public class WebAdapterServlet
 		Application.WindowDetachListener,
 		Paintable.RepaintRequestListener {
 
+	private static final String TEMP_FILE_PREFIX = "WA_TMP_";
 	private static int DEFAULT_THEME_CACHETIME = 1000 * 60 * 60 * 24;
 	private static int DEFAULT_BUFFER_SIZE = 32 * 1024;
 	private static int DEFAULT_MAX_TRANSFORMERS = 1;
@@ -139,6 +141,7 @@ public class WebAdapterServlet
 		throws javax.servlet.ServletException {
 		super.init(servletConfig);
 
+
 		// Get the application class name
 		String applicationClassName =
 			servletConfig.getInitParameter("application");
@@ -173,6 +176,16 @@ public class WebAdapterServlet
 			applicationProperties.getProperty(DebugWindow.WINDOW_NAME, "false");
 		// Enable application specific debug
 		this.debugMode = debug.equals("true");
+
+		// Can be overriden by system property
+		String propName =
+			this.getClass().getPackage().getName()
+				+ "."
+				+ DebugWindow.WINDOW_NAME;
+		debug = System.getProperty(propName);
+		if (debug != null) {
+			this.debugMode = debug.equals("true");
+		}
 
 		// Get the default browser parameter
 		String defaultBrowser =
@@ -212,17 +225,20 @@ public class WebAdapterServlet
 			while (st.hasMoreTokens()) {
 				File f = new File(st.nextToken());
 				try {
-					if (f.isDirectory()) {
+					if (!f.isAbsolute()) {
+						this.themeSource.add(
+							new ServletThemeSource(
+								this.getServletContext(),
+								this,
+								f.toString()));
+					} else if (f.isDirectory()) {
 						this.themeSource.add(new DirectoryThemeSource(f, this));
 					} else {
 						this.themeSource.add(new JarThemeSource(f, this, ""));
 					}
-				} catch (java.io.FileNotFoundException de) {
-					Log.except(
-						"Failed to load the themes from '" + f + "'. Ignoring.",
-						de);
-				} catch (java.io.IOException je) {
-					Log.except("Failed to load the themes from " + f, je);
+				} catch (Exception e) {
+					// Any exception breaks the the init
+					throw new ServletException("Invalid theme source: " + f, e);
 				}
 			}
 		}
@@ -234,19 +250,38 @@ public class WebAdapterServlet
 			if (f != null && f.exists())
 				this.themeSource.add(new JarThemeSource(f, this, ""));
 
-		} catch (java.io.FileNotFoundException de) {
-			Log.except("Failed to load themes from " + f, de);
-		} catch (java.io.IOException je) {
-			Log.except("Failed to load the themes from " + f, je);
+		} catch (Exception e) {
+			Log.except(
+				"Failed to load default theme jar from WEB-INF/lib" + f,
+				e);
 		}
-		try {
-			// Add themes directory if exists
-			f = new File(this.getServletContext().getRealPath(THEME_PATH));
-			if (f.exists())
-				this.themeSource.add(new DirectoryThemeSource(f, this));
 
-		} catch (java.io.IOException je) {
-			Log.except("Failed to load the themes from " + f, je);
+		// Add all themes in themes directory if exists
+		Set themes = this.getServletContext().getResourcePaths(THEME_PATH);
+		if (themes != null) {
+			for (Iterator i = themes.iterator(); i.hasNext();) {
+				String themeName = (String) i.next();
+				ThemeSource src = null;
+				try {
+					src =
+						new ServletThemeSource(
+							this.getServletContext(),
+							this,
+							themeName);
+				} catch (IllegalArgumentException e) {
+					Log.warn("Skipped Invalid theme source: " + themeName);
+					src = null;
+				} catch (Exception e) {
+					// Any other exception breaks the the init
+					throw new ServletException(
+						"Invalid theme source: " + themeName,
+						e);
+				}
+
+				if (src != null) {
+					this.themeSource.add(src);
+				}
+			}
 		}
 
 		// Check themes
@@ -385,7 +420,6 @@ public class WebAdapterServlet
 							"The requested window has been removed from application.");
 						page.write("</body></html>");
 						page.close();
-						
 
 						return;
 					}
@@ -624,18 +658,45 @@ public class WebAdapterServlet
 	 * @return Jar file or null if not found.
 	 */
 	private File findDefaultThemeJar() {
-		File lib =
-			new File(this.getServletContext().getRealPath("/WEB-INF/lib"));
-		String[] files = lib.list();
-		if (files != null) {
-			for (int i = 0; i < files.length; i++) {
-				if (files[i].toLowerCase().endsWith(".jar")
-					&& files[i].startsWith(THEME_JAR_PREFIX)) {
-					return new File(lib, files[i]);
-				}
+
+		Set libContent =
+			this.getServletContext().getResourcePaths("WEB-INF/lib");
+		for (Iterator i = libContent.iterator(); i.hasNext();) {
+			String name = (String) i.next();
+			if (name.toLowerCase().endsWith(".jar")
+				&& name.startsWith("WEB-INF/lib/" + THEME_JAR_PREFIX)) {
+
+				// Read to temp file and return it
+				InputStream in =
+					this.getServletContext().getResourceAsStream(name);
+				return createTemporaryFile(in, ".jar");
 			}
 		}
 		return null;
+	}
+	/**Created temporary file for given stream.
+	 * @param stream Stream to be stored into temporary file.
+	 * @param extension File type extension
+	 * @return File
+	 */
+	private File createTemporaryFile(InputStream stream, String extension) {
+		File tmpFile;
+		try {
+			tmpFile = File.createTempFile(TEMP_FILE_PREFIX, extension);
+			FileOutputStream out = new FileOutputStream(tmpFile);
+			byte[] buf = new byte[1024];
+			int bytes = 0;
+			while ((bytes = stream.read(buf)) > 0) {
+				out.write(buf, 0, bytes);
+			}
+			out.close();
+		} catch (IOException e) {
+			System.err.println(
+				"Failed to create temporary file for default theme: " + e);
+			tmpFile = null;
+		}
+
+		return tmpFile;
 	}
 
 	/** Handle theme resource file requests.
@@ -1020,7 +1081,7 @@ public class WebAdapterServlet
 			addDirtyWindow(event.getApplication(), win);
 		else
 			win.requestRepaintRequests();
-			
+
 	}
 
 	/**
