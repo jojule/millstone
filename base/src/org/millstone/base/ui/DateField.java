@@ -38,20 +38,18 @@
 
 package org.millstone.base.ui;
 
-import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Map;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
 
-import org.millstone.base.terminal.PaintException;
-import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.data.Property;
-import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.ErrorMessage;
-import org.millstone.base.terminal.SystemError;
+import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
+import org.millstone.base.terminal.SystemError;
 
 /** <p>A date editor component that can be bound to any bindable Property.
  * that is compatible with java.util.Date.

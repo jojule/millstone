@@ -39,22 +39,21 @@
 package org.millstone.base.ui;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.Iterator;
-import java.util.Collection;
+import java.util.LinkedList;
 
-import org.millstone.base.terminal.PaintException;
-import org.millstone.base.terminal.PaintTarget;
-import org.millstone.base.terminal.ErrorMessage;
-import org.millstone.base.terminal.CompositeErrorMessage;
+import org.millstone.base.data.Buffered;
 import org.millstone.base.data.BufferedValidatable;
 import org.millstone.base.data.Property;
-import org.millstone.base.data.BufferedValidatable;
 import org.millstone.base.data.Validatable;
 import org.millstone.base.data.Validator;
-import org.millstone.base.data.Buffered;
+import org.millstone.base.terminal.CompositeErrorMessage;
+import org.millstone.base.terminal.ErrorMessage;
+import org.millstone.base.terminal.PaintException;
+import org.millstone.base.terminal.PaintTarget;
 
 /** <p>Abstract field component for implementing buffered property editors.
  * The field may hold an internal value, or it may be connected to any data
