@@ -63,12 +63,11 @@
 <!-- ........................................................................
  String -variable
 .............................................................................
-    <string id ="7" name="mystring" value="the string"/>
+    <string id ="7" name="mystring">the string</string>
 -->
-<!ELEMENT string EMPTY>
-    <!ATTLIST string    
-                %variableAttributes;
-                value CDATA #REQUIRED>
+<!ELEMENT string (#PCDATA)>
+    <!ATTLIST string   
+                %variableAttributes;>
                 
 <!-- ........................................................................
  Integer variable           
