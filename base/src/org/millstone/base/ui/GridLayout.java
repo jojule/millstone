@@ -38,6 +38,8 @@
 
 package org.millstone.base.ui;
 
+import java.nio.channels.OverlappingFileLockException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -66,31 +68,22 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 	/** Initial grid y size */
 	private int height = 0;
 
-	/** Minimum (leftmost) x coordinate at the grid */
-	private int minX = 0;
+	/** Cursor X position: this is where the next component with
+	 * unspecified x,y is inserted
+	 */
+	private int cursorX = 0;
 
-	/** Minimum (upper) y coordinate at the grid */
-	private int minY = 0;
-
-	/** Maximum (rightmost) x coordinate at the grid. This can grow. */
-	private int maxX = 0;
-
-	/** Maximum (bottom) y coordinate at the grid. This can grow. */
-	private int maxY = 0;
-
-	/** Next y coordinate at the grid, when adding components without position. */
-	private int nextY = 0;
+	/** Cursor Y position: this is where the next component with
+	 * unspecified x,y is inserted
+	 */
+	private int cursorY = 0;
 
 	/** Contains all items that are placed on the grid.
 	 * These are components with grid area definition.
-	 *
-	 * (In the future this could use the TreeMap instead of the LinkedList)
 	 */
 	private LinkedList areas = new LinkedList();
 
-	/** Contains all component that are placed on the grid.
-	 * 
-	 */
+	/** Mapping from components to threir respective areas. */
 	private LinkedList components = new LinkedList();
 
 	/** Constructor for grid of given size.
@@ -106,7 +99,7 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 
 	/** Constructs an empty grid layout that is extended as needed. */
 	public GridLayout() {
-		this(0, 0);
+		this(1, 1);
 	}
 
 	/** <p>Adds a component with a specified area to the grid. The area the
@@ -128,88 +121,75 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 	 * <code>c</code> is supposed to occupy
 	 * @throws OverlapsException if the new component overlaps with any
 	 * of the components already in the grid
+	 * @throws OutOfBoundsException if the coordinates are outside of the
+	 * grid area.
 	 */
-	public void addComponent(Component c, int x1, int y1, int x2, int y2)
-		throws OverlapsException {
+	public void addComponent(
+		Component component,
+		int x1,
+		int y1,
+		int x2,
+		int y2)
+		throws OverlapsException, OutOfBoundsException {
 
-		Area area = new Area(x1, y1, x2, y2);
-		Item newItem = new Item(c, area);
-		c.setParent(this);
+		if (component == null)
+			throw new NullPointerException("Component must not be null");
 
-		// Add newItem to grid
+		// Check that the component does not already exist in the container
+		if (components.contains(component))
+			throw new IllegalArgumentException("Component is already in the container");
+
+		// Create area
+		Area area = new Area(component, x1, y1, x2, y2);
+
+		// Check the validity of the coordinates
+		if (x2 < x1 || y2 < y2)
+			throw new IllegalArgumentException("Illegal coordinates for the component");
+		if (x1 < 0 || y1 < 0 || x2 >= width || y2 >= height)
+			throw new OutOfBoundsException(area);
+
 		// Check that newItem does not overlap with existing items
-		checkExistingOverlaps(newItem);
+		checkExistingOverlaps(area);
 
-		// Insert newItem to right place at the list
+		// Insert the component to right place at the list
 		// Respect top-down, left-right ordering
+		component.setParent(this);
 		Iterator i = areas.iterator();
-		int correctIndex = 0;
-		boolean found = false;
-
-		while (!found && i.hasNext()) {
-			Item existingItem = (Item) i.next();
-			correctIndex = areas.indexOf(existingItem);
-			if (newItem.getArea().getY1() > existingItem.getArea().getY1()) {
-				// Continue
-			} else if (
-				newItem.getArea().getY1() == existingItem.getArea().getY1()) {
-				// On the same row
-				if (newItem.getArea().getX1()
-					> existingItem.getArea().getX1()) {
-					// But greater not found
-				} else {
-					// Stop, greater found
-					found = true;
-					continue;
-				}
-			} else {
-				// Stop, greater found
-				found = true;
-				continue;
+		int index = 0;
+		boolean done = false;
+		while (!done && i.hasNext()) {
+			Area existingArea = (Area) i.next();
+			if ((existingArea.y1 >= y1 && existingArea.x1 > x1)
+				|| existingArea.y1 > y1) {
+				areas.add(index, area);
+				components.add(index, component);
+				done = true;
 			}
+			index++;
+		}
+		if (!done) {
+			areas.addLast(area);
+			components.addLast(component);
 		}
 
-		if (!found) {
-			this.areas.add(newItem);
-			this.components.add(c);
-			this.nextY = newItem.getArea().getY1();
-		} else {
-			this.areas.add(correctIndex, newItem);
-			this.components.add(c);
-			this.nextY = newItem.getArea().getY1();
-		}
-
-		//
-		// Update used grid area coordinates.
-		// Handles automatic grid resizing and crop (optional)
-		//
-		if (this.minX > area.getX1())
-			this.minX = area.getX1();
-		if (this.minY > area.getY1())
-			this.minY = area.getY1();
-		if (this.maxX < area.getX2())
-			this.maxX = area.getX2();
-		if (this.maxY < area.getY2())
-			this.maxY = area.getY2();
-			
-		fireComponentAttachEvent(c);
+		super.addComponent(component);
 		requestRepaint();
 	}
 
-	/** Tests if the given item overlaps with any of the items already on
+	/** Tests if the given area overlaps with any of the items already on
 	 * the grid.
 	 * 
-	 * @param newItem Item to be checked for overlapping
-	 * @throws OverlapsException if <code>newItem</code> overlaps with
-	 * any existing item
+	 * @param area Area to be checked for overlapping
+	 * @throws OverlapsException if <code>area</code> overlaps with
+	 * any existing area
 	 */
-	private void checkExistingOverlaps(Item newItem) throws OverlapsException {
+	private void checkExistingOverlaps(Area area) throws OverlapsException {
 		for (Iterator i = areas.iterator(); i.hasNext();) {
-			Item existingItem = (Item) i.next();
-			if ((existingItem.getArea().overlaps(newItem.getArea()))) {
+			Area existingArea = (Area) i.next();
+			if (existingArea.overlaps(area))
+
 				// Component not added, overlaps with existing component
-				throw new OverlapsException(existingItem);
-			}
+				throw new OverlapsException(existingArea);
 		}
 	}
 
@@ -227,71 +207,79 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 	/** Force the next component to be added to the beginning of the next line.
 	 *  By calling this function user can ensure that no more components are
 	 *  added to the right of the previous component.
-	 * @see #addComponent(Component)
-	 * @param c The component to be added.
+	 * 
+	 * @see space()
 	 */
 	public void newLine() {
-		this.nextY = (this.nextY <= this.minY) ? this.minY + 1 : this.nextY + 1;
+		cursorX = 0;
+		cursorY++;
 	}
 
-	/** Add a component into this container to first available place on the grid.
-	 * Suitable place is searched as left to right and top to down order.
-	 * Primarily add to right side region if there is space, otherwise add to bottom region.
-	 * If grid has all cells reserved, then grid height is
-	 * enlarged by one and component is added to bottom of the grid.
-	 * Component's width and height is 1.
+	/** Move cursor forwards by one. If the cursor goes out of the right grid border,
+	 * move it to next line.
+	 * 
+	 * @see newLine()
+	 */
+	public void space() {
+		cursorX++;
+		if (cursorX >= width) {
+			cursorX = 0;
+			cursorY++;
+		}
+	}
+
+	/** Add a component into this container to the cursor position.
+	 * If the cursor position is already occupied, the cursor is
+	 * moved forwards to find free position. If the cursor goes out
+	 * from the bottom of the grid, the grid is automaticly extended.
 	 * @param c The component to be added.
 	 */
-	public void addComponent(Component c) {
+	public void addComponent(Component component) {
 
 		// Find first available place from the grid
-
-		// Iterate every row
-		int beginY = this.nextY > this.minY ? this.nextY : this.minY;
-		for (int cury = beginY; cury <= maxY; cury++) {
-			// Iterate every acolumn
-			for (int curx = this.minX; curx <= maxX; curx++) {
-				// Check if added component overlaps with existing items
-				boolean overlaps = false;
-				for (Iterator i = areas.iterator(); i.hasNext();) {
-					Item existingItem = (Item) i.next();
-					Area area = new Area(curx, cury, curx, cury);
-					Item newItem = new Item(c, area);
-					if ((existingItem.getArea().overlaps(newItem.getArea()))) {
-						overlaps = true;
-						continue;
-					}
-				}
-				if (!overlaps) {
-					this.addComponent(c, curx, cury, curx, cury);
-					return;
-				}
+		Area area;
+		boolean done = false;
+		while (!done)
+			try {
+				area = new Area(component, cursorX, cursorY, cursorX, cursorY);
+				checkExistingOverlaps(area);
+				done = true;
+			} catch (OverlapsException ignored) {
+				space();
 			}
-		}
 
-		// All places from the grid iterated, no space found
+		// Extend the grid if needed
+		width = cursorX >= width ? cursorX + 1 : width;
+		height = cursorY >= height ? cursorY + 1 : height;
 
-		// Add component to bottom in the grid,
-		// enlarges the grid by one.
-		this.addComponent(c, 0, this.maxY + 1, 0, this.maxY + 1);
+		addComponent(component, cursorX, cursorY);
 	}
 
-	/** Removes the first occurence of a given component from this
+	/** Removes the given component from this
 	 * container.
 	 * 
 	 * @param c The component to be removed.
 	 */
-	public void removeComponent(Component c) {
-		for (Iterator i = areas.iterator(); i.hasNext();) {
-			Item item = (Item) i.next();
-			if (item.getComponent() == c) {
-				this.areas.remove(item);
-				this.components.remove(item);
-				fireComponentDetachEvent(c);
-				requestRepaint();
-				return;
-			}
+	public void removeComponent(Component component) {
+
+		// Check that the component is contained in the container
+		if (component == null || !components.contains(component))
+			return;
+
+		super.removeComponent(component);
+
+		Area area = null;
+		for (Iterator i = areas.iterator(); area == null && i.hasNext();) {
+			Area a = (Area) i.next();
+			if (a.getComponent() == component)
+				area = a;
 		}
+
+		components.remove(component);
+		if (area != null)
+			areas.remove(area);
+
+		requestRepaint();
 	}
 
 	/** Removes a component specified with it's top-left corner coordinates
@@ -301,32 +289,15 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 	 * @param y Component's top-left corner's Y-coordinate
 	 */
 	public void removeComponent(int x, int y) {
+
+		// Find area
 		for (Iterator i = areas.iterator(); i.hasNext();) {
-			Item item = (Item) i.next();
-			if ((item.getArea().getX1() == x)
-				&& (item.getArea().getY1() == y)) {
-				this.areas.remove(item);
-				this.components.remove(item);
-				fireComponentDetachEvent(item.getComponent());
-				requestRepaint();
+			Area area = (Area) i.next();
+			if (area.getX1() == x && area.getY1() == y) {
+				removeComponent(area.getComponent());
 				return;
 			}
 		}
-	}
-
-	/** Removes all components from the grid and resets it to it's initial
-	 * width and height.
-	 */
-	public void removeAllComponents() {
-
-		// Remove components
-		super.removeAllComponents();
-
-		// Reset grid width and height
-		this.minX = 0;
-		this.minY = 0;
-		this.maxX = this.width > 0 ? this.width - 1 : 0;
-		this.maxY = this.height > 0 ? this.height - 1 : 0;
 	}
 
 	/** Gets an Iterator to the component container contents. Using the
@@ -335,7 +306,7 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 	 * @return Iterator of the components inside the container.
 	 */
 	public Iterator getComponentIterator() {
-		return components.iterator();
+		return Collections.unmodifiableCollection(components).iterator();
 	}
 
 	/** Paints the contents of this component.
@@ -345,41 +316,32 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 	 */
 	public void paintContent(PaintTarget target) throws PaintException {
 
-		//
-		// Construct grid
-		//
+		target.addAttribute("h", height);
+		target.addAttribute("w", width);
 
-		target.addAttribute("h", maxY - minY + 1);
-		target.addAttribute("w", maxX - minX + 1);
+		// Area iterator
+		Iterator areaiterator = areas.iterator();
 
 		// Current item to be processed (fetch first item)
-		Iterator i = areas.iterator();
-		// Item contains Component and Area
-		Item item = null;
-		if (i.hasNext()) {
-			item = (Item) i.next();
-		}
+		Area area = areaiterator.hasNext() ? (Area) areaiterator.next() : null;
 
 		// Collect rowspan related information here
-		// Fix!!! use linkedList e.g.
-		Hashtable cellUsed = new Hashtable();
+		HashMap cellUsed = new HashMap();
 
 		// Empty cell collector
 		int emptyCells = 0;
 
 		// Iterate every applicable row
-		for (int cury = this.minY; cury <= maxY; cury++) {
+		for (int cury = 0; cury < height; cury++) {
 			target.startTag("gr");
 
 			// Iterate every applicable column
-			for (int curx = this.minX; curx <= maxX; curx++) {
-				// Check if current item is located at curx,cury
-				if (item != null
-					&& (item.area.getY1() == cury)
-					&& (item.area.getX1() == curx)) {
-					// Write current item at current x,y position
+			for (int curx = 0; curx < width; curx++) {
 
-					// But first check if empty cell needs to be rendered
+				// Check if current item is located at curx,cury
+				if (area != null && (area.y1 == cury) && (area.x1 == curx)) {
+
+					// First check if empty cell needs to be rendered
 					if (emptyCells > 0) {
 						target.startTag("gc");
 						if (emptyCells > 1) {
@@ -390,8 +352,8 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 					}
 
 					// Now proceed rendering current item
-					int cols = (item.area.getX2() - item.area.getX1()) + 1;
-					int rows = (item.area.getY2() - item.area.getY1()) + 1;
+					int cols = (area.x2 - area.x1) + 1;
+					int rows = (area.y2 - area.y1) + 1;
 					target.startTag("gc");
 
 					if (cols > 1) {
@@ -400,9 +362,16 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 					if (rows > 1) {
 						target.addAttribute("h", rows);
 					}
-					item.getComponent().paint(target);
+					area.getComponent().paint(target);
 
 					target.endTag("gc");
+
+					// Fetch next item
+					if (areaiterator.hasNext()) {
+						area = (Area) areaiterator.next();
+					} else {
+						area = null;
+					}
 
 					// Update cellUsed if rowspan needed
 					if (rows > 1) {
@@ -421,8 +390,10 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 					}
 
 				} else {
+
 					// Check against cellUsed, render space or ignore cell
 					if (cellUsed.containsKey(new Integer(curx))) {
+
 						// Current column contains already an item,
 						// check if rowspan affects at current x,y position
 						int rowspanDepth =
@@ -430,6 +401,7 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 								.intValue();
 
 						if (rowspanDepth >= cury) {
+
 							// ignore cell
 							// Check if empty cell needs to be rendered
 							if (emptyCells > 0) {
@@ -442,22 +414,18 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 								emptyCells = 0;
 							}
 						} else {
+
 							// empty cell is needed
 							emptyCells++;
+
 							// Remove cellUsed key as it has become obsolete
 							cellUsed.remove(new Integer(curx));
 						}
 					} else {
+
 						// empty cell is needed
 						emptyCells++;
 					}
-				}
-
-				// Fetch next item
-				if (i.hasNext()) {
-					item = (Item) i.next();
-				} else {
-					item = null;
 				}
 
 			} // iterate every column
@@ -511,6 +479,9 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 		/** Y-coordinate of the lower right corner of the area */
 		private int y2;
 
+		/** Component painted on the area */
+		private Component component;
+
 		/** <p>Construct a new area on a grid.
 		 * 
 		 * @param x1 The X-coordinate of the upper left corner of the area
@@ -524,21 +495,12 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 		 * @throws OverlapsException if the new component overlaps with any
 		 * of the components already in the grid
 		 */
-		public Area(int x1, int y1, int x2, int y2) {
-			this.setX1(x1);
-			this.setY1(y1);
-			this.setX2(x2);
-			this.setY2(y2);
-		}
-
-		/** Constructs a new Area at a specified location with width and
-		 * height of 1.
-		 * 
-		 * @param x1 X-coordinate of the upper left corner of the new Area
-		 * @param y1 Y-coordinate of the upper left corner of the new Area
-		 */
-		public Area(int x1, int y1) {
-			this(x1, y1, x1, y1);
+		public Area(Component component, int x1, int y1, int x2, int y2) {
+			this.x1 = x1;
+			this.y1 = y1;
+			this.x2 = x2;
+			this.y2 = y2;
+			this.component = component;
 		}
 
 		/** Tests if the given Area overlaps with an another Area.
@@ -549,174 +511,189 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 		 * this area, <code>false</code> if it doesn't
 		 */
 		public boolean overlaps(Area other) {
-			if ((this.getX1() <= other.getX2())
-				&& (other.getX1() <= this.getX2())
-				&& (other.getY1() <= this.getY2())
-				&& (this.getY1() <= other.getY2())) {
-				return true;
-			} else {
-				return false;
-			}
+			return x1 <= other.getX2()
+				&& y1 <= other.getY2()
+				&& x2 >= other.getX1()
+				&& y2 >= other.getY1();
+
 		}
-
-		/** Gets the X-coordinate of the upper left corner of the Area.
-		 * 
-		 * @return X-coordinate of the upper left corner of the Area
-		 */
-		public int getX1() {
-			return this.x1;
-		}
-
-		/** Gets the Y-coordinate of the upper left corner of the Area.
-		 * 
-		 * @return Y-coordinate of the upper left corner of the Area
-		 */
-		public int getY1() {
-			return this.y1;
-		}
-
-		/** Gets the X-coordinate of the lower right corner of the Area.
-		 * 
-		 * @return X-coordinate of the lower right corner of the Area.
-		 */
-		public int getX2() {
-			return this.x2;
-		}
-
-		/** Gets the Y-coordinate of the lower right corner of the Area.
-		 * 
-		 * @return Y-coordinate of the lower right corner of the Area.
-		 */
-		public int getY2() {
-			return this.y2;
-		}
-
-		/** Method setX1.
-		 * @param x1
-		 */
-		private void setX1(int x1) {
-			this.x1 = x1;
-		}
-
-		/** Method setY1.
-		 * @param y1
-		 */
-		private void setY1(int y1) {
-			this.y1 = y1;
-		}
-
-		/** Method setX2.
-		 * @param x2
-		 */
-		private void setX2(int x2) {
-			this.x2 = x2;
-		}
-
-		/** Method setY2.
-		 * @param y2
-		 */
-		private void setY2(int y2) {
-			this.y2 = y2;
-		}
-
-	}
-
-	/** An UI component wrapper that is placed on in an Area inside a grid.
-	 * 
-	 * @see org.millstone.base.ui.Component Component
-	 * @see org.millstone.base.ui.GridLayout.Area Area
-	 * @author IT Mill Ltd.
-	 * @version @VERSION@
-	 * @since 3.0
-	 */
-	public class Item {
-		private Area area;
-		private Component component;
-
-		/** Constructs a new Item that can be added into a grid.
-		 * 
-		 * @param component Component to be added as an Item
-		 * @param area Area on the grid
-		 */
-		public Item(Component component, Area area) {
-			this.component = component;
-			this.area = area;
-		}
-
-		/** Gets the Area this Item belongs to.
-		 * 
-		 * @return the Area this item belongs to
-		 */
-		public Area getArea() {
-			return this.area;
-		}
-
-		/** Gets the component this Item wraps.
-		 * 
-		 * @return the component this Item wraps
+		/** Returns the component connected to the area.
+		 * @return Component
 		 */
 		public Component getComponent() {
-			return this.component;
+			return component;
 		}
+
+		/** Returns the top-left corner x-coordinate.
+		 * @return int
+		 */
+		public int getX1() {
+			return x1;
+		}
+
+		/**
+		 * Returns the bottom-right corner x-coordinate.
+		 * @return int
+		 */
+		public int getX2() {
+			return x2;
+		}
+
+		/**
+		 * Returns the top-left corner y-coordinate.
+		 * @return int
+		 */
+		public int getY1() {
+			return y1;
+		}
+
+		/**
+		 * Returns the bottom-right corner y-coordinate.
+		 * @return int
+		 */
+		public int getY2() {
+			return y2;
+		}
+
 	}
 
 	/** An <code>Exception</code> object which is thrown when two Items
-	 * occupy the same space on a grid
+	 * occupy the same space on a grid.
 	 * @author IT Mill Ltd.
 	 * @version @VERSION@
 	 * @since 3.0
 	 */
 	public class OverlapsException extends java.lang.RuntimeException {
 
-		private Exception originalException = null;
-		private Item existingItem = null;
+		private Area existingArea;
 
-		/** Constructs an <code>OverlapsException</code> with the specified
+		/** Constructs an <code>OverlapsException</code>.
+		 * @param msg the detail message.
+		 */
+		public OverlapsException(Area existingArea) {
+			this.existingArea = existingArea;
+		}
+
+		/** Get the area */
+		public Area getArea() {
+			return existingArea;
+		}
+	}
+
+	/** An <code>Exception</code> object which is thrown when an area exceeds the
+	 * bounds of the grid.
+	 * @author IT Mill Ltd.
+	 * @version @VERSION@
+	 * @since 3.0
+	 */
+	public class OutOfBoundsException extends java.lang.RuntimeException {
+
+		private Area areaOutOfBounds;
+
+		/** Constructs an <code>OoutOfBoundsException</code> with the specified
 		 * detail message.
 		 * 
 		 * @param msg the detail message.
 		 */
-		public OverlapsException(Item existingItem) {
-			super();
-			this.existingItem = existingItem;
+		public OutOfBoundsException(Area areaOutOfBounds) {
+			this.areaOutOfBounds = areaOutOfBounds;
 		}
 
-		/** Returns the Item that is the cause of the exception
-		 * 
-		 * @return the overlapping Item
-		 */
-		public Item getOverlappingItem() {
-			return this.existingItem;
+		/** Get the area that is out of bounds */
+		public Area getArea() {
+			return areaOutOfBounds;
 		}
 	}
 
-	/** Set the width of the grid.
-	 * @param width - The amount of cells across the grid.
+	/** Set the width of the grid. The width can not be reduced if there are
+	 * any areas that would be outside of the shrunk grid.
+	 * @param width New width of the grid.
+	 * @throws OutOfBoundsException if the one of the areas would exceed the
+	 * bounds of the grid after the modification of the grid size.
 	 */
 	public void setWidth(int width) {
+
+		// The the param
+		if (width < 1)
+			throw new IllegalArgumentException("The grid width and height must be at least 1");
+
+		// In case of no change
+		if (this.width == width)
+			return;
+
+		// Check for overlaps
+		if (this.width > width)
+			for (Iterator i = areas.iterator(); i.hasNext();) {
+				Area area = (Area) i.next();
+				if (area.x2 >= width)
+					throw new OutOfBoundsException(area);
+			}
+
 		this.width = width;
-		this.maxX = width > 0 ? width - 1 : 0;
+
+		requestRepaint();
 	}
 
 	/** Get the width of the grids.
-	 * @return int - how many cells across.
+	 * @return The width of the grid
 	 */
-	public int getWidth() {
+	public final int getWidth() {
 		return this.width;
 	}
 
-	/** Set the height of the grid.
-	 * @param height - The amount of cells from top to bottom in the grid.
+	/** Set the height of the grid. The width can not be reduced if there are
+	 * any areas that would be outside of the shrunk grid.
+	 * @param Height of the grid
 	 */
 	public void setHeight(int height) {
+
+		// The the param
+		if (height < 1)
+			throw new IllegalArgumentException("The grid width and height must be at least 1");
+
+		// In case of no change
+		if (this.height == height)
+			return;
+
+		// Check for overlaps
+		if (this.height > height)
+			for (Iterator i = areas.iterator(); i.hasNext();) {
+				Area area = (Area) i.next();
+				if (area.y2 >= height)
+					throw new OutOfBoundsException(area);
+			}
+
 		this.height = height;
-		this.maxY = height > 0 ? height - 1 : 0;
+
+		requestRepaint();
 	}
 
 	/** Get the height of the grid.
 	 * @return int - how many cells high the grid is
 	 */
-	public int getHeight() {
+	public final int getHeight() {
 		return this.height;
+	}
+
+	/** Get the current cursor x-position.
+	 * The cursor position points the position for the next component 
+	 * that is added without specifying its coordinates. When the 
+	 * cursor position is occupied, the next component will be added
+	 * to first free position after the cursor.
+	 * @return Cursor x-coordinate.
+	 */
+	public int getCursorX() {
+		return cursorX;
+	}
+
+	/** Get the current cursor y-position.
+	 * The cursor position points the position for the next component 
+	 * that is added without specifying its coordinates. When the 
+	 * cursor position is occupied, the next component will be added
+	 * to first free position after the cursor.
+	 * @return Cursor y-coordinate.
+	 */
+	public int getCursorY() {
+		return cursorY;
 	}
 }
