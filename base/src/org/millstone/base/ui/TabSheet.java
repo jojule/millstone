@@ -38,6 +38,7 @@
 
 package org.millstone.base.ui;
 
+import java.lang.reflect.Method;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Iterator;
@@ -88,8 +89,10 @@ public class TabSheet extends AbstractComponentContainer {
 			super.removeComponent(c);
 			tabs.remove(c);
 			tabCaptions.remove(c);
-			if (c.equals(selected))
+			if (c.equals(selected)) {
 				selected = (Component) tabs.getFirst();
+				fireSelectedTabChange();
+			}
 			requestRepaint();
 		}
 	}
@@ -114,8 +117,10 @@ public class TabSheet extends AbstractComponentContainer {
 			tabCaptions.put(c, caption != null ? caption : "");
 			if (icon != null)
 				tabIcons.put(c, icon);
-			if (selected == null)
+			if (selected == null) {
 				selected = c;
+				fireSelectedTabChange();
+			}
 			super.addComponent(c);
 			requestRepaint();
 		}
@@ -228,6 +233,7 @@ public class TabSheet extends AbstractComponentContainer {
 	public void setSelectedTab(Component c) {
 		if (c != null && tabs.contains(c) && !selected.equals(c)) {
 			selected = c;
+			fireSelectedTabChange();
 			requestRepaint();
 		}
 	}
@@ -305,4 +311,74 @@ public class TabSheet extends AbstractComponentContainer {
 			requestRepaint();
 		}
 	}
-}
+
+
+	/* Click event ************************************************ */
+
+	private static final Method SELECTED_TAB_CHANGE_METHOD;
+	static {
+		try {
+			SELECTED_TAB_CHANGE_METHOD =
+				SelectedTabChangeListener.class.getDeclaredMethod(
+					"selectedTabChange",
+					new Class[] { SelectedTabChangeEvent.class });
+		} catch (java.lang.NoSuchMethodException e) {
+			// This should never happen
+			throw new java.lang.RuntimeException();
+		}
+	}
+
+	/** Selected Tab Change event. This event is thrown, when the selected tab
+	 * in the tab sheet is changed.
+	 * @author IT Mill Ltd.
+ 	 * @version @VERSION@
+ 	 * @since 3.0
+	 */
+	public class SelectedTabChangeEvent extends Component.Event {
+
+		/** New instance of selected tab change event
+		* @param source Source of the event.
+		*/
+		public SelectedTabChangeEvent(Component source) {
+			super(source);
+		}
+
+		/** Select where the event occurred
+		 * @return Source of the event.
+		 */
+		public Select getSelect() {
+			return (Select) getSource();
+		}
+	}
+
+	/** Selected Tab Change Event listener
+	 * @author IT Mill Ltd.
+ 	 * @version @VERSION@
+ 	 * @since 3.0
+	 */
+	public interface SelectedTabChangeListener {
+
+		/** Visible tab in tab sheet has has been changed.
+		 * @param event Selected tab change event.
+		 */
+		public void selectedTabChange(SelectedTabChangeEvent event);
+	}
+
+	/** Add selected tab change listener
+	* @param listener Listener to be added.
+	*/
+	public void addListener(SelectedTabChangeListener listener) {
+		addListener(SelectedTabChangeEvent.class, listener, SELECTED_TAB_CHANGE_METHOD);
+	}
+
+	/** Remove selected tab change listener
+	* @param listener Listener to be removed.
+	*/
+	public void removeListener(SelectedTabChangeListener listener) {
+		removeListener(SelectedTabChangeEvent.class, listener, SELECTED_TAB_CHANGE_METHOD);
+	}
+
+	/** Emit options change event. */
+	protected void fireSelectedTabChange() {
+		fireEvent(new SelectedTabChangeEvent(this));
+	}}
