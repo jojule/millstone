@@ -67,7 +67,10 @@ public class BaseFieldFactory implements FieldFactory {
 	 * @see org.millstone.base.ui.FieldFactory#createField(Property, Component)
 	 */
 	public Field createField(Property property, Component uiContext) {
-		return createField(property.getType(),uiContext);
+		if (property != null)
+			return createField(property.getType(),uiContext);
+		else
+			return null;
 	}
 
 	/** Creates field based on the item and property id.
@@ -75,7 +78,10 @@ public class BaseFieldFactory implements FieldFactory {
 	 * @see org.millstone.base.ui.FieldFactory#createField(Item, Object, Component)
 	 */
 	public Field createField(Item item, Object propertyId, Component uiContext) {
-		return createField(item.getItemProperty(propertyId),uiContext);
+		if (item != null)
+			return createField(item.getItemProperty(propertyId),uiContext);
+		else
+			return null;
 	}
 	
 	/**
