@@ -66,7 +66,7 @@ IMG.action {
 
 /* Component Margins and Paddings --------------------------------------- */
 
-INPUT.button, DIV.button, NOBR.button,
+INPUT.button, DIV.button-link, NOBR.button,
 DIV.component, 
 DIV.datefield,DIV.datefield-text,DIV.datefield-calendar,
 DIV.embedded,
