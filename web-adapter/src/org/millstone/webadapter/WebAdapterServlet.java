@@ -105,8 +105,8 @@ public class WebAdapterServlet
 
 	// Versions
 	private static final int VERSION_MAJOR = 3;
-	private static final int VERSION_MINOR = 0;
-	private static final int VERSION_BUILD = 3;
+	private static final int VERSION_MINOR = 1;
+	private static final int VERSION_BUILD = 0;
 	private static final String VERSION =
 		"" + VERSION_MAJOR + "." + VERSION_MINOR + "." + VERSION_BUILD;
 
