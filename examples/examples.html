@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+	<link href="millstoneorg.css" type="text/css" rel="STYLESHEET">
+	<title>Millstone Examples</title>
+
+<SCRIPT LANGUAGE="JavaScript">
+    function openLink(ex, size, path, classes) {
+    	var clist = classes.split(',');
+        win = window.open(
+        	"loading.html",
+        	"example",
+        	"width=750,height=550,directories=no,location=no,menubar=no,scrollbars=yes,status=no,toolbar=no,resizable=yes");
+
+	  win.document.write('<FRAMESET rows="*,80,55"><FRAME name="ex" src="'+ex+'"><FRAME name="src" src="nosource.html"><FRAME name="class" border="0" frameborder="no" src="loading.html"></FRAMESET>');  
+	  win.frames['class'].document.open();
+	  win.frames['class'].document.write('<html><head><link href="millstoneorg.css" type="text/css" rel="STYLESHEET"></head><body><TABLE cellpaddig="5"><TR>' +"\n");
+	  for (src in clist) {
+		win.frames['class'].document.write("\n<TD>\n");
+	  	win.frames['class'].document.write('<A class="caption" target="src" href="docs/sources/'+path+'/'+clist[src]+'.html">'+clist[src]+'</A> (<A target="src" href="docs/sources/'+path+'/'+clist[src]+'.java">.java</A>)');
+	  	win.frames['class'].document.write("\n</TD>\n");
+	  }
+	  win.frames['class'].document.write("</TR></TABLE></body></html>\n");
+	  win.frames['class'].document.close();
+
+	win.focus();
+	win.document.close();
+
+    }
+</SCRIPT>
+</head>
+
+<body class="main">
+
+<div class="body">
+<p>
+<h1>Millstone &trade; Example Applications</h1>
+
+These examples provide a good tutorial to the features if Millstone.
+The source code for the examples is extensively commented and we tried to
+make them as readable as possible. Trade-off is that the samples are
+little bit longer than thay should be.
+</p>
+<p>
+Samples try to present the associated features as clearly as possible.
+Feel free to cut n' paste the code from the samples to implement the
+same behaviour in your own application.
+
+</p>
+<p>
+The javadoc API-documentation is also available in the distribution package.
+</p>
+
+<table border="0" cellpadding="5">
+<tr>
+<td><a href="javascript:openLink('hello/',50, 'org/millstone/examples', 'HelloWorld')">Hello World</a></td>
+<td>The classic example application.</td>
+</tr>
+
+<tr>
+<td><a href="javascript:openLink('calc/',170,'org/millstone/examples', 'Calc')">Calculator</a></td>
+<td>Simple calculator application.</td>
+</tr>
+
+<tr>
+<td><a href="javascript:openLink('features/',400,'org/millstone/examples/features', 'Feature,FeatureBrowser,FeatureButton,FeatureDateField,FeatureGridLayout,FeatureLabel,FeatureLink,FeatureOrderedLayout,FeatureApplication,FeatureSelect,FeatureTable,FeatureTabSheet,FeatureTextField,FeatureTree')">Millstone features browser</a></td>
+<td> An application that demonstrates each component and layout of Millstone with description and code-example.</td>
+</tr>
+
+
+<tr>
+<td><a href="javascript:openLink('login/',100,'org/millstone/examples', 'Login')">Login example</a></td>
+<td> Example of typical website. Some parts are public and some require the </td>
+</tr>
+
+<tr>
+<td><a href="javascript:openLink('player/',350,'org/millstone/examples/stoneplayer', 'StonePlayer,Song,Jukebox,JukeboxListener')">StonePlayer</a></td>
+<td> MP3 player application.</td>
+</tr>
+
+<tr>
+<td><a href="javascript:openLink('chat/',200,'org/millstone/examples', 'Chat')">Chat</a></td>
+<td> Chat application demonstrating usage of streams in Millstone application.</td>
+</tr>
+
+<tr>
+<td><a href="javascript:openLink('go/',300,'org/millstone/examples/gogame', 'Go,Game,Board')">Game of Go</a></td>
+<td> Multiplayer GO-game that demonstrates building of custom UI components and
+server side refresh.</td>
+</tr>
+
+</table>
+
+</div>
+</body>
+</html>

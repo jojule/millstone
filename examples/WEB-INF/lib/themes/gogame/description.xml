@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<theme name="gogame">
+  
+	<extends theme="default"/>
+       
+ 	<description>Theme for game of GO example</description>
+  	<author name="IT Mill Ltd" email="millstone@itmill.com" />
+
+<fileset>
+    <require>
+    	<supports javascript="JavaScript 1.0"/>
+    </require>
+
+	<file name="goboard.xsl" />
+	<file name="golayout.xsl" />
+
+</fileset>
+  	
+</theme>

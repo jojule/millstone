@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<theme name="stoneplayer">
+  
+	<extends theme="default"/>
+       
+ 	<description>The StonePlayer Theme</description>
+  	<author name="IT Mill Ltd" email="millstone@itmill.com" />
+
+
+<fileset name="extensions">
+	<file name="xsl/framewindow.xsl" />
+</fileset>
+  	
+</theme>

@@ -1,0 +1,253 @@
+package org.millstone.examples;
+
+import java.io.*;
+import java.util.*;
+import java.lang.ref.WeakReference;
+
+import org.millstone.base.terminal.PaintException;
+import org.millstone.base.terminal.PaintTarget;
+import org.millstone.base.terminal.StreamResource;
+import org.millstone.base.ui.*;
+import org.millstone.base.data.*;
+
+/** Chat example application.
+ * 
+ * <p>This example application implements Internet chatroom with the 
+ * following features:
+ * <ul>
+ * 		<li>Continuosly streaming chat discussion. This is implemented 
+ * 			with StreamResource that is kept open during the discussion.
+ * 		<li>Dynamically changing frames.
+ * 		<li>Chatroom that is implemented with static list of chatters 
+ * 			referenced by weak references.
+ *  </ul>
+ * </p>
+ *
+ * @see org.millstone.base.Application
+ * @see org.millstone.base.ui.FrameWindow
+ * @see org.millstone.base.terminal.StreamResource
+ */
+
+public class Chat
+	extends org.millstone.base.Application
+	implements StreamResource.StreamSource, Button.ClickListener {
+
+	/** Linked list of Chat applications who participate the discussion */
+	private static LinkedList chatters = new LinkedList();
+
+	/** Reference (to this application) stored in chatters list */
+	private WeakReference listEntry = null;
+
+	/** Writer for writing to open chat stream */
+	private PrintWriter chatWriter = null;
+
+	/** Login name / Alias for chat */
+	private TextField loginName = new TextField("Your name?", "");
+
+	/** Login button */
+	private Button loginButton = new Button("Enter chat");
+
+	/** Text to be said to discussion */
+	private TextField sayText = new TextField();
+
+	/** Button for sending the sayTest to discussion */
+	private Button say = new Button("Say");
+
+	/** Button for listing the people in the chatroom */
+	private Button listUsers = new Button("List chatters");
+
+	/** Last time this chat application said something */
+	private long idleSince = (new Date()).getTime();
+
+ 	/** framewindow for following the discussion and control */
+	FrameWindow frames = new FrameWindow("Millstone chat");
+
+	/** Initialize the chat application */
+	public void init() {
+
+		say.dependsOn(sayText);
+		say.addListener((Button.ClickListener) this);
+		listUsers.addListener((Button.ClickListener) this);
+		Window discussion = new Window();
+		discussion.setName("chatDiscussion");
+		StreamResource chatStream =
+			new StreamResource(this, "discussion.html", this);
+		chatStream.setBufferSize(1);
+		chatStream.setCacheTime(0);
+		discussion.open(chatStream);
+		frames.getFrameset().newFrame(discussion);
+		Window controls =
+			new Window(
+				"",
+				new OrderedLayout(OrderedLayout.ORIENTATION_HORIZONTAL));
+		controls.setName("chatControls");
+		controls.addComponent(sayText);
+		sayText.setColumns(40);
+		controls.addComponent(say);
+		controls.addComponent(loginName);
+		controls.addComponent(loginButton);
+		loginButton.dependsOn(loginName);
+		loginButton.addListener(this);
+		controls.addComponent(listUsers);
+		controls.addComponent(new Button("Leave", this, "close"));
+		say.setVisible(false);
+		sayText.setVisible(false);
+		frames.getFrameset().newFrame(controls).setAbsoluteSize(60);
+		frames.getFrameset().setVertical(true);
+		frames.setName("chatMain");
+		setMainWindow(frames);
+
+		// Register chat application
+		synchronized (chatters) {
+			chatters.add(listEntry = new WeakReference(this));
+		}
+	}
+
+	/** Handle button actions for login, user listing and saying */
+	public void buttonClick(Button.ClickEvent event) {
+
+		// Say something in discussion
+		if (event.getSource() == say && sayText.toString().length() > 0) {
+
+			// Say something to chatstream
+			say("<b>" + getUser() + ": </b>" + sayText + "<br>");
+
+			// Clear the saytext field
+			sayText.setValue("");
+		}
+
+		// List the users
+		else if (event.getSource() == listUsers)
+			listUsers();
+
+		// Login to application
+		else if (event.getSource() == loginButton) {
+
+			// Set user name
+			setUser(loginName.toString());
+	
+			// Hide logins controls
+			loginName.setVisible(false);
+			loginButton.setVisible(false);
+			
+			// Show say controls
+			say.setVisible(true);
+			sayText.setVisible(true);
+		}
+	}
+	
+	/** List chatters to chat stream */
+	private void listUsers() {
+
+		// Compose userlist 
+		StringBuffer userlist = new StringBuffer();
+		userlist.append(
+			"<div style=\"background-color: #ffffd0;\"><b>Chatters ("
+				+ (new Date())
+				+ ")</b><ul>");
+		synchronized (chatters) {
+			for (Iterator i = chatters.iterator(); i.hasNext();) {
+				try {
+					Chat c = (Chat) ((WeakReference) i.next()).get();
+					String name = (String) c.getUser();
+					if (name != null)
+					userlist.append("<li>" + name);
+					userlist.append(" (idle "
+							+ ((new Date()).getTime() - c.idleSince) / 1000
+							+ "s)");
+				} catch (NullPointerException ignored) {
+				}
+			}
+		}
+		userlist.append("</ul></div><script>self.scroll(0,71234);</script>\n");
+
+		// Print the user list to chatstream
+		printToStream(userlist.toString());
+	}
+
+	/** Print to chatstream and scroll the window */
+	private void printToStream(String text) {
+		if (chatWriter != null) {
+			chatWriter.println(text);
+			chatWriter.println("<script>self.scroll(0,71234);</script>\n");
+			chatWriter.flush();
+		}
+	}
+
+	/** Say to all chat streams */
+	private void say(String text) {
+
+		// Get all the listeners
+		Object[] listener;
+		synchronized (chatters) {
+			listener = chatters.toArray();
+		}
+
+		// Put the saytext to listener streams
+		// Remove dead listeners
+		for (int i = 0; i < listener.length; i++) {
+			Chat c = (Chat) ((WeakReference) listener[i]).get();
+			if (c != null)
+				c.printToStream(text);
+			else
+				chatters.remove(listener[i]);
+		}
+
+		// Update idle time
+		idleSince = (new Date()).getTime();
+	}
+
+	/** Open chat stream */
+	public InputStream getStream() {
+
+		// Create piped stream
+		PipedOutputStream chatStream = new PipedOutputStream();
+		chatWriter = new PrintWriter(chatStream);
+		InputStream is = null;
+		try {
+			is = new PipedInputStream(chatStream);
+		} catch (IOException ignored) {
+			chatWriter = null;
+			return null;
+		};
+
+		// Write headers
+		printToStream(
+			"<html><head><title>Discussion "
+				+ (new Date())
+				+ "</title>"
+				+ "</head><body>\n");
+
+		// List all the participants and join the discussion
+		say("<i>" + getUser() + " joined the discussion</i><br>");
+		listUsers();
+
+		return is;
+	}
+
+	/** On application close leave the chat */
+	public void close() {
+
+		// If we have been logged in, say goodbye
+		if (listEntry != null) {
+			say(
+				"<i>"
+					+ getUser()
+					+ " left the chat ("
+					+ (new Date())
+					+ ")</i><br>");
+
+			synchronized (chatters) {
+				chatters.remove(listEntry);
+			}
+		}
+		if (chatWriter != null)
+			chatWriter.close();
+
+		// Close the application
+		super.close();
+	}
+
+}
+/* This Millstone sample code is public domain. *  
+ * For more information see www.millstone.org.  */
