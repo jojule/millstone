@@ -7,18 +7,17 @@
 	    <not><available classname="Java2Html"/></not>
 	</condition>
     </target>
-    
-    <target name="init" unless="version" depends="checks">
-    	<fail message="Cannot run this script separately. Run 'build.xml' instead." />    
-    </target>
 
-
-    <target name="fail-formatter-missing" if="codeformatter.missing">
+    <target name="fail-if-formatter-missing" if="codeformatter.missing" depends="checks">
         <echo message="Code syntax highlighter not found. "/> 
 	<fail message="The Java2Html JAR must be in your classpath."/>
     </target>       
     
-    
+    <target name="init" unless="version" depends="fail-if-formatter-missing">
+    	<fail message="Cannot run this script separately. Run 'build.xml' instead." />    
+    </target>
+
+
     <target name="checkout" if="release" depends="init">
 	<!-- Do the CVS checkout -->
     	<echo message="Checking out MillStone ${version} from ${cvs-root} with tag ${cvs-tag} to ${checkout-dir}" />
@@ -71,7 +70,7 @@
 
     </target>
 
-    <target name="package" depends="jar,fail-formatter-missing">
+    <target name="package" depends="jar">
 
 	<!-- Copy example binary -->
 	<copy file="${work-dir}/examples/${examples-jar-name}" todir="${output-dir}/lib"/>
@@ -105,7 +104,15 @@
               </patternset>
             </fileset>
 	</copy>    
-	
+
+        <!-- Convert sources CRLF's and tabs -->
+        <fixcrlf srcdir="${war-dir}/WEB-INF/src"
+                 eol="crlf"
+		 tablength="4"
+		 tab="remove"
+	         includes="**/*.java"/>
+
+
 	<!-- Copy Millstone JARs to lib -->
 	<copy todir="${war-dir}/WEB-INF/lib">
             <fileset dir="${output-dir}/lib">
@@ -118,7 +125,7 @@
             </fileset>
 	</copy>   
 
-	<!-- Copy java sources to documentation -->
+	<!-- Copy java sources to documentation to public -->
 	<mkdir dir="${war-dir}/docs/sources"/>
 	<copy todir="${war-dir}/docs/sources">
             <fileset dir="${root-dir}/examples/WEB-INF/src">
@@ -127,6 +134,13 @@
               </patternset>
             </fileset>
 	</copy>   
+
+        <!-- Convert sources CRLF's and tabs -->
+        <fixcrlf srcdir="${war-dir}/docs/sources"
+                 eol="crlf"
+		 tablength="4"
+		 tab="remove"
+	         includes="**/*.java"/>
 
 	<!-- Apply source code syntax highlighting -->
 	<apply executable="java" dir="${war-dir}/docs/sources" dest="${war-dir}/docs/sources" parallel="false">

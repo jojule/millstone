@@ -66,6 +66,15 @@
               </patternset>
             </fileset>	
 	</copy>
+	
+        <!-- Convert to CRLF's and tabs -->
+        <fixcrlf srcdir="${output-dir}/base/src"
+                 eol="crlf"
+		 tablength="4"
+		 tab="remove"
+	         includes="**/*.java"/>
+	
+	
 	<!-- Unfiltered files -->
 	<copy todir="${output-dir}">
             <fileset dir="${root-dir}">

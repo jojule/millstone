@@ -24,7 +24,10 @@
 	
         <!-- Fixed CVS properties -->
 	<property name="cvs-root" value=":pserver:anonymous@cvs.millstone.sourceforge.net:/cvsroot/millstone"/>
-		
+
+        <!-- Environment -->
+	<property environment="env"/>
+   
     </target>
 
     
@@ -52,7 +55,7 @@
 	<echo message="Checkout from: ${cvs-root} with tag ${cvs-tag}"/>
 	<echo message="Checkout to: ${checkout-dir}" />
 	<echo message="Root: ${root-dir}" />
-        <input message="Press Return key to continue..." />	
+	<echo message="JAVA_HOME: ${env.JAVA_HOME}" />
     </target>
 
 
@@ -69,10 +72,14 @@
     	<echo message="Preparing for development snapshot."/>
     	<echo message="Creating MillStone ${version}"/>
 	<echo message="Root: ${root-dir}" />
+	<echo message="JAVA_HOME: ${env.JAVA_HOME}" />
+ 	
 	<echo message="You can build releases by setting the 'release' property to true."/>
-        <input message="Press Return key to continue..." />	
     </target>
 
+    <target name="pause">
+        <input message="Press Return key to continue..." />	
+    </target>
 
     <target name="init" depends="init-development,init-release">
 
@@ -101,7 +108,7 @@
 
     <!-- Intialize Working Directory -->
 
-    <target name="init-work-dir" depends="init"
+    <target name="init-work-dir" depends="init,pause"
             description="Create release working Sirectory structure">
 
     	<!-- Create working directory -->
@@ -136,13 +143,14 @@
         <!-- Convert to CRLF -->
         <fixcrlf srcdir="${output-dir}"
                  eol="crlf"
-	         includes="*.txt"
-        />
+		 tablength="4"
+		 tab="remove"
+	         includes="*.txt"/>
 	
         <!-- Create Output Directory Hierarchy -->
         <mkdir dir="${output-dir}/docs/apidocs" />
         <mkdir dir="${output-dir}/lib" />
-
+    
     </target>
     
     
@@ -207,9 +215,9 @@
     </target>
 
 
-    <!-- API Documentation- - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Documentation- - - - - - - - - - - - - - - - - - - - - - - - - -->
 
-    <target name="apidocs" depends="base,webadapter">
+    <target name="docs" depends="base,webadapter">
         <ant antfile="release/build/build-docs.xml" inheritAll="true" />
     </target>
 
@@ -228,7 +236,7 @@
 
     <!-- ZIP Package creation - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
-    <target name="package" depends="init-output-dir,apidocs,base,webadapter,examples">
+    <target name="package" depends="init-output-dir,docs,base,webadapter,examples">
         <zip zipfile="${work-dir}/${package-file-name}">
 	     <fileset dir="${work-dir}">
               <patternset>

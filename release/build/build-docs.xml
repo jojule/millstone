@@ -26,31 +26,47 @@
 	<mkdir dir="${work-dir}/docsrc/"/>   
 
         <!-- Base documentation -->
-        <copy todir="${work-dir}/docsrc/" filtering="true">
+        <copy todir="${work-dir}/docsrc/">
 	    <filterset>
     	       <filter token="VERSION" value="${version}"/>
             </filterset>
-            <fileset dir="${root-dir}/base/src/**/*.java"/>	
-            <fileset dir="${root-dir}/base/src/**/*.html"/>	
+            <fileset dir="${root-dir}/base/src">
+               <patternset>
+ 	          <include name="**/*.java" />
+                  <include name="**/*.html"/>	
+               </patternset>
+	    </fileset>
         </copy>
         <copy todir="${work-dir}/docsrc/">
-            <fileset dir="${root-dir}/base/src/**/*.gif"/>	
-            <fileset dir="${root-dir}/base/src/**/*.jpg"/>	
-            <fileset dir="${root-dir}/base/src/**/*.png"/>	
+            <fileset dir="${root-dir}/base/src">
+               <patternset>
+ 	          <include name="**/*.gif" />
+                  <include name="**/*.jpg"/>	
+                  <include name="**/*.png"/>	
+               </patternset>
+	    </fileset>
         </copy>
 
         <!-- Webadapter documentation -->
-        <copy todir="${work-dir}/docsrc/" filtering="true">
+        <copy todir="${work-dir}/docsrc/">
 	    <filterset>
     	       <filter token="VERSION" value="${version}"/>
             </filterset>
-            <fileset dir="${root-dir}/web-adapter/src/**/*.java"/>	
-            <fileset dir="${root-dir}/web-adapter/src/**/*.html"/>	
+            <fileset dir="${root-dir}/web-adapter/src">	
+               <patternset>
+ 	          <include name="**/*.java" />
+                  <include name="**/*.html"/>	
+               </patternset>
+	    </fileset>
         </copy>
         <copy todir="${work-dir}/docsrc/">
-            <fileset dir="${root-dir}/web-adapter/src/**/*.gif"/>	
-            <fileset dir="${root-dir}/web-adapter/src/**/*.jpg"/>	
-            <fileset dir="${root-dir}/web-adapter/src/**/*.png"/>	
+            <fileset dir="${root-dir}/web-adapter/src">	
+               <patternset>
+ 	          <include name="**/*.gif" />
+                  <include name="**/*.jpg"/>	
+                  <include name="**/*.png"/>	
+               </patternset>
+            </fileset>
         </copy>
     
         <!-- Run Javadoc -->

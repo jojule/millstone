@@ -1,8 +1,20 @@
 <project name="Millstone Webadapter Release" default="package">
 
-    <target name="init" unless="version">
+    <target name="checks" >
+	<condition property="servlet.missing">
+	    <not><available classname="javax.servlet.http.HttpServlet"/></not>
+	</condition>
+    </target>
+
+    <target name="fail-if-servlet-missing" if="servlet.missing" depends="checks">
+        <echo message="Servlet classes not found. "/> 
+	<fail message="The 'servlet.jar' must be in your classpath."/>
+    </target>       
+    
+    <target name="init" unless="version" depends="fail-if-servlet-missing">
     	<fail message="Cannot run this script separately. Run 'build.xml' instead." />    
     </target>
+
 
     <target name="checkout" if="release" depends="init">
 	<!-- Do the CVS checkout -->
@@ -81,7 +93,15 @@
               </patternset>
             </fileset>	
 	</copy>	
-	<!-- Un-Filtered files -->
+        <!-- Convert to CRLF's and tabs -->
+        <fixcrlf srcdir="${output-dir}/web-adapter/src"
+                 eol="crlf"
+		 tablength="4"
+		 tab="remove"
+	         includes="**/*.java"/>
+
+
+        <!-- Un-Filtered files -->
 	<copy todir="${output-dir}">
             <fileset dir="${root-dir}">
               <patternset>
