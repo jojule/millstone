@@ -4,8 +4,17 @@ var xsltProcessor = new XSLTProcessor();
 var variableChanges = "";
 
 function debug(message) {
-    var ta = document.getElementById("debug");
- //   ta.value = ta.value + "\n==========\n" + message;
+	
+	// Debug disabled
+	return;
+	
+	var ta = document.getElementById("debug");
+    if (ta == null) {
+		// Debug box
+		document.write("<TEXTAREA STYLE='border: 1px solid gray; background-color: #ffffbb' id='debug' COLS='80' ROWS='20'></TEXTAREA>");
+	    ta = document.getElementById("debug");    
+    }
+    ta.value = ta.value + "\n==========\n" + message;
     ta.scrollTop = ta.scrollHeight;
 }
 
@@ -36,9 +45,6 @@ function sendGetChanges(repaintAll) {
 
 function init() {
 
-	// Debug box
-	document.write("<hr><b>Debug</b><br/><TEXTAREA STYLE='border: 1px solid gray; background-color: #ffffbb' id='debug' COLS='80' ROWS='20'></TEXTAREA>");
-	
 	// Stylesheet
 	var myXMLHTTPRequest = new XMLHttpRequest();
 	myXMLHTTPRequest.open("GET", "theme.xsl", false);
