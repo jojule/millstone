@@ -11,13 +11,15 @@
 
 ------------------------------------------------------------------------------
 
-Millstone 3.0.2 Release
+Millstone 3.0.3 Release
 -----------------------
 This version is service release for the Millstone Base 3.0 and the 
 Millstone WebAdapter 3.0 modules. 
 
-This version includes fixes both in base and web-adapter modules, and it 
-also adds some previously unimplemented features to the default theme.
+The most significant changes in this release include fix for WebAdapter window 
+close handling and support for unpacked WAR files. Additionally this release
+fixes Tree component recursive collapse and exapand functions along with some 
+other smaller fixes in Base package.
 
 More detailed description about the changes can be found in the changes.txt.
 

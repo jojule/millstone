@@ -10,6 +10,45 @@
 
 ------------------------------------------------------------------------------
 
+version 3.0.3
+---------------------------
+Base:
+  - Resolved problem with update in ContainerHierarchicalWrapper (#623)
+  - Fixed the recursive expand and collapse functions (#630, #622)
+  - Propagate the Form attach and detach events to sub components (#632)
+  - Parent is now assigned to Form layout (#632)
+  - Resolved a NPE problem in object construction (#634)
+  - Set Tabsheet immediate-property to true by default
+
+WebAdapter:
+  - Added support for themes in unpacked WAR
+  - Default theme JAR is now bound to WebAdapter version
+  - Fixed the problem with theme resources when theme
+    extends an already inherited theme
+  - Added possibility to specify defaults for WebAdapter parameters in
+    system properties using 'org.millstone.webadapter.*' namespace.
+    Following parameters are supported:
+     + Debug - true|false, WebAdapter debug mode
+     + DefaultThemeJar - string, Location default theme JAR 
+     + ThemeSource - string, The external theme sources 
+     + ThemeCacheTime - int, Cache expire time in seconds for theme resources
+     + MaxTransformers - int, Number of concurrent transformers
+     + TransformerCacheTime - int, Transformer expire time in seconds
+  - Resolved problem with window closing itself (#618)
+  - Adding handling for removed or invisible application windows
+  - Null value changes are no longer ignored in HttpVariableMap (#635)
+  - Description file is now always reloaded when reloading theme XSL
+  - Theme description parsing exceptions are now fully printed
+  - Updated debug information in theme loading
+  
+Default Theme:
+  - Resolved link and button captions in Table (#633)
+  - Added image width and height parameters to tree template.
+
+Examples:
+  - Added Tree component expandAll and collapseAll feature demos
+
+
 version 3.0.2
 ---------------------------
 Base:
