@@ -61,11 +61,6 @@ public class Button extends AbstractField {
 	/** strings to be catched at adatapter (transformer) */
 	private static final String BUTTON_VAR_NAME = "clicked";
 
-    /* Predefined styles *********************************************** */
-
-    /** Predefined style for link styled button. */
-    public static final String STYLE_LINK = "link";
-    
 	/* Private members ************************************************* */
 
 	boolean switchMode = false;

@@ -81,13 +81,6 @@ public class Select
 		Container.ItemSetChangeNotifier,
 		Container.ItemSetChangeListener {
 
-	/* Predefined styles *********************************************** */
-
-	/** Predefined optiongroup style. 
-	 * A group of radiobuttons or checkboxes depending on the select mode.
-	 */
-	public static final String STYLE_OPTIONGROUP = "optiongroup";
-
 	/* Caption modes *************************************************** */
 
 	/** Item caption mode: Item's ID's <code>String</code> representation

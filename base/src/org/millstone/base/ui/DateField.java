@@ -71,29 +71,6 @@ import org.millstone.base.terminal.PaintTarget;
  */
 public class DateField extends AbstractField {
 
-    /* Predefined styles *********************************************** */
-    
-    /** Predefined style for creating and editable datefield with
-     * drop down menus for days and months. (Localized according to
-     * current Locale.)
-     * This is the default style.
-     */
-    public static final String STYLE_FIELD = "field";
-    
-    /** Predefined style for creating text-only datefield. 
-     * The date in the text mode. The main difference to 
-     * TextField is that only the selected parts of the date are shown. 
-     * In read-only mode, this is simply a localized text. 
-     * In read-write mode each part of the localized date/time is editable, 
-     * but they do not have to look like a text-fields
-     */
-    public static final String STYLE_TEXT = "text";
-
-    /** Predefined style for creating date selector datefield.
-     *  Creates calendar where user can select a date.
-     */
-    public static final String STYLE_CALENDAR = "calendar";
-
 	/* Private members ************************************************* */
 
 	/** Resolution identifier: milliseconds */

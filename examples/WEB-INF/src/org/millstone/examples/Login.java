@@ -74,7 +74,7 @@ public class Login
 			if (pages[i][0].equals(title)) {
 				Panel p = new Panel(pages[i][0]);
 				p.addComponent(new Label(pages[i][1]));
-				p.setStyle(Panel.STYLE_STRONG);
+				p.setStyle("strong");
 				layout.addComponent(p, 1, 0);
 			}
 	}
@@ -98,7 +98,7 @@ public class Login
 			// Initialize the component
 			loginPanel.addComponent(loginName);
 			loginPanel.addComponent(loginButton);
-			loginPanel.setStyle(loginPanel.STYLE_STRONG);
+			loginPanel.setStyle("strong");
 			loginButton.dependsOn(loginName);
 			loginName.setColumns(8);
 			statusPanel.addComponent(statusLabel);

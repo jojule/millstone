@@ -20,7 +20,7 @@ public class FeatureDateField extends Feature {
 		
 		DateField df = new DateField("Caption");
 		df.setValue(new java.util.Date());
-		df.setStyle(DateField.STYLE_CALENDAR);
+		df.setStyle("calendar");
 		
 		show.addComponent(df);
 		l.addComponent(show);

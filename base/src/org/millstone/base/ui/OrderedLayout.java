@@ -56,19 +56,6 @@ public class OrderedLayout
 	extends AbstractComponentContainer
 	implements Layout {
 
-	/* Predefined styles *********************************************** */
-
-	/** Predefined form style. 
-	 * Form style is used for layouts representing a fillable form. 
-	 * The main purpose of this is to assure the alignment of the contained 
-	 * components, their captions, icons and in some cases even group the 
-	 * error messages and descriptions in some convenient way. The exact 
-	 * representation depends on the terminal, but the focus is to simulate 
-	 * fillable paper forms in most convenient way. The orientation of the ordered 
-	 * layout should also be taken into account.
-	 */
-	public static final String STYLE_FORM = "form";
-
 	/* Predefined orientations ***************************************** */
 
 	/** Components are to be layed out vertically. */

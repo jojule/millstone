@@ -53,16 +53,6 @@ import org.millstone.base.terminal.Scrollable;
  */
 public class Panel extends AbstractComponentContainer implements Sizeable, Scrollable {
 
-    /* Predefined styles *********************************************** */
-
-    /** Predefined style for panel with light emphasis.
-     */
-    public static final String STYLE_LIGHT = "light";
-
-    /** Predefined style for panel with strong emphasis.
-     */
-    public static final String STYLE_STRONG = "strong";
-
     /** Layout of the panel */
     private Layout layout;
     
