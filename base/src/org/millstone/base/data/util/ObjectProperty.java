@@ -136,7 +136,11 @@ Property.ReadOnlyStatusChangeNotifier {
      * ObjectProperty
      */
     public String toString() {
-        return getValue().toString();
+    	Object value = getValue();
+    	if (value != null) 
+        	return value.toString();
+        else 
+        	return null;
     }
     
     /** Tests if the Property is in read-only mode. In read-only mode calls
@@ -178,7 +182,7 @@ Property.ReadOnlyStatusChangeNotifier {
         if (isReadOnly()) throw new Property.ReadOnlyException();
         
         // Try to assign the compatible value directly
-        if (type.isAssignableFrom(newValue.getClass()))
+        if (newValue == null || type.isAssignableFrom(newValue.getClass()))
             value = newValue;
         
         // Otherwise try to convert the value trough string constructor
