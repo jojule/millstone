@@ -42,7 +42,6 @@ import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.PaintException;
 import java.util.Iterator;
 import java.util.HashMap;
-import java.util.Set;
 
 /** <p>A container component with freely designed layout and style. The
  * container consists of items with textually represented locations. Each

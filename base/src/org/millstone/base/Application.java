@@ -40,7 +40,6 @@ package org.millstone.base;
 
 import org.millstone.base.terminal.ApplicationResource;
 import org.millstone.base.terminal.DownloadStream;
-import org.millstone.base.terminal.Terminal;
 import org.millstone.base.terminal.URIHandler;
 import org.millstone.base.ui.Window;
 import java.util.Collection;
@@ -54,10 +53,6 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Random;
-import java.util.Set;
-import java.util.HashSet;
-import java.io.InputStream;
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 

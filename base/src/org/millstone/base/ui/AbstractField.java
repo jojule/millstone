@@ -49,7 +49,6 @@ import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.ErrorMessage;
 import org.millstone.base.terminal.CompositeErrorMessage;
-import org.millstone.base.terminal.SystemError;
 import org.millstone.base.data.BufferedValidatable;
 import org.millstone.base.data.Property;
 import org.millstone.base.data.BufferedValidatable;

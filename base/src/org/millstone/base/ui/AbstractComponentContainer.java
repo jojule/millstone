@@ -42,9 +42,6 @@ import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.Iterator;
 
-import org.millstone.base.ui.ComponentContainer.ComponentAttachListener;
-import org.millstone.base.ui.ComponentContainer.ComponentDetachListener;
-
 /** Extension to {@link AbstractComponent} that defines the default
  * implementation for the methods in {@link ComponentContainer}. Basic UI
  * components that need to contain other components inherit this class to

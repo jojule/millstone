@@ -38,18 +38,9 @@
 
 package org.millstone.base.ui;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 
-import org.millstone.base.service.FileTypeResolver;
-import org.millstone.base.terminal.DownloadStream;
-import org.millstone.base.terminal.ExternalResource;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.Resource;

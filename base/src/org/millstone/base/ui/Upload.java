@@ -48,8 +48,6 @@ import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.PaintException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.FileOutputStream;
-import java.io.File;
 
 /** Component for client file uploading.
  *

@@ -45,15 +45,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.naming.OperationNotSupportedException;
-
 import org.millstone.base.Application;
-import org.millstone.base.terminal.ErrorMessage;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
-import org.millstone.base.terminal.Paintable;
 import org.millstone.base.terminal.Resource;
-import org.millstone.base.terminal.Terminal;
 import org.millstone.base.terminal.VariableOwner;
 
 /** Custom component provides simple implementation of Component interface for 

@@ -41,17 +41,14 @@ package org.millstone.base.ui;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.millstone.base.data.Item;
 import org.millstone.base.data.Buffered;
 import org.millstone.base.data.Property;
-import org.millstone.base.data.Buffered.SourceException;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
-import org.millstone.base.terminal.VariableOwner;
 
 /** Form component provides easy way of creating and managing sets fields.
  * 
@@ -94,11 +91,11 @@ import org.millstone.base.terminal.VariableOwner;
 	/** Current buffered source exception */
 	private Buffered.SourceException currentBufferedSourceException = null;
 
-	/** Is the item editor in write trough mode */
-	private boolean writeTrough = true;
+	/** Is the form in write trough mode */
+	private boolean writeThrough = true;
 
-	/** Is the item editor in read trough mode */
-	private boolean readTrough = true;
+	/** Is the form in read trough mode */
+	private boolean readThrough = true;
 
 	/** Mapping from propertyName to corresponding field */
 	private HashMap fields = new HashMap();
@@ -228,7 +225,7 @@ import org.millstone.base.terminal.VariableOwner;
 	 * interface.
 	 */
 	public boolean isReadThrough() {
-		return readTrough;
+		return readThrough;
 	}
 
 	/* Is the editor in a write-through mode?
@@ -236,7 +233,7 @@ import org.millstone.base.terminal.VariableOwner;
 	 * interface.
 	 */
 	public boolean isWriteThrough() {
-		return writeTrough;
+		return writeThrough;
 	}
 
 	/* Sets the editor's read-through mode to the specified status.
@@ -244,8 +241,8 @@ import org.millstone.base.terminal.VariableOwner;
 	 * interface.
 	 */
 	public void setReadThrough(boolean readThrough) {
-		if (readThrough != this.readTrough) {
-			this.readTrough = readTrough;
+		if (readThrough != this.readThrough) {
+			this.readThrough = readThrough;
 			for (Iterator i = propertyIds.iterator(); i.hasNext();)
 				((AbstractField) fields.get(i.next())).setReadThrough(
 					readThrough);
@@ -257,8 +254,8 @@ import org.millstone.base.terminal.VariableOwner;
 	 * interface.
 	 */
 	public void setWriteThrough(boolean writeThrough) {
-		if (writeThrough != this.writeTrough) {
-			this.writeTrough = writeTrough;
+		if (writeThrough != this.writeThrough) {
+			this.writeThrough = writeThrough;
 			for (Iterator i = propertyIds.iterator(); i.hasNext();)
 				((AbstractField) fields.get(i.next())).setWriteThrough(
 					writeThrough);
@@ -325,8 +322,8 @@ import org.millstone.base.terminal.VariableOwner;
 		field.dependsOn(this);
 		fields.put(propertyId, field);
 		propertyIds.addLast(propertyId);
-		field.setReadThrough(readTrough);
-		field.setWriteThrough(writeTrough);
+		field.setReadThrough(readThrough);
+		field.setWriteThrough(writeThrough);
 
 		if (layout instanceof CustomLayout)
 			((CustomLayout) layout).addComponent(field, propertyId.toString());

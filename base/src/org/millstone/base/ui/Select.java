@@ -57,7 +57,6 @@ import org.millstone.base.data.Item;
 import org.millstone.base.data.Property;
 import org.millstone.base.data.Container;
 import org.millstone.base.data.util.IndexedContainer;
-import org.millstone.base.data.validator.NullValidator;
 import org.millstone.base.terminal.KeyMapper;
 
 /** <p>A class representing a selection of items the user has selected in a

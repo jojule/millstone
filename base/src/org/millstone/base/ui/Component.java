@@ -38,23 +38,15 @@
 
 package org.millstone.base.ui;
 
-import org.millstone.base.terminal.ErrorMessage;
 import org.millstone.base.terminal.Resource;
 import org.millstone.base.terminal.Paintable;
-import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.VariableOwner;
 import org.millstone.base.Application;
-import org.millstone.base.data.Property;
-import org.millstone.base.data.Validator;
-import org.millstone.base.event.MethodEventSource;
 
 import java.util.Collection;
 import java.util.EventListener;
 import java.util.EventObject;
 import java.util.Locale;
-import java.lang.reflect.Method;
-import java.io.Serializable;
-import java.io.StringWriter;
 
 /** The top-level component interface which must be implemented by all
  * MillStone UI components. It contains the methods the MillStone framework
