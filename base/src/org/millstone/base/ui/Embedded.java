@@ -126,10 +126,10 @@ public class Embedded extends AbstractComponent implements Sizeable {
 		if (type == TYPE_IMAGE) {
 			target.addAttribute("type", "image");
 		}
-		
-		if (source != null) 
+
+		if (source != null)
 			target.addAttribute("src", source);
-		
+
 		// Dimensions
 		if (width > 0)
 			target.addAttribute(
@@ -336,11 +336,8 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	 * @param source The source to set
 	 */
 	public void setSource(Resource source) {
-		this.source = source;
-
-		this.source = source;
-
-		if (source != null) {
+		if (source != null && !source.equals(this.source)) {
+			this.source = source;
 			String mt = source.getMIMEType();
 			if ((mt.substring(0, mt.indexOf("/")).equalsIgnoreCase("image"))) {
 				type = TYPE_IMAGE;
