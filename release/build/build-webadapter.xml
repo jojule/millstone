@@ -70,7 +70,10 @@
 	<copy file="${work-dir}/webadapter/${webadapter-src-jar-name}" todir="${output-dir}/lib"/>
         <copy file="${work-dir}/webadapter/${web-themes-jar-name}"     todir="${output-dir}/lib"/>
 	<!-- Filtered files -->
-	<copy todir="${output-dir}" filtering="true">
+	<copy todir="${output-dir}">
+	    <filterset>
+    	       <filter token="VERSION" value="${version}"/>
+            </filterset>
             <fileset dir="${root-dir}">
               <patternset>
                 <include name="web-adapter/src/**/*.java"/>
@@ -79,7 +82,7 @@
             </fileset>	
 	</copy>	
 	<!-- Un-Filtered files -->
-	<copy todir="${output-dir}" filtering="true">
+	<copy todir="${output-dir}">
             <fileset dir="${root-dir}">
               <patternset>
                 <include name="web-adapter/src/**/*.gif"/>

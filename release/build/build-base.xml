@@ -55,7 +55,10 @@
 	<copy file="${work-dir}/base/${base-bin-jar-name}" todir="${output-dir}/lib"/>
 	<copy file="${work-dir}/base/${base-src-jar-name}" todir="${output-dir}/lib"/>
 	<!-- Filtered files -->
-	<copy todir="${output-dir}" filtering="true">
+	<copy todir="${output-dir}">
+	    <filterset>
+    	       <filter token="VERSION" value="${version}"/>
+            </filterset>
             <fileset dir="${root-dir}">
               <patternset>
                 <include name="base/src/**/*.java"/>
@@ -64,7 +67,7 @@
             </fileset>	
 	</copy>
 	<!-- Unfiltered files -->
-	<copy todir="${output-dir}" filtering="false">
+	<copy todir="${output-dir}">
             <fileset dir="${root-dir}">
               <patternset>
                 <include name="base/src/**/*.gif"/>

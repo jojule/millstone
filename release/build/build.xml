@@ -42,6 +42,9 @@
 
     <target name="init-release" depends="pre-init,check-version,check-tag" if="release">
 
+        <!-- Create Version filter -->
+        <filter token="VERSION" value="${version}"/>
+
         <!-- Set release base directory -->
         <property name="root-dir" value="${checkout-dir}" />
 
@@ -57,6 +60,9 @@
 
         <!-- MillStone version -->
 	<property name="version" value="${DSTAMP}.${TSTAMP}" />
+	
+        <!-- Create Version filter -->
+        <filter token="VERSION" value="${version}"/>
 
         <property name="root-dir" value="." />
         
@@ -89,10 +95,7 @@
 
         <echo message="Prepared to build MillStone ${version} packages"/>
        
-       <!-- Create Version filter -->
-       <filter token="VERSION" value="${version}"/>
-
-   </target>
+    </target>
 
 
 
