@@ -1,0 +1,34 @@
+
+------------------------------------------------------------------------------
+
+                                Millstone(tm) 
+				
+  Open Sourced User Interface Library for Internet Development With Java(tm)
+
+                                version @VERSION@
+
+                       (c) 2000,2001,2002, IT Mill Ltd
+
+------------------------------------------------------------------------------
+
+Release notes
+-------------
+
+This version of the Millstone is pre-release version of the Millstone 
+Base 3 and Millstone WebAdapter 3 modules. 
+
+Millstone Status as of 20.11.2002:
+
+Millstone is on pre-release phase. The public pre-release of Millstone 3
+products will be made 25.11.2002 The development is now focused on bugfixing,
+testing and documentation. The Millstone Manual is under construction and will 
+be included in the public release. Bugfixes will be made continuously and as quickly 
+as possible.
+            
+The Millstone.org developer site is up and running at http://www.millstone.org/.
+This is the main information channel for development community. The site is 
+currently members-only, but but will be opened for the public in the near future.
+
+------------------------------------------------------------------------------
+Millstone is a registered trademark of IT Mill Ltd
+
