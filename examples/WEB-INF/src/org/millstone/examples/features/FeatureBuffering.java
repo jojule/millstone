@@ -46,4 +46,33 @@ public class FeatureBuffering extends Feature {
 	protected String getTitle() {
 		return "Buffering";
 	}
+	/**
+	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
+	 */
+	protected String getDescriptionXHTML() {
+		return "<p>Millstone data model provides interface for implementing "
+			+ "buffering in data components. The basic idea is that a component "
+			+ "reading their state from data source can implement "
+			+ "Buffered-interface, for storing the value internally. "
+			+ "Buffering provides transactional access "
+			+ "for setting data: data can be put to components buffer and "
+			+ "afterwards committed to or discarded from component data source. "
+			+ "The buffering can be used both for creating interactive interfaces "
+			+ "as well as caching the data for performance reasons.</p>"
+			+ "<p>Buffered interface contains methods for committing and discarding "
+			+ "changes to an object and support for controlling buffering mode "
+			+ "with read-through and write-through modes. "
+			+ "Read-through mode means that the value read from the buffered "
+			+ "object is constantly up to date with the data source. "
+			+ "Write-through mode means that all changes to the object are "
+			+ "immediately updated to the data source.</p>";
+	}
+
+	/**
+	 * @see org.millstone.examples.features.Feature#getImage()
+	 */
+	protected String getImage() {
+		return "buffering.jpg";
+	}
+
 }

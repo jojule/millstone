@@ -155,7 +155,6 @@ public class FeatureBrowser
 		registerFeature(
 			"/Terminal/Server Initiated Events",
 			new FeatureServerEvents());
-		registerFeature("/Terminal/Resources", new FeatureResources());
 		registerFeature(
 			"/Terminal/Parameters and URI Handling",
 			new FeatureParameters());

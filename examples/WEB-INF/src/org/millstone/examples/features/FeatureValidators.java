@@ -47,4 +47,24 @@ public class FeatureValidators extends Feature {
 	protected String getTitle() {
 		return "Validators";
 	}
+
+	protected String getDescriptionXHTML() {
+	return 
+		"<p>Millstone contains simple, yet powerful validation interface, "+
+		"that consists of two parts: Validator and Validatable. Validator is "+
+		"any class that can check validity of an Object. Validatable is "+
+		"a class with configurable validation. "+
+		"Validation errors are passed as special exceptions that implement "+
+		"ErrorMessage interface. This way the validation errors can be "+
+		"automatically added to components.</p>"+
+		"<p>Utilities for simple string and null validation are provided, as "+
+		"well as combinative validators. The validation interface can also "+
+		"be easily implemented by the applications for more complex "+
+		"validation needs.</p>";
+	}
+
+	protected String getImage() {
+		return "validators.gif";
+	}
+
 }
