@@ -135,7 +135,7 @@ public class FrameWindow extends Window {
 
 		/** String representation of the width */
 		private String width = "*";
-		
+
 		/** Parent frameset */
 		protected Frameset parentFrameset;
 
@@ -318,8 +318,8 @@ public class FrameWindow extends Window {
 
 		/** Remove all frames from this frameset */
 		public void removeAllFrames() {
-			for (Iterator i = frames.iterator(); i.hasNext(); )
-				((Frame)i.next()).parentFrameset = null;
+			for (Iterator i = frames.iterator(); i.hasNext();)
+				 ((Frame) i.next()).parentFrameset = null;
 			frames.clear();
 			requestRepaint();
 		}
@@ -355,7 +355,8 @@ public class FrameWindow extends Window {
 		 * not found
 		 */
 		public Frame getFrame(String name) {
-			if (name == null) return null;
+			if (name == null)
+				return null;
 			for (Iterator i = frames.iterator(); i.hasNext();) {
 				Frame f = (Frame) i.next();
 				if (name.equals(f.getName()))
@@ -403,13 +404,21 @@ public class FrameWindow extends Window {
 		}
 
 		/** Set the application for all the frames in this frameset */
-		private void setApplication(Application application) {
+		private void setApplication(
+			Application fromApplication,
+			Application toApplication) {
 			for (Iterator i = frames.iterator(); i.hasNext();) {
 				Frame f = (Frame) i.next();
 				if (f instanceof Frameset)
-					 ((Frameset) f).setApplication(application);
-				else if (f.window != null)
-					application.addWindow(f.window);
+					((Frameset) f).setApplication(
+						fromApplication,
+						toApplication);
+				else if (f.window != null) {
+					if (toApplication == null) {
+						fromApplication.removeWindow(f.window);
+					} else
+						toApplication.addWindow(f.window);
+				}
 			}
 		}
 	}
@@ -419,10 +428,11 @@ public class FrameWindow extends Window {
 	 * @see org.millstone.base.ui.Window#setApplication(Application)
 	 */
 	public void setApplication(Application application) {
+		Application fromApplication = getApplication();
 		super.setApplication(application);
 		Frameset fs = getFrameset();
 		if (fs != null)
-			fs.setApplication(application);
+			fs.setApplication(fromApplication, application);
 	}
 
 	/** Frame windows does not support scrolling.
