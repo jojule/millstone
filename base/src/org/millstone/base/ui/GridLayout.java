@@ -47,13 +47,14 @@ import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.PaintException;
 
 /** <p>A container that consists of components with certain coordinates on a
- * grid. The grid has an initial width and height which are automatically
- * extended if components are added outside the grid's initial size.</p>
+ * grid. It also maintains cursor for adding component in left to right,
+ * top to bottom order.</p>
  * 
  * <p>Each component in a <code>GridLayout</code> uses a certain
  * {@link GridLayout.Area area} (x1,y1,x2,y2) from the grid. One should not
  * add components that would overlap with the existing components because in
- * such case an {@link OverlapsException} is thrown.</p>
+ * such case an {@link OverlapsException} is thrown. Adding component with
+ * cursor automatically extends the grid by increasing the grid height.</p>
  *
  * @author IT Mill Ltd.
  * @version @VERSION@
