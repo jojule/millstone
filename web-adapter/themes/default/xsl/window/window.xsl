@@ -8,8 +8,12 @@
   <HTML>
     <HEAD>
       <xsl:call-template name="window-head"/>
-    </HEAD>
-    <BODY>	 
+    </HEAD>    
+    <BODY>
+    
+      <!-- Special handling of modal windows -->
+      <xsl:if test="($dhtml='true') and (@style='modal')"><SCRIPT>makeModal(window);</SCRIPT></xsl:if>	 
+      
 	  <!-- Window resize variable ids -->
       <xsl:variable name="heightid"><xsl:value-of select="./integer[@name='height']/@id"/></xsl:variable>
       <xsl:variable name="widthid"><xsl:value-of select="./integer[@name='width']/@id"/></xsl:variable>
