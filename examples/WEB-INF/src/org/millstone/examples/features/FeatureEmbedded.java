@@ -107,34 +107,26 @@ public class FeatureEmbedded extends Feature {
 				new ClassResource("millstone-logo.gif", getApplication())},
 			new Object[] { "null", "Millstone logo" });
 		p.addProperties("Embedded Properties", ap);
-		p.getField("standby").setDescription("The text to display while loading the object");
-		p.getField("codeBase").setDescription("root-path used to access resources with relative paths");
+		p.getField("standby").setDescription(
+			"The text to display while loading the object");
+		p.getField("codeBase").setDescription(
+			"root-path used to access resources with relative paths");
 		l.addComponent(p);
 
 		return l;
 	}
 
 	protected String getExampleSrc() {
-		return "Embedded emb = new Embedded(\"Caption\");\n"
-			+ "emb.setClassId(\"clsid:F08DF954-8592-11D1-B16A-00C0F0283628\");\n"
-			+ "emb.setWidth(100);\n"
-			+ "emb.setHeight(50);\n"
-			+ "\n//Set optional object parameters\n"
-			+ "emb.setParameter(\"BorderStyle\",\"1\");\n"
-			+ "emb.setParameter(\"MousePointer\",\"1\");\n"
-			+ "emb.setParameter(\"Enabled\",\"1\");\n"
-			+ "emb.setParameter(\"Min\",\"1\");\n"
-			+ "emb.setParameter(\"Max\",\"10\");\n";
-
+		return "// Load image from jpg-file, that is in the same package with the application\n"
+			+ "Embedded e = new Embedded(\"Image title\",\n"
+			+ "   new ClassResource(\"image.jpg\", getApplication()));";
 	}
 
 	protected String getDescriptionXHTML() {
-		return "The embedding feature allows for adding multimedia and other non-specified content to your application. "
+		return "<p>The embedding feature allows for adding images, multimedia and other non-specified "
+			+ "content to your application. "
 			+ "The feature has provisions for embedding both applets and Active X controls. "
-			+ "Actual support for embedded media types is left to the terminal."
-			+ "<br/>"
-			+ "On the demo tab you can try out how the different properties affect the presentation "
-			+ "of the component.";
+			+ "Actual support for embedded media types is left to the terminal.</p>";
 	}
 
 	protected String getImage() {

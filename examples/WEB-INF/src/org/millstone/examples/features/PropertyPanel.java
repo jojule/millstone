@@ -42,6 +42,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -51,8 +52,11 @@ import org.millstone.base.ui.*;
 import org.millstone.base.data.*;
 import org.millstone.base.data.util.*;
 
-public class PropertyPanel extends Panel implements Button.ClickListener {
+public class PropertyPanel
+	extends Panel
+	implements Button.ClickListener, Property.ValueChangeListener {
 
+	private Select addComponent;
 	private OrderedLayout formsLayout = new OrderedLayout();
 	private LinkedList forms = new LinkedList();
 	private Button setButton = new Button("Set", this);
@@ -87,6 +91,9 @@ public class PropertyPanel extends Panel implements Button.ClickListener {
 			addSelectProperties();
 		if (objectToConfigure instanceof AbstractField)
 			addFieldProperties();
+		if ((objectToConfigure instanceof AbstractComponentContainer) && 
+		!(objectToConfigure instanceof FrameWindow))
+			addComponentContainerProperties();
 
 		// The list of all properties
 		addComponent(showAllProperties);
@@ -168,43 +175,150 @@ public class PropertyPanel extends Panel implements Button.ClickListener {
 			createBeanPropertySet(
 				new String[] {
 					"caption",
-					"icon",
-					"description",
-					"style",
 					"enabled",
+					"icon",
 					"visible",
+					"description",
 					"readOnly",
-					"immediate" });
+					"componentError",
+					"immediate",
+					 "style"});
 		set.replaceWithSelect(
-				"icon",
-				new Object[] { null, new ThemeResource("icon/files/file.gif")},
-				new Object[] { "No icon", "Sample icon" });
+			"icon",
+			new Object[] { null, new ThemeResource("icon/files/file.gif")},
+			new Object[] { "No icon", "Sample icon" });
+		Throwable sampleException;
+		try {
+			throw new NullPointerException("sample exception");
+		} catch (NullPointerException e) {
+			sampleException = e;
+		}
 		set.replaceWithSelect(
+			"componentError",
+			new Object[] {
+				null,
+				new UserError("Sample text error message."),
+				new UserError(
+					"<h3>Error message formatting</h3><p>Error messages can contain any UIDL "
+						+ "formatting, like: <ul><li><b>Bold</b></li><li><i>Italic</i></li></ul></p>",
+					UserError.CONTENT_UIDL,
+					ErrorMessage.INFORMATION),
+				new SystemError(
+					"This is an example of exception error reposting",
+					sampleException)},
+			new Object[] {
+				"No error",
+				"Sample text error",
+				"Sample Formatted error",
+				"Sample System Error" });
+		set
+			.replaceWithSelect(
 				"style",
 				new Object[] { null },
-				new Object[] { "Default"}).setNewItemsAllowed(true);
-		
-		addProperties("Component basics", set);
+				new Object[] { "Default" })
+			.setNewItemsAllowed(true);
+
+		addProperties("Component Basics", set);
 	}
 
 	private void addSelectProperties() {
 		Form set =
 			createBeanPropertySet(
-				new String[] {
-					"multiSelect",
-					"newItemsAllowed"  });
-		addProperties("Select properties", set);
+				new String[] { "multiSelect", "newItemsAllowed" });
+		addProperties("Select Properties", set);
 	}
 
 	private void addFieldProperties() {
-		Form set = new Form(new GridLayout(2,1));
-		set.addField("focus",new Button("Focus",objectToConfigure,"focus"));
-		addProperties("Field features", set);
+		Form set = new Form(new GridLayout(2, 1));
+		set.addField("focus", new Button("Focus", objectToConfigure, "focus"));
+		addProperties("Field Features", set);
+	}
+
+	private void addComponentContainerProperties() {
+		Form set = new Form(new GridLayout(2, 1));
+
+		addComponent = new Select();
+		addComponent.setImmediate(true);
+		addComponent.addItem("Add component to container");
+		addComponent.setNullSelectionItemId("Add field");
+		addComponent.addItem("Text field");
+		addComponent.addItem("Time");
+		addComponent.addItem("Option group");
+		addComponent.addItem("Calendar");
+		addComponent.addListener(this);
+
+		set.addField("component adder", addComponent);
+		set.addField(
+			"remove all components",
+			new Button(
+				"Remove all components",
+				objectToConfigure,
+				"removeAllComponents"));
+
+		addProperties("ComponentContainer Features", set);
+	}
+
+	public void valueChange(Property.ValueChangeEvent event) {
+
+		if (event.getProperty() == addComponent) {
+
+			String value = (String) addComponent.getValue();
+
+			if (value != null) {
+				if (value.equals("Text field"))
+					(
+						(
+							AbstractComponentContainer) objectToConfigure)
+								.addComponent(
+						new TextField("Test field"));
+				if (value.equals("Time")) {
+					DateField d = new DateField("Time", new Date());
+					d.setDescription(
+						"This is a DateField-component with text-style");
+					d.setResolution(DateField.RESOLUTION_MIN);
+					d.setStyle("text");
+					(
+						(
+							AbstractComponentContainer) objectToConfigure)
+								.addComponent(
+						d);
+				}
+				if (value.equals("Calendar")) {
+					DateField c = new DateField("Calendar", new Date());
+					c.setDescription(
+						"DateField-component with calendar-style and day-resolution");
+					c.setStyle("calendar");
+					c.setResolution(DateField.RESOLUTION_DAY);
+					(
+						(
+							AbstractComponentContainer) objectToConfigure)
+								.addComponent(
+						c);
+				}
+				if (value.equals("Option group")) {
+					Select s = new Select("Options");
+					s.setDescription("Select-component with optiongroup-style");
+					s.addItem("Linux");
+					s.addItem("Windows");
+					s.addItem("Solaris");
+					s.addItem("Symbian");
+					s.setStyle("optiongroup");
+
+					(
+						(
+							AbstractComponentContainer) objectToConfigure)
+								.addComponent(
+						s);
+				}
+
+				addComponent.setValue(null);
+			}
+		}
 	}
 
 	public Form createBeanPropertySet(String names[]) {
 
-		Form set = new Form(new GridLayout(2,1));
+		Form set = new Form(new GridLayout(2, 1));
 
 		for (int i = 0; i < names.length; i++) {
 			Property p = config.getItemProperty(names[i]);

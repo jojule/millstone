@@ -56,45 +56,29 @@ public class FeatureOrderedLayout extends Feature {
 		// Example panel
 		Panel show = new Panel("OrderedLayout component");
 		OrderedLayout ol = new OrderedLayout();
-		ol.addComponent(new TextField("TextField caption"));
-		ol.addComponent(new Label("Label"));
-		Select sel = new Select("Select caption");
-		sel.addItem("Value 1");
-		sel.addItem("Value 2");
-		sel.addItem("Value 3");
-		ol.addComponent(sel);
-		ol.addComponent(new Label("Label 2"));
-
 		show.addComponent(ol);
 		l.addComponent(show);
 
-		// Configuration
-
-		Hashtable alternateEditors = new Hashtable();
-
-		Select s =
-			createSelect(
-				"Orientation",
-				new Integer[] {
-					new Integer(OrderedLayout.ORIENTATION_HORIZONTAL),
-					new Integer(OrderedLayout.ORIENTATION_VERTICAL),
-					new Integer(OrderedLayout.ORIENTATION_FLOW)},
-				new String[] { "Horizontal", "Vertical", "Flow" });
-
-		alternateEditors.put("orientation", s);
-
-		Select t =
-			createSelect(
-				"Style",
-				new String[] { "", "form" },
-				new String[] { "Default", "Form" });
-		alternateEditors.put("style", t);
-
-		l.addComponent(
-			createPropertyPanel(
-				ol,
-				new String[] { "orientation" },
-				alternateEditors));
+		// Properties
+		PropertyPanel p = new PropertyPanel(ol);
+		Form ap = p.createBeanPropertySet(new String[] { "orientation" });
+		ap.replaceWithSelect(
+			"orientation",
+			new Object[] {
+				new Integer(OrderedLayout.ORIENTATION_FLOW),
+				new Integer(OrderedLayout.ORIENTATION_HORIZONTAL),
+				new Integer(OrderedLayout.ORIENTATION_VERTICAL)},
+			new Object[] {
+				"Flow layout",
+				"Horizontal",
+				"Vertical"});
+		Select themes = (Select) p.getField("style");
+		themes
+			.addItem("form")
+			.getItemProperty(themes.getItemCaptionPropertyId())
+			.setValue("form");
+		p.addProperties("OrderedLayout Properties", ap);
+		l.addComponent(p);
 
 		return l;
 	}

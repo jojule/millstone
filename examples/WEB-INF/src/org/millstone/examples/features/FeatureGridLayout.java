@@ -54,21 +54,17 @@ public class FeatureGridLayout extends Feature {
 		// Example panel
 		Panel show = new Panel("OrderedLayout component");
 		GridLayout gl = new GridLayout(2,2);
-		gl.addComponent(new Label("Label 1 in GridLayout"));
-		gl.addComponent(new Label("Label 2 in GridLayout"));
-		gl.addComponent(new Label("Label 3 in GridLayout"));
-		gl.addComponent(new Label("Label 4 in GridLayout"));
-		
 		show.addComponent(gl);
 		l.addComponent(show);
 
-		// Configuration
-		l.addComponent(
-			createPropertyPanel(
-				gl,
-				new String[] {
-					"width",
-					"height"},null));
+		// Properties
+		PropertyPanel p = new PropertyPanel(gl);
+		Form ap = p.createBeanPropertySet(new String[] { "width","height" });
+		ap.addField("new line", new Button("New Line",gl,"newLine"));
+		ap.addField("space", new Button("Space",gl,"space"));
+		p.addProperties("GridLayout Features", ap);
+		p.getField("height").dependsOn(p.getField("add component"));
+		l.addComponent(p);
 
 		return l;
 	}

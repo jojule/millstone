@@ -56,25 +56,22 @@ public class FeaturePanel extends Feature {
 		// Example panel
 		Panel show = new Panel("Panel caption");
 		show.addComponent(new Label("Label in Panel"));
-
 		l.addComponent(show);
 
-		// Configuration
-		Hashtable alternateEditors = new Hashtable();
-
-		Select t =
-			createSelect(
-				"Style",
-				new String[] { "", "light","strong" },
-				new String[] { "Default", "Light","Strong" });
-
-		alternateEditors.put("style", t);
-
-		l.addComponent(
-		 createPropertyPanel(show,
-				new String[] {
-					"width",
-					"height"},alternateEditors));
+		// Properties
+		PropertyPanel p = new PropertyPanel(show);
+		Form ap = p.createBeanPropertySet(new String[] { "width", "height" });
+		Select themes = (Select) p.getField("style");
+		themes
+			.addItem("light")
+			.getItemProperty(themes.getItemCaptionPropertyId())
+			.setValue("light");
+		themes
+			.addItem("strong")
+			.getItemProperty(themes.getItemCaptionPropertyId())
+			.setValue("strong");
+		p.addProperties("Panel Properties", ap);
+		l.addComponent(p);
 
 		return l;
 	}
@@ -84,9 +81,7 @@ public class FeaturePanel extends Feature {
 			+ "show.addComponent(new Label(\"Label in Panel\"));";
 
 	}
-	/**
-	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
-	 */
+
 	protected String getDescriptionXHTML() {
 		return "The Panel is a container for other components, it usually draws a frame around it's "+
 			"extremities and may have a caption to clarify the nature of the contained components purpose."+

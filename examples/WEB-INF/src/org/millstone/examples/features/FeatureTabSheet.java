@@ -62,11 +62,9 @@ public class FeatureTabSheet extends Feature {
 		show.addComponent(ts);
 		l.addComponent(show);
 
-		// Configuration
-		l.addComponent(
-			createPropertyPanel(
-				ts,
-				new String[] {},null));
+		// Properties
+		PropertyPanel p = new PropertyPanel(ts);
+		l.addComponent(p);
 
 		return l;
 	}

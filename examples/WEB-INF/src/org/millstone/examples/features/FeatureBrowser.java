@@ -82,7 +82,12 @@ public class FeatureBrowser
 		// Configure component layout
 		layout = new GridLayout(2, 1);
 		setCompositionRoot(layout);
-		layout.addComponent(features, 0, 0, 0, 0);
+		OrderedLayout left = new OrderedLayout();
+		left.addComponent(features);
+		Button close = new Button("restart",getApplication(),"close");
+		left.addComponent(close);
+		close.setStyle("link");
+		layout.addComponent(left, 0, 0, 0, 0);
 		Label greeting = new Label(WELCOME_TEXT, Label.CONTENT_XHTML);
 		//welcomePanel = new Panel((String) null);
 		welcome = new Embedded("",new ClassResource(getClass(),"millstone-logo.gif", getApplication()));
@@ -99,14 +104,13 @@ public class FeatureBrowser
 		registerFeature("/UI Components/Item Containers/Select", new FeatureSelect());
 		registerFeature("/UI Components/Item Containers/Table", new FeatureTable());
 		registerFeature("/UI Components/Item Containers/Tree", new FeatureTree());
-		registerFeature("/UI Components/Item Containers/Actions", new Feature());
 		registerFeature("/UI Components/Layouts/Ordered Layout", new FeatureOrderedLayout());
 		registerFeature("/UI Components/Layouts/Grid Layout", new FeatureGridLayout());
-		registerFeature("/UI Components/Layouts/Custom Layout", new FeatureGridLayout());
+		registerFeature("/UI Components/Layouts/Custom Layout", new FeatureCustomLayout());
 		registerFeature("/UI Components/Layouts/Panel", new FeaturePanel());
 		registerFeature("/UI Components/Layouts/Tab Sheet", new FeatureTabSheet());
 		registerFeature("/UI Components/Layouts/Window", new FeatureWindow());
-		registerFeature("/UI Components/Layouts/Frame Window", new Feature());
+		registerFeature("/UI Components/Layouts/Frame Window", new FeatureFrameWindow());
 		registerFeature("/UI Components/Data handling/Embedded Objects", new FeatureEmbedded());
 		registerFeature("/UI Components/Data handling/XML and XHTML", new FeatureLabel());
 		registerFeature("/UI Components/Data handling/Upload", new FeatureFileTransfer());
