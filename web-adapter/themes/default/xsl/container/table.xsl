@@ -10,10 +10,18 @@
 
   <xsl:variable name="actionlistid"><xsl:value-of select="generate-id(./actions)"/></xsl:variable>
 
+  <xsl:variable name="popupid"><xsl:value-of select="generate-id(./visiblecolumns)"/>_POPUP</xsl:variable>
+
+	<xsl:if test="./array[@name='columnorder']">		
+		<script src="{wa:resource('script/tableheaderdragger.js')}"/>
+		<script>var THD<xsl:value-of select="./array[@name='columnorder']/@id"/>=new TableHeaderDragger('<xsl:value-of select="./array[@name='columnorder']/@id"/>');</script>
+	</xsl:if>
+
   <TABLE CELLSPACING="0" CELLPADDING="0" BORDER="0" WIDTH="{$maxtablewidth}" CLASS="{$class}">
     <xsl:if test="@colheaders='true'">
       <xsl:call-template name="table-column-header">
         <xsl:with-param name="class"><xsl:value-of select="$class"/></xsl:with-param>      
+        <xsl:with-param name="popupid"><xsl:value-of select="$popupid"/></xsl:with-param>      
       </xsl:call-template>
     </xsl:if>
     <xsl:for-each select="rows/tr">
@@ -41,6 +49,54 @@
       </INPUT>
     </xsl:for-each>
   </xsl:if>
+	<!-- Available columns -->
+	<DIV id="{$popupid}" CLASS="action-popup" STYLE="display:none;">
+	<!-- Column order -->
+	<xsl:for-each select="./array[@name='columnorder']">
+		<INPUT TYPE="hidden" ID="{@id}" NAME="array:{@id}">
+			<xsl:attribute name="VALUE">
+				<xsl:for-each select="ai">
+					<xsl:value-of select="text()"/>
+					<xsl:if test="following-sibling::*">,</xsl:if>
+				</xsl:for-each>
+			</xsl:attribute>
+		</INPUT>
+	</xsl:for-each>
+	<xsl:for-each select="./array[@name='collapsedcolumns']">
+		<INPUT TYPE="hidden" ID="{@id}" NAME="array:{@id}">
+			<xsl:attribute name="VALUE">
+				<xsl:for-each select="ai">
+					<xsl:value-of select="text()"/>
+					<xsl:if test="following-sibling::*">,</xsl:if>
+				</xsl:for-each>
+			</xsl:attribute>
+		</INPUT>
+	</xsl:for-each>
+	<xsl:for-each select="./visiblecolumns/column">
+		<DIV CLASS="action-item"
+           ONMOUSEOVER="this.className = Millstone.toHighlightClassName(this.className);"
+           ONMOUSEOUT="this.className = Millstone.toUnselectedClassName(this.className);">
+		<xsl:attribute name="onclick">
+			<xsl:choose>
+			<xsl:when test="not(@collapsed='true')">document.getElementById('<xsl:value-of select="../../array[@name='collapsedcolumns']/@id"/>').value=Millstone.listAddInt(document.getElementById('<xsl:value-of select="../../array[@name='collapsedcolumns']/@id"/>').value,'<xsl:value-of select="@cid"/>');</xsl:when>
+			<xsl:otherwise>document.getElementById('<xsl:value-of select="../../array[@name='collapsedcolumns']/@id"/>').value=Millstone.listRemoveInt(document.getElementById('<xsl:value-of select="../../array[@name='collapsedcolumns']/@id"/>').value,'<xsl:value-of select="@cid"/>');</xsl:otherwise>
+			</xsl:choose>
+			Millstone.submit();
+		</xsl:attribute>
+		<INPUT type="checkbox">	
+        <xsl:if test="not(@collapsed='true')">
+          <xsl:attribute name="CHECKED">CHECKED</xsl:attribute>
+        </xsl:if>
+		</INPUT>
+		<!--
+		<xsl:if test="@visible='true'">
+			<IMG src="{wa:resource('icon/arrows/x.gif')}"/>
+		</xsl:if>
+		-->
+		<NOBR><xsl:value-of select="@caption"/></NOBR><br/>
+		</DIV>
+	</xsl:for-each>
+	</DIV>
   
   <!-- Sorting variables -->
   <INPUT TYPE="HIDDEN" ID="{./integer[@name='sortcolumn']/@id}" NAME="{./integer[@name='sortcolumn']/@id}" VALUE="{./integer[@name='sortcolumn']/@value}" />
@@ -53,6 +109,7 @@
 
 <xsl:template name="table-column-header">
   <xsl:param name="class" />
+  <xsl:param name="popupid" />
   <TR>
 
 	<!-- Selection column -->
@@ -65,15 +122,16 @@
     
     <!-- Column headers -->
 	<xsl:for-each select="cols/ch">
+		<xsl:variable name="hid"><xsl:value-of  select="generate-id()"/></xsl:variable>
       <TD CLASS="{$class}-column-header">
         <xsl:if test="@icon"><xsl:value-of select="@icon"/></xsl:if>
          <xsl:variable name="thispos" select="position()-1" />
            <xsl:choose>
                <xsl:when test="@sortable='true'">
-		         <A CLASS="{$class}-column-header">
+		         <DIV CLASS="{$class}-column-header" cid="{@cid}" id="{$hid}">
 		           <xsl:choose>
 		               <xsl:when test="../../integer[@name='sortcolumn']/@value=$thispos">
-		                   <xsl:attribute name="HREF">javascript:Millstone.setVarById('<xsl:value-of select="../../boolean[@name='sortascending']/@id"/>','<xsl:value-of select="not(../../boolean[@name='sortascending']/@value='true')"/>',true);</xsl:attribute>
+		                   <xsl:attribute name="onclick">javascript:Millstone.setVarById('<xsl:value-of select="../../boolean[@name='sortascending']/@id"/>','<xsl:value-of select="not(../../boolean[@name='sortascending']/@value='true')"/>',true);</xsl:attribute>
 		                   <xsl:value-of select="@caption" />
 		                   <IMG BORDER="0" CLASS="{$class}-column-header" valign="middle">
 		                       <xsl:if test="../../boolean[@name='sortascending']/@value='true'"><xsl:attribute name="SRC"><xsl:value-of select="wa:resource('icon/arrows/down.gif')"/></xsl:attribute></xsl:if>        
@@ -81,18 +139,26 @@
 		                   </IMG>
 		               </xsl:when>
 		               <xsl:otherwise>
-		                       <xsl:attribute name="HREF">javascript:Millstone.setVarById('<xsl:value-of select="../../integer[@name='sortcolumn']/@id"/>','<xsl:value-of select="$thispos"/>',true);</xsl:attribute>
+		                       <xsl:attribute name="onclick">javascript:Millstone.setVarById('<xsl:value-of select="../../integer[@name='sortcolumn']/@id"/>','<xsl:value-of select="$thispos"/>',true);</xsl:attribute>
 		                       <xsl:value-of select="@caption" />
 		               </xsl:otherwise>
 		           </xsl:choose>
-		         </A>
+		         </DIV>
                </xsl:when>
                <xsl:otherwise>
-                  <SPAN CLASS="{$class}-column-header"><xsl:value-of select="@caption"/></SPAN>
+                  <DIV CLASS="{$class}-column-header" cid="{@cid}" id="{$hid}"><xsl:value-of select="@caption"/></DIV>
                </xsl:otherwise>
            </xsl:choose>
+		   <xsl:if test="../../array[@name='columnorder']"><script>THD<xsl:value-of select="../../array[@name='columnorder']/@id"/>.addDraggableById('<xsl:value-of select="$hid"/>');</script></xsl:if>
       </TD>
     </xsl:for-each>
+	<xsl:if test="./visiblecolumns">
+	<TD CLASS="{$class}-column-header" align="right">    
+		<IMG SRC="{wa:resource('img/popup-button.gif')}" CLASS="action" BORDER="0">
+			<xsl:attribute name="onclick">Millstone.showPopupById('<xsl:value-of select="$popupid"/>',event.clientX,event.clientY);</xsl:attribute>
+		</IMG>
+	</TD>
+	</xsl:if>
     
   </TR>
 </xsl:template>
@@ -155,8 +221,9 @@
     </xsl:for-each>
 
     <!-- Actions  -->
-    <xsl:for-each select="al">
-	  <TD>
+	<xsl:if test="al or ../../array[@name='collapsedcolumns']">
+	  <TD CLASS="{$class}">
+     <xsl:for-each select="al">
 	    <xsl:choose>
 	      <xsl:when test="$dhtml">
             <xsl:apply-templates select="." mode="dhtml">
@@ -169,8 +236,9 @@
             </xsl:apply-templates>   
           </xsl:otherwise>
         </xsl:choose>
-      </TD>
-	</xsl:for-each>      
+	</xsl:for-each>
+      &#160;</TD>
+	</xsl:if>      
     
   </TR>
 </xsl:template>

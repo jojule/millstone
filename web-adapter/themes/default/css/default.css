@@ -178,6 +178,8 @@ DIV.panel-body-strong
 
 TABLE.table { border: solid 1px #0059ef; }
 TD.table-column-header { color: white; font-weight: bold; background-color: #7fabf6; }
+DIV.table-column-header { position: relative; cursor:pointer;color: white; font-weight: bold; background-color: #7fabf6; }
+DIV.table-column-header-highlighted { border-left: 1px solid gray;position: relative; cursor:pointer;color: white; font-weight: bold; background-color: #666666; }
 TD.table-row-header 
 { 
 	background-color: #7fabf6; 
@@ -447,3 +449,10 @@ TD.cal-day-selected {
 	color: white;
     background-color: #0059ef;
 }	
+
+.draggable {
+	display:			box;
+	float:				left;
+	background-color: 	red;
+	cursor:				pointer;
+}
