@@ -73,7 +73,7 @@ public class Label
 		Property,
 		Property.Viewer,
 		Property.ValueChangeListener,
-		Property.ValueChangeNotifier {
+		Property.ValueChangeNotifier, Comparable {
 
 	/** Content mode, where the label contains only plain text. The getValue()
 	 * result is coded to XML when painting. 
@@ -395,6 +395,66 @@ public class Label
 	 */
 	public void valueChange(Property.ValueChangeEvent event) {
 		fireValueChange();
+	}
+
+	/** Compare Label to other objects. 
+	 * 
+	 * <p>Labels can be compared to other labels for sorting label contents. 
+	 * This is especially handy for sorting table columns.</p>
+	 * 
+	 * <p>In RAW, PREFORMATTED and TEXT modes, the label contents are 
+	 * compared as is. In XML, UIDL and XHTML modes, only CDATA is compared and
+	 * tags ignored. If the other object is not a Label, its toString() return
+	 * value is used in comparison.</p>
+	 * 
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 * @param other Other object to compare to
+	 * @return a negative integer, zero, or a positive integer as this object  is less than, equal to, or greater than the specified object.
+	 */
+	public int compareTo(Object other) {
+		
+		String thisValue;
+		String otherValue;
+		
+		if (contentMode == CONTENT_XML || contentMode == CONTENT_UIDL || contentMode == CONTENT_XHTML)
+			thisValue = stripTags(toString());
+		else 
+			thisValue = toString();
+		
+		if (other instanceof Label && (((Label)other).getContentMode() == CONTENT_XML ||
+				((Label)other).getContentMode() == CONTENT_UIDL || 
+				((Label)other).getContentMode() == CONTENT_XHTML))
+			otherValue = stripTags(other.toString());
+		else 
+			otherValue = other.toString();
+		
+		return thisValue.compareTo(otherValue);
+	}
+
+	/** Strip tags from the XML.
+	 * 
+	 * @param xml String containing a XML snippet
+	 * @return The original XML without tags
+	 */
+	private String stripTags(String xml) {
+		
+		StringBuffer res = new StringBuffer();
+
+		int processed = 0;
+		int xmlLen = xml.length();
+		while (processed < xmlLen) {
+			int next = xml.indexOf('<',processed);
+			if (next < 0) 
+				next = xmlLen;
+			res.append(xml.substring(processed,next));
+			if (processed < xmlLen) {
+				next = xml.indexOf('>',processed);
+				if (next < 0) next = xmlLen;
+				processed = next+1;
+			}
+		}
+		
+		return res.toString();
 	}
 
 }
