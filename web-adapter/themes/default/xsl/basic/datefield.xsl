@@ -162,15 +162,24 @@
 <!-- Month selector styles -->
 
 <xsl:template match="integer[@name='month']" mode="datefield">
+
+  <!-- Format value -->
+  <xsl:variable name="value">
+    <xsl:choose>
+      <xsl:when test="@value &gt;= 0"><xsl:value-of select="format-number(@value,'00')"/></xsl:when>
+      <xsl:otherwise></xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
   <xsl:choose>
   
     <!-- Text only -->
-    <xsl:when test="(../@readonly) and (../@style='text')">-<xsl:value-of select="format-number(@value,'00')" /></xsl:when>
+    <xsl:when test="(../@readonly) and (../@style='text')">-<xsl:value-of select="$value" /></xsl:when>
     
     <!-- Editor -->
     <xsl:otherwise>
       <xsl:variable name="class">datefield<xsl:if test="string-length(../@style) &gt; 0">-<xsl:value-of select="../@style"/></xsl:if></xsl:variable>
-      - <INPUT TYPE="text" SIZE="2" MAXLENGTH="2" ID="{@id}" NAME="{@id}" VALUE="{@value}" CLASS="{$class}-m">
+      - <INPUT TYPE="text" SIZE="2" MAXLENGTH="2" ID="{@id}" NAME="{@id}" VALUE="{$value}" CLASS="{$class}-m">
         <xsl:if test="../@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
         <xsl:if test="$dhtml and (../@immediate)">
             <xsl:attribute name="ONCHANGE">document.millstone.submit();</xsl:attribute>
@@ -214,15 +223,24 @@
 <!-- Day selectors -->
 
 <xsl:template match="integer[@name='day']" mode="datefield">
+
+  <!-- Format value -->
+  <xsl:variable name="value">
+    <xsl:choose>
+      <xsl:when test="@value &gt;= 0"><xsl:value-of select="format-number(@value,'00')"/></xsl:when>
+      <xsl:otherwise></xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
   <xsl:choose>
 
-    <!-- Text only -->
-    <xsl:when test="(../@readonly) and (../@style='text')">-<xsl:value-of select="format-number(@value,'00')" /></xsl:when>
+    <!-- Text only -->    
+    <xsl:when test="(../@readonly) and (../@style='text')">-<xsl:value-of select="$value" /></xsl:when>
 
     <!-- Day Editor -->
     <xsl:otherwise>
       <xsl:variable name="class">datefield<xsl:if test="string-length(../@style) &gt; 0">-<xsl:value-of select="../@style"/></xsl:if></xsl:variable>
-      - <INPUT TYPE="text" SIZE="2" MAXLENGTH="2" NAME="{@id}" VALUE="{@value}" CLASS="{$class}-d">
+      - <INPUT TYPE="text" SIZE="2" MAXLENGTH="2" NAME="{@id}" VALUE="{$value}" CLASS="{$class}-d">
         <xsl:if test="../@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
 
         <xsl:if test="$dhtml and (../@immediate)">
