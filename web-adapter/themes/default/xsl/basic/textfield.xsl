@@ -5,7 +5,7 @@
 <xsl:template match="textfield" mode="core">
   <xsl:choose>
     <xsl:when test="@multiline='true' and not(@secret='true')">
-	  <TEXTAREA name="{./string[@name='text']/@id}"> 
+	  <TEXTAREA name="{./string[@name='text']/@id}" ID="{./string[@name='text']/@id}"> 
 		<xsl:if test="@modified='true'"><xsl:attribute name="CLASS">modified</xsl:attribute></xsl:if>
 	    <xsl:if test="@readonly='true'"><xsl:attribute name="READONLY">true</xsl:attribute></xsl:if>
 		<xsl:if test="@immediate='true'"><xsl:attribute name="onchange">millstone.submit()</xsl:attribute></xsl:if>
@@ -18,7 +18,7 @@
       </TEXTAREA>
 	</xsl:when>
 	<xsl:otherwise>
-	  <INPUT NAME="{./string[@name='text']/@id}" VALUE="{./string[@name='text']}"> 
+	  <INPUT NAME="{./string[@name='text']/@id}" ID="{./string[@name='text']/@id}" VALUE="{./string[@name='text']}"> 
 		<xsl:if test="@modified='true'"><xsl:attribute name="CLASS">modified</xsl:attribute></xsl:if>
 	    <xsl:if test="@readonly='true'"><xsl:attribute name="READONLY">true</xsl:attribute></xsl:if>
 		<xsl:if test="@immediate='true'"><xsl:attribute name="onchange">millstone.submit()</xsl:attribute></xsl:if>
@@ -29,6 +29,11 @@
       </INPUT>
     </xsl:otherwise>
   </xsl:choose>
+
+  <xsl:if test="@focus='true'">
+    <SCRIPT>document.millstone.<xsl:value-of select="./string[@name='text']/@id"/>.focus()</SCRIPT>
+  </xsl:if>
+
 </xsl:template>
 
 </xsl:stylesheet>

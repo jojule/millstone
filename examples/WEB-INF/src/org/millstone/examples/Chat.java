@@ -83,11 +83,13 @@ public class Chat
 		sayText.setColumns(40);
 		controls.addComponent(say);
 		controls.addComponent(loginName);
+		loginName.focus();
 		controls.addComponent(loginButton);
 		loginButton.dependsOn(loginName);
 		loginButton.addListener(this);
 		controls.addComponent(listUsers);
-		controls.addComponent(new Button("Leave", this, "close"));
+		Button leaveButton = new Button("Leave", this, "close");
+		controls.addComponent(leaveButton);
 		say.setVisible(false);
 		sayText.setVisible(false);
 		frames.getFrameset().newFrame(controls).setAbsoluteSize(60);
@@ -132,6 +134,7 @@ public class Chat
 			// Show say controls
 			say.setVisible(true);
 			sayText.setVisible(true);
+			sayText.focus();
 			
 			// Announce discussion joining
 			say("<i>" + getUser() + 
