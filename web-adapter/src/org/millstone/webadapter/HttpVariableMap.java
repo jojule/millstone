@@ -262,13 +262,14 @@ public class HttpVariableMap {
 					value = newVal;
 
 					// Special case - if the set:-method is used for 
-					// declaring array of length 2, where all of the 
+					// declaring array of length 2, where either of the  
 					// following conditions are true:
-					//    - the both items have the same length
-					//    - the items only differ on last character
-					//    - second last character is '.'
-					//    - last char of one sting is 'x' and other is 'y'
-					// Browser is unporposely modifying the name.
+					//    - the both items are the same 
+					//    - the both items have the same length and 
+					//      - the items only differ on last character
+					//      - second last character is '.'
+					//      - last char of one string is 'x' and other is 'y'
+					// Browser is unporposely modifying the name. 
 					if (value.length == 2
 						&& value[0].length() == value[1].length()) {
 						boolean same = true;
@@ -276,16 +277,50 @@ public class HttpVariableMap {
 							if (value[0].charAt(i) != value[1].charAt(i))
 								same = false;
 						if (same
-							&& (value[0].charAt(value[0].length() - 1) == 'x'
+							&& ((value[0].charAt(value[0].length() - 1) == 'x'
 								&& value[1].charAt(value[1].length() - 1) == 'y')
 							|| (value[0].charAt(value[0].length() - 1) == 'y'
 								&& value[1].charAt(value[1].length() - 1)
-									== 'x')) {
+									== 'x'))) {
 							value =
 								new String[] {
 									 value[0].substring(
 										0,
 										value[1].length() - 2)};
+						} else
+						if (same && value[0].equals(value[1]))
+							value = new String[] { value[0] };
+					}
+
+					// Special case - if the set:-method is used for 
+					// declaring array of length 3, where all of the 
+					// following conditions are true:
+					//    - two last items  have the same length
+					//    - the first item is 2 chars shorter
+					//    - the longer items only differ on last character
+					//    - the shortest item is a prefix of the longer ones
+					//    - second last character of longer ones is '.'
+					//    - last char of one long string is 'x' and other is 'y'
+					// Browser is unporposely modifying the name. (Mozilla, Firefox, ..)
+					if (value.length == 3
+						&& value[1].length() == value[2].length() &&
+						value[0].length() +2 == value[1].length()) {
+						boolean same = true;
+						for (int i = 0; i < value[1].length() - 1 && same; i++)
+							if (value[2].charAt(i) != value[1].charAt(i))
+								same = false;
+						for (int i = 0; i < value[0].length() && same; i++)
+							if (value[0].charAt(i) != value[1].charAt(i))
+								same = false;
+						if (same
+							&& (value[2].charAt(value[2].length() - 1) == 'x'
+								&& value[1].charAt(value[1].length() - 1) == 'y')
+							|| (value[2].charAt(value[2].length() - 1) == 'y'
+								&& value[1].charAt(value[1].length() - 1)
+									== 'x')) {
+							value =
+								new String[] {
+									 value[0]};
 						}
 					}
 
@@ -522,9 +557,9 @@ public class HttpVariableMap {
 												|= (!val.equals(varOldValue));
 										} else {
 											Log.warn(
-												"Empty variable "
+												"Empty variable '"
 													+ varName
-													+ " of type "
+													+ "' of type "
 													+ varType.toString());
 										}
 
