@@ -156,16 +156,21 @@ public class FeatureTree extends Feature implements Action.Handler {
 	}
 
 	protected String getDescriptionXHTML() {
-		return "A tree is a natural way to represent datasets that have hierarchical relationships, "
-			+ "like for filesystems, message threads or... family trees. "
-			+ "Millstone features a versatile and powerful Tree component that works much like the tree components "
-			+ "of most modern operating systems. "
-			+ "The most prominent use of the Tree component is to use it for displaying a hierachical menu, like the "
-			+ "menu on the left side of the screen for instance, or to display filesystems.<br/><br/>"
-			+ "The tree component uses <code>Container</code> datasources much like the Table component, "
-			+ "with the addition that it also utilizes the hierarchy information maintained by the container. "
-			+ "<br/><br />On the demo tab you can try out how the different properties "
-			+ "affect the presentation of the tree component.";
+		return "<p>A tree is a natural way to represent datasets that have"
+			+ " hierarchical relationships, such as filesystems, message "
+			+ "threads or... family trees. Millstone features a versatile "
+			+ "and powerful Tree component that works much like the tree components "
+			+ "of most modern operating systems. </p>"
+			+ "<p>The most prominent use of the Tree component is to "
+			+ "use it for displaying a hierachical menu, like the "
+			+ "menu on the left side of the screen for instance "
+			+ "or to display filesystems or other hierarchical datasets.</p>"
+			+ "<p>The tree component uses <code>Container</code> "
+			+ "datasources much like the Table component, "
+			+ "with the addition that it also utilizes the hierarchy "
+			+ "information maintained by the container. </p><p>On "
+			+ "the demo tab you can try out how the different properties "
+			+ "affect the presentation of the tree component.</p>";
 	}
 
 	protected String getImage() {

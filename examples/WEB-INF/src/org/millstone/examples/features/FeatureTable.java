@@ -200,16 +200,16 @@ public class FeatureTable extends Feature implements Action.Handler {
 
 	protected String getDescriptionXHTML() {
 
-		return "The Table component is designed for displaying large volumes of tabular data, "
-			+ "in multiple pages whenever needed.<br/><br/> "
-			+ "Selection of the displayed data is supported both in selecting exclusively one row "
+		return "<p>The Table component is designed for displaying large volumes of tabular data, "
+			+ "in multiple pages whenever needed.</p> "
+			+ "<p>Selection of the displayed data is supported both in selecting exclusively one row "
 			+ "or multiple rows at the same time. For each row, there may be a set of actions associated, "
-			+ "depending on the skin implementation these actions may be displayed either as a drop-down "
-			+ "menu for each row or a set of command buttons. <br/><br/>"
+			+ "depending on the theme these actions may be displayed either as a drop-down "
+			+ "menu for each row or a set of command buttons.</p><p>"
 			+ "Table may be connected to any datasource implementing the <code>Container</code> interface."
 			+ "This way data found in external datasources can be directly presented in the table component."
-			+ "<br/><br/>"
-			+ "Table implements a number of features and you can test most of them in the table demo tab.";
+			+ "</p><p>"
+			+ "Table implements a number of features and you can test most of them in the table demo tab.</p>";
 	}
 
 	protected String getImage() {

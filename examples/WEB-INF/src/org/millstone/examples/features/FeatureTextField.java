@@ -92,7 +92,9 @@ public class FeatureTextField extends Feature {
 			+ "that the value has changed but is not committed.</p>"
 			+ "<p>Furthermore a validators may be bound to the component to "
 			+ "check and validate the given input before it is actually commited."
-			+ "</p>";
+			+ "</p>"
+			+ "<p>On the demo tab you can try out how the different properties affect the "
+			+ "presentation of the component.</p>";
 	}
 
 	protected String getImage() {

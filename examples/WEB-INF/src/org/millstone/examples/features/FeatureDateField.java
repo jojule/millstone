@@ -119,14 +119,17 @@ public class FeatureDateField extends Feature {
 	}
 
 	protected String getDescriptionXHTML() {
-		return "Representing Dates and times and providing a way to select or enter some specific date and/or time "
-			+ "is an oft recuring need in data-entry userinterfaces. Millstone provides a DateField component that "
-			+ "is intuitive to use and yet controllable through its properties. The calendar-style allows "
-			+ "point-and-click selection of dates while text-style shows only minimalistic user interface."
+		return "<p>Representing Dates and times and providing a way to select "
+			+ "or enter some specific date and/or time is an typical need in "
+			+ "data-entry userinterfaces. Millstone provides a DateField "
+			+ "component that is intuitive to use and yet controllable through "
+			+ "its properties.</p>"
+			+ "<p>The calendar-style allows point-and-click selection "+
+			"of dates while text-style shows only minimalistic user interface."
 			+ "Validators may be bound to the component to check and "
-			+ "validate the given input.<br/>"
-			+ "<br/>On the demo tab you can try out how the different properties affect the "
-			+ "presentation of the component.";
+			+ "validate the given input.</p>"
+			+ "<p>On the demo tab you can try out how the different properties affect the "
+			+ "presentation of the component.</p>";
 	}
 
 	protected String getImage() {
