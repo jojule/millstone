@@ -39,7 +39,6 @@
 package org.millstone.ajaxadapter.browser;
 
 import java.io.IOException;
-import java.io.Writer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
