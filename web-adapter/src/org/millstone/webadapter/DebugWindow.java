@@ -73,35 +73,36 @@ import org.millstone.base.ui.*;
  */
 public class DebugWindow extends Window {
 
-	TabSheet tabs = new TabSheet();
-	Application application;
-	WebAdapterServlet servlet;
-	HttpSession session;
-	Select themeSelector;
-	HashMap rawUIDL = new HashMap();
-	/**
-	 * Constructor for DebugWindow.
-	 * @param caption
-	 * @param application
-	 * @param uri
-	 * @param layout
+	protected static String WINDOW_NAME = "debug";
+
+	private Application debuggedApplication;
+	private HashMap rawUIDL = new HashMap();
+	private WebAdapterServlet servlet;
+	private HttpSession session;
+
+	private TabSheet tabs = new TabSheet();
+	private Select themeSelector;
+	private Label applicationInfo = new Label("", Label.CONTENT_XHTML);
+
+	/**Create new debug window for an application.
+	 * @param debuggedApplication Application to be debugged.
+	 * @param session Session to be debugged.
+	 * @param servlet Servlet to be debugged.
 	 */
 	protected DebugWindow(
-		Application application,
+		Application debuggedApplication,
 		HttpSession session,
 		WebAdapterServlet servlet) {
+
 		super("Debug window");
-		setName("debug");
-		this.application = application;
-		this.servlet = servlet;
-		this.session = session;
-		application.addWindow(this);
+		setName(WINDOW_NAME);
+		setServlet(servlet);
+		setSession(session);
 
 		// Create control buttons
 		OrderedLayout controls =
 			new OrderedLayout(OrderedLayout.ORIENTATION_HORIZONTAL);
-		Label title =
-			new Label("<b>Class:</b> " + application.getClass().getName());
+		Label title = new Label("<h1>Debug</h1>", Label.CONTENT_UIDL);
 		title.setContentMode(Label.CONTENT_XHTML);
 		controls.addComponent(
 			new Button("Restart Application", this, "restartApplication"));
@@ -112,10 +113,16 @@ public class DebugWindow extends Window {
 		for (Iterator i = themes.iterator(); i.hasNext();) {
 			names.add(((Theme) i.next()).getName());
 		}
+
+		// Create theme selector
 		themeSelector = new Select("Application Theme", names);
-		themeSelector.setPropertyDataSource(
-			new MethodProperty(application, "theme"));
 		themeSelector.setWriteThrough(false);
+
+		Label terminal =
+			new Label(
+				"<h2>Terminal Information</h2> "
+					+ WebBrowserProbe.getTerminalType(session));
+		terminal.setContentMode(Label.CONTENT_XHTML);
 
 		// Create disable tab tab
 		tabs.addTab(
@@ -125,11 +132,17 @@ public class DebugWindow extends Window {
 
 		// Add all components
 		addComponent(title);
+		addComponent(applicationInfo);
+		addComponent(terminal);
 		addComponent(controls);
 		addComponent(themeSelector);
 		addComponent(new Button("Change theme", this, "commitTheme"));
 		addComponent(tabs);
 		addComponent(new Button("Save UIDL", this, "saveUIDL"));
+
+		// Set the debugged application
+		setDebuggedApplication(debuggedApplication);
+
 	}
 
 	public void saveUIDL() {
@@ -174,10 +187,11 @@ public class DebugWindow extends Window {
 	}
 
 	public void restartApplication() {
-		application.close();
+		if (debuggedApplication != null)
+			debuggedApplication.close();
 	}
 
-	public void setWindowUIDL(Window window, String uidl) {
+	protected void setWindowUIDL(Window window, String uidl) {
 		String caption = "UIDL:" + window.getName();
 		synchronized (tabs) {
 			for (Iterator i = tabs.getComponentIterator(); i.hasNext();) {
@@ -200,7 +214,7 @@ public class DebugWindow extends Window {
 		}
 	}
 
-	public String getHTMLFormattedUIDL(String caption, String uidl) {
+	protected String getHTMLFormattedUIDL(String caption, String uidl) {
 		StringBuffer sb = new StringBuffer();
 
 		// Print formatted UIDL with errors embedded
@@ -329,6 +343,53 @@ public class DebugWindow extends Window {
 			}
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * Sets the application.
+	 * @param application The application to set
+	 */
+	protected void setDebuggedApplication(Application application) {
+		this.debuggedApplication = application;
+		if (application != null) {
+			applicationInfo.setValue(
+				"<h2>Application Class</h2> "
+					+ application.getClass().getName());
+			themeSelector.setPropertyDataSource(
+				new MethodProperty(application, "theme"));
+		}
+	}
+
+	/**
+	 * Returns the servlet.
+	 * @return WebAdapterServlet
+	 */
+	protected WebAdapterServlet getServlet() {
+		return servlet;
+	}
+
+	/**
+	 * Returns the session.
+	 * @return HttpSession
+	 */
+	protected HttpSession getSession() {
+		return session;
+	}
+
+	/**
+	 * Sets the servlet.
+	 * @param servlet The servlet to set
+	 */
+	protected void setServlet(WebAdapterServlet servlet) {
+		this.servlet = servlet;
+	}
+
+	/**
+	 * Sets the session.
+	 * @param session The session to set
+	 */
+	protected void setSession(HttpSession session) {
+		this.session = session;
 	}
 
 }

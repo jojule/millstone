@@ -176,7 +176,8 @@ public class WebAdapterServlet
 		}
 
 		// Get the debug window parameter
-		String debug = applicationProperties.getProperty("debug", "false");
+		String debug =
+			applicationProperties.getProperty(DebugWindow.WINDOW_NAME, "false");
 		// Enable application specific debug
 		this.debugMode = debug.equals("true");
 
@@ -431,11 +432,11 @@ public class WebAdapterServlet
 
 					// Assure that the correspoding debug window will be repainted property
 					// by clearing it before the actual paint.
-					Window debugWindow = application.getDebugWindow();
+					DebugWindow debugWindow =
+						(DebugWindow) application.getWindow(
+							DebugWindow.WINDOW_NAME);
 					if (debugWindow != null && debugWindow != window) {
-						((DebugWindow) debugWindow).setWindowUIDL(
-							window,
-							"Painting...");
+						debugWindow.setWindowUIDL(window, "Painting...");
 					}
 
 					// Paint window		
@@ -447,7 +448,7 @@ public class WebAdapterServlet
 
 					// Debug
 					if (debugWindow != null && debugWindow != window) {
-						((DebugWindow) debugWindow).setWindowUIDL(
+						debugWindow.setWindowUIDL(
 							window,
 							paintTarget.getUIDL());
 					}
@@ -913,14 +914,15 @@ public class WebAdapterServlet
 		}
 
 		// Create and open new debug window for application if requested
-		if (this.debugMode && application.getDebugWindow() == null)
+		if (this.debugMode
+			&& application.getWindow(DebugWindow.WINDOW_NAME) == null)
 			try {
-				Window debugWindow =
+				DebugWindow debugWindow =
 					new DebugWindow(
 						application,
 						request.getSession(false),
 						this);
-				application.setDebugWindow(debugWindow);
+				application.addWindow(debugWindow);
 			} catch (Exception e) {
 				throw new ServletException(
 					"Failed to create debug window for application",
@@ -1103,7 +1105,7 @@ public class WebAdapterServlet
 							w.println(
 								"<script>\n"
 									+ ThemeFunctionLibrary
-										.getWindowRefreshScript(
+										.getWindowRefreshScript(application,
 										win)
 									+ "</script>");
 

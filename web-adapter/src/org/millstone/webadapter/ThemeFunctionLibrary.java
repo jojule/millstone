@@ -250,12 +250,15 @@ public class ThemeFunctionLibrary {
 		}
 
 		// Set window name
-		script.append("window.name = \"" + window.getName() + "\";\n");
+		script.append(
+			"window.name = \""
+				+ getWindowTargetName(app, window)
+				+ "\";\n");
 
 		// Generate window updatescript
 		for (Iterator i = update.iterator(); i.hasNext();) {
 			Window w = (Window) i.next();
-			script.append(getWindowRefreshScript(w));
+			script.append(getWindowRefreshScript(app,w));
 
 			wa.removeDirtyWindow(app, w);
 
@@ -269,6 +272,40 @@ public class ThemeFunctionLibrary {
 			script.append("window.close();\n");
 
 		return script.toString();
+	}
+
+	/** Returns an unique target name for a given window name.
+	 *  @param windowName Name of the window.
+	 *  @return An unique ID for window target
+	 *  @throws IllegalStateException If application for window is null.
+	 */
+	static public String getWindowTargetName(
+		Application application,
+		Window window) {
+		try {			
+			return "" + application.hashCode() + "_" + window.getName();
+		} catch (NullPointerException e) {
+			throw new IllegalStateException();
+		}
+	}
+
+	/** Returns an unique target name for current window.
+	 *  @return An unique ID for window target
+	 */
+	static public String getWindowTargetName() {
+		return getWindowTargetName(application(), window());
+	}
+
+	/** Returns an unique target name for current window.
+	 *  @return An unique ID for window target
+	 *  @throws IllegalStateException If application for window is null.
+	 */
+	static public String getWindowTargetName(String name) {
+		Window w = application().getWindow(name);
+		if (w != null)
+			return getWindowTargetName(application(), w);
+		else
+			return name;
 	}
 
 	/* Static mapping for 0 to be sunday. */
@@ -350,20 +387,23 @@ public class ThemeFunctionLibrary {
 	}
 
 	/** Generate JavaScript for updating given window */
-	static protected String getWindowRefreshScript(Window window) {
+	static protected String getWindowRefreshScript(
+		Application application,
+		Window window) {
+
+		if (application == null)
+			return "";
 
 		if (window == null)
 			return "";
 
-		String name = window.getName();
-
-		if (name == null)
+		if (window == null)
 			return "";
 
 		// If window is closed or hidden
 		if (window.getApplication() == null || !window.isVisible())
 			return "win = window.open(\"\",\""
-				+ name
+				+ getWindowTargetName(application, window)
 				+ "\");\n  "
 				+ "if (win != null) { win.close(); }\n";
 
@@ -397,7 +437,7 @@ public class ThemeFunctionLibrary {
 		}
 
 		return "win = window.open(\"\",\""
-			+ name
+			+ getWindowTargetName(application,window)
 			+ "\",\""
 			+ features
 			+ "\");\n"
