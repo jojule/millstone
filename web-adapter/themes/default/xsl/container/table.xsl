@@ -89,18 +89,16 @@
     </xsl:call-template>
 
     <!-- Cells -->
-    <xsl:for-each select="td/*">
+    <xsl:for-each select="*[local-name()!='al']">
       <TD CLASS="{$class}">
 
         <!-- Cell alignment -->
         <xsl:variable name="thispos" select="position()" />
-        <xsl:for-each select="../../../../cols/ch">
-          <xsl:if test="position() = $thispos">
+        <xsl:for-each select="../../../cols/ch[$thispos]">
             <xsl:choose>
               <xsl:when test="@align = 'c'"><xsl:attribute name="ALIGN">CENTER</xsl:attribute></xsl:when>
               <xsl:when test="@align = 'e'"><xsl:attribute name="ALIGN">RIGHT</xsl:attribute></xsl:when>
             </xsl:choose>
-          </xsl:if>
         </xsl:for-each>
         
         <!-- Component caption, icon, errors, descriptions -->

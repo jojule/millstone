@@ -927,7 +927,6 @@ public class Table extends Select implements Action.Container {
 
 			// cells
 			for (int j = 0; j < cols; j++) {
-				target.startTag("td");
 				if (iscomponent[j]) {
 					Component c = (Component) cells[CELL_FIRSTCOL + j][i];
 					if (c != null)
@@ -936,7 +935,6 @@ public class Table extends Select implements Action.Container {
 					target.addSection(
 						"label",
 						(String) cells[CELL_FIRSTCOL + j][i]);
-				target.endTag("td");
 			}
 
 			target.endTag("tr");
