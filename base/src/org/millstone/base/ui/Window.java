@@ -588,9 +588,15 @@ public class Window extends Panel implements URIHandler, ParameterHandler {
 
 	}
 
-	/**
-	 * Method setFocusedComponent.
-	 * @param abstractField
+	/** Get currently focused component in this window.
+	 * @return Focused component or null if none is focused.
+	 */
+	public Component.Focusable getFocusedComponent() {
+		return this.focusedComponent;
+	}
+	/** Set currently focused component in this window.
+	 * 
+	 * @param  focusable Focused component or null if none is focused.
 	 */
 	public void setFocusedComponent(Component.Focusable focusable) {
 		this.focusedComponent = focusable;
