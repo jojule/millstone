@@ -210,6 +210,8 @@
       <xsl:attribute name="ONCLICK">javascript:treeSelClick('<xsl:value-of select="$selectedid"/>','<xsl:value-of select="@key"/>','<xsl:value-of select="$immediate"/>','<xsl:value-of select="$selectmode"/>')</xsl:attribute>
     </xsl:if>
 
+    <NOBR>
+
 	<!-- Menu indent -->
     <xsl:choose>
       <!-- Leaf nodes -->
@@ -244,7 +246,6 @@
     </xsl:apply-templates>   
 
     <!-- Icon and caption -->
-    <NOBR>
       <xsl:choose>      
         <xsl:when test="not($dhtml)">
           <INPUT TYPE="submit" name="set:{$selectedid}={@key}" value="{@caption}" />
