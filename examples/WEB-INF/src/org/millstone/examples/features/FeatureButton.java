@@ -83,8 +83,13 @@ public class FeatureButton extends Feature {
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
 	protected String getDescriptionXHTML() {
-		return "In Millstone, buttons may function either as a pushbuttons or switches. (checkboxes)<br/><br/>"
-			+ "On the demo tab you can try out how the different properties affect "
+		return "In Millstone, boolean input values are represented by buttons. "
+			+ "Buttons may function either as a push buttons or switches. (checkboxes)<br/><br/>"			
+			+ "Button can be directly connected to any function of an object, which "
+			+ "is an easy way to trigger events: <code> new Button(\"Play\", myPiano \"playIt\")</code>. "
+			+ "Or in checkbox-mode they can be bound to a boolean proterties and create "
+			+ " simple selectors.<br /><br /> "
+			+ "See the demo and try out how the different properties affect "
 			+ "the presentation of the component.";
 	}
 

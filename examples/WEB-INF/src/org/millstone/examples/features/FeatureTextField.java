@@ -90,8 +90,9 @@ public class FeatureTextField extends Feature {
 			+ "underlying data source, both directly or in a buffered (asynchronous) "
 			+ "mode. In buffered mode its background color will change to indicate "
 			+ "that the value has changed but is not committed.</p>"
-			+ "<p>Furthermore a validator may be bound to the component to "
-			+ "check and validate the given input.</p>";
+			+ "<p>Furthermore a validators may be bound to the component to "
+			+ "check and validate the given input before it is actually commited."
+			+ "</p>";
 	}
 
 	protected String getImage() {

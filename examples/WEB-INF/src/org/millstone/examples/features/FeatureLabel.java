@@ -88,9 +88,15 @@ public class FeatureLabel extends Feature {
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
 	protected String getDescriptionXHTML() {
-		return "Millstone Labels are used not only for captions and plain text but also for embedding "
-			+ "more complicated content such as for instance XHTML."
-			+ "<br/>"
+		return "Labels components are for captions and plain text. "
+			+ "By default, it is a light-weight component for presenting "
+			+ "text content in application, but it can be also used to present "
+			+ "formatted information and even XML."
+			+ "<br /><br />"
+			+ "Label can also be directly associated with data property to display "
+			+ "information from different data sources automatically. This makes it "
+			+ "trivial to present the current user in the corner of applications main window. "
+			+ "<br /><br />"
 			+ "On the demo tab you can try out how the different properties affect "
 			+ "the presentation of the component.";
 	}

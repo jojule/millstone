@@ -92,10 +92,9 @@ public class FeatureLink extends Feature {
 	protected String getDescriptionXHTML() {
 		return "The link feature allows for making refences to both internal and external resources. "
 			+ "The link can open the new resource in a new window, allowing for control of the newly "
-			+ "opened windows attributes, such as size and border.<br/>"
-			+ "<br/>"
-			+ "On the demo tab you can try out how the different properties affect "
-			+ "the presentation of the component.";
+			+ "opened windows attributes, such as size and border. "
+			+ "<br /><br />"
+			+ " For example you can create an application pop-up or create link to external resources.";
 
 	}
 

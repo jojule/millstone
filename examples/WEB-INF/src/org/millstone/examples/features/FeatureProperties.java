@@ -50,9 +50,9 @@ public class FeatureProperties extends Feature {
 
 	protected String getDescriptionXHTML() {
 		return "<p>Millstone data model is one of the core concepts "
-			+ "in the library and Property-interface is the base of the "
+			+ "in the library and Property-interface is the base of that "
 			+ "model. Property provides standardized API for a singe data object "
-			+ "that can be getted and setted. Property is typed, but can optionally "
+			+ "that can be getted and setted. A property is always typed, but can optionally "
 			+ "support data type conversions. Optionally properties can provide "
 			+ "value change events for following the state changes.</p>"
 			+ "<p>The most important function of the Property as well as other "

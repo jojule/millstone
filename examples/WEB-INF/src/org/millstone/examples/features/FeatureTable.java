@@ -200,16 +200,16 @@ public class FeatureTable extends Feature implements Action.Handler {
 
 	protected String getDescriptionXHTML() {
 
-		return "The Table feature caters for displaying large volumes of tabular data, "
-			+ "in multiple pages where needed.<br/><br/> "
+		return "The Table component is designed for displaying large volumes of tabular data, "
+			+ "in multiple pages whenever needed.<br/><br/> "
 			+ "Selection of the displayed data is supported both in selecting exclusively one row "
 			+ "or multiple rows at the same time. For each row, there may be a set of actions associated, "
 			+ "depending on the skin implementation these actions may be displayed either as a drop-down "
 			+ "menu for each row or a set of command buttons. <br/><br/>"
-			+ "As with all Millstone data-components , so also the Table may be bound to an underlying "
-			+ "datasource, such as for instance a database table.<br/><br/>"
-			+ "On the demo tab you can try out how the different properties "
-			+ "affect the presentation of the component.";
+			+ "Table may be connected to any datasource implementing the <code>Container</code> interface."
+			+ "This way data found in external datasources can be directly presented in the table component."
+			+ "<br/><br/>"
+			+ "Table implements a number of features and you can test most of them in the table demo tab.";
 	}
 
 	protected String getImage() {

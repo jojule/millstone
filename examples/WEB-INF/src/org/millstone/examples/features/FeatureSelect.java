@@ -88,11 +88,15 @@ public class FeatureSelect extends Feature {
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
 	protected String getDescriptionXHTML() {
-		return "The select feature embodies  two different modes of item selection.  "
-			+ "Firstly it presents the single selection mode which is usually represented as "
+		return "The select component combines two different modes of item selection.  "
+			+ "Firstly it presents the single selection mode, which is usually represented as "
 			+ "either a drop-down menu or a radio-group of switches, secondly it "
 			+ "allows for multiple item selection, this is usually represented as either a "
-			+ "listbox of selectable items or as a group of checkboxes.<br/><br/>"
+			+ "listbox of selectable items or as a group of checkboxes."
+			+ "<br/><br/>"
+			+ "Data source can be associated both with selected item and the list of selections. "+
+			  "This way you can easily present a selection based on items specified elsewhere in application. "
+			+ "<br/><br/>"
 			+ "On the demo tab you can try out how the different properties affect the"
 			+ " presentation of the component.";
 	}
