@@ -45,16 +45,17 @@ public class FeatureItems extends Feature {
 	}
 
 	protected String getDescriptionXHTML() {
-		return "<p>Item is an object that contains a set of named properties."
-			+ "Each of the properties is identified by item property id and a "
-			+ "reference to the property can be queried from the Item.</p>"+
-			"<p>Item defines inner-interfaces for maintaining the item "+
-			"property set and listening the item property set changes.</p>" + 
-			"<p>Items generally represent objects in the object oriented "+
-			"model, but with the exception that they are configurable and "
-			+"provide event mechanism. The simplest way of utilising Items "+
-			"is to use existing Item implementations, that provide property "+
-			"set functionality, automatic Bean to </p>";
+		return "<p>Item is an object, which contains a set of named "
+			+ "properties. Each of the properties is identified by item property "
+			+ "id and a reference to the property can be queried from the Item. "
+			+ "Item defines inner-interfaces for maintaining the item property "
+			+ "set and listening the item property set changes.</p>"
+			+ "<p>Items generally represent objects in the object-oriented "
+			+ "model, but with the exception that they are configurable "
+			+ "and provide event mechanism. The simplest way of utilizing "
+			+ "Item interface is to use existing Item implementations. "
+			+ "Provided utility classes include configurable property set,"
+			+ " bean to item adapter and Form UI component.</p>";
 	}
 
 	protected String getImage() {
