@@ -493,7 +493,7 @@ import org.millstone.base.terminal.PaintTarget;
 			if (values[i] == value
 				|| (value != null && value.equals(values[i])))
 				found = true;
-		if (!found)
+		if (value != null && !found)
 			throw new IllegalArgumentException(
 				"Current value '"
 					+ value
