@@ -18,10 +18,12 @@
 	    <xsl:apply-templates mode="datefield-dropdown" select="integer[@name='day']"/>
       </SPAN>
       <SPAN CLASS="datefield-time">
+	   <NOBR>
         <xsl:apply-templates mode="datefield" select="integer[@name='hour']"/>
         <xsl:apply-templates mode="datefield" select="integer[@name='min']"/>
         <xsl:apply-templates mode="datefield" select="integer[@name='sec']"/>
         <xsl:apply-templates mode="datefield" select="integer[@name='msec']"/>
+	   </NOBR>
       </SPAN>
     </xsl:otherwise>
   </xsl:choose>
@@ -37,10 +39,12 @@
 	  <xsl:apply-templates mode="datefield" select="integer[@name='day']"/>
 	</SPAN>
 	<SPAN CLASS="datefield-time">
+     <NOBR>
 	  <xsl:apply-templates mode="datefield" select="integer[@name='hour']"/>
 	  <xsl:apply-templates mode="datefield" select="integer[@name='min']"/>
 	  <xsl:apply-templates mode="datefield" select="integer[@name='sec']"/>
 	  <xsl:apply-templates mode="datefield" select="integer[@name='msec']"/>
+	 </NOBR>
 	</SPAN>
 </xsl:template>
 
@@ -87,10 +91,12 @@
       <!-- Time -->
       <TD CLASS="datefield-time">
         <SPAN CLASS="datefield-time">
+	     <NOBR>        
           <xsl:apply-templates mode="datefield" select="integer[@name='hour']"/>
           <xsl:apply-templates mode="datefield" select="integer[@name='min']"/>
           <xsl:apply-templates mode="datefield" select="integer[@name='sec']"/>
           <xsl:apply-templates mode="datefield" select="integer[@name='msec']"/>
+	     </NOBR>
         </SPAN>
       </TD>
     </TR>
@@ -113,7 +119,7 @@
   <!-- Format value -->
   <xsl:variable name="value">
     <xsl:choose>
-      <xsl:when test="@value &gt; 0"><xsl:value-of select="format-number(@value,'0000')"/></xsl:when>
+      <xsl:when test="@value &gt;= 0"><xsl:value-of select="format-number(@value,'0000')"/></xsl:when>
       <xsl:otherwise></xsl:otherwise>
     </xsl:choose>
   </xsl:variable>
@@ -293,7 +299,7 @@
        <!-- Format value -->
        <xsl:variable name="value">
          <xsl:choose>
-           <xsl:when test="@value &gt; 0"><xsl:value-of select="format-number(@value,'00')"/></xsl:when>
+           <xsl:when test="@value &gt;= 0"><xsl:value-of select="format-number(@value,'00')"/></xsl:when>
            <xsl:otherwise></xsl:otherwise>
          </xsl:choose>
        </xsl:variable>
@@ -320,7 +326,7 @@
        <!-- Format value -->
        <xsl:variable name="value">
          <xsl:choose>
-           <xsl:when test="@value &gt; 0"><xsl:value-of select="format-number(@value,'00')"/></xsl:when>
+           <xsl:when test="@value &gt;= 0"><xsl:value-of select="format-number(@value,'00')"/></xsl:when>
            <xsl:otherwise></xsl:otherwise>
          </xsl:choose>
        </xsl:variable>
@@ -347,7 +353,7 @@
        <!-- Format value -->
        <xsl:variable name="value">
          <xsl:choose>
-           <xsl:when test="@value &gt; 0"><xsl:value-of select="format-number(@value,'00')"/></xsl:when>
+           <xsl:when test="@value &gt;= 0"><xsl:value-of select="format-number(@value,'00')"/></xsl:when>
            <xsl:otherwise></xsl:otherwise>
          </xsl:choose>
        </xsl:variable>
@@ -375,7 +381,7 @@
        <!-- Format value -->
        <xsl:variable name="value">
          <xsl:choose>
-           <xsl:when test="@value &gt; 0"><xsl:value-of select="format-number(@value,'000')"/></xsl:when>
+           <xsl:when test="@value &gt;= 0"><xsl:value-of select="format-number(@value,'000')"/></xsl:when>
            <xsl:otherwise></xsl:otherwise>
          </xsl:choose>
        </xsl:variable>
