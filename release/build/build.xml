@@ -94,16 +94,10 @@
 
     	<!-- Create working directory -->
         <mkdir dir="${work-dir}" />
+        
+		<!-- Create manifest directory -->
+		<mkdir dir="${manifest-dir}" />
 	
-	<!-- Create versioned manifest files -->
-        <copy todir="${manifest-dir}">
-	    <filterset>
-    	       <filter token="VERSION" value="${version}"/>
-            </filterset>
-            <fileset dir="${original-manifests}">
-                <include name="*.mf"/>
-            </fileset>
-        </copy>
     </target>
     
 
@@ -144,16 +138,55 @@
 	-->
     </target>
     
+    
+    <!-- Target for generation manifest file
+  			parameters: name,title -->
+    <target name="generate-manifest">
+		<manifest file="${manifest-dir}/${name}">
+    		<attribute name="Built-By" value="${user.name}"/>
+    		<section name="common">
+      		<attribute name="Specification-Title" value="${title}"/>
+      		<attribute name="Specification-Version" value="${version}"/>
+      		<attribute name="Specification-Vendor" value="Millstone.org"/>
+      		<attribute name="Implementation-Title" value="common"/>
+      		<attribute name="Implementation-Version" value="${version} ${TODAY}"/> 
+      		<attribute name="Implementation-Vendor" value="Millstone.org"/>
+    		</section>
+		</manifest>
+    </target>
+
+    
+    
     <!-- Base - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
     <target name="base" depends="init-output-dir">
+		<antcall target="generate-manifest">
+			<param name="name" value="millstone-base-src.mf"/>
+			<param name="title" value="Millstone Base"/>
+	  	</antcall>
+	  	<antcall target="generate-manifest">
+			<param name="name" value="millstone-base-bin.mf"/>
+			<param name="title" value="Millstone Base"/>
+	  	</antcall>
         <ant antfile="release/build/build-base.xml" inheritAll="true" />
     </target>
     
     <!-- Web adapter- - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
     <target name="webadapter" depends="base">
-        <ant antfile="release/build/build-webadapter.xml" inheritAll="true" />
+		<antcall target="generate-manifest">
+			<param name="name" value="millstone-webadapter-bin.mf"/>
+			<param name="title" value="Millstone Web Adapter"/>
+	  	</antcall>
+	  	<antcall target="generate-manifest">
+			<param name="name" value="millstone-webadapter-src.mf"/>
+			<param name="title" value="Millstone Web Adapter"/>
+	  	</antcall>
+	  	<antcall target="generate-manifest">
+			<param name="name" value="millstone-web-themes.mf"/>
+			<param name="title" value="Millstone Web Adapter"/>
+	  	</antcall>
+       <ant antfile="release/build/build-webadapter.xml" inheritAll="true" />
     </target>
 
 
@@ -166,7 +199,11 @@
     <!-- Examples - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
     <target name="examples" depends="init-output-dir,base,webadapter">
-        <ant antfile="release/build/build-examples.xml" inheritAll="true" />
+  	  	<antcall target="generate-manifest">
+			<param name="name" value="millstone-examples.mf"/>
+			<param name="title" value="Millstone Examples"/>
+	  	</antcall>
+       <ant antfile="release/build/build-examples.xml" inheritAll="true" />
     </target>
 
 
