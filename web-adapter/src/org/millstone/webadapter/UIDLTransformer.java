@@ -123,11 +123,8 @@ public class UIDLTransformer {
 		this.webAdapterServlet = webAdapterServlet;
 
 		// Instantiate a XSL TransformerFactory.
-		System.setProperty(
-			"org.xml.sax.driver",
-			"org.apache.crimson.parser.XMLReaderImpl");
 		javax.xml.transform.TransformerFactory xsltFactory =
-			net.sf.saxon.TransformerFactoryImpl.newInstance();
+		javax.xml.transform.TransformerFactory.newInstance();
 
 		// Register error handler
 		errorHandler = new TransformerErrorHandler();
