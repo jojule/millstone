@@ -36,7 +36,6 @@
 
    ********************************************************************** */
 
-
 package org.millstone.base.data.util;
 
 import java.lang.reflect.InvocationTargetException;
@@ -180,7 +179,7 @@ public class MethodProperty implements Property {
 		}
 
 		setArguments(new Object[] {
-		},new Object[] { null },0);
+		}, new Object[] { null }, 0);
 		this.readOnly = (setMethod == null);
 		this.instance = instance;
 	}
@@ -276,11 +275,11 @@ public class MethodProperty implements Property {
 
 		// Find set and get -methods    
 		Method[] m = instance.getClass().getMethods();
-		
+
 		// Find get method
 		boolean found = false;
 		for (int i = 0; i < m.length; i++) {
-			
+
 			// Test the name of the get Method
 			if (!m[i].getName().equals(getMethodName)) {
 
@@ -356,13 +355,12 @@ public class MethodProperty implements Property {
 
 						// parameter type does not match, try next method
 						break;
-					} else if (j == setArgumentIndex && 
-						!c[j].equals(type)) {
-							
+					} else if (j == setArgumentIndex && !c[j].equals(type)) {
+
 						// Property type is not the same as setArg type
 						break;
 					}
-					j++;	
+					j++;
 				}
 				if (j == c.length) {
 
@@ -382,8 +380,8 @@ public class MethodProperty implements Property {
 				throw new MethodProperty.MethodException(
 					"Could not identify " + setMethodName + "-method");
 			}
-		} 
-		
+		}
+
 		// Get the return type from get method
 		if (type.isPrimitive()) {
 			if (type.equals(Boolean.TYPE))
@@ -536,10 +534,10 @@ public class MethodProperty implements Property {
 		Object[] setArgs,
 		int setArgumentIndex) {
 		this.getArgs = new Object[getArgs.length];
-		for (int i=0; i<getArgs.length; i++)
+		for (int i = 0; i < getArgs.length; i++)
 			this.getArgs[i] = getArgs[i];
 		this.setArgs = new Object[setArgs.length];
-		for (int i=0; i<setArgs.length; i++)
+		for (int i = 0; i < setArgs.length; i++)
 			this.setArgs[i] = setArgs[i];
 		this.setArgumentIndex = setArgumentIndex;
 	}
@@ -568,27 +566,31 @@ public class MethodProperty implements Property {
 			invokeSetMethod(newValue);
 
 		// Otherwise try to convert the value trough string constructor
-		else
+		else {
+
+			Object value;
 			try {
 
 				// Get the string constructor
 				Constructor constr =
 					getType().getConstructor(new Class[] { String.class });
 
-				// Create new object from the string
-				invokeSetMethod(
-					constr.newInstance(new Object[] { newValue.toString()}));
+				value = constr.newInstance(new Object[] { newValue.toString()});
 
 			} catch (java.lang.Exception e) {
 				throw new Property.ConversionException(e);
 			}
+
+			// Create new object from the string
+			invokeSetMethod(value);
+		}
 	}
 
 	/** Internal method to actually call the setter method of the wrapped
 	 * property.
 	 */
 	private void invokeSetMethod(Object value) {
-	
+
 		try {
 			// Construct a temporary argument array only if needed
 			if (setArgs.length == 1)
@@ -624,13 +626,13 @@ public class MethodProperty implements Property {
 	 * problems calling or finding the specified getter or setter methods
 	 * of the property.
 	 * @author IT Mill Ltd.
-     * @version @VERSION@
-     * @since 3.0
+	 * @version @VERSION@
+	 * @since 3.0
 	 */
 	public class MethodException extends RuntimeException {
 
 		/** Cause of the method exception */
-		private Throwable cause;	
+		private Throwable cause;
 
 		/** Constructs a new <code>MethodException</code> with the
 		 * specified detail message.
@@ -658,7 +660,7 @@ public class MethodProperty implements Property {
 
 		/** Get the method property this exception originates from */
 		public MethodProperty getMethodProperty() {
-			return MethodProperty.this;	
+			return MethodProperty.this;
 		}
 	}
 
@@ -667,8 +669,8 @@ public class MethodProperty implements Property {
 	/** An <code>Event</code> object specifying the Property whose read-only
 	 * status has been changed.
 	 * @author IT Mill Ltd.
-     * @version @VERSION@
-     * @since 3.0
+	 * @version @VERSION@
+	 * @since 3.0
 	 */
 	private class ReadOnlyStatusChangeEvent
 		extends java.util.EventObject
