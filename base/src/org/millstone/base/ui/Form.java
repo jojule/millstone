@@ -119,6 +119,7 @@ import org.millstone.base.terminal.PaintTarget;
 	public Form(Layout formLayout) {
 		super();
 		layout = formLayout;
+		layout.setParent(this);
 	}
 
 	/* Documented in interface */
