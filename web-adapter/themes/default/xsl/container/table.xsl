@@ -62,7 +62,7 @@
 	<xsl:for-each select="cols/ch">
       <TD CLASS="{$class}-column-header">
         <xsl:if test="@icon"><xsl:value-of select="@icon"/></xsl:if>
-        <xsl:value-of select="@caption"/>
+        <U><xsl:value-of select="@caption"/></U>
       </TD>
     </xsl:for-each>
     
@@ -94,7 +94,7 @@
 
         <!-- Cell alignment -->
         <xsl:variable name="thispos" select="position()" />
-        <xsl:for-each select="../../../cols/ch">
+        <xsl:for-each select="../../../../cols/ch">
           <xsl:if test="position() = $thispos">
             <xsl:choose>
               <xsl:when test="@align = 'c'"><xsl:attribute name="ALIGN">CENTER</xsl:attribute></xsl:when>
@@ -109,9 +109,10 @@
         <xsl:value-of select="@caption"/>
         <xsl:for-each select="./error"><xsl:apply-templates select="." mode="popup"/></xsl:for-each>
         <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
-
-        <xsl:apply-templates select="." mode="core"/>
-      </TD>
+        <!-- Avoid empty cells (which are mistreated by browsers) 
+             by adding an 'nbsp' to end of cell. -->
+        <xsl:apply-templates select="." mode="core"
+      />&#160;</TD>      
     </xsl:for-each>
 
     <!-- Actions  -->
