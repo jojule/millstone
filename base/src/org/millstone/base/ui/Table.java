@@ -213,7 +213,7 @@ public class Table extends Select implements Action.Container,
     private boolean editable = false;
 
     /** Current sorting direction */
-    boolean sortAscendic = true;
+    boolean sortAscending = true;
 
     /** Currently table is sorted on this propertyId */
     Object sortContainerPropertyId = null;
@@ -898,8 +898,8 @@ public class Table extends Select implements Action.Container,
                     .intValue());
             doSort = true;
         }
-        if (variables.containsKey("sortascendic")) {
-            setSortAscendic(((Boolean) variables.get("sortascendic"))
+        if (variables.containsKey("sortascending")) {
+            setSortAscending(((Boolean) variables.get("sortascending"))
                     .booleanValue());
             doSort = true;
         }
@@ -1065,7 +1065,7 @@ public class Table extends Select implements Action.Container,
         // Sorting
         if (getContainerDataSource() instanceof Container.Sortable) {
             target.addVariable(this, "sortcolumn", this.getSortColumnIndex());
-            target.addVariable(this, "sortascendic", this.sortAscendic);
+            target.addVariable(this, "sortascending", this.sortAscending);
         }
 
         // Actions
@@ -1624,11 +1624,11 @@ public class Table extends Select implements Action.Container,
      *             if the container data source does not implement
      *             Container.Sortable
      */
-    public void sort(Object[] propertyId, boolean[] ascendic)
+    public void sort(Object[] propertyId, boolean[] ascending)
             throws UnsupportedOperationException {
         Container c = getContainerDataSource();
         if (c instanceof Container.Sortable) {
-            ((Container.Sortable) c).sort(propertyId, ascendic);
+            ((Container.Sortable) c).sort(propertyId, ascending);
         } else if (c != null) {
             throw new UnsupportedOperationException(
                     "Underlying Data does not allow sorting");
@@ -1646,7 +1646,7 @@ public class Table extends Select implements Action.Container,
         if (getSortContainerPropertyId() == null)
             return;
         sort(new Object[] { this.sortContainerPropertyId },
-                new boolean[] { this.sortAscendic });
+                new boolean[] { this.sortAscending });
     }
 
     /*
@@ -1663,10 +1663,18 @@ public class Table extends Select implements Action.Container,
         }
     }
 
+    /** Get the currently sorted column property ID. 
+     * 
+     * @return Container property id of the currently sorted column.
+     */
     public Object getSortContainerPropertyId() {
         return this.sortContainerPropertyId;
     }
 
+    /** Set the currently sorted column property id.
+     * 
+     * @param propertyId Container property id of the currently sorted column.
+     */
     public void setSortContainerPropertyId(Object propertyId) {
         if ((this.sortContainerPropertyId != null && !this.sortContainerPropertyId
                 .equals(propertyId))
@@ -1676,6 +1684,10 @@ public class Table extends Select implements Action.Container,
         }
     }
 
+    /** Get index of the currently sorted visible column.
+     * 
+     * @return Index of the currently sorted visible column.
+     */
     private int getSortColumnIndex() {
         // Get column index
         Object[] cols = getVisibleColumns();
@@ -1689,20 +1701,32 @@ public class Table extends Select implements Action.Container,
         return -1;
     }
 
-    private void setSortColumnIndex(int i) {
+    /** Set index of the currently sorted visible column.
+     * 
+     * @param i Index of the currently sorted visible column.
+     */
+   private void setSortColumnIndex(int i) {
         Object[] c = getVisibleColumns();
         if (c != null && i >= 0 && i < c.length) {
             setSortContainerPropertyId(c[i]);
         }
     }
 
-    public boolean isSortAscendic() {
-        return this.sortAscendic;
+   /** Is the table currently sorted in ascending order.
+    * 
+    * @return <code>true</code> if ascending, <code>false</code> if descending
+    */
+    public boolean isSortAscending() {
+        return this.sortAscending;
     }
 
-    public void setSortAscendic(boolean ascendic) {
-        if (this.sortAscendic != ascendic) {
-            this.sortAscendic = ascendic;
+    /** Set the table in ascending order.
+     * 
+     * @param ascending <code>true</code> if ascending, <code>false</code> if descending
+     */
+     public void setSortAscending(boolean ascending) {
+        if (this.sortAscending != ascending) {
+            this.sortAscending = ascending;
             sort();
         }
     }
