@@ -239,11 +239,11 @@ public class XSLReader implements XMLReader, ContentHandler {
 	 * @see org.xml.sax.ContentHandler#setDocumentLocator(Locator)
 	 */
 	public void setDocumentLocator(Locator locator) {				
+        this.streamLocator = locator;
 		// create new locator combined streams/files
 		if (!startTagHandled) {
 			handler.setDocumentLocator(this.locator);
 		}
-		this.streamLocator = locator;
 	}
 
 	/**
