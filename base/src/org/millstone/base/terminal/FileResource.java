@@ -58,6 +58,9 @@ import org.millstone.base.ui.Window;
  */
 public class FileResource implements ApplicationResource {
 
+	/** Default buffer size for this stream resource */
+	private int bufferSize = 0;
+
 	/** File where the downloaded content is fetched from. */
 	private File sourceFile;
 
@@ -144,4 +147,17 @@ public class FileResource implements ApplicationResource {
 	public void setCacheTime(long cacheTime) {
 		this.cacheTime = cacheTime;
 	}	
+	
+	/* documented in superclass */
+	public int getBufferSize() {
+		return bufferSize;
+	}
+
+	/** Set the size of the download buffer used for this resource.
+	 * @param bufferSize The size of the buffer in bytes.
+	 */
+	public void setBufferSize(int bufferSize) {
+		this.bufferSize = bufferSize;
+	}
+
 }

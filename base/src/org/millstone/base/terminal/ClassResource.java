@@ -56,8 +56,19 @@ import sun.rmi.log.ReliableLog;
  */
 public class ClassResource implements ApplicationResource {
 
+	/** Default buffer size for this stream resource */
+	private int bufferSize = 0;
+
+	/** Default cache time for this stream resource */
+	private long cacheTime = DEFAULT_CACHETIME;	
+
+	/** Associated class used for indetifying the source of the resource */
 	private Class associatedClass;
+	
+	/** Name of the resource is relative to the associated class */
 	private String resourceName;
+	
+	/** Application used for serving the class */
 	private Application application;
 
 	/** Create new application resource instance. 
@@ -111,17 +122,43 @@ public class ClassResource implements ApplicationResource {
 	}
 
 	public DownloadStream getStream() {
-		return new DownloadStream(
+		DownloadStream ds = new DownloadStream(
 			associatedClass.getResourceAsStream(resourceName),
 			getMIMEType(),
 			getFilename());
+		ds.setBufferSize(getBufferSize());
+		ds.setCacheTime(cacheTime);
+		return ds;
 	}
 
-	/** Use default buffer size.
-	 * @return Always returns 0.
-	 */
+	/* documented in superclass */
 	public int getBufferSize() {
-		return 0;
+		return bufferSize;
 	}
 
+	/** Set the size of the download buffer used for this resource.
+	 * @param bufferSize The size of the buffer in bytes.
+	 */
+	public void setBufferSize(int bufferSize) {
+		this.bufferSize = bufferSize;
+	}
+
+	/* documented in superclass */
+	public long getCacheTime() {
+		return cacheTime;
+	}
+
+	/** Set lenght of cache expiracy time.
+	 * 
+	 * <p>This gives the adapter the possibility cache streams sent to the
+	 * client. The caching may be made in adapter or at the client if the 
+	 * client supports caching. Zero or negavive value disbales the 
+	 * caching of this stream.</p>
+	 * 
+	 * @param cacheTime The cache time in milliseconds.
+	 * 
+	 */
+	public void setCacheTime(long cacheTime) {
+		this.cacheTime = cacheTime;
+	}
 }
