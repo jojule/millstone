@@ -46,7 +46,6 @@ import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.ParserFactory;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.io.BufferedInputStream;
