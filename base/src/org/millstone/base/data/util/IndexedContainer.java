@@ -36,7 +36,6 @@
 
    ********************************************************************** */
 
-
 package org.millstone.base.data.util;
 
 import java.util.HashSet;
@@ -109,6 +108,19 @@ public class IndexedContainer
 
 	/** List of all container Item set change event listeners */
 	private LinkedList itemSetChangeListeners = null;
+
+	/* Container constructors *********************************************** */
+
+	public IndexedContainer() {
+	}
+
+	public IndexedContainer(Collection itemIds) {
+		if (items != null) {
+			for (Iterator i = itemIds.iterator(); i.hasNext();) {
+				this.addItem(i.next());
+			}
+		}
+	}
 
 	/* Container methods **************************************************** */
 
@@ -411,24 +423,26 @@ public class IndexedContainer
 		int index = 0;
 		if (previousItemId != null) {
 			index = 1 + indexOfId(previousItemId);
-			if (index <= 0 || index > size()) return null;
+			if (index <= 0 || index > size())
+				return null;
 		}
-		
-		return addItemAt(index,newItemId);
-			}
+
+		return addItemAt(index, newItemId);
+	}
 
 	/**
 	 * @see org.millstone.base.data.Container.Ordered#addItemAfter(Object)
 	 */
 	public Object addItemAfter(Object previousItemId) {
-		
+
 		// Get the index of the addition
 		int index = 0;
 		if (previousItemId != null) {
 			index = 1 + indexOfId(previousItemId);
-			if (index <= 0 || index > size()) return null;
+			if (index <= 0 || index > size())
+				return null;
 		}
-		
+
 		return addItemAt(index);
 	}
 
@@ -449,18 +463,18 @@ public class IndexedContainer
 	public int indexOfId(Object itemId) {
 		return itemIds.indexOf(itemId);
 	}
-	
+
 	/**
 	 * @see org.millstone.base.data.Container.Indexed#addItemAt(int, Object)
 	 */
 	public Item addItemAt(int index, Object newItemId) {
-		
+
 		// Make sure that the Item has not been created yet
 		if (items.containsKey(newItemId))
 			return null;
 
 		// Add the Item to container
-		itemIds.add(index,newItemId);
+		itemIds.add(index, newItemId);
 		items.put(newItemId, new Hashtable());
 
 		// Send the event
@@ -478,7 +492,7 @@ public class IndexedContainer
 		Object id = new Object();
 
 		// Add the Item into container
-		addItemAt(index,id);
+		addItemAt(index, id);
 
 		return id;
 	}
@@ -488,8 +502,8 @@ public class IndexedContainer
 	/** An <code>event</code> object specifying the list whose
 	 * Property set has changed.
 	 * @author IT Mill Ltd.
-     * @version @VERSION@
-     * @since 3.0
+	 * @version @VERSION@
+	 * @since 3.0
 	 */
 	private class PropertySetChangeEvent
 		extends EventObject
@@ -511,8 +525,8 @@ public class IndexedContainer
 	/** An <code>event</code> object specifying the list whose
 	 * Item set has changed.
 	 * @author IT Mill Ltd.
-     * @version @VERSION@
-     * @since 3.0
+	 * @version @VERSION@
+	 * @since 3.0
 	 */
 	private class ItemSetChangeEvent
 		extends EventObject
@@ -535,8 +549,8 @@ public class IndexedContainer
 	/** An <code>event</code> object specifying the Propery in a list
 	 * whose value has changed.
 	 * @author IT Mill Ltd.
-     * @version @VERSION@
-     * @since 3.0
+	 * @version @VERSION@
+	 * @since 3.0
 	 */
 	private class PropertyValueChangeEvent
 		extends EventObject
@@ -733,8 +747,8 @@ public class IndexedContainer
 	/* A class implementing the org.millstone.base.data.Item interface to be
 	 * contained in the list.
 	 * @author IT Mill Ltd.
-     * @version @VERSION@
-     * @since 3.0
+	 * @version @VERSION@
+	 * @since 3.0
 	 */
 	class IndexedContainerItem implements Item {
 
@@ -848,8 +862,8 @@ public class IndexedContainer
 	/* A class implementing the org.millstone.base.data.Property interface
 	 * to be contained in the Items contained in the list.
 	 * @author IT Mill Ltd.
-     * @version @VERSION@
-     * @since 3.0
+	 * @version @VERSION@
+	 * @since 3.0
 	 */
 	private class IndexedContainerProperty
 		implements Property, Property.ValueChangeNotifier {
@@ -1042,5 +1056,5 @@ public class IndexedContainer
 			return IndexedContainer.this;
 		}
 
-	}	
+	}
 }
