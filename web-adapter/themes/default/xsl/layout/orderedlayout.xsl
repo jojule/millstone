@@ -39,7 +39,7 @@
 
 <xsl:template match="orderedlayout[@style='form']" mode="core">
   <xsl:if test="./child::*">
-    <TABLE BORDER="0" WIDTH="{$maxtablewidth}">
+    <TABLE BORDER="0">
       <xsl:for-each select="*">
         <TR>
           <TD CLASS="form-caption">
@@ -61,7 +61,7 @@
 
 <xsl:template match="orderedlayout[(@orientation='flow') and (@style='form')]" mode="core">
   <xsl:for-each select="*">
-    <TABLE BORDER="0" WIDTH="{$maxtablewidth}">
+    <TABLE BORDER="0">
       <TR CLASS="form-caption">
         <TD>
 	      <xsl:if test="not(local-name()!='button' and @type='switch') and local-name()!='link' and @caption">
