@@ -6,6 +6,8 @@
     xmlns:browser="xalan://org.millstone.webadapter.WebBrowser"
     xmlns="http://www.w3.org/TR/WD-html-in-xml/DTD/xhtml1-strict.dtd">
 
+<xsl:output method="html" doctype-public="-//W3C//DTD HTML 4.0 Transitional//EN"/>
+
 <!-- Calculate some browser dependant variables for use in templates -->
 <xsl:variable name="dhtml" select="browser:supports(wa:browser(),browser:parseJavaScriptVersion('JavaScript 1.0'))"/> 
 

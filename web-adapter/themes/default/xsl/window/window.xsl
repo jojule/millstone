@@ -9,7 +9,7 @@
       <xsl:call-template name="window-head"/>
     </HEAD>
     <BODY>	         
-      <FORM NAME="millstone" METHOD="POST" ENCTYPE="multipart/form-data">
+      <FORM NAME="millstone" METHOD="POST" ACCEPT-CHARSET="UTF-8" ENCTYPE="multipart/form-data">
         <xsl:apply-templates/>
         <xsl:apply-templates mode="popup"/>
       </FORM>
@@ -19,6 +19,7 @@
 
 <xsl:template name="window-head">
 
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8" />    
     <TITLE><xsl:value-of select="@caption" /></TITLE>
 
     <LINK REL="STYLESHEET" TYPE="text/css" HREF="{wa:resource('css/default.css')}"/>
