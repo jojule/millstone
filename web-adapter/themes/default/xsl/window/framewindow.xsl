@@ -29,7 +29,7 @@
 </xsl:template>
 
 <xsl:template match="frame">
-    <FRAME SRC="{@src}" NAME="{@name}" />
+    <FRAME SRC="{@src}" NAME="{wa:getWindowTargetName(@name)}" />
 </xsl:template>
 
 </xsl:stylesheet>

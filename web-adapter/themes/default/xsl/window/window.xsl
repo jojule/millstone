@@ -34,7 +34,7 @@
 			<!-- Open new windows -->
 		    <xsl:for-each select="open">
 				openWindow('<xsl:value-of select="@src"
-		          />','<xsl:value-of select="@name"
+		          />','<xsl:value-of select="wa:getWindowTargetName(@name)"
 		          />',<xsl:choose><xsl:when test="@width"><xsl:value-of select="@width"/></xsl:when><xsl:otherwise>-1</xsl:otherwise></xsl:choose
 		          >,<xsl:choose><xsl:when test="@height"><xsl:value-of select="@height"/></xsl:when><xsl:otherwise>-1</xsl:otherwise></xsl:choose
 		          >,'<xsl:value-of select="@border" />');
