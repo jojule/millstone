@@ -458,6 +458,7 @@ public class WebBrowser implements Terminal {
 
 	public static final MarkupVersion[] MARKUP_VERSIONS =
 		new MarkupVersion[] {
+			MARKUP_UNKNOWN,
 			MARKUP_HTML_2_0,
 			MARKUP_HTML_3_2,
 			MARKUP_HTML_4_0,
