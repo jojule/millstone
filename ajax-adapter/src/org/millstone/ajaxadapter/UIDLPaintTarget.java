@@ -631,16 +631,9 @@ public class UIDLPaintTarget implements PaintTarget {
             throws PaintException {
         startTag(tag);
         String cacheId = cache.getCacheId(paintable);
-        boolean wasCached = cacheId != null;
-        if (!wasCached) {
             cacheId = cache.add(paintable);
-        }
         addAttribute("id", cacheId);
-        wasCached &= !cache.isDirty(paintable);
-        if (wasCached) {
-            addAttribute("cached", "true");
-        }
-        return wasCached;
+        return false;
     }
 
     /*

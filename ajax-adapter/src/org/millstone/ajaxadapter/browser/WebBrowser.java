@@ -39,10 +39,15 @@
 package org.millstone.ajaxadapter.browser;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringBufferInputStream;
+import java.io.Writer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.millstone.ajaxadapter.ApplicationManager;
 import org.millstone.base.terminal.Terminal;
 import org.millstone.base.ui.Window;
 
@@ -88,16 +93,39 @@ public abstract class WebBrowser implements Terminal {
 
     public static WebBrowser getBrowser(String userAgentHeader) {
 
-        if (userAgentHeader.matches(".*Safari.*")) 
+        if (userAgentHeader.matches(".*Safari.*"))
             return new Safari();
-        if (userAgentHeader.matches(".*Internet Explorer.*")) 
+        if (userAgentHeader.matches(".*Internet Explorer.*"))
             return new InternetExplorer();
-        if (userAgentHeader.matches(".*Firefox.*")) 
+        if (userAgentHeader.matches(".*Firefox.*"))
             return new Firefox();
-        
+
         return new UnsupportedBrowser(userAgentHeader);
     }
 
     public abstract void createAjaxClient(HttpServletRequest request,
-            HttpServletResponse response, Window window) throws IOException;
+            HttpServletResponse response, Window window, ApplicationManager manager) throws IOException;
+
+    public void sendThemeXsl(HttpServletRequest request,
+            HttpServletResponse response, Window window) throws IOException {
+
+
+        // TODO We need to create a some more sane theming system
+        InputStream is = getClass().getResourceAsStream("theme.xsl");
+        if (is == null) {
+            response.setContentType("text/plain");
+            is = new StringBufferInputStream(
+                    "Theme not found (resource theme.xsl not found for class "
+                            + getClass().getName() );
+        }
+
+        OutputStream os = response.getOutputStream();
+        byte[] buffer = new byte[1024];
+        int read = 0;
+        while ((read = is.read(buffer)) >= 0)
+            os.write(buffer, 0, read);
+        is.close();
+        os.close();
+    }
+
 }

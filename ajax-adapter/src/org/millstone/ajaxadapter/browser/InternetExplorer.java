@@ -45,6 +45,7 @@ import java.io.Writer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.millstone.ajaxadapter.ApplicationManager;
 import org.millstone.base.ui.Window;
 
 /** Internet Explorer specific terminal implementation of terminal interface.
@@ -56,7 +57,7 @@ import org.millstone.base.ui.Window;
 public class InternetExplorer extends WebBrowser {
 
     public void createAjaxClient(HttpServletRequest request,
-            HttpServletResponse response, Window window) throws IOException {
+            HttpServletResponse response, Window window, ApplicationManager manager) throws IOException {
 
         Writer w = response.getWriter();
 

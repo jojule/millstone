@@ -9,6 +9,7 @@ import java.io.Writer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.millstone.ajaxadapter.ApplicationManager;
 import org.millstone.base.ui.Window;
 
 /**
@@ -23,7 +24,7 @@ public class UnsupportedBrowser extends WebBrowser {
     }
 
     public void createAjaxClient(HttpServletRequest request,
-            HttpServletResponse response, Window window) throws IOException {
+            HttpServletResponse response, Window window, ApplicationManager manager) throws IOException {
 
         Writer w = response.getWriter();
         w

@@ -90,6 +90,8 @@ public class AjaxAdapterServlet extends HttpServlet {
      */
     private static String SESSION_ATTR_APPLICATION_CONTEXT = "org.millstone.ajaxadapter.AjaxApplicationContext";
 
+    private static String PATH_INFO_THEME_XSL = "/theme.xsl";
+
     private static String GET_PARAM_WINDOW = "window";
 
     private Class applicationClass;
@@ -191,8 +193,33 @@ public class AjaxAdapterServlet extends HttpServlet {
                         getApplicationUrl(request), request.getLocale(),
                         applicationProperties);
 
+            // Get window
+            String windowName = request.getParameter(GET_PARAM_WINDOW);
+            Window window = windowName != null && windowName.length() > 0 ? application
+                    .getWindow(windowName)
+                    : application.getMainWindow();
+
+            // Get browser
+            WebBrowser browser;
+            if (window.getTerminal() != null
+                    && window.getTerminal() instanceof WebBrowser)
+                browser = (WebBrowser) window.getTerminal();
+            else {
+                browser = WebBrowser.getBrowser(request
+                        .getHeader("User-Agent"));
+                window.setTerminal(browser);
+            }
+
+
+            // If theme request
+            if (PATH_INFO_THEME_XSL.equals(request.getPathInfo())) {
+                            // The the browser to handle the request
+                browser.sendThemeXsl(request, response, window);
+
+            }
+
             // If xmlHttpRequest
-            if (request.getParameter(GET_PARAM_XML_HTTP_REQUEST) != null) {
+            else if (request.getParameter(GET_PARAM_XML_HTTP_REQUEST) != null) {
                 context.getApplicationManager(application)
                         .handleXmlHttpRequest(request, response);
             }
@@ -200,25 +227,8 @@ public class AjaxAdapterServlet extends HttpServlet {
             // If ajax application request
             else {
 
-                // Get window
-                String windowName = request.getParameter(GET_PARAM_WINDOW);
-                Window window = windowName != null && windowName.length() > 0 ? application
-                        .getWindow(windowName)
-                        : application.getMainWindow();
-
-                // Get browser
-                WebBrowser browser;
-                if (window.getTerminal() != null
-                        && window.getTerminal() instanceof WebBrowser)
-                    browser = (WebBrowser) window.getTerminal();
-                else {
-                    browser = WebBrowser.getBrowser(request
-                            .getHeader("User-Agent"));
-                    window.setTerminal(browser);
-                }
-
-                // The the browser to handle the request
-                browser.createAjaxClient(request, response, window);
+                            // The the browser to handle the request
+                browser.createAjaxClient(request, response, window, context.getApplicationManager(application));
             }
 
         } catch (InstantiationException e) {

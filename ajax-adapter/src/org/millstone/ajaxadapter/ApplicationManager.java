@@ -44,6 +44,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -186,7 +187,12 @@ public class ApplicationManager {
                             getVariableMap(), getPaintListener(), out);
 
                     // Paint components
-                    Set paintables = getPaintListener().getDirtyComponents();
+                    Set paintables;
+                    if (request.getParameter(GET_PARAM_REPAINT_ALL) != null) {
+                        paintables = new LinkedHashSet();
+                        paintables.add(window);
+                    } else
+                        paintables = getPaintListener().getDirtyComponents();
                     if (paintables != null) {
                         for (Iterator i = (new ArrayList(paintables))
                                 .iterator(); i.hasNext();) {
@@ -290,5 +296,15 @@ public class ApplicationManager {
             context.removeApplication(application);
 
         response.sendRedirect(response.encodeRedirectURL(logoutUrl));
+    }
+
+    /**
+     * @param window
+     * @return
+     */
+    public String getPaintableId(Window window) {
+
+        // TODO Needs implementation
+        return "271987398329";
     }
 }

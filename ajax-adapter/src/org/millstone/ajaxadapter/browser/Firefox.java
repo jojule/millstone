@@ -39,11 +39,13 @@ Primary source for MillStone information and releases: www.millstone.org
 package org.millstone.ajaxadapter.browser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.millstone.ajaxadapter.ApplicationManager;
 import org.millstone.base.ui.Window;
 
 /** Mozilla specific terminal implementation of terminal interface.
@@ -55,12 +57,21 @@ import org.millstone.base.ui.Window;
 public class Firefox extends WebBrowser {
 
     public void createAjaxClient(HttpServletRequest request,
-            HttpServletResponse response, Window window) throws IOException {
+            HttpServletResponse response, Window window, ApplicationManager manager) throws IOException {
 
         Writer w = response.getWriter();
 
         // TODO Unimplemented
         w.write("<html><head><title>" + window.getCaption()
-                + "</title></head><body><h1>Firefox support is not yet done...</h1></body></html>");
+                + "</title></head><body><div id='"+manager.getPaintableId(window)+"'>Loading...</div><script>");
+        w.write("windowId = '"+manager.getPaintableId(window)+"';");
+        w.write("windowUrl = '"+window.getURL()+"';");
+        InputStream is = getClass().getResourceAsStream("firefox-ajax-client.js");
+        int read =0;
+        byte[] buffer = new byte[1024];
+        while ((read=is.read(buffer)) >= 0) {
+            w.write(new String(buffer,0,read));
+        }
+        w.write("</script></body></html>");
         w.close();
     }}
