@@ -221,11 +221,12 @@
   <xsl:param name="root"/>
 
 
-  <!-- Action lists -->
-  <xsl:apply-templates select="./al">
-    <xsl:with-param name="actionlistid"><xsl:value-of select="$actionlistid" /></xsl:with-param>
-  </xsl:apply-templates>   
-  
+  <!-- Action lists in javascript mode-->
+  <xsl:if test="$dhtml">
+    <xsl:apply-templates select="./al">
+      <xsl:with-param name="actionlistid"><xsl:value-of select="$actionlistid" /></xsl:with-param>
+    </xsl:apply-templates>   
+  </xsl:if>
   
   <!-- Selection -->
   <xsl:choose>
@@ -314,6 +315,13 @@
       </NOBR>
     </xsl:otherwise>
   </xsl:choose>
+
+  <!-- Action lists in non-javascript mode-->
+  <xsl:if test="not($dhtml)">
+    <xsl:apply-templates select="./al" mode="inline">
+      <xsl:with-param name="actionsvar" select="$root/actions" />
+    </xsl:apply-templates>   
+  </xsl:if>
 
 </xsl:template>
 

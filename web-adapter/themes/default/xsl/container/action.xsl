@@ -5,7 +5,7 @@
 <!-- Do not output text by default in popups mode -->
 <xsl:template match="text()" mode="popup"></xsl:template>
 
-<xsl:template match="actions" mode="popup">
+<xsl:template match="actions[$dhtml]" mode="popup">
   <xsl:variable name="actionlistid"><xsl:value-of select="generate-id(.)" /></xsl:variable>
   <xsl:variable name="actionvariableid"><xsl:value-of select="./string[@name='action']/@id"/></xsl:variable>
 
@@ -29,7 +29,7 @@
 </xsl:template>
 
 
-<xsl:template match="al">
+<xsl:template match="al[$dhtml]">
   <xsl:param name="actionlistid" />
 
   <xsl:variable name="itemid"><xsl:value-of select="../@key"/></xsl:variable>
@@ -42,6 +42,23 @@
   </xsl:if>
 </xsl:template>
 
+
+<!-- Non Javasctipt version -->
+
+<xsl:template match="al" mode="inline">
+  <xsl:param name="actionsvar" />
+
+  <xsl:variable name="actionvariableid" select="$actionsvar/string[@name='action']/@id"/>
+
+  <xsl:variable name="itemid" select="../@key"/>
+  <xsl:for-each select="./ak">  
+    <INPUT TYPE="submit" CLASS="action">
+      <xsl:attribute name="NAME">set:<xsl:value-of select="$actionvariableid"/>=<xsl:value-of select="$itemid"/>,<xsl:value-of select="text()"/></xsl:attribute>
+      <xsl:variable name="activekey" select="text()"/>
+      <xsl:attribute name="VALUE"><xsl:value-of select="$actionsvar/action[@key=$activekey]/@caption" /></xsl:attribute>     
+    </INPUT>
+  </xsl:for-each>
+</xsl:template>
 
 </xsl:stylesheet>
 

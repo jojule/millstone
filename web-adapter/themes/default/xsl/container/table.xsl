@@ -117,9 +117,18 @@
     <!-- Actions  -->
     <xsl:for-each select="al">
 	  <TD>
-        <xsl:apply-templates select=".">
-          <xsl:with-param name="actionlistid"><xsl:value-of select="$actionlistid" /></xsl:with-param>
-        </xsl:apply-templates>   
+	    <xsl:choose>
+	      <xsl:when test="$dhtml">
+            <xsl:apply-templates select=".">
+              <xsl:with-param name="actionlistid" select="$actionlistid" />
+            </xsl:apply-templates>   
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:apply-templates select="." mode="inline">
+              <xsl:with-param name="actionsvar" select="../../../actions" />
+            </xsl:apply-templates>   
+          </xsl:otherwise>
+        </xsl:choose>
       </TD>
 	</xsl:for-each>      
     
