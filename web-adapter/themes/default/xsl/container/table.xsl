@@ -41,6 +41,11 @@
       </INPUT>
     </xsl:for-each>
   </xsl:if>
+  
+  <!-- Sorting variables -->
+  <INPUT TYPE="HIDDEN" ID="{./integer[@name='sortcolumn']/@id}" NAME="{./integer[@name='sortcolumn']/@id}" VALUE="{./integer[@name='sortcolumn']/@value}" />
+  <INPUT TYPE="HIDDEN" ID="{./boolean[@name='sortascendic']/@id}" NAME="{./boolean[@name='sortascendic']/@id}" VALUE="{./boolean[@name='sortascendic']/@value}" />
+  
 </xsl:template>
 
 
@@ -62,7 +67,23 @@
 	<xsl:for-each select="cols/ch">
       <TD CLASS="{$class}-column-header">
         <xsl:if test="@icon"><xsl:value-of select="@icon"/></xsl:if>
-        <U><xsl:value-of select="@caption"/></U>
+         <xsl:variable name="thispos" select="position()-1" />
+         <A CLASS="{$class}-column-header">
+               <xsl:choose>
+                       <xsl:when test="../../integer[@name='sortcolumn']/@value=$thispos">
+                                       <xsl:attribute name="HREF">javascript:setVarById('<xsl:value-of select="../../boolean[@name='sortascendic']/@id"/>','<xsl:value-of select="not(../../boolean[@name='sortascendic']/@value='true')"/>',true);</xsl:attribute>
+                                       <xsl:value-of select="@caption" />
+                                       <IMG BORDER="0" CLASS="{$class}-column-header" valign="middle">
+                                       <xsl:if test="../../boolean[@name='sortascendic']/@value='true'"><xsl:attribute name="SRC"><xsl:value-of select="wa:resource('icon/arrows/down.gif')"/></xsl:attribute></xsl:if>        
+                                       <xsl:if test="../../boolean[@name='sortascendic']/@value!='true'"><xsl:attribute name="SRC"><xsl:value-of select="wa:resource('icon/arrows/up.gif')"/></xsl:attribute></xsl:if>
+                               </IMG>
+                               </xsl:when>
+                               <xsl:otherwise>
+                                       <xsl:attribute name="HREF">javascript:setVarById('<xsl:value-of select="../../integer[@name='sortcolumn']/@id"/>','<xsl:value-of select="$thispos"/>',true);</xsl:attribute>
+                                       <xsl:value-of select="@caption" />
+                               </xsl:otherwise>
+                       </xsl:choose>
+         </A>
       </TD>
     </xsl:for-each>
     
