@@ -38,10 +38,12 @@
 
 package org.millstone.base.ui;
 
+import java.text.Format;
 import java.util.Map;
+
+import org.millstone.base.data.Property;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
-import org.millstone.base.data.Property;
 
 /** <p>A text editor component that can be bound to any bindable Property.
  * The text editor supports both multiline and single line modes, default
@@ -60,6 +62,9 @@ import org.millstone.base.data.Property;
 public class TextField extends AbstractField {
 
 	/* Private members ************************************************* */
+
+	/** Value formatter used to format the string contents*/
+	private Format format;
 
 	/** Number of visible columns in the TextField. */
 	private int columns = 0;
@@ -158,12 +163,32 @@ public class TextField extends AbstractField {
 		}
 
 		// Add content as variable
-		String value = (String) toString();
+		String value = getFormattedValue();
 		if (value == null)
 			value = getNullRepresentation();
 		if (value == null)
 			throw new IllegalStateException("Null values are not allowed if the null-representation is null");
 		target.addVariable(this, "text", value);
+	}
+
+	/** Get the formatted dtring value.
+	 *  Sets the field value by using the assigned Format.
+	 * @param value to be formatted
+	 * @return Formatted value
+	 * @see #setFormat(Format)
+	 * @see Format
+	 */
+	protected String getFormattedValue() {
+		Object value = getValue();
+		if (this.format != null && value != null)
+			try {
+				return this.format.format(value);
+			} catch (IllegalArgumentException ignored) {
+				// Ignored exception
+			}
+		if (value != null)
+			return value.toString();
+		return null;
 	}
 
 	/* Gets the components UIDL tag string.
@@ -186,7 +211,7 @@ public class TextField extends AbstractField {
 			// Only do the setting if the string representation of the value
 			// has been updated
 			String newValue = (String) variables.get("text");
-			String oldValue = toString();
+			String oldValue = getFormattedValue();
 			if (newValue != null
 				&& (oldValue == null || isNullSettingAllowed())
 				&& newValue.equals(getNullRepresentation()))
@@ -194,7 +219,6 @@ public class TextField extends AbstractField {
 			if (newValue != oldValue
 				&& (newValue == null || !newValue.equals(oldValue)))
 				setValue(newValue);
-
 		}
 
 	}
@@ -358,6 +382,23 @@ public class TextField extends AbstractField {
 	 */
 	public void setNullSettingAllowed(boolean nullSettingAllowed) {
 		this.nullSettingAllowed = nullSettingAllowed;
+	}
+
+	/** Get the value formatter of TextField.
+	 * 
+	 * 
+	 * @return The Format used to format the value.
+	 */
+	public Format getFormat() {
+		return format;
+	}
+
+	/** Get the value formatter of TextField.
+	 * 
+	 * @param The Format used to format the value. Null disables the formatting.
+	 */
+	public void setFormat(Format format) {
+		this.format = format;
 	}
 
 }
