@@ -63,7 +63,9 @@ public class WebBrowserProbe {
 	 *  @return WebBrowser instance for the given session. 
 	 */
 	public static WebBrowser getTerminalType(HttpSession session) {
-		return (WebBrowser) session.getAttribute(CLIENT_TYPE);
+		if (session != null)
+			return (WebBrowser) session.getAttribute(CLIENT_TYPE);
+		return null;
 	}
 
 	/** Set the terminal type for the given session. 
@@ -72,7 +74,8 @@ public class WebBrowserProbe {
 	public static void setTerminalType(
 		HttpSession session,
 		WebBrowser terminal) {
-		session.setAttribute(CLIENT_TYPE, terminal);
+		if (session != null)
+			session.setAttribute(CLIENT_TYPE, terminal);
 	}
 
 	/** Handle client checking. 
@@ -109,7 +112,7 @@ public class WebBrowserProbe {
 
 		// Create new type based on client parameters
 		browser = probe(browser, request, parameters);
-		s.setAttribute(CLIENT_TYPE, browser);
+		setTerminalType(s,browser);
 
 		// Set client as checked if parameters were found			
 		if (parameters.containsKey("wa_clientprobe")) {

@@ -183,8 +183,9 @@ public class WebBrowser implements Terminal {
 
 	/** Test the equality of the properties for two web browser types */
 	public boolean equals(Object obj) {
-		if (obj != null)
+		if (obj != null && obj instanceof WebBrowser) {
 			return toString().equals(obj.toString());
+		}
 		return false;
 	}
 
@@ -410,7 +411,7 @@ public class WebBrowser implements Terminal {
 		 * @see java.lang.Object#equals(Object)
 		 */
 		public boolean equals(Object obj) {
-			if (obj instanceof MarkupVersion)
+			if (obj != null && obj instanceof MarkupVersion)
 				return name.equals(((MarkupVersion) obj).name);
 			return false;
 		}
@@ -479,7 +480,7 @@ public class WebBrowser implements Terminal {
 		 * @see java.lang.Object#equals(Object)
 		 */
 		public boolean equals(Object obj) {
-			if (obj instanceof JavaScriptVersion)
+			if (obj != null && obj instanceof JavaScriptVersion)
 				return name.equals(((JavaScriptVersion) obj).name);
 			return false;
 		}
