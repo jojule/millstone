@@ -184,6 +184,15 @@ public class ThemeFunctionLibrary {
 		}
 	}
 
+	/** Generate JavaScript for page that performs 
+	 * client-side combility checks.
+	 * The script includes HTML/JavaScript commands to be included
+	 * in the body of the millstone-form.
+	 */
+	static public boolean probeClient() {
+		return (browser().performClientCheck() && !browser().isClientSideChecked());
+	}
+
 	/** Generate JavaScript for page header that handles 
 	 * window refreshing, opening and closing.
 	 * 
@@ -251,14 +260,12 @@ public class ThemeFunctionLibrary {
 
 		// Set window name
 		script.append(
-			"window.name = \""
-				+ getWindowTargetName(app, window)
-				+ "\";\n");
+			"window.name = \"" + getWindowTargetName(app, window) + "\";\n");
 
 		// Generate window updatescript
 		for (Iterator i = update.iterator(); i.hasNext();) {
 			Window w = (Window) i.next();
-			script.append(getWindowRefreshScript(app,w));
+			script.append(getWindowRefreshScript(app, w));
 
 			wa.removeDirtyWindow(app, w);
 
@@ -282,7 +289,7 @@ public class ThemeFunctionLibrary {
 	static public String getWindowTargetName(
 		Application application,
 		Window window) {
-		try {			
+		try {
 			return "" + application.hashCode() + "_" + window.getName();
 		} catch (NullPointerException e) {
 			throw new IllegalStateException();
@@ -437,7 +444,7 @@ public class ThemeFunctionLibrary {
 		}
 
 		return "win = window.open(\"\",\""
-			+ getWindowTargetName(application,window)
+			+ getWindowTargetName(application, window)
 			+ "\",\""
 			+ features
 			+ "\");\n"

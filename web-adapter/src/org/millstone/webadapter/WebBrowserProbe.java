@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -57,98 +58,9 @@ import javax.servlet.http.HttpSession;
  */
 public class WebBrowserProbe {
 
-	private static final String CLIENT_TYPE = "clientcheck";
-	private static final String CLIENT_CHECK_PAGE =
-		" <HTML> "
-			+ "\n    <HEAD>      "
-			+ "\n      <META http-equiv=\"Cache-Control\" content=\"no-cache\" />"
-			+ "\n      <META http-equiv=\"Pragma\" content=\"no-cache\" />"
-			+ "\n      <META http-equiv=\"Expires\" content=\"0\" />"
-			+ "\n      <META http-equiv=\"Refresh\" content=\"600;\" />"
-			+ "\n      <TITLE></TITLE>"
-			+ "\n      "
-			+ "\n		<SCRIPT LANGUAGE=\"javascript1.1\">"
-			+ "\n			<!--"
-			+ "\n			var ver11 = \"JavaScript 1.1\";"
-			+ "\n		    // -->"
-			+ "\n    	</SCRIPT>"
-			+ "\n		<SCRIPT LANGUAGE=\"javascript1.2\">"
-			+ "\n			<!--"
-			+ "\n			var ver12 = \"JavaScript 1.2\";"
-			+ "\n		    // -->"
-			+ "\n    	</SCRIPT>	"
-			+ "\n		<SCRIPT LANGUAGE=\"javascript1.3\">"
-			+ "\n			<!--"
-			+ "\n			var ver13 = \"JavaScript 1.3\";"
-			+ "\n		    // -->"
-			+ "\n  	</SCRIPT>	"
-			+ "\n		<SCRIPT LANGUAGE=\"javascript1.4\">"
-			+ "\n			<!--"
-			+ "\n			var ver14 = \"JavaScript 1.4\";"
-			+ "\n		    // -->"
-			+ "\n    	</SCRIPT>	"
-			+ "\n		<SCRIPT LANGUAGE=\"javascript1.5\">"
-			+ "\n			<!--"
-			+ "\n			var ver15 = \"JavaScript 1.5\";"
-			+ "\n		    // -->"
-			+ "\n    	</SCRIPT>	"
-			+ "\n		 <SCRIPT LANGUAGE=\"javascript\">"
-			+ "\n			<!--"
-			+ "\n			var ver11;"
-			+ "\n			var ver12;"
-			+ "\n			var ver13;"
-			+ "\n			var ver14;"
-			+ "\n			var ver15;"
-			+ "\n			var ver = ver11 ? ver11 : 'none';"
-			+ "\n			ver = ver12 ? ver12 : ver;"
-			+ "\n			ver = ver13 ? ver13 : ver;"
-			+ "\n			ver = ver14 ? ver14 : ver;"
-			+ "\n			ver = ver15 ? ver15 : ver;"
-			+ "\n			"
-			+ "\n			function checkCSS() {"
-			+ "\n			    //checktype = "
-			+ "\n			    //   document.layers ? document.checkcss : checkcss;"
-			+ "\n			    ret = (document.getElementById(\"checkcss\") != null) ? true : false;"
-			+ "\n			    return ret;"
-			+ "\n			}"
-			+ "\n			"
-			+ "\n			function checkFrames() {"
-			+ "\n			    return true;"
-			+ "\n			}"
-			+ "\n			"
-			+ "\n			function checkVersions() {"
-			+ "\n			    var  div = document.getElementById(\"nojs\");"
-			+ "\n			    if (div != null) {"
-			+ "\n                  div.style.display = \"none\";"
-			+ "\n			       document.clientcheck.jsversion.value = ver;"
-			+ "\n			       document.clientcheck.screenwidth.value = window.screen.width;"
-			+ "\n			       document.clientcheck.screenheight.value = window.screen.height;"
-			+ "\n			       document.clientcheck.frames.value = checkFrames();"
-			+ "\n			       document.clientcheck.css.value = checkCSS();"
-			+ "\n			       document.clientcheck.javaenabled.value = navigator.javaEnabled();"
-			+ "\n			       document.clientcheck.submit();"
-			+ "\n			    }"
-			+ "\n			}			"
-			+ "\n			// -->"
-			+ "\n    	 </SCRIPT>"
-			+ "\n    </HEAD>"
-			+ "\n    <BODY ONLOAD=\"checkVersions()\">"
-			+ "\n        <SPAN ID=\"checkcss\" STYLE=\"position:absolute; color: #000066; font-family: Arial, Helvetica; font-size: 12px\">Please wait...</SPAN>"
-			+ "\n   		<FORM NAME=\"clientcheck\" METHOD=\"post\">"
-			+ "\n   			<INPUT NAME=\"clientcheck\" TYPE=\"hidden\" VALUE=\"true\"/>"
-			+ "\n   			<INPUT NAME=\"jsversion\" TYPE=\"hidden\" VALUE=\"JavaScript none\"/>"
-			+ "\n   			<INPUT NAME=\"screenwidth\" TYPE=\"hidden\" VALUE=\"640\"/>"
-			+ "\n   			<INPUT NAME=\"screenheight\" TYPE=\"hidden\" VALUE=\"480\"/>"
-			+ "\n   			<INPUT NAME=\"css\" TYPE=\"hidden\" VALUE=\"false\"/>"
-			+ "\n   			<INPUT NAME=\"frames\" TYPE=\"hidden\" VALUE=\"false\"/>"
-			+ "\n   			<INPUT NAME=\"javaenabled\" TYPE=\"hidden\" VALUE=\"false\"/>"
-			+ "\n   			<DIV ID=\"nojs\">"
-			+ "\n   			Javascript not rcognized.<BR>"
-			+ "\n   			<INPUT NAME=\"button\" TYPE=\"submit\" VALUE=\"Continue\" />"
-			+ "\n   			</DIV>"
-			+ "\n   		</FORM>    "
-			+ "\n    </BODY>"
-			+ "\n  </HTML>";
+	private static final String WA_NOSCRIPT = "WA_NOSCRIPT";
+
+	private static final String CLIENT_TYPE = "wa_browser";
 
 	/** Return the terminal type from the given session. 
 	 *  @return WebBrowser instance for the given session. 
@@ -169,62 +81,51 @@ public class WebBrowserProbe {
 	/** Handle client checking. 
 	 *  @param request The HTTP request to process.
 	 *  @param response HTTP response to write to.
-	 *  @return true is request was handled, false otherwise.
+	 *  @return true if response should include a probe script
 	 **/
 	public static boolean handleProbeRequest(
 		HttpServletRequest request,
-		HttpServletResponse response)
+		Map parameters)
 		throws ServletException {
 
 		HttpSession s = request.getSession();
-		WebBrowser type = (WebBrowser) s.getAttribute(CLIENT_TYPE);
-		if (type != null) {
+		WebBrowser browser = getTerminalType(s);
+		if (browser != null) {
 
-			// If client is checked, allow further request processing
-			if (type.isClientSideChecked())
+			// Check if no-script was requested
+			if (parameters.containsKey(WA_NOSCRIPT)) {
+				String val = ((String[]) parameters.get(WA_NOSCRIPT))[0];
+				if (val != null && "1".equals(val)) {
+					browser.setJavaScriptVersion(WebBrowser.JAVASCRIPT_NONE);
+					browser.setClientSideChecked(true);
+				} else {
+					// Recheck
+					browser.setClientSideChecked(false);
+				}
+			}
+
+			// If client is alredy checked disable further checking
+			if (browser.isClientSideChecked())
 				return false;
 
-			// Create new type based on client parameters
-			type = probe(request);
-			type.setClientSideChecked(true);
-			s.setAttribute(CLIENT_TYPE, type);
-
-			return false;
-		} else {
-			// Create default type from request
-			type = probe(request);
-			s.setAttribute(CLIENT_TYPE, type);
-
-			// If this client allows checking, do it
-			if (type.performClientCheck()) {
-				printBrowserProbe(response);
-				return true;
-			} else {
-				// Mark as checked to disable checking
-				type.setClientSideChecked(true);
-			}
 		}
-		return false;
+
+		// Create new type based on client parameters
+		browser = probe(browser, request, parameters);
+		s.setAttribute(CLIENT_TYPE, browser);
+
+		// Set client as checked if parameters were found			
+		if (parameters.containsKey("wa_clientprobe")) {
+			String val = ((String[]) parameters.get("wa_clientprobe"))[0];
+			browser.setClientSideChecked(val != null && "1".equals(val));
+		}
+
+		// Include probe script if requested and not alredy probed
+		return browser.performClientCheck() && !browser.isClientSideChecked();
+
 	}
 
-	/** Generate a client check page. 
-	 *  Prints the web page performing the client-side tests.
-	 *  @param response Response to write the page to.
-	 */
-	private static void printBrowserProbe(HttpServletResponse response) {
-		try {
-			response.setContentType("text/html");
-			PrintWriter out = response.getWriter();
-
-			out.print(CLIENT_CHECK_PAGE);
-			out.close();
-
-		} catch (IOException e) {
-			Log.except("Failed to generate client check page.", e);
-		}
-	}
-
-	/** Determine HTML version based on user agent. 
+	/** Determine versions based on user agent string. 
 	 *  @param agent HTTP User-Agent request header.
 	 *  @return new WebBrowser instance initialized based on agent features.
 	 */
@@ -241,8 +142,8 @@ public class WebBrowserProbe {
 			res.setJavaScriptVersion(WebBrowser.JSCRIPT_5_6);
 			res.setJavaEnabled(true);
 			res.setFrameSupport(true);
-		} 
-		
+		}
+
 		// Opera
 		else if (
 			(agent.indexOf("Opera 6.") >= 0)
@@ -255,8 +156,8 @@ public class WebBrowserProbe {
 			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_3);
 			res.setJavaEnabled(false);
 			res.setFrameSupport(true);
-		} 
-		
+		}
+
 		// OmniWeb
 		else if (agent.indexOf("OmniWeb") >= 0) {
 			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_1_3);
@@ -357,48 +258,72 @@ public class WebBrowserProbe {
 
 	/** Create new instance of WebBrowser by initializing the values
 	 *  based on user request.
+	 *  @param browser The browser to be updated. If null a new instance is created.
 	 *  @param request Request to be used as defaults.
+	 *  @param params Parameters to be used as defaults.
 	 *  @return new WebBrowser instance initialized based on request parameters.
 	 */
-	public static WebBrowser probe(HttpServletRequest request) {
+	public static WebBrowser probe(
+		WebBrowser browser,
+		HttpServletRequest request,
+		Map params) {
 
 		// Initialize defaults based on client features
-		WebBrowser res = probe(request.getHeader("User-Agent"));
+		WebBrowser res = browser;
+		if (res == null) {
+			res = probe(request.getHeader("User-Agent"));
+		}
 
 		// Client locales
 		Collection locales = res.getLocales();
+		locales.clear();
 		for (Enumeration e = request.getLocales(); e.hasMoreElements();) {
 			locales.add(e.nextElement());
 		}
 
 		//Javascript version
-		String val = request.getParameter("jsversion");
-		if (val != null) {
-			res.setJavaScriptVersion(WebBrowser.parseJavaScriptVersion(val));
+		if (params.containsKey("wa_jsversion")) {
+			String val = ((String[]) params.get("wa_jsversion"))[0];
+			if (val != null) {
+				res.setJavaScriptVersion(
+					WebBrowser.parseJavaScriptVersion(val));
+			}
 		}
-
 		//Java support
-		val = request.getParameter("javaenabled");
-		if (val != null) {
-			res.setJavaEnabled(Boolean.valueOf(val).booleanValue());
+		if (params.containsKey("wa_javaenabled")) {
+			String val = ((String[]) params.get("wa_javaenabled"))[0];
+			if (val != null) {
+				res.setJavaEnabled(Boolean.valueOf(val).booleanValue());
+			}
 		}
-
 		//Screen width
-		val = request.getParameter("screenwidth");
-		if (val != null) {
-			res.setScreenWidth(Integer.parseInt(val));
+		if (params.containsKey("wa_screenwidth")) {
+			String val = ((String[]) params.get("wa_screenwidth"))[0];
+			if (val != null) {
+				try {
+					res.setScreenWidth(Integer.parseInt(val));
+				} catch (NumberFormatException e) {
+					res.setScreenWidth(-1);
+				}
+			}
 		}
-
 		//Screen height
-		val = request.getParameter("screenheight");
-		if (val != null) {
-			res.setScreenHeight(Integer.parseInt(val));
+		if (params.containsKey("wa_screenheight")) {
+			String val = ((String[]) params.get("wa_screenheight"))[0];
+			if (val != null) {
+				try {
+					res.setScreenHeight(Integer.parseInt(val));
+				} catch (NumberFormatException e) {
+					res.setScreenHeight(-1);
+				}
+			}
 		}
-
 		//Frame support
-		val = request.getParameter("frames");
-		if (val != null) {
-			res.setFrameSupport(Boolean.valueOf(val).booleanValue());
+		if (params.containsKey("wa_frames")) {
+			String val = ((String[]) params.get("wa_frames"))[0];
+			if (val != null) {
+				res.setFrameSupport(Boolean.valueOf(val).booleanValue());
+			}
 		}
 
 		return res;

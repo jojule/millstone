@@ -312,19 +312,6 @@ public class WebAdapterServlet
 						+ request.getServletPath()
 						+ RESOURCE_URI;
 						
-			// Set terminal type if not aleady set
-			if (WebBrowserProbe.getTerminalType(request.getSession())
-				== null) {
-				// Check/handle client side feature checks
-				if (!this.enableBrowserProbe) {
-					WebBrowserProbe.setTerminalType(
-						request.getSession(),
-						WebBrowserProbe.probe(request));
-				} else if (
-					WebBrowserProbe.handleProbeRequest(request, response))
-					return;
-			}
-
 			// Handle resource requests
 			if (handleResourceRequest(request, response))
 				return;
@@ -358,6 +345,9 @@ public class WebAdapterServlet
 
 				// Change  all variables based on request parameters
 				Map unhandledParameters = variableMap.handleVariables(request);
+
+				// Check/handle client side feature checks
+				WebBrowserProbe.handleProbeRequest(request, unhandledParameters);
 
 				// Handle the URI if the application is still running
 				if (application.isRunning())
