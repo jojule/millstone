@@ -43,10 +43,21 @@ import java.util.Hashtable;
 import java.util.Locale;
 
 import org.millstone.base.data.util.BeanItem;
+import org.millstone.base.data.util.IndexedContainer;
 import org.millstone.base.data.util.MethodProperty;
 import org.millstone.base.ui.*;
 
 public class FeatureDateField extends Feature {
+
+	static private IndexedContainer localeContainer;
+	static {
+		localeContainer = new IndexedContainer();
+		localeContainer.addContainerProperty("name", String.class, "");
+		Locale[] locales = Locale.getAvailableLocales();
+		for (int i = 0; i < locales.length; i++)
+			localeContainer.addItem(locales[i]).getItemProperty("name").setValue(
+				locales[i].getDisplayName());
+	}
 
 	public FeatureDateField() {
 		super();
@@ -64,13 +75,8 @@ public class FeatureDateField extends Feature {
 		l.addComponent(show);
 
 		// Create locale selector
-		Select selector = new Select("Application Locale");
-		selector.addContainerProperty("name", String.class, "");
+		Select selector = new Select("Application Locale",localeContainer);
 		selector.setItemCaptionPropertyId("name");
-		Locale[] locales = Locale.getAvailableLocales();
-		for (int i = 0; i < locales.length; i++)
-			selector.addItem(locales[i]).getItemProperty("name").setValue(
-				locales[i].getDisplayName());
 		selector.setImmediate(true);
 		selector.setPropertyDataSource(
 			new MethodProperty(this.getApplication(), "locale"));
