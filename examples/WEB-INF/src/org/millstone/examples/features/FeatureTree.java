@@ -135,8 +135,6 @@ public class FeatureTree extends Feature implements Action.Handler {
 			.getItemProperty(themes.getItemCaptionPropertyId())
 			.setValue("menu");
 		p.addProperties("Tree Properties", ap);
-		p.getField("newItemsAllowed").setEnabled(false);
-		p.getField("focus").setEnabled(false);
 		l.addComponent(p);
 
 		return l;

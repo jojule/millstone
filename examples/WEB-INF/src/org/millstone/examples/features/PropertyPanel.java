@@ -66,6 +66,7 @@ public class PropertyPanel
 	private Table allProperties = new Table();
 	private Object objectToConfigure;
 	private BeanItem config;
+	protected static final int COLUMNS = 3;
 
 	/** Contruct new property panel for configuring given object. */
 	public PropertyPanel(Object objectToConfigure) {
@@ -90,7 +91,9 @@ public class PropertyPanel
 		addBasicComponentProperties();
 		if (objectToConfigure instanceof Select)
 			addSelectProperties();
-		if (objectToConfigure instanceof AbstractField)
+		if (objectToConfigure instanceof AbstractField
+			&& !(objectToConfigure instanceof Table
+				|| objectToConfigure instanceof Tree))
 			addFieldProperties();
 		if ((objectToConfigure instanceof AbstractComponentContainer)
 			&& !(objectToConfigure instanceof FrameWindow))
@@ -117,9 +120,10 @@ public class PropertyPanel
 
 	/** Add a formful of properties to property panel */
 	public void addProperties(String propertySetCaption, Form properties) {
-
+	
 		// Create new panel containing the form
 		Panel p = new Panel();
+		p.setWidth(600);
 		p.setCaption(propertySetCaption);
 		p.setStyle("light");
 		p.addComponent(properties);
@@ -197,14 +201,14 @@ public class PropertyPanel
 			createBeanPropertySet(
 				new String[] {
 					"caption",
-					"enabled",
 					"icon",
-					"visible",
-					"description",
-					"readOnly",
 					"componentError",
-					"immediate",
-					"style" });
+					"description",
+					"enabled",
+					"visible",
+					"style",
+					"readOnly",
+					"immediate" });
 
 		// Icon
 		set.replaceWithSelect(
@@ -225,8 +229,9 @@ public class PropertyPanel
 				null,
 				new UserError("Sample text error message."),
 				new UserError(
-					"<h3>Error message formatting</h3><p>Error messages can contain any UIDL "
-						+ "formatting, like: <ul><li><b>Bold</b></li><li><i>Italic</i></li></ul></p>",
+					"<h3>Error message formatting</h3><p>Error messages can "
+						+ "contain any UIDL formatting, like: <ul><li><b>Bold"
+						+ "</b></li><li><i>Italic</i></li></ul></p>",
 					UserError.CONTENT_UIDL,
 					ErrorMessage.INFORMATION),
 				new SystemError(
@@ -302,23 +307,27 @@ public class PropertyPanel
 		set.getField("multiSelect").setDescription(
 			"Specified if multiple items can be selected at once.");
 		set.getField("newItemsAllowed").setDescription(
-			"Select component (but not Tree or Table) can allow the user to directly "+
-			"add new items to set of options. The new items are constrained to be "+
-			"strings and thus feature only applies to simple lists.");
+			"Select component (but not Tree or Table) can allow the user to directly "
+				+ "add new items to set of options. The new items are constrained to be "
+				+ "strings and thus feature only applies to simple lists.");
+		if (objectToConfigure instanceof Tree
+			|| objectToConfigure instanceof Table)
+			set.removeItemProperty("newItemsAllowed");
 	}
 
 	/** Field special properties */
 	private void addFieldProperties() {
-		Form set = new Form(new GridLayout(2, 1));
+		Form set = new Form(new GridLayout(COLUMNS, 1));
 		set.addField("focus", new Button("Focus", objectToConfigure, "focus"));
-		set.getField("focus").setDescription("Focus the cursor to this field. Not all "+
-		"components and/or terminals support this feature.");
+		set.getField("focus").setDescription(
+			"Focus the cursor to this field. Not all "
+				+ "components and/or terminals support this feature.");
 		addProperties("Field Features", set);
 	}
 
 	/** Add and remove some miscellaneous example component to/from component container */
 	private void addComponentContainerProperties() {
-		Form set = new Form(new GridLayout(2, 1));
+		Form set = new Form(new GridLayout(COLUMNS, 1));
 
 		addComponent = new Select();
 		addComponent.setImmediate(true);
@@ -356,7 +365,7 @@ public class PropertyPanel
 							AbstractComponentContainer) objectToConfigure)
 								.addComponent(
 						new TextField("Test field"));
-	
+
 				// DateField time style 
 				if (value.equals("Time")) {
 					DateField d = new DateField("Time", new Date());
@@ -370,7 +379,7 @@ public class PropertyPanel
 								.addComponent(
 						d);
 				}
-				
+
 				// Date field calendar style
 				if (value.equals("Calendar")) {
 					DateField c = new DateField("Calendar", new Date());
@@ -384,7 +393,7 @@ public class PropertyPanel
 								.addComponent(
 						c);
 				}
-				
+
 				// Select option group style
 				if (value.equals("Option group")) {
 					Select s = new Select("Options");
@@ -411,12 +420,22 @@ public class PropertyPanel
 	 */
 	protected Form createBeanPropertySet(String names[]) {
 
-		Form set = new Form(new GridLayout(2, 1));
+		Form set = new Form(new GridLayout(COLUMNS, 1));
 
 		for (int i = 0; i < names.length; i++) {
 			Property p = config.getItemProperty(names[i]);
-			if (p != null)
+			if (p != null) {
 				set.addItemProperty(names[i], p);
+				AbstractField f = set.getField(names[i]);
+				if (f instanceof TextField) {
+					if (Integer.class.equals(p.getType())) 
+						((TextField)f).setColumns(4);
+					else {
+						((TextField)f).setNullSettingAllowed(true);
+						((TextField)f).setColumns(24);
+					}
+				} 
+			}
 		}
 
 		return set;

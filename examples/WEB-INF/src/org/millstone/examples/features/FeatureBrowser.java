@@ -67,7 +67,8 @@ public class FeatureBrowser
 
 	public void attach() {
 
-		if (initialized) return;
+		if (initialized)
+			return;
 		initialized = true;
 
 		// Configure tree
@@ -84,43 +85,81 @@ public class FeatureBrowser
 		setCompositionRoot(layout);
 		OrderedLayout left = new OrderedLayout();
 		left.addComponent(features);
-		Button close = new Button("restart",getApplication(),"close");
+		Button close = new Button("restart", getApplication(), "close");
 		left.addComponent(close);
 		close.setStyle("link");
 		layout.addComponent(left, 0, 0, 0, 0);
 		Label greeting = new Label(WELCOME_TEXT, Label.CONTENT_XHTML);
 		//welcomePanel = new Panel((String) null);
-		welcome = new Embedded("",new ClassResource(getClass(),"millstone-logo.gif", getApplication()));
+		welcome =
+			new Embedded(
+				"",
+				new ClassResource(
+					getClass(),
+					"millstone-logo.gif",
+					getApplication()));
 		//	welcomePanel.addComponent(greeting);
 		layout.addComponent(welcome, 1, 0, 1, 0);
 
 		// Test component
-		registerFeature("/UI Components/Basic/Text Field", new FeatureTextField());
-		registerFeature("/UI Components/Basic/Date Field", new FeatureDateField());
+		registerFeature(
+			"/UI Components/Basic/Text Field",
+			new FeatureTextField());
+		registerFeature(
+			"/UI Components/Basic/Date Field",
+			new FeatureDateField());
 		registerFeature("/UI Components/Basic/Button", new FeatureButton());
 		registerFeature("/UI Components/Basic/Form", new FeatureForm());
 		registerFeature("/UI Components/Basic/Label", new FeatureLabel());
 		registerFeature("/UI Components/Basic/Link", new FeatureLink());
-		registerFeature("/UI Components/Item Containers/Select", new FeatureSelect());
-		registerFeature("/UI Components/Item Containers/Table", new FeatureTable());
-		registerFeature("/UI Components/Item Containers/Tree", new FeatureTree());
-		registerFeature("/UI Components/Layouts/Ordered Layout", new FeatureOrderedLayout());
-		registerFeature("/UI Components/Layouts/Grid Layout", new FeatureGridLayout());
-		registerFeature("/UI Components/Layouts/Custom Layout", new FeatureCustomLayout());
+		registerFeature(
+			"/UI Components/Item Containers/Select",
+			new FeatureSelect());
+		registerFeature(
+			"/UI Components/Item Containers/Table",
+			new FeatureTable());
+		registerFeature(
+			"/UI Components/Item Containers/Tree",
+			new FeatureTree());
+		registerFeature(
+			"/UI Components/Layouts/Ordered Layout",
+			new FeatureOrderedLayout());
+		registerFeature(
+			"/UI Components/Layouts/Grid Layout",
+			new FeatureGridLayout());
+		registerFeature(
+			"/UI Components/Layouts/Custom Layout",
+			new FeatureCustomLayout());
 		registerFeature("/UI Components/Layouts/Panel", new FeaturePanel());
-		registerFeature("/UI Components/Layouts/Tab Sheet", new FeatureTabSheet());
+		registerFeature(
+			"/UI Components/Layouts/Tab Sheet",
+			new FeatureTabSheet());
 		registerFeature("/UI Components/Layouts/Window", new FeatureWindow());
-		registerFeature("/UI Components/Layouts/Frame Window", new FeatureFrameWindow());
-		registerFeature("/UI Components/Data handling/Embedded Objects", new FeatureEmbedded());
-		registerFeature("/UI Components/Data handling/Upload", new FeatureUpload());
+		registerFeature(
+			"/UI Components/Layouts/Frame Window",
+			new FeatureFrameWindow());
+		registerFeature(
+			"/UI Components/Data handling/Embedded Objects",
+			new FeatureEmbedded());
+		registerFeature(
+			"/UI Components/Data handling/Upload",
+			new FeatureUpload());
 		registerFeature("/Data Model/Properties", new FeatureProperties());
 		registerFeature("/Data Model/Items", new FeatureItems());
 		registerFeature("/Data Model/Containers", new FeatureContainers());
 		registerFeature("/Data Model/Validators", new FeatureValidators());
 		registerFeature("/Data Model/Buffering", new FeatureBuffering());
-		registerFeature("/Terminal/Server Initiated Events", new FeatureServerEvents());
+		registerFeature(
+			"/Terminal/Server Initiated Events",
+			new FeatureServerEvents());
 		registerFeature("/Terminal/Resources", new FeatureResources());
-		registerFeature("/Terminal/Parameters and URI Handling", new FeatureParameters());
+		registerFeature(
+			"/Terminal/Parameters and URI Handling",
+			new FeatureParameters());
+
+		// Pre-open all menus
+		for (Iterator i=features.getItemIds().iterator(); i.hasNext();) 
+			features.expandItem(i.next());
 	}
 
 	public void registerFeature(String path, Feature feature) {
@@ -161,8 +200,10 @@ public class FeatureBrowser
 					currentFeature = feature;
 					layout.removeComponent(1, 0);
 					layout.addComponent(currentFeature, 1, 0);
-					getWindow().setCaption("Millstone Features / " + features.getContainerProperty(id, "name"));
-				} 
+					getWindow().setCaption(
+						"Millstone Features / "
+							+ features.getContainerProperty(id, "name"));
+				}
 			}
 		}
 	}

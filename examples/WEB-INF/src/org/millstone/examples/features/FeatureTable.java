@@ -170,8 +170,6 @@ public class FeatureTable extends Feature implements Action.Handler {
 			.getItemProperty(themes.getItemCaptionPropertyId())
 			.setValue("list");
 		p.addProperties("Table Properties", ap);
-		p.getField("newItemsAllowed").setEnabled(false);
-		p.getField("focus").setEnabled(false);
 		l.addComponent(p);
 
 		return l;
