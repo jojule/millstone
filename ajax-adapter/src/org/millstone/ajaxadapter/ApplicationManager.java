@@ -176,8 +176,7 @@ Application.WindowAttachListener, Application.WindowDetachListener {
                     }
 
                     // Set the response type
-                    // TODO Response type should be set
-                    // response.setContentType(terminalType.getContentType());
+                    response.setContentType("application/xml");
 
                     // Create UIDL writer
                     UIDLPaintTarget phoneTerminal = new UIDLPaintTarget(

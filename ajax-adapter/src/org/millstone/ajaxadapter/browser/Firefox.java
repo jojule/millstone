@@ -59,6 +59,9 @@ public class Firefox extends WebBrowser {
     public void createAjaxClient(HttpServletRequest request,
             HttpServletResponse response, Window window, ApplicationManager manager) throws IOException {
 
+        
+        response.setContentType("text/html");
+        
         Writer w = response.getWriter();
 
         // TODO Unimplemented

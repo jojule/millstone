@@ -117,8 +117,9 @@ public abstract class WebBrowser implements Terminal {
             is = new ByteArrayInputStream((
                     "Theme not found (resource theme.xsl not found for class "
                             + getClass().getName()).getBytes());
-        }
-
+        } else 
+            response.setContentType("application/xml");
+        
         OutputStream os = response.getOutputStream();
         byte[] buffer = new byte[1024];
         int read = 0;
