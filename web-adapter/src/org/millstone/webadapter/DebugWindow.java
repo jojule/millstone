@@ -364,8 +364,6 @@ public class DebugWindow extends Window {
 		if (oldStrLen <= 0)
 			return text;
 
-		int lastIndex = text.length() - oldStr.length();
-		char firstChar = oldStr.charAt(0);
 		int i = 0;
 		while (i <= sb.length() - oldStrLen) {
 			if (sb.substring(i, i + oldStrLen).equals(oldStr)) {

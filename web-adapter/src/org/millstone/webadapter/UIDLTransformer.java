@@ -424,9 +424,6 @@ public class UIDLTransformer {
 			} catch (ThemeSource.ThemeException ignored) {
 
 			}
-			String uild = " UIDL Not Available";
-			if (paintTarget != null)
-				uild = paintTarget.getUIDL();
 
 			String xsl = "XSL Source not avaialable";
 			if (readBuffer != null)
@@ -527,7 +524,6 @@ public class UIDLTransformer {
 			int row = 0;
 			int prev = 0;
 			int index = 0;
-			int errornro = 0;
 			boolean lastLineWasEmpty = false;
 
 			// Append error report
@@ -548,7 +544,6 @@ public class UIDLTransformer {
 				prev = index + 1;
 				row++;
 
-				Exception exp = (Exception) rowToErrorMap.get(new Integer(row));
 				line = WebPaintTarget.escapeXML(line);
 				boolean isEmpty = (line.length() == 0 || line.equals("\r"));
 

@@ -306,7 +306,6 @@ public class Theme extends DefaultHandler {
 						+ TAG_FILESET
 						+ "' element.");
 			}
-			Fileset fs = (Fileset) this.openFilesets.peek();
 			if (this.openRequirements.isEmpty()) {
 				throw new IllegalStateException(
 					"Element '"

@@ -54,8 +54,10 @@ import javax.servlet.ServletException;
 import org.millstone.base.Application;
 import org.millstone.base.ui.Window;
 import org.millstone.webadapter.ThemeSource.ThemeException;
+import org.millstone.base.terminal.*;
 import org.millstone.base.terminal.Paintable;
 import org.millstone.base.terminal.DownloadStream;
+import org.millstone.base.terminal.ParameterHandler;
 import org.millstone.base.terminal.ThemeResource;
 import org.millstone.base.terminal.Paintable.RepaintRequestEvent;
 
@@ -319,8 +321,6 @@ public class WebAdapterServlet
 			return val;
 		}
 
-
-
 		return defaultValue;
 	}
 
@@ -499,7 +499,8 @@ public class WebAdapterServlet
 					return;
 
 				// Change  all variables based on request parameters
-				Map unhandledParameters = variableMap.handleVariables(request);
+				Map unhandledParameters =
+					variableMap.handleVariables(request, application);
 
 				// Check/handle client side feature checks
 				WebBrowserProbe.handleProbeRequest(
@@ -521,9 +522,14 @@ public class WebAdapterServlet
 					// Handle the unhandled parameters if the application is still running
 					if (window != null
 						&& unhandledParameters != null
-						&& !unhandledParameters.isEmpty())
-						window.handleParameters(unhandledParameters);
-
+						&& !unhandledParameters.isEmpty()) {
+						try {
+							window.handleParameters(unhandledParameters);
+						} catch (Throwable t) {
+							application.terminalError(
+								new ParameterHandlerErrorImpl(window, t));
+						}
+					}
 					// Remove application if it has stopped
 					if (!application.isRunning()) {
 						endApplication(request, response, application);
@@ -706,8 +712,12 @@ public class WebAdapterServlet
 			uri = uri.substring(1);
 
 		// Handle the uri
-		DownloadStream stream =
-			application.handleURI(application.getURL(), uri);
+		DownloadStream stream = null;
+		try {
+			stream = application.handleURI(application.getURL(), uri);
+		} catch (Throwable t) {
+			application.terminalError(new URIHandlerErrorImpl(application, t));
+		}
 
 		return stream;
 	}
@@ -790,9 +800,9 @@ public class WebAdapterServlet
 		String path = this.getServletContext().getRealPath(themeJarFile);
 		File file = null;
 		if (path != null && (file = new File(path)).exists()) {
-			return file;			
+			return file;
 		}
-		
+
 		// If we do not have access to individual files, create a temporary
 		// file from named resource.  
 		InputStream defaultTheme =
@@ -987,9 +997,6 @@ public class WebAdapterServlet
 		HttpSession session = request.getSession(false);
 		if (session == null)
 			return null;
-
-		// Get the application url
-		URL applicationUrl = getApplicationUrl(request);
 
 		// Get application list for the session.
 		LinkedList applications =
@@ -1346,7 +1353,6 @@ public class WebAdapterServlet
 							// For one of the dirty windows (in each application)
 							// request redraw
 							Window win = (Window) dws.iterator().next();
-							String url = win.getURL().toString();
 							w.println(
 								"<script>\n"
 									+ ThemeFunctionLibrary
@@ -1440,5 +1446,59 @@ public class WebAdapterServlet
 			}
 		}
 
+	}
+
+	/** Implementation of ParameterHandler.ErrorEvent interface. */
+	public class ParameterHandlerErrorImpl
+		implements ParameterHandler.ErrorEvent {
+
+		private ParameterHandler owner;
+		private Throwable throwable;
+
+		private ParameterHandlerErrorImpl(
+			ParameterHandler owner,
+			Throwable throwable) {
+			this.owner = owner;
+			this.throwable = throwable;
+		}
+
+		/**
+		 * @see org.millstone.base.terminal.Terminal.ErrorEvent#getThrowable()
+		 */
+		public Throwable getThrowable() {
+			return this.throwable;
+		}
+		/**
+		 * @see org.millstone.base.terminal.ParameterHandler.ErrorEvent#getParameterHandler()
+		 */
+		public ParameterHandler getParameterHandler() {
+			return this.owner;
+		}
+
+	}
+
+	/** Implementation of URIHandler.ErrorEvent interface. */
+	public class URIHandlerErrorImpl implements URIHandler.ErrorEvent {
+
+		private URIHandler owner;
+		private Throwable throwable;
+
+		private URIHandlerErrorImpl(URIHandler owner, Throwable throwable) {
+			this.owner = owner;
+			this.throwable = throwable;
+		}
+
+		/**
+		 * @see org.millstone.base.terminal.Terminal.ErrorEvent#getThrowable()
+		 */
+		public Throwable getThrowable() {
+			return this.throwable;
+		}
+		/**
+		 * @see org.millstone.base.terminal.URIHandler.ErrorEvent#getURIHandler()
+		 */
+		public URIHandler getURIHandler() {
+			return this.owner;
+		}
 	}
 }

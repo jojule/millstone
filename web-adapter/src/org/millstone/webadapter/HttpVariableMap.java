@@ -39,6 +39,7 @@
 package org.millstone.webadapter;
 
 import org.millstone.base.terminal.SystemError;
+import org.millstone.base.terminal.Terminal;
 import org.millstone.base.terminal.VariableOwner;
 import org.millstone.base.terminal.UploadStream;
 
@@ -136,11 +137,11 @@ public class HttpVariableMap {
 				// Generate new id and register it
 				id = "v" + String.valueOf(++lastId);
 				nameToIdMap.put(name, id);
-				idToOwnerMap.put(id, new WeakReference(owner));				
+				idToOwnerMap.put(id, new WeakReference(owner));
 				idToNameMap.put(id, name);
 				idToTypeMap.put(id, type);
 			}
-			
+
 			idToValueMap.put(id, value);
 
 			return id;
@@ -421,7 +422,10 @@ public class HttpVariableMap {
 	*  served. Otherwise all the listeners are served.
 	*  @return Name to Value[] mapping of unhandled variables
 	*/
-	public Map handleVariables(HttpServletRequest req) throws IOException {
+	public Map handleVariables(
+		HttpServletRequest req,
+		Terminal.ErrorListener errorListener)
+		throws IOException {
 
 		// Get the parameters
 		ParameterContainer parcon = new ParameterContainer(req);
@@ -445,7 +449,7 @@ public class HttpVariableMap {
 					Class varType = (Class) idToTypeMap.get(param);
 					Object varOldValue = idToValueMap.get(param);
 					if (varName == null || varType == null)
-						Log.error(
+						Log.warn(
 							"VariableMap: No variable found for parameter "
 								+ param
 								+ " ("
@@ -489,9 +493,13 @@ public class HttpVariableMap {
 							String[] values = parcon.getValue(param);
 							if (values != null) {
 
-								if (varType.equals(String[].class)) {									
+								if (varType.equals(String[].class)) {
 									variables.put(varName, values);
-									changed |= (!Arrays.equals(values,(String[])varOldValue));
+									changed
+										|= (!Arrays
+											.equals(
+												values,
+												(String[]) varOldValue));
 								} else {
 									try {
 										if (values.length == 1) {
@@ -499,8 +507,11 @@ public class HttpVariableMap {
 												convert(varType, values[0]);
 											variables.put(varName, val);
 											changed
-												|= ((val == null && varOldValue != null) 
-												|| (val != null && !val.equals(varOldValue)));
+												|= ((val == null
+													&& varOldValue != null)
+													|| (val != null
+														&& !val.equals(
+															varOldValue)));
 										} else if (
 											values.length == 0
 												&& varType.equals(
@@ -510,7 +521,7 @@ public class HttpVariableMap {
 											changed
 												|= (!val.equals(varOldValue));
 										} else {
-											Log.error(
+											Log.warn(
 												"Empty variable "
 													+ varName
 													+ " of type "
@@ -521,6 +532,8 @@ public class HttpVariableMap {
 										Log.except(
 											"WebVariableMap conversion exception",
 											e);
+										errorListener.terminalError(
+											new TerminalErrorImpl(e));
 									}
 								}
 							}
@@ -530,12 +543,58 @@ public class HttpVariableMap {
 
 				// Do the valuechange if the listener is enabled
 				if (listener.isEnabled() && changed) {
-					listener.changeVariables(req, variables);
+					try {
+						listener.changeVariables(req, variables);
+					} catch (Throwable t) {
+						// Notify the error listener
+						errorListener.terminalError(
+							new VariableOwnerErrorImpl(listener, t));
+					}
 				}
 			}
 		}
 
 		return parcon.getNonVariables();
+	}
+
+	/** Implementation of VariableOwner.Error interface. */
+	public class TerminalErrorImpl implements Terminal.ErrorEvent {
+		private Throwable throwable;
+
+		private TerminalErrorImpl(Throwable throwable) {
+			this.throwable = throwable;
+		}
+
+		/**
+		 * @see org.millstone.base.terminal.Terminal.ErrorEvent#getThrowable()
+		 */
+		public Throwable getThrowable() {
+			return this.throwable;
+		}
+
+	}
+
+	/** Implementation of VariableOwner.Error interface. */
+	public class VariableOwnerErrorImpl
+		extends TerminalErrorImpl
+		implements VariableOwner.ErrorEvent {
+
+		private VariableOwner owner;
+
+		private VariableOwnerErrorImpl(
+			VariableOwner owner,
+			Throwable throwable) {
+			super(throwable);
+			this.owner = owner;
+		}
+
+		/**
+		 * @see org.millstone.base.terminal.VariableOwner.ErrorEvent#getVariableOwner()
+		 */
+		public VariableOwner getVariableOwner() {
+			return this.owner;
+		}
+
 	}
 
 	/** Resolve the VariableOwners needed from the request and sort
@@ -547,7 +606,7 @@ public class HttpVariableMap {
 	 */
 	private List getDependencySortedListenerList(Set listeners) {
 
-		List result = new LinkedList();
+		LinkedList result = new LinkedList();
 
 		// Go trough the listeners and either add them to result or resolve
 		// their dependencies
@@ -561,8 +620,12 @@ public class HttpVariableMap {
 
 				// The listeners with no dependencies are added to the front of the
 				// list directly
-				if (dependencies == null || dependencies.isEmpty())
-					result.add(listener);
+				if (dependencies == null || dependencies.isEmpty()) {
+					if (listener.isImmediate())
+						result.addLast(listener);
+					else
+						result.addFirst(listener);
+				}
 
 				// Resolve deep dependencies for the listeners with dependencies
 				// (the listeners will be added to the end of results in correct
