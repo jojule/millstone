@@ -135,10 +135,18 @@ public class FrameWindow extends Window {
 
 		/** String representation of the width */
 		private String width = "*";
+		
+		/** Parent frameset */
+		protected Frameset parentFrameset;
 
 		/** URL of the frame */
 		public URL getURL() {
 			return window == null ? url : window.getURL();
+		}
+
+		/** Get the parent frameset */
+		public Frameset getParentFrameset() {
+			return parentFrameset;
 		}
 
 		/** Name of the freame */
@@ -227,6 +235,7 @@ public class FrameWindow extends Window {
 		public Frame newFrame(Window window, int index) {
 			Frame f = new Frame();
 			f.window = window;
+			f.parentFrameset = this;
 			frames.add(index, f);
 			if (getApplication() != null)
 				getApplication().addWindow(window);
@@ -261,6 +270,7 @@ public class FrameWindow extends Window {
 			Frame f = new Frame();
 			f.url = url;
 			f.name = name;
+			f.parentFrameset = this;
 			frames.add(index, f);
 			requestRepaint();
 			return f;
@@ -277,6 +287,7 @@ public class FrameWindow extends Window {
 			Frame f = new Frame();
 			f.resource = resource;
 			f.name = name;
+			f.parentFrameset = this;
 			frames.add(index, f);
 			requestRepaint();
 			return f;
@@ -292,6 +303,7 @@ public class FrameWindow extends Window {
 		public Frameset newFrameset(boolean isVertical, int index) {
 			Frameset f = new Frameset();
 			f.setVertical(isVertical);
+			f.parentFrameset = this;
 			frames.add(index, f);
 			requestRepaint();
 			return f;
@@ -300,11 +312,14 @@ public class FrameWindow extends Window {
 		/** Remove a frame from this frameset */
 		public void removeFrame(Frame frame) {
 			frames.remove(frame);
+			frame.parentFrameset = null;
 			requestRepaint();
 		}
 
 		/** Remove all frames from this frameset */
 		public void removeAllFrames() {
+			for (Iterator i = frames.iterator(); i.hasNext(); )
+				((Frame)i.next()).parentFrameset = null;
 			frames.clear();
 			requestRepaint();
 		}
@@ -340,9 +355,10 @@ public class FrameWindow extends Window {
 		 * not found
 		 */
 		public Frame getFrame(String name) {
+			if (name == null) return null;
 			for (Iterator i = frames.iterator(); i.hasNext();) {
 				Frame f = (Frame) i.next();
-				if (f.getName().equals(name))
+				if (name.equals(f.getName()))
 					return f;
 			}
 			return null;
@@ -353,7 +369,7 @@ public class FrameWindow extends Window {
 		 * not found
 		 */
 		public Frame getFrame(int index) {
-			if (index != 0 && index < frames.size())
+			if (index >= 0 && index < frames.size())
 				return (Frame) frames.get(index);
 			return null;
 		}
