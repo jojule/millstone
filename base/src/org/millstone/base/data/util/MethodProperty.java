@@ -436,7 +436,7 @@ public class MethodProperty implements Property {
 
 		if (getMethod == null) {
 			throw new MethodProperty.MethodException(
-				"Property GET-mehod cannot not be null.");
+				"Property GET-method cannot not be null: "+type);
 		}
 
 		if (setArgumentIndex < 0 || setArgumentIndex >= setArgs.length)
