@@ -9,10 +9,10 @@
     	var clist = classes.split(',');
         win = window.open(
         	"loading.html",
-        	"example",
+        	"source",
         	"width=750,height=550,directories=no,location=no,menubar=no,scrollbars=yes,status=no,toolbar=no,resizable=yes");
 
-	  win.document.write('<FRAMESET rows="*,80,55"><FRAME name="ex" src="'+ex+'"><FRAME name="src" src="nosource.html"><FRAME name="class" border="0" frameborder="no" src="loading.html"></FRAMESET>');  
+	  win.document.write('<FRAMESET rows="*,55"><FRAME name="src" src="nosource.html"><FRAME name="class" border="0" frameborder="no" src="loading.html"></FRAMESET>');  
 	  win.frames['class'].document.open();
 	  win.frames['class'].document.write('<html><head><link href="millstoneorg.css" type="text/css" rel="STYLESHEET"></head><body><TABLE cellpaddig="5"><TR>' +"\n");
 	  for (src in clist) {
@@ -51,40 +51,40 @@ proprietary projects.
 
 <table border="0" cellpadding="5">
 <tr>
-<td><a href="javascript:openLink('hello/',50, 'org/millstone/examples', 'HelloWorld')">Hello World</a></td>
-<td>The classic example application.</td>
+<td><a target="_example" href="hello/">Hello World</a></td>
+<td>The classic example application.<br /><a href="javascript:openLink('hello/',50, 'org/millstone/examples', 'HelloWorld')">[sources]</a></td>
 </tr>
 
 <tr>
-<td><a href="javascript:openLink('calc/',170,'org/millstone/examples', 'Calc')">Calculator</a></td>
-<td>Simple calculator application.</td>
+<td><a target="_example" href="calc/">Calculator</a></td>
+<td>Simple server-side calculator application. <br /><a href="javascript:openLink('calc/',170,'org/millstone/examples', 'Calc')">[sources]</a></td>
 </tr>
 
 <tr>
-<td><a href="javascript:openLink('features/',400,'org/millstone/examples/features', 'Feature,FeatureBrowser,FeatureButton,FeatureDateField,FeatureGridLayout,FeatureLabel,FeatureLink,FeatureOrderedLayout,FeatureApplication,FeatureSelect,FeatureTable,FeatureTabSheet,FeatureTextField,FeatureTree')">Millstone features browser</a></td>
-<td> An application that demonstrates each component and layout of Millstone with description and code-example.</td>
+<td><a target="_example" href="features/">Millstone features browser</a></td>
+<td> An application that demonstrates each component and layout of Millstone with description and code-example.<br /><a href="javascript:openLink('features/',400,'org/millstone/examples/features', 'Feature,FeatureBrowser,FeatureButton,FeatureDateField,FeatureGridLayout,FeatureLabel,FeatureLink,FeatureOrderedLayout,FeatureApplication,FeatureSelect,FeatureTable,FeatureTabSheet,FeatureTextField,FeatureTree')">[sources]</a></td>
 </tr>
 
 
 <tr>
-<td><a href="javascript:openLink('login/',100,'org/millstone/examples', 'Login')">Login example</a></td>
-<td> Example of typical website. Some parts are public and some require the </td>
+<td><a target="_example" href="login/">Login example</a></td>
+<td> Example of typical website. Some parts are public and some require the user to log in. <br /><a href="javascript:openLink('login/',100,'org/millstone/examples', 'Login')">[sources]</a></td>
 </tr>
 
 <tr>
-<td><a href="javascript:openLink('player/',350,'org/millstone/examples/stoneplayer', 'StonePlayer,Song,Jukebox,JukeboxListener')">StonePlayer</a></td>
-<td> MP3 player application.</td>
+<td><a target="_example" href="player/">StonePlayer</a></td>
+<td> Server-side MP3 player application. Play music in our server. <br /><a href="javascript:openLink('player/',350,'org/millstone/examples/stoneplayer', 'StonePlayer,Song,Jukebox,JukeboxListener')">[sources]</a></td>
 </tr>
 
 <tr>
-<td><a href="javascript:openLink('chat/',200,'org/millstone/examples', 'Chat')">Chat</a></td>
-<td> Chat application demonstrating usage of streams in Millstone application.</td>
+<td><a target="_example" href="chat/">Chat</a></td>
+<td> Chat application demonstrating usage of streams in Millstone application.<br /><a href="javascript:openLink('chat/',200,'org/millstone/examples', 'Chat')">[sources]</a></td>
 </tr>
 
 <tr>
-<td><a href="javascript:openLink('go/',300,'org/millstone/examples/gogame', 'Go,Game,Board')">Game of Go</a></td>
+<td><a target="_example" href="go/">Game of Go</a></td>
 <td> Multiplayer GO-game that demonstrates building of custom UI components and
-server side refresh.</td>
+server side refresh.<br /><a href="javascript:openLink('go/',300,'org/millstone/examples/gogame', 'Go,Game,Board')">[sources]</a></td>
 </tr>
 
 </table>
