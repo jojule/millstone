@@ -132,8 +132,13 @@
                 <include name="changes.txt"/>
             </fileset>
         </copy>
-
-
+	
+        <!-- Convert to CRLF -->
+        <fixcrlf srcdir="${output-dir}"
+                 eol="crlf"
+	         includes="*.txt"
+        />
+	
         <!-- Create Output Directory Hierarchy -->
         <mkdir dir="${output-dir}/docs/apidocs" />
         <mkdir dir="${output-dir}/lib" />

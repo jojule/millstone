@@ -24,12 +24,33 @@
    
         <!-- Version the files -->
 	<mkdir dir="${work-dir}/docsrc/"/>   
-	<filter token="VERSION" value="${version}"/>
+
+        <!-- Base documentation -->
         <copy todir="${work-dir}/docsrc/" filtering="true">
-           <fileset dir="${root-dir}/base/src"/>	
+	    <filterset>
+    	       <filter token="VERSION" value="${version}"/>
+            </filterset>
+            <fileset dir="${root-dir}/base/src/**/*.java"/>	
+            <fileset dir="${root-dir}/base/src/**/*.html"/>	
         </copy>
+        <copy todir="${work-dir}/docsrc/">
+            <fileset dir="${root-dir}/base/src/**/*.gif"/>	
+            <fileset dir="${root-dir}/base/src/**/*.jpg"/>	
+            <fileset dir="${root-dir}/base/src/**/*.png"/>	
+        </copy>
+
+        <!-- Webadapter documentation -->
         <copy todir="${work-dir}/docsrc/" filtering="true">
-            <fileset dir="${root-dir}/web-adapter/src"/>	
+	    <filterset>
+    	       <filter token="VERSION" value="${version}"/>
+            </filterset>
+            <fileset dir="${root-dir}/web-adapter/src/**/*.java"/>	
+            <fileset dir="${root-dir}/web-adapter/src/**/*.html"/>	
+        </copy>
+        <copy todir="${work-dir}/docsrc/">
+            <fileset dir="${root-dir}/web-adapter/src/**/*.gif"/>	
+            <fileset dir="${root-dir}/web-adapter/src/**/*.jpg"/>	
+            <fileset dir="${root-dir}/web-adapter/src/**/*.png"/>	
         </copy>
     
         <!-- Run Javadoc -->
