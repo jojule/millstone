@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
+
 <theme name="default">
+
    <description>Default Theme</description>
    <author name="IT Mill Ltd" email="dev@millstone.org"/>
-   <fileset>
+
+   <fileset name="default">
       <file name="xsl/uidl.xsl"/>
       <file name="xsl/probe.xsl"/>
       <file name="xsl/abstractcomponent.xsl"/>
