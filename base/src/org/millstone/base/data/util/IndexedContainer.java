@@ -73,10 +73,10 @@ public class IndexedContainer implements Container, Container.Indexed,
     /* Internal structure *************************************************** */
 
     /** Linked list of ordered Item IDs */
-    private List itemIds = new ArrayList();
+    private ArrayList itemIds = new ArrayList();
 
     /** Linked list of ordered Property IDs */
-    private List propertyIds = new ArrayList();
+    private ArrayList propertyIds = new ArrayList();
 
     /** Property ID to type mapping */
     private Hashtable types = new Hashtable();
@@ -1223,5 +1223,33 @@ public class IndexedContainer implements Container, Container.Indexed,
         }
 
         return 0;
+    }
+
+    /* Support cloning of the IndexedContainer cleanly */
+    protected Object clone() throws CloneNotSupportedException {
+
+        IndexedContainer nc = new IndexedContainer();
+        
+        // Clone the shallow properties
+        nc.itemIds = (ArrayList) this.itemIds.clone();
+        nc.itemSetChangeListeners = (LinkedList) this.itemSetChangeListeners.clone();
+        nc.propertyIds = (ArrayList) this.propertyIds.clone();
+        nc.propertySetChangeListeners = (LinkedList) this.propertySetChangeListeners.clone();
+        nc.propertyValueChangeListeners = (LinkedList) this.propertyValueChangeListeners.clone();
+        nc.readOnlyProperties = (HashSet) this.readOnlyProperties.clone();
+        nc.singlePropertyValueChangeListeners = (Hashtable) this.singlePropertyValueChangeListeners.clone();
+        nc.sortDirection = (boolean[]) this.sortDirection.clone();
+        nc.sortPropertyId = (Object[]) this.sortPropertyId.clone();
+        nc.types = (Hashtable) this.types.clone();
+        
+        // Clone deep properties
+        nc.items = new Hashtable();
+        for (Iterator i = this.items.keySet().iterator(); i.hasNext();) {
+            Object id = i.next();
+            Hashtable it = (Hashtable) this.items.get(id);
+            nc.items.put(id,it.clone());
+        }
+
+        return nc;
     }
 }
