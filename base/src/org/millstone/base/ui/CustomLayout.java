@@ -148,4 +148,32 @@ public class CustomLayout extends AbstractComponentContainer implements Layout {
 			target.endTag("location");
 		}
 	}
+	
+	/* Documented in superclass */
+	public void replaceComponent(
+		Component oldComponent,
+		Component newComponent) {
+
+		// Get the locations			
+		String oldLocation = null;
+		String newLocation  = null;
+		for (Iterator i=slots.keySet().iterator(); i.hasNext();) {
+			String location = (String) i.next();
+			Component component = (Component) slots.get(location);
+			if (component == oldComponent) oldLocation = location;
+			if (component == newComponent) newLocation = location;
+		}	
+
+		if (oldLocation == null)
+			addComponent(newComponent);
+		else if (newLocation == null) {
+			removeComponent(oldLocation);
+			addComponent(newComponent,oldLocation);
+		} else {
+			slots.put(newLocation,oldComponent);
+			slots.put(oldLocation,newComponent);	
+			requestRepaint();
+		}
+	}
+
 }

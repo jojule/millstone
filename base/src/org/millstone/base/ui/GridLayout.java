@@ -517,11 +517,23 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 				&& y2 >= other.getY1();
 
 		}
+
 		/** Returns the component connected to the area.
 		 * @return Component
 		 */
 		public Component getComponent() {
 			return component;
+		}
+
+		/** Sets the component connected to the area.
+		 * 
+		 * <p>This function only sets the value in the datastructure and does not 
+		 * send any events or set parents</p>
+		 * 
+		 * @param newComponent The new connected overriding the existing one
+		 */
+		protected void setComponent(Component newComponent) {
+			component= newComponent;
 		}
 
 		/** Returns the top-left corner x-coordinate.
@@ -696,4 +708,32 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 	public int getCursorY() {
 		return cursorY;
 	}
+	
+	/* Documented in superclass */
+	public void replaceComponent(
+		Component oldComponent,
+		Component newComponent) {
+
+		// Get the locations			
+		Area oldLocation = null;
+		Area newLocation  = null;
+		for (Iterator i=areas.iterator(); i.hasNext();) {
+			Area location = (Area) i.next();
+			Component component = (Component) location.getComponent();
+			if (component == oldComponent) oldLocation = location;
+			if (component == newComponent) newLocation = location;
+		}	
+
+		if (oldLocation == null)
+			addComponent(newComponent);
+		else if (newLocation == null) {
+			removeComponent(oldComponent);
+			addComponent(newComponent,oldLocation.getX1(),oldLocation.getY1(),oldLocation.getX2(),oldLocation.getY2());
+		} else {
+			oldLocation.setComponent(newComponent);
+			newLocation.setComponent(oldComponent);
+			requestRepaint();
+		}
+	}
+	
 }

@@ -65,6 +65,19 @@ public interface ComponentContainer extends Component {
     /** Removes all components from this container. */    
     public void removeAllComponents();
 
+	/** Replace a component in the container with another one without changing position.
+	 * 
+	 * <p>This method replaces component with another one is such way that the new component
+	 * overtakes the position of the old component. If the old component is not in the 
+	 * container, the new component is added to the container. If the both component are
+	 * already in the container, their positions are swapped.
+	 * Component attach and detach events should be taken care as with add and remove.</p>
+	 * 
+	 * @param oldComponent The old component that will be replaced.
+	 * @param newComponent The new component to be replaced
+	 */
+	public void replaceComponent(Component oldComponent, Component newComponent);
+
     /** Gets an iterator to the collection of contained components. Using
      * this iterator it is possible to step through all components contained
      * in this container.

@@ -45,154 +45,170 @@ import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.Sizeable;
 import org.millstone.base.terminal.Scrollable;
+import org.millstone.base.ui.ComponentContainer.ComponentAttachEvent;
+import org.millstone.base.ui.ComponentContainer.ComponentDetachEvent;
 
 /** Panel - a simple single component container.
  * @author IT Mill Ltd.
  * @version @VERSION@
  * @since 3.0
  */
-public class Panel extends AbstractComponentContainer implements Sizeable, Scrollable {
+public class Panel
+	extends AbstractComponentContainer
+	implements
+		Sizeable,
+		Scrollable,
+		ComponentContainer.ComponentAttachListener,
+		ComponentContainer.ComponentDetachListener {
 
-    /** Layout of the panel */
-    private Layout layout;
-    
-    /** Width of the panel or -1 if unspecified */
-    private int width = -1;
-    
-    /** Height of the panel or -1 if unspecified */
-    private int height = -1;
-    
-    /** Width unit */
-    private int widthUnit = Sizeable.UNITS_PIXELS;
+	/** Layout of the panel */
+	private Layout layout;
 
-    /** Height unit */
-    private int heightUnit = Sizeable.UNITS_PIXELS;
+	/** Width of the panel or -1 if unspecified */
+	private int width = -1;
+
+	/** Height of the panel or -1 if unspecified */
+	private int height = -1;
+
+	/** Width unit */
+	private int widthUnit = Sizeable.UNITS_PIXELS;
+
+	/** Height unit */
+	private int heightUnit = Sizeable.UNITS_PIXELS;
 
 	/** Scroll X position */
 	private int scrollOffsetX = 0;
 
 	/** Scroll Y position */
 	private int scrollOffsetY = 0;
-	
+
 	/** Scrolling mode */
 	private boolean scrollable = false;
 
-    /** Create new empty panel.
-     *  Ordered layout is used.
-     */
-    public Panel() {
-        this(new OrderedLayout());
-    }
-    
-    /** Create new empty panel with given layout.
-     * Layout must be non-null.
-     *
-     * @param layout The layout used in the panel.
-     */
-    public Panel(Layout layout) {
-        setLayout(layout);
-    }
-    
-    /** Create new empty panel with caption.
-     * Ordered layout is used.
-     *
-     * @param caption The caption used in the panel.
-     */
-    public Panel(String caption) {
-        this(caption,new OrderedLayout());
-    }
-    
-    /** Create new empty panel with caption.
-     *
-     * @param caption The caption of the panel.
-     * @param layout The layout used in the panel.
-     */
-    public Panel(String caption, Layout layout) {
-        this(layout);
-        setCaption(caption);
-    }
-    
-    /** Get the current layout of the panel.
-     * @return Current layout of the panel.
-     */
-    public Layout getLayout() {
-        return this.layout;
-    }
-    
-    /** Set the layout of the panel.
-     * All the components are moved to new layout.
-     *
-     * @param layout New layout of the panel.
-     */
-    public void setLayout(Layout layout) {
-        
-        // Only allow non-null layouts
-        if (layout == null)
-            layout = new OrderedLayout();
-        
-        // Set the panel to be parent for the layout
-        layout.setParent(this);
-        dependsOn(layout);
-        
-        // If panel already contains a layout, move the contents to new one
-        // and detach old layout from the panel
-        if (this.layout != null) {
-            layout.moveComponentsFrom(this.layout);
-            removeDirectDependency(this.layout);
-            this.layout.setParent(null);
-        }
-        
-        // Set the new layout
-        this.layout = layout;
-    }
-    
-    /** Paint the content of this component.
-     * @param event PaintEvent.
-     * @throws PaintException The paint operation failed.
-     */
-    public void paintContent(PaintTarget target) throws PaintException {
-        layout.paint(target);
-        target.addVariable(this, "height", getHeight());
-        target.addVariable(this, "width", getWidth());
-        if (isScrollable())
-	        target.addVariable(this, "scrollleft", getScrollOffsetX());
-    	    target.addVariable(this, "scrolldown", getScrollOffsetY());
-    }
-    
-    /** Get component UIDL tag.
-     * @return Component UIDL tag as string.
-     */
-    public String getTag() {
-        return "panel";
-    }
-    
-    /** Add a component into this container.
-     * @param c The component to be added.
-     */
-    public void addComponent(Component c) {
-        layout.addComponent(c);
-        fireComponentAttachEvent(c);
-        // No repaint request is made as we except the underlaying container to 
-        // request repaints
-    }
-    
-    /** Remove a component from this container.
-     * @param c The component to be added.
-     */
-    public void removeComponent(Component c) {
-        layout.removeComponent(c);
-        fireComponentDetachEvent(c);
-        // No repaint request is made as we except the underlaying container to 
-        // request repaints
-    }
-    
-    /** Get component container iterator for going trough all the components in the container.
-     * @return Iterator of the components inside the container.
-     */
-    public Iterator getComponentIterator() {
-        return layout.getComponentIterator();
-    }
-    
+	/** Create new empty panel.
+	 *  Ordered layout is used.
+	 */
+	public Panel() {
+		this(new OrderedLayout());
+	}
+
+	/** Create new empty panel with given layout.
+	 * Layout must be non-null.
+	 *
+	 * @param layout The layout used in the panel.
+	 */
+	public Panel(Layout layout) {
+		setLayout(layout);
+	}
+
+	/** Create new empty panel with caption.
+	 * Ordered layout is used.
+	 *
+	 * @param caption The caption used in the panel.
+	 */
+	public Panel(String caption) {
+		this(caption, new OrderedLayout());
+	}
+
+	/** Create new empty panel with caption.
+	 *
+	 * @param caption The caption of the panel.
+	 * @param layout The layout used in the panel.
+	 */
+	public Panel(String caption, Layout layout) {
+		this(layout);
+		setCaption(caption);
+	}
+
+	/** Get the current layout of the panel.
+	 * @return Current layout of the panel.
+	 */
+	public Layout getLayout() {
+		return this.layout;
+	}
+
+	/** Set the layout of the panel.
+	 * All the components are moved to new layout.
+	 *
+	 * @param layout New layout of the panel.
+	 */
+	public void setLayout(Layout layout) {
+
+		// Only allow non-null layouts
+		if (layout == null)
+			layout = new OrderedLayout();
+
+		// Set the panel to be parent for the layout
+		layout.setParent(this);
+		dependsOn(layout);
+
+		// If panel already contains a layout, move the contents to new one
+		// and detach old layout from the panel
+		if (this.layout != null) {
+			layout.moveComponentsFrom(this.layout);
+			removeDirectDependency(this.layout);
+			this.layout.setParent(null);
+		}
+		
+		// Remove the event listeners from the old layout
+		if (this.layout != null) {
+			this.layout.removeListener((ComponentContainer.ComponentAttachListener) this);	
+			this.layout.removeListener((ComponentContainer.ComponentDetachListener) this);	
+		}
+
+		// Set the new layout
+		this.layout = layout;
+
+		// Add event listeners for new layout
+			layout.addListener((ComponentContainer.ComponentAttachListener) this);	
+			layout.addListener((ComponentContainer.ComponentDetachListener) this);	
+	}
+
+	/** Paint the content of this component.
+	 * @param event PaintEvent.
+	 * @throws PaintException The paint operation failed.
+	 */
+	public void paintContent(PaintTarget target) throws PaintException {
+		layout.paint(target);
+		target.addVariable(this, "height", getHeight());
+		target.addVariable(this, "width", getWidth());
+		if (isScrollable())
+			target.addVariable(this, "scrollleft", getScrollOffsetX());
+		target.addVariable(this, "scrolldown", getScrollOffsetY());
+	}
+
+	/** Get component UIDL tag.
+	 * @return Component UIDL tag as string.
+	 */
+	public String getTag() {
+		return "panel";
+	}
+
+	/** Add a component into this container.
+	 * @param c The component to be added.
+	 */
+	public void addComponent(Component c) {
+		layout.addComponent(c);
+		// No repaint request is made as we except the underlaying container to 
+		// request repaints
+	}
+
+	/** Remove a component from this container.
+	 * @param c The component to be added.
+	 */
+	public void removeComponent(Component c) {
+		layout.removeComponent(c);
+		// No repaint request is made as we except the underlaying container to 
+		// request repaints
+	}
+
+	/** Get component container iterator for going trough all the components in the container.
+	 * @return Iterator of the components inside the container.
+	 */
+	public Iterator getComponentIterator() {
+		return layout.getComponentIterator();
+	}
+
 	/**
 	 * Returns the height.
 	 * @return int
@@ -232,7 +248,7 @@ public class Panel extends AbstractComponentContainer implements Sizeable, Scrol
 	 */
 	public void changeVariables(Object source, Map variables) {
 		super.changeVariables(source, variables);
-	
+
 		// Get new size	
 		Integer newWidth = (Integer) variables.get("width");
 		Integer newHeight = (Integer) variables.get("height");
@@ -240,7 +256,7 @@ public class Panel extends AbstractComponentContainer implements Sizeable, Scrol
 			setWidth(newWidth.intValue());
 		if (newHeight != null && newHeight.intValue() != getHeight())
 			setHeight(newHeight.intValue());
-			
+
 		// Scrolling
 		Integer newScrollX = (Integer) variables.get("scrollleft");
 		Integer newScrollY = (Integer) variables.get("scrolldown");
@@ -305,7 +321,7 @@ public class Panel extends AbstractComponentContainer implements Sizeable, Scrol
 	public void setScrollable(boolean isScrollingEnabled) {
 		if (scrollable != isScrollingEnabled) {
 			scrollable = isScrollingEnabled;
-			requestRepaint();	
+			requestRepaint();
 		}
 	}
 
@@ -314,7 +330,7 @@ public class Panel extends AbstractComponentContainer implements Sizeable, Scrol
 		if (pixelsScrolledLeft < 0)
 			throw new IllegalArgumentException("Scroll offset must be at least 0");
 		if (this.scrollOffsetX != pixelsScrolledLeft) {
-			scrollOffsetX = pixelsScrolledLeft;	
+			scrollOffsetX = pixelsScrolledLeft;
 			requestRepaint();
 		}
 	}
@@ -324,9 +340,33 @@ public class Panel extends AbstractComponentContainer implements Sizeable, Scrol
 		if (pixelsScrolledDown < 0)
 			throw new IllegalArgumentException("Scroll offset must be at least 0");
 		if (this.scrollOffsetY != pixelsScrolledDown) {
-			scrollOffsetY = pixelsScrolledDown;	
+			scrollOffsetY = pixelsScrolledDown;
 			requestRepaint();
 		}
+	}
+
+	/* Documented in superclass */
+	public void replaceComponent(
+		Component oldComponent,
+		Component newComponent) {
+
+		layout.replaceComponent(oldComponent, newComponent);
+	}
+
+	/** Pass the events from underlying layout forwards.
+	 * @see org.millstone.base.ui.ComponentContainer.ComponentAttachListener#componentAttachedToContainer(ComponentAttachEvent)
+	 */
+	public void componentAttachedToContainer(ComponentAttachEvent event) {
+		if (event.getContainer() == layout)
+			fireComponentAttachEvent(event.getAttachedComponent());
+	}
+
+	/** Pass the events from underlying layout forwards.
+	 * @see org.millstone.base.ui.ComponentContainer.ComponentDetachListener#componentDetachedFromContainer(ComponentDetachEvent)
+	 */
+	public void componentDetachedFromContainer(ComponentDetachEvent event) {
+		if (event.getContainer() == layout)
+			fireComponentDetachEvent(event.getDetachedComponent());
 	}
 
 }
