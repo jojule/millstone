@@ -49,7 +49,6 @@ import org.millstone.base.data.Buffered;
 import org.millstone.base.data.Property;
 import org.millstone.base.data.Validatable;
 import org.millstone.base.data.Validator;
-import org.millstone.base.terminal.CompositeErrorMessage;
 import org.millstone.base.terminal.ErrorMessage;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
@@ -108,13 +107,19 @@ public abstract class AbstractField
 	/** Are the invalid values committed */
 	private boolean invalidCommitted = false;
 
-	/** Should the field be focused on next repaint */
-	private boolean focus = false;
-
 	/** The tab order number of this field */
 	private int tabIndex = 0;
-
+	
+	/** Unique focusable id */
+	private long focusableId = -1;
+	
+	
 	/* Component basics ************************************************ */
+
+	public AbstractField() {
+		this.focusableId = Window.getNewFocusableId(this);
+	}
+
 
 	/* Paint the field.
 	 * Don't add a JavaDoc comment here, we use the default documentation from
@@ -122,9 +127,10 @@ public abstract class AbstractField
 	 */
 	public void paintContent(PaintTarget target) throws PaintException {
 
-		// The field should be focused
-		if (focus)
-			target.addAttribute("focus", true);
+		// Focus control id
+		if (this.focusableId > 0) {
+			target.addAttribute("focusid", this.focusableId);			
+		}
 
 		// The tab ordering number
 		if (this.tabIndex > 0)
@@ -604,8 +610,10 @@ public abstract class AbstractField
 	 */
 	public ErrorMessage getErrorMessage() {
 		ErrorMessage superError = super.getErrorMessage();
+		return superError;
+		/* TODO: Check the logic of this
 		ErrorMessage validationError = null;
-		try {
+				try {
 			validate();
 		} catch (Validator.InvalidValueException e) {
 			validationError = e;
@@ -622,6 +630,7 @@ public abstract class AbstractField
 				superError,
 				validationError,
 				currentBufferedSourceException });
+				*/
 
 	}
 
@@ -755,8 +764,10 @@ public abstract class AbstractField
 
 	/** Ask the terminal to place the cursor to this field. */
 	public void focus() {
-		focus = true;
-		requestRepaint();
+		Window w = getWindow();
+		if (w != null) {
+			w.setFocusedComponent(this);
+		}
 	}
 
 	/** Create abstract field by the type of the property.
@@ -819,4 +830,11 @@ public abstract class AbstractField
 	protected void setInternalValue(Object newValue) {
 		this.value = newValue;
 	}
+
+	/**
+	 * @see org.millstone.base.ui.Component.Focusable#getFocusableId()
+	 */
+	public long getFocusableId() {
+		return this.focusableId;
+	}	
 }
