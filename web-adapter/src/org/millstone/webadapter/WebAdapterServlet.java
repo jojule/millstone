@@ -38,41 +38,6 @@
 
 package org.millstone.webadapter;
 
-import org.millstone.base.Application.WindowAttachEvent;
-import org.millstone.base.Application.WindowDetachEvent;
-import org.millstone.base.service.FileTypeResolver;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionBindingListener;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-
-import org.millstone.base.Application;
-import org.millstone.base.ui.Window;
-import org.millstone.webadapter.ThemeSource.ThemeException;
-import org.millstone.base.terminal.*;
-import org.millstone.base.terminal.Paintable;
-import org.millstone.base.terminal.DownloadStream;
-import org.millstone.base.terminal.ParameterHandler;
-import org.millstone.base.terminal.ThemeResource;
-import org.millstone.base.terminal.Paintable.RepaintRequestEvent;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.Iterator;
-import java.util.WeakHashMap;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -85,6 +50,39 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.WeakHashMap;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
+
+import org.millstone.base.Application;
+import org.millstone.base.Application.WindowAttachEvent;
+import org.millstone.base.Application.WindowDetachEvent;
+import org.millstone.base.service.FileTypeResolver;
+import org.millstone.base.terminal.DownloadStream;
+import org.millstone.base.terminal.Paintable;
+import org.millstone.base.terminal.ParameterHandler;
+import org.millstone.base.terminal.ThemeResource;
+import org.millstone.base.terminal.URIHandler;
+import org.millstone.base.terminal.Paintable.RepaintRequestEvent;
+import org.millstone.base.ui.Window;
+import org.millstone.webadapter.ThemeSource.ThemeException;
 
 /** This servlet is the core of the MillStone Web Adapter, that adapts the
  * MillStone applications to Web standards. The web adapter can be used to
