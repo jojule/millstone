@@ -312,6 +312,13 @@ public interface Component extends Paintable, VariableOwner {
 		 * zero means unspecified tab order.
 		 */
 		public void setTabIndex(int tabIndex);
+
+		/** Get unique ID of focusable.
+		 *  This will be used to move input focus directly to this
+		 *  component.
+		 * @return Unique id of focusable.
+		 */
+		public long getFocusableId();
 		
 	}
 }
