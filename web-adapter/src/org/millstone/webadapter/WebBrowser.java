@@ -189,7 +189,9 @@ public class WebBrowser implements Terminal {
 
 	/** Test the equality of the properties for two web browser types */
 	public boolean equals(Object obj) {
-		return toString().equals(obj.toString());
+		if (obj != null)
+			return toString().equals(obj.toString());
+		return false;
 	}
 
 	/** Repsent the type of the web browser as string */
