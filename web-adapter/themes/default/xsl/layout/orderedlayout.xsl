@@ -37,12 +37,34 @@
 
 <!-- STYLE: form -->
 
+<xsl:template match="orderedlayout[@style='form']" mode="core">
+  <xsl:if test="./child::*">
+    <TABLE BORDER="0" WIDTH="{$maxtablewidth}">
+      <xsl:for-each select="*">
+        <TR>
+          <TD>
+		    <xsl:if test="local-name()!='button' and local-name()!='link' and @caption">
+		      <NOBR CLASS="caption">
+  		        <xsl:if test="@icon"><IMG SRC="{@icon}" /></xsl:if>
+  	            <xsl:value-of select="@caption"/>
+		      </NOBR>
+		    </xsl:if>
+		    <xsl:if test="not(@caption) and @icon"><IMG SRC="{@icon}" /></xsl:if>
+          </TD>
+          <TD><xsl:apply-templates select="." mode="core"/></TD>
+        </TR>
+      </xsl:for-each>
+    </TABLE>
+  </xsl:if>
+</xsl:template>
+
+
 <xsl:template match="orderedlayout[(@orientation='flow') and (@style='form')]" mode="core">
   <xsl:for-each select="*">
-    <TABLE BORDER="0">
+    <TABLE BORDER="0" WIDTH="{$maxtablewidth}">
       <TR CLASS="flowform-caption">
         <TD>
-	      <xsl:if test="@caption">
+	      <xsl:if test="local-name()!='button' and local-name()!='link' and @caption">
 		    <NOBR CLASS="caption">
   		      <xsl:if test="@icon"><IMG SRC="{@icon}" /></xsl:if>
 	          <xsl:value-of select="@caption"/>
@@ -53,9 +75,7 @@
         </TD>
       </TR>
       <TR>
-        <xsl:for-each select="*">
-          <TD><xsl:apply-templates select="." mode="core"/></TD>
-        </xsl:for-each>
+        <TD><xsl:apply-templates select="." mode="core"/></TD>
       </TR>
     </TABLE>
   </xsl:for-each>
@@ -67,7 +87,7 @@
       <TR>
         <xsl:for-each select="*">
           <TD>
-		    <xsl:if test="@caption">
+		    <xsl:if test="local-name()!='button' and local-name()!='link' and @caption">
 		      <NOBR CLASS="caption">
   		        <xsl:if test="@icon"><IMG SRC="{@icon}" /></xsl:if>
 		        <xsl:value-of select="@caption"/>
@@ -79,32 +99,12 @@
       </TR>
       <TR>
         <xsl:for-each select="*">
-          <TD><xsl:apply-templates select="." mode="core"/></TD>
+	        <TD><xsl:apply-templates select="." mode="core"/></TD>
         </xsl:for-each>
       </TR>
     </TABLE>
   </xsl:if>
 </xsl:template>
 
-<xsl:template match="orderedlayout[@style='form']" mode="core">
-  <xsl:if test="./child::*">
-    <TABLE BORDER="0">
-      <xsl:for-each select="*">
-        <TR>
-          <TD>
-		    <xsl:if test="@caption">
-		      <NOBR CLASS="caption">
-  		        <xsl:if test="@icon"><IMG SRC="{@icon}" /></xsl:if>
-		        <xsl:if test="@icon"><IMG SRC="{@icon}" /></xsl:if>
-		      </NOBR>
-		    </xsl:if>
-		    <xsl:if test="not(@caption) and @icon"><IMG SRC="{@icon}" /></xsl:if>
-          </TD>
-          <TD><xsl:apply-templates mode="core"/></TD>
-        </TR>
-      </xsl:for-each>
-    </TABLE>
-  </xsl:if>
-</xsl:template>
 
 </xsl:stylesheet>
