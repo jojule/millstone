@@ -8,7 +8,7 @@
 	  <TEXTAREA NAME="{./string[@name='text']/@id}" ID="{./string[@name='text']/@id}"> 
 		<xsl:if test="@modified='true'"><xsl:attribute name="CLASS">modified</xsl:attribute></xsl:if>
 	    <xsl:if test="@readonly='true'"><xsl:attribute name="READONLY">true</xsl:attribute></xsl:if>
-	    <xsl:if test="@enabled='false'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
+        <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
 		<xsl:if test="@immediate='true' and $dhtml"><xsl:attribute name="onchange">millstoneSubmit()</xsl:attribute></xsl:if>
 		<xsl:if test="not(@immediate='true') and $dhtml"><xsl:attribute name="onchange">this.className='modified'</xsl:attribute></xsl:if>
 		<xsl:if test="@cols"><xsl:attribute name="COLS"><xsl:value-of select="@cols"/></xsl:attribute></xsl:if>
@@ -16,6 +16,7 @@
 		<xsl:if test="@wordwrap='false'"><xsl:attribute name="WRAP">off</xsl:attribute></xsl:if>
 		<xsl:if test="@maxlength"><xsl:attribute name="MAXLENGTH"><xsl:value-of select="@maxlength"/></xsl:attribute></xsl:if>
     	<xsl:if test="@tabindex"><xsl:attribute name="tabindex"><xsl:value-of select="@tabindex"/></xsl:attribute></xsl:if>
+        <xsl:if test="@focusid"><xsl:attribute name="FOCUSID"><xsl:value-of select="@focusid"/></xsl:attribute></xsl:if>
 		<xsl:value-of select="./string[@name='text']"/>
       </TEXTAREA>
 	</xsl:when>
@@ -23,21 +24,17 @@
 	  <INPUT NAME="{./string[@name='text']/@id}" ID="{./string[@name='text']/@id}" VALUE="{./string[@name='text']}"> 
 		<xsl:if test="@modified='true'"><xsl:attribute name="CLASS">modified</xsl:attribute></xsl:if>
 	    <xsl:if test="@readonly='true'"><xsl:attribute name="READONLY">true</xsl:attribute></xsl:if>
-	    <xsl:if test="@enabled='false'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
+        <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
 		<xsl:if test="@immediate='true' and $dhtml"><xsl:attribute name="onchange">millstoneSubmit()</xsl:attribute></xsl:if>
 		<xsl:if test="not(@immediate='true') and $dhtml"><xsl:attribute name="onchange">this.className='modified'</xsl:attribute></xsl:if>
 		<xsl:if test="@cols"><xsl:attribute name="SIZE"><xsl:value-of select="@cols"/></xsl:attribute></xsl:if>
 		<xsl:if test="@maxlength"><xsl:attribute name="MAXLENGTH"><xsl:value-of select="@maxlength"/></xsl:attribute></xsl:if>
 		<xsl:if test="@secret"><xsl:attribute name="TYPE">password</xsl:attribute></xsl:if>
      	<xsl:if test="@tabindex"><xsl:attribute name="tabindex"><xsl:value-of select="@tabindex"/></xsl:attribute></xsl:if>
+        <xsl:if test="@focusid"><xsl:attribute name="FOCUSID"><xsl:value-of select="@focusid"/></xsl:attribute></xsl:if>
       </INPUT>
     </xsl:otherwise>
   </xsl:choose>
-
-  <!-- Set focus to field -->
-  <xsl:if test="@focus='true' and $dhtml">
-    <SCRIPT>document.millstone.<xsl:value-of select="./string[@name='text']/@id"/>.focus()</SCRIPT>
-  </xsl:if>
 
 </xsl:template>
 

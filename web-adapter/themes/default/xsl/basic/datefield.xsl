@@ -141,6 +141,7 @@
        <xsl:if test="../@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
        <xsl:if test="../@readonly='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
        <xsl:if test="../@tabindex"><xsl:attribute name="tabindex"><xsl:value-of select="../@tabindex"/></xsl:attribute></xsl:if>
+       <xsl:if test="../@focusid"><xsl:attribute name="FOCUSID"><xsl:value-of select="../@focusid"/></xsl:attribute></xsl:if>
        
        <!-- calendar is updated on change -->
        <xsl:choose>       
@@ -154,12 +155,7 @@
          </xsl:when>        
        </xsl:choose>
       </INPUT>
-      
-  	  <!-- Set focus to year field -->
-  	  <xsl:if test="../@focus='true' and $dhtml">
-        <SCRIPT>document.millstone.<xsl:value-of select="@id"/>.focus()</SCRIPT>
-  	  </xsl:if>
-      
+
     </xsl:otherwise>
   </xsl:choose>
 

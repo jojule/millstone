@@ -8,12 +8,8 @@
     <xsl:if test="@readonly='true'"><xsl:attribute name="READONLY">true</xsl:attribute></xsl:if>
     <xsl:if test="not(@immediate='true') and $dhtml"><xsl:attribute name="onchange">this.CLASS='modified'</xsl:attribute></xsl:if>
     <xsl:if test="@tabindex"><xsl:attribute name="tabindex"><xsl:value-of select="@tabindex"/></xsl:attribute></xsl:if>
+    <xsl:if test="@focusid"><xsl:attribute name="FOCUSID"><xsl:value-of select="@focusid"/></xsl:attribute></xsl:if>
   </INPUT>
-  
-  <!-- Set focus to field -->
-  <xsl:if test="@focus='true' and $dhtml">
-    <SCRIPT>document.millstone.<xsl:value-of select="./uploadstream/@id"/>.focus()</SCRIPT>
-  </xsl:if>
   
 </xsl:template>
 

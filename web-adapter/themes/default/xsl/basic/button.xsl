@@ -8,6 +8,7 @@
     <!-- Link Style -->
     <xsl:when test="$dhtml and (@style='link')">
       <A CLASS="button-link">
+        <xsl:if test="@focusid"><xsl:attribute name="FOCUSID"><xsl:value-of select="@focusid"/></xsl:attribute></xsl:if>
         <xsl:if test="not(@disabled)"><xsl:attribute name="HREF">javascript:setVarById('<xsl:value-of select="./boolean/@id"/>','true',true)</xsl:attribute></xsl:if>
         <xsl:if test="@disabled"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
         <xsl:if test="@icon"><IMG class="icon" SRC="{@icon}" /></xsl:if>
@@ -31,13 +32,10 @@
    	    <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
         <xsl:if test="@readonly='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
      	<xsl:if test="@tabindex"><xsl:attribute name="tabindex"><xsl:value-of select="@tabindex"/></xsl:attribute></xsl:if>
+        <xsl:if test="@focusid"><xsl:attribute name="FOCUSID"><xsl:value-of select="@focusid"/></xsl:attribute></xsl:if>
       </INPUT>
       </xsl:if>
    
-      <!-- Set focus to field -->
-      <xsl:if test="@focus='true' and $dhtml">
-        <SCRIPT>document.getElementById('<xsl:value-of select="./boolean/@id"/>').focus()</SCRIPT>
-      </xsl:if>
     </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
@@ -111,13 +109,9 @@
     <xsl:if test="@immediate='true' and $dhtml"><xsl:attribute name="onclick">millstoneSubmit()</xsl:attribute></xsl:if>
     <xsl:if test="./boolean/@value='true'"><xsl:attribute name="CHECKED">true</xsl:attribute></xsl:if>
     <xsl:if test="@readonly='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
+    <xsl:if test="@focusid"><xsl:attribute name="FOCUSID"><xsl:value-of select="@focusid"/></xsl:attribute></xsl:if>
    </INPUT>
-
-  <!-- Set focus to field -->
-  <xsl:if test="@focus='true' and $dhtml">
-    <SCRIPT>document.getElementById('<xsl:value-of select="./boolean/@id"/>').focus()</SCRIPT>
-  </xsl:if>
-   
+      
 </xsl:template>
 
 </xsl:stylesheet>
