@@ -55,6 +55,9 @@ import org.millstone.base.data.Property;
  */
 public class BeanItem extends PropertysetItem {
 
+	/** The bean wich this Item is based on. */
+	private Object bean;
+
 	/** <p>Creates a new instance of BeanItem and adds all properties of a
 	 * Java Bean to it. The properties are identified by their respective
 	 * bean names.</p>
@@ -66,6 +69,8 @@ public class BeanItem extends PropertysetItem {
 	 * @param bean the Java Bean to copy properties from
 	 */
 	public BeanItem(Object bean) {
+
+		this.bean = bean;
 
 		// Try to introspect, if it fails, we just have an empty Item
 		try {
@@ -99,6 +104,9 @@ public class BeanItem extends PropertysetItem {
 	 * @param bean the Java Bean to copy properties from
 	 */
 	public BeanItem(Object bean, Collection propertyIds) {
+		
+		this.bean = bean;
+
 		// Try to introspect, if it fails, we just have an empty Item
 		try {
 			// Create bean information
@@ -129,6 +137,13 @@ public class BeanItem extends PropertysetItem {
 		} catch (java.beans.IntrospectionException ignored) {
 		}
 
+	}
+
+	/** Get the underlying JavaBean object. 
+	 * @return the bean object.
+	 */
+	public Object getBean() {
+		return bean;
 	}
 
 }
