@@ -73,7 +73,7 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	private int type = TYPE_OBJECT;
 
 	/** Source of the embedded object */
-	private Resource source = new ExternalResource("");
+	private Resource source = null;
 
 	/** Dimensions of the object. */
 	private int width = -1;
@@ -127,7 +127,9 @@ public class Embedded extends AbstractComponent implements Sizeable {
 			target.addAttribute("type", "image");
 		}
 		
-		target.addAttribute("src", source);
+		if (source != null) 
+			target.addAttribute("src", source);
+		
 		// Dimensions
 		if (width > 0)
 			target.addAttribute(
