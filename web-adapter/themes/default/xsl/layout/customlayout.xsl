@@ -5,7 +5,7 @@
 <!-- This layout must be overriden with higher priority template -->
 
 <xsl:template match="customlayout" mode="core">
-    <xsl:for-each select="item"><xsl:apply-templates/></xsl:for-each>    
+    <xsl:for-each select="location"><xsl:apply-templates select="."/></xsl:for-each>    
 </xsl:template>
 
 </xsl:stylesheet>
