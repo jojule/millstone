@@ -474,8 +474,10 @@ public class Form
 			if (id != null && property != null) {
 				Field f =
 					this.fieldFactory.createField(itemDatasource, id, this);
-				f.setPropertyDataSource(property);
-				addField(id, f);
+				if (f != null) {
+					f.setPropertyDataSource(property);
+					addField(id, f);
+				}
 			}
 		}
 	}
