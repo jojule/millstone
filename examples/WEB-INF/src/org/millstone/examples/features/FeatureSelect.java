@@ -38,10 +38,6 @@
 
 package org.millstone.examples.features;
 
-import java.util.Hashtable;
-import java.util.Vector;
-
-import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.ui.*;
 
 public class FeatureSelect extends Feature {

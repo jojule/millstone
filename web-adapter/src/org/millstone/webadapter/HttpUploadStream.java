@@ -39,7 +39,6 @@
 package org.millstone.webadapter;
 
 import java.io.InputStream;
-import java.util.EventObject;
 
 /** WebAdapter implementation of the UploadStream interface.
  *

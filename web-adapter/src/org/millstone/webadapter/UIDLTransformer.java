@@ -40,41 +40,24 @@ package org.millstone.webadapter;
 
 import org.millstone.base.terminal.PaintException;
 import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.io.StringReader;
-import java.io.Writer;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.StringTokenizer;
 
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.Result;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.SourceLocator;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.OutputKeys;
 
 /** Class implementing the MillStone WebAdapter UIDLTransformer.

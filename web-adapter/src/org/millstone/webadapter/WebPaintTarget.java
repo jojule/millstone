@@ -40,22 +40,14 @@ package org.millstone.webadapter;
 
 import org.millstone.base.Application;
 import org.millstone.base.terminal.ApplicationResource;
-import org.millstone.base.terminal.ClassResource;
-import org.millstone.base.terminal.StreamResource;
 import org.millstone.base.terminal.ExternalResource;
-import org.millstone.base.terminal.FileResource;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.Resource;
 import org.millstone.base.terminal.ThemeResource;
 import org.millstone.base.terminal.VariableOwner;
 import org.millstone.base.terminal.UploadStream;
-import org.millstone.base.terminal.DownloadStream;
 import org.millstone.base.terminal.PaintTarget;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.io.PrintWriter;
 import java.util.Stack;
-import java.util.StringTokenizer;
 
 /** User Interface Description Language Target.
  * @author IT Mill Ltd.

@@ -38,11 +38,8 @@
 
 package org.millstone.examples.features;
 
-import java.util.Date;
-import java.util.Hashtable;
 import java.util.Locale;
 
-import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.data.util.IndexedContainer;
 import org.millstone.base.data.util.MethodProperty;
 import org.millstone.base.ui.*;

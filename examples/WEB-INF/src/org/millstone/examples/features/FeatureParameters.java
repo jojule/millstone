@@ -38,12 +38,10 @@
 
 package org.millstone.examples.features;
 
-import java.net.Authenticator;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.terminal.DownloadStream;
 import org.millstone.base.terminal.ExternalResource;
 import org.millstone.base.terminal.ParameterHandler;

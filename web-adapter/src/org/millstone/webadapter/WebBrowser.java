@@ -38,18 +38,12 @@
 
 package org.millstone.webadapter;
 
-import org.millstone.base.terminal.Paintable;
 import org.millstone.base.terminal.Terminal;
-import org.millstone.base.terminal.VariableOwner;
-
-import javax.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.StringTokenizer;
 
 /** Web browser terminal type.
  *

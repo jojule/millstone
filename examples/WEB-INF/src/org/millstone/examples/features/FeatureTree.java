@@ -38,13 +38,8 @@
 
 package org.millstone.examples.features;
 
-import org.millstone.base.data.util.BeanItem;
-import org.millstone.base.data.util.FilesystemContainer;
-import org.millstone.base.data.util.ObjectProperty;
 import org.millstone.base.ui.*;
 import org.millstone.base.event.Action;
-import java.io.File;
-import java.util.Hashtable;
 
 public class FeatureTree extends Feature implements Action.Handler {
 

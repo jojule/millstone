@@ -40,13 +40,10 @@ package org.millstone.webadapter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.SequenceInputStream;
 import java.lang.ref.SoftReference;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -55,9 +52,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
-
-import org.millstone.webadapter.ThemeSource.ThemeException;
 
 /** Theme source for reading themes from a JAR archive.
  *  At this time only jar files are supported and an archive

@@ -38,7 +38,6 @@
 
 package org.millstone.webadapter;
 
-import org.millstone.base.terminal.ThemeResource;
 import java.io.InputStream;
 import java.util.Collection;
 

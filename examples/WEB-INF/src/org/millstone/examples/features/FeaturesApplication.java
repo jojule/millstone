@@ -38,10 +38,7 @@
 
 package org.millstone.examples.features;
 
-import java.util.Locale;
-
 import org.millstone.base.ui.*;
-import org.millstone.base.data.util.MethodProperty;
 
 public class FeaturesApplication
 	extends org.millstone.base.Application {

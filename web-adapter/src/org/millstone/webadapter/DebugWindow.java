@@ -47,7 +47,6 @@ import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,7 +55,6 @@ import java.util.LinkedList;
 import javax.servlet.http.HttpSession;
 
 import org.millstone.base.Application;
-import org.millstone.base.data.Property;
 import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.data.util.MethodProperty;
 import org.millstone.base.terminal.FileResource;
