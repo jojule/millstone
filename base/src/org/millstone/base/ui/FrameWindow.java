@@ -66,6 +66,13 @@ public class FrameWindow extends Window {
 
 	private Frameset frameset = new Frameset();
 
+	/** <p>Constructs a new frame window.
+	 *
+	 */
+	public FrameWindow() {
+	}
+
+
 	/** <p>Constructs a new frame window. 
 	 * 
 	 * @param caption title of the window

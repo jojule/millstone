@@ -176,6 +176,8 @@ public class TabSheet extends AbstractComponentContainer {
 
 		for (Iterator i = getComponentIterator(); i.hasNext();) {
 			Component c = (Component) i.next();
+            if (!c.isVisible()) 
+                continue;
 			target.startTag("tab");
 			Resource icon = getTabIcon(c);
 			if (icon != null)

@@ -65,7 +65,7 @@ import org.millstone.base.terminal.Resource;
  * @version @VERSION@
  * @since 3.0
  */
-public class Table extends Select implements Action.Container {
+public class Table extends Select implements Action.Container, Container.Ordered {
 
 	private static final int CELL_KEY = 0;
 	private static final int CELL_HEADER = 1;
@@ -1287,5 +1287,62 @@ public class Table extends Select implements Action.Container {
 	public void focus() throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}
-
+	
+	/**
+	 * @see org.millstone.base.data.Container.Ordered#nextItemId(java.lang.Object)
+	 */
+	public Object nextItemId(Object itemId) {
+		return ((Container.Ordered) items).nextItemId(itemId);
+	}
+	
+	/**
+	 * @see org.millstone.base.data.Container.Ordered#prevItemId(java.lang.Object)
+	 */
+	public Object prevItemId(Object itemId) {
+		return ((Container.Ordered) items).prevItemId(itemId);
+	}
+	
+	/**
+	 * @see org.millstone.base.data.Container.Ordered#firstItemId()
+	 */
+	public Object firstItemId() {
+		return ((Container.Ordered) items).firstItemId();
+	}
+	
+	/**
+	 * @see org.millstone.base.data.Container.Ordered#lastItemId()
+	 */
+	public Object lastItemId() {
+		return ((Container.Ordered) items).lastItemId();
+	}
+	
+	/**
+	 * @see org.millstone.base.data.Container.Ordered#isFirstId(java.lang.Object)
+	 */
+	public boolean isFirstId(Object itemId) {
+		return ((Container.Ordered) items).isFirstId(itemId);
+	}
+	
+	/**
+	 * @see org.millstone.base.data.Container.Ordered#isLastId(java.lang.Object)
+	 */
+	public boolean isLastId(Object itemId) {
+		return ((Container.Ordered) items).isLastId(itemId);
+	}
+	
+	/**
+	 * @see org.millstone.base.data.Container.Ordered#addItemAfter(java.lang.Object)
+	 */
+	public Object addItemAfter(Object previousItemId)
+		throws UnsupportedOperationException {
+		return ((Container.Ordered) items).addItemAfter(previousItemId);
+	}
+	
+	/**
+	 * @see org.millstone.base.data.Container.Ordered#addItemAfter(java.lang.Object, java.lang.Object)
+	 */
+	public Item addItemAfter(Object previousItemId, Object newItemId)
+		throws UnsupportedOperationException {
+		return ((Container.Ordered) items).addItemAfter(previousItemId,newItemId);
+	}
 }

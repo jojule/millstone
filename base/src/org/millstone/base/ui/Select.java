@@ -41,7 +41,7 @@ package org.millstone.base.ui;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -127,10 +127,10 @@ public class Select
 	protected KeyMapper itemIdMapper = new KeyMapper();
 
 	/** Item icons */
-	private Hashtable itemIcons = new Hashtable();
+	private HashMap itemIcons = new HashMap();
 
 	/** Item captions */
-	private Hashtable itemCaptions = new Hashtable();
+	private HashMap itemCaptions = new HashMap();
 
 	/** Item caption mode */
 	private int itemCaptionMode = ITEM_CAPTION_MODE_EXPLICIT_DEFAULTS_ID;
@@ -226,6 +226,33 @@ public class Select
 						&& getNullSelectionItemId() == null ? 0 : 1)];
 		int keyIndex = 0;
 		target.startTag("options");
+
+		// Support for external null selection item id
+		Collection ids = getItemIds();
+		if (getNullSelectionItemId() != null
+			&& (!ids.contains(getNullSelectionItemId()))) {
+				
+			// Get the option attribute values
+			Object id = getNullSelectionItemId();
+			String key = itemIdMapper.key(id);
+			String caption = getItemCaption(id);
+			Resource icon = getItemIcon(id);
+
+			// Paint option
+			target.startTag("so");
+			if (icon != null)
+				target.addAttribute("icon", icon);
+			target.addAttribute("caption", caption);
+			target.addAttribute("nullselection", true);
+			target.addAttribute("key", key);
+			if (isSelected(id)) {
+				target.addAttribute("selected", true);
+				selectedKeys[keyIndex++] = key;
+			}
+			target.endTag("so");
+		}
+
+		// Paint available selection options from data source
 		for (Iterator i = getItemIds().iterator(); i.hasNext();) {
 
 			// Get the option attribute values
@@ -239,6 +266,8 @@ public class Select
 			if (icon != null)
 				target.addAttribute("icon", icon);
 			target.addAttribute("caption", caption);
+			if (id != null && id.equals(getNullSelectionItemId()))
+				target.addAttribute("nullselection", true);
 			target.addAttribute("key", key);
 			if (isSelected(id)) {
 				target.addAttribute("selected", true);
@@ -460,7 +489,10 @@ public class Select
 	 * @param itemId Id the of item to be tested.
 	 */
 	public boolean containsId(Object itemId) {
-		return items.containsId(itemId);
+		if (itemId != null)
+			return items.containsId(itemId);
+		else
+			return false;
 	}
 
 	/**
@@ -786,12 +818,13 @@ public class Select
 	 * @param icon New icon.
 	 */
 	public void setItemIcon(Object itemId, Resource icon) {
-		if (itemId != null);
-		if (icon == null)
-			itemIcons.remove(itemId);
-		else
-			itemIcons.put(itemId, icon);
-		requestRepaint();
+		if (itemId != null) {
+			if (icon == null)
+				itemIcons.remove(itemId);
+			else
+				itemIcons.put(itemId, icon);
+			requestRepaint();
+		}
 	}
 
 	/** Get the item icon.

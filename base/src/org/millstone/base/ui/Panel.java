@@ -375,4 +375,11 @@ public class Panel
 	public void detach() {
 		if (layout != null) layout.detach();
 	}	
+	/* 
+	 * @see org.millstone.base.ui.ComponentContainer#removeAllComponents()
+	 */
+	public void removeAllComponents() {
+		layout.removeAllComponents();
+	}
+
 }

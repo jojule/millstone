@@ -332,7 +332,9 @@ public class DateField extends AbstractField {
 	 */
 	public String toString() {
 		Date value = (Date) getValue();
-		return value.toString();
+		if (value != null)
+			return value.toString();
+		return null;
 	}
 
 	/* Set the value of the property.
@@ -364,7 +366,7 @@ public class DateField extends AbstractField {
 	 * @see org.millstone.base.data.Property.Viewer#setPropertyDataSource(Property)
 	 */
 	public void setPropertyDataSource(Property newDataSource) {
-		if (Date.class.isAssignableFrom(newDataSource.getType()))
+		if (newDataSource == null || Date.class.isAssignableFrom(newDataSource.getType()))
 			super.setPropertyDataSource(newDataSource);
 		else
 			throw new IllegalArgumentException("DateField only supports Date properties");
