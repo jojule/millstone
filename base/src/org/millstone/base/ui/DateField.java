@@ -274,7 +274,7 @@ public class DateField extends AbstractField {
 				int day =
 					variables.containsKey("day")
 						? ((Integer) variables.get("day")).intValue()
-						: 0;
+						: 1;
 				int hour =
 					variables.containsKey("hour")
 						? ((Integer) variables.get("hour")).intValue()
