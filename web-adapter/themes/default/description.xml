@@ -4,6 +4,7 @@
    <author name="IT Mill Ltd" email="dev@millstone.org"/>
    <fileset>
       <file name="xsl/uidl.xsl"/>
+      <file name="xsl/probe.xsl"/>
       <file name="xsl/abstractcomponent.xsl"/>
       <file name="xsl/basic/button.xsl"/>
       <file name="xsl/basic/component.xsl"/>
