@@ -772,10 +772,10 @@ TextField component
     rectangular.
     Components can not overlap. 
 .............................................................................
-    <gridlayout w="1" h="1">
+    <gridlayout w="2" h="1">
         <gr>
-            <gc x="1" y="1"/>
-            <gc x="2" y="1">
+            <gc x="0" y="0"/>
+            <gc x="1" y="0">
                 <somecomponent/>
             </gc>
         </gr>
@@ -783,19 +783,19 @@ TextField component
 -->       
 <!ELEMENT gc ((%componentSections;)*, (%components;)?)>
     <!ATTLIST gc
-                x       CDATA   #IMPLIED
-                y       CDATA   #IMPLIED
-                w       CDATA   #IMPLIED
-                h       CDATA   #IMPLIED>
+                x       CDATA   #REQUIRED
+                y       CDATA   #REQUIRED
+                w       CDATA   "1"
+                h       CDATA   "1">
                 <!--
                 x:
                     Horizontal position of the cell, starting from left
                 y:
                     Vertical position of the cell, startion from top
                 w:
-                    Width (column-span) of the cell
+                    Width (column-span) of the cell. Defaults to 1 if missing.
                 h:
-                    Height (row-span) of the cell
+                    Height (row-span) of the cell. Defaults to 1 if missing.
                 -->
                 
 <!ELEMENT gr (gc*)> <!-- Grid row                                         -->
@@ -805,8 +805,8 @@ TextField component
                 %componentAttributes;
                 x           CDATA           "0"
                 y           CDATA           "0"
-                w           CDATA           #IMPLIED 
-                h           CDATA           #IMPLIED>
+                w           CDATA           #REQUIRED 
+                h           CDATA           #REQUIRED>
                 <!--
                 x:
                     Horisontal position of the grid's origo (top-left).

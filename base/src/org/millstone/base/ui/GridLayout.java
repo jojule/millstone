@@ -343,6 +343,8 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 					// First check if empty cell needs to be rendered
 					if (emptyCells > 0) {
 						target.startTag("gc");
+						target.addAttribute("x", curx - emptyCells);
+						target.addAttribute("y", cury);
 						if (emptyCells > 1) {
 							target.addAttribute("w", emptyCells);
 						}
@@ -355,6 +357,9 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 					int rows = (area.y2 - area.y1) + 1;
 					target.startTag("gc");
 
+					target.addAttribute("x", curx);
+					target.addAttribute("y", cury);
+					
 					if (cols > 1) {
 						target.addAttribute("w", cols);
 					}
@@ -405,6 +410,8 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 							// Check if empty cell needs to be rendered
 							if (emptyCells > 0) {
 								target.startTag("gc");
+								target.addAttribute("x", curx - emptyCells);
+								target.addAttribute("y", cury);
 								if (emptyCells > 1) {
 									target.addAttribute("w", emptyCells);
 								}
@@ -434,6 +441,8 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 			// Check if empty cell needs to be rendered
 			if (emptyCells > 0) {
 				target.startTag("gc");
+				target.addAttribute("x", width - emptyCells);
+				target.addAttribute("y", cury);
 				if (emptyCells > 1) {
 					target.addAttribute("w", emptyCells);
 				}
