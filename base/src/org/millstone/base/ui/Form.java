@@ -268,7 +268,7 @@ import org.millstone.base.terminal.PaintTarget;
 	 * 
 	 * @see org.millstone.base.data.Item#addProperty(Object, Property)
 	 */
-	public boolean addProperty(Object id, Property property) {
+	public boolean addItemProperty(Object id, Property property) {
 
 		// Check inputs
 		if (id == null || property == null)
@@ -343,7 +343,7 @@ import org.millstone.base.terminal.PaintTarget;
 	 * 
 	 * @see org.millstone.base.data.Item#getProperty(Object)
 	 */
-	public Property getProperty(Object id) {
+	public Property getItemProperty(Object id) {
 		AbstractField field = (AbstractField) fields.get(id);
 		if (field == null)
 			return null;
@@ -361,7 +361,7 @@ import org.millstone.base.terminal.PaintTarget;
 	}
 
 	/* Documented in interface */
-	public Collection getPropertyIds() {
+	public Collection getItemPropertyIds() {
 		return Collections.unmodifiableCollection(propertyIds);
 	}
 
@@ -369,7 +369,7 @@ import org.millstone.base.terminal.PaintTarget;
 	 * 
 	 * @see org.millstone.base.data.Item#removeProperty(Object)
 	 */
-	public boolean removeProperty(Object id) {
+	public boolean removeItemProperty(Object id) {
 
 		AbstractField field = (AbstractField) fields.get(id);
 
@@ -377,6 +377,7 @@ import org.millstone.base.terminal.PaintTarget;
 			propertyIds.remove(id);
 			fields.remove(id);
 			this.removeDirectDependency(field);
+			layout.removeComponent(field);
 			return true;
 		}
 
@@ -393,7 +394,7 @@ import org.millstone.base.terminal.PaintTarget;
 		boolean success = true;
 
 		for (int i = 0; i < properties.length; i++)
-			if (!removeProperty(properties[i]))
+			if (!removeItemProperty(properties[i]))
 				success = false;
 
 		return success;
@@ -414,7 +415,7 @@ import org.millstone.base.terminal.PaintTarget;
 	public void setItemDataSource(Item newDataSource) {
 		setItemDataSource(
 			newDataSource,
-			newDataSource != null ? newDataSource.getPropertyIds() : null);
+			newDataSource != null ? newDataSource.getItemPropertyIds() : null);
 	}
 
 	/** Set the item datasource for the form, but limit the form contents
@@ -441,9 +442,9 @@ import org.millstone.base.terminal.PaintTarget;
 		// Add all the properties to this form
 		for (Iterator i = propertyIds.iterator(); i.hasNext();) {
 			Object id = i.next();
-			Property property = newDataSource.getProperty(id);
+			Property property = newDataSource.getItemProperty(id);
 			if (id != null && property != null)
-				addProperty(id, property);
+				addItemProperty(id, property);
 		}
 	}
 
@@ -463,8 +464,9 @@ import org.millstone.base.terminal.PaintTarget;
 	 * current value of the field and the lengths of the arrays must match. Null values are not
 	 * supported.</p>
 	 * 
+	 * @return The select property generated
 	 */
-	public void replaceWithOptionList(
+	public Select replaceWithSelect(
 		Object propertyId,
 		Object[] values,
 		Object[] descriptions) {
@@ -485,8 +487,6 @@ import org.millstone.base.terminal.PaintTarget;
 		Object value = oldField.getValue();
 
 		// Check that the value exists
-		if (value == null)
-			throw new IllegalArgumentException("Null values are not supported");
 		boolean found = false;
 		for (int i = 0; i < values.length && !found; i++)
 			if (values[i] == value
@@ -508,12 +508,17 @@ import org.millstone.base.terminal.PaintTarget;
 		newField.setWriteThrough(oldField.isWriteThrough());
 
 		// Create options list
-		newField.addProperty("desc", String.class, "");
+		newField.addContainerProperty("desc", String.class, "");
 		newField.setItemCaptionPropertyId("desc");
 		for (int i = 0; i < values.length; i++) {
-			Item item = newField.addItem(values[i]);
+			Object id = values[i];
+			if (id == null) {
+				id = new Object();
+				newField.setNullSelectionItemId(id);
+			}
+			Item item = newField.addItem(id);
 			if (item != null)
-				item.getProperty("desc").setValue(descriptions[i].toString());
+				item.getItemProperty("desc").setValue(descriptions[i].toString());
 		}
 
 		// Set the property data source
@@ -526,5 +531,7 @@ import org.millstone.base.terminal.PaintTarget;
 		fields.put(propertyId, newField);
 		this.removeDirectDependency(oldField);
 		this.dependsOn(newField);
+
+		return newField;
 	}
 }
