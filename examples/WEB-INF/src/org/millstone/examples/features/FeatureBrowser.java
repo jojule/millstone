@@ -13,13 +13,17 @@ public class FeatureBrowser
 	private Tree features;
 	private Feature currentFeature = null;
 	private GridLayout layout;
+	private Panel welcomePanel;
+
 	private static final String WELCOME_TEXT =
-			"<h3>Welcome to the Millstone feature tour!</h3>"
-			+"In this application you may view a demonstration of each Millstone feature. <br/>"
+		"<h3>Welcome to the Millstone feature tour!</h3>"
+			+ "In this Millstone application you may view a demonstration of some of its "
+			+ "features.<br/>"
 			+ "Each feature has a description, demonstration and code-example "
 			+ "associated with it.<br/><br/>"
-			+"Start your tour by selecting a component from the list on the left.<br/><br/>"
-			+"For more information, point your browser to: <a href=\"http://www.millstone.org\">www.millstone.org</a>";
+			+ "Start your tour by selecting a component from the list on the left.<br/><br/>"
+			+ "For more information, point your browser to: <a href=\"http://www.millstone.org\""
+			+ " target=\"_new\">www.millstone.org</a>";
 
 	public FeatureBrowser() {
 
@@ -31,18 +35,15 @@ public class FeatureBrowser
 		features.setItemCaptionPropertyId("name");
 		features.addListener(this);
 		features.setImmediate(true);
-		features.setCaption("Millstone Components");
 
 		// Configure component layout
 		layout = new GridLayout(2, 1);
 		setCompositionRoot(layout);
 		layout.addComponent(features, 0, 0, 0, 0);
-		layout.addComponent(
-			new Label(WELCOME_TEXT, Label.CONTENT_XHTML),
-			1,
-			0,
-			1,
-			0);
+		Label greeting = new Label(WELCOME_TEXT, Label.CONTENT_XHTML);
+		welcomePanel = new Panel((String) null);
+		welcomePanel.addComponent(greeting);
+		layout.addComponent(welcomePanel, 1, 0, 1, 0);
 
 		// Test component
 		registerFeature("/Field/TextField", new FeatureTextField());
@@ -109,12 +110,7 @@ public class FeatureBrowser
 					layout.addComponent(currentFeature, 1, 0, 1, 0);
 				} else {
 					layout.removeComponent(1, 0);
-					layout.addComponent(
-						new Label(WELCOME_TEXT, Label.CONTENT_XHTML),
-						1,
-						0,
-						1,
-						0);
+					layout.addComponent(welcomePanel, 1, 0, 1, 0);
 
 				}
 			}
