@@ -66,4 +66,12 @@ public interface ParameterHandler {
      */
     public void handleParameters(Map parameters);
 
+	/** ParameterHandler error event */
+	public interface ErrorEvent extends Terminal.ErrorEvent {
+
+		/** Get the source ParameterHandler. */
+		public ParameterHandler getParameterHandler();
+
+	}
+
 }
