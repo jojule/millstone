@@ -556,7 +556,6 @@ public class WebPaintTarget implements PaintTarget {
 		uidlBuffer.append(">");
 		mTagArgumentListOpen = false;
 
-		// Escape and write what was given
 		if (sectionData != null)
 			uidlBuffer.append(sectionData);
 		endTag(sectionTagName);
