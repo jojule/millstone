@@ -639,6 +639,10 @@ public class WebAdapterServlet
                     // For exception handling, memorize the current dirty status
                     Collection dirtyWindows = (Collection) applicationToDirtyWindowSetMap
                             .get(application);
+        			if (dirtyWindows == null) {
+        				dirtyWindows = new HashSet();
+        				applicationToDirtyWindowSetMap.put(application, dirtyWindows);
+        			}                    
                     currentlyDirtyWindowsForThisApplication
                             .addAll(dirtyWindows);
 
