@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-    <classpathentry kind="src" path="src"/>
-    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-    <classpathentry exported="true" kind="src" path="/Millstone Base HEAD"/>
-    <classpathentry kind="lib" path="C:/Program Files/Apache Group/Tomcat 4.1/common/lib/servlet.jar"/>
-    <classpathentry kind="output" path="bin"/>
-</classpath>
