@@ -98,8 +98,8 @@
   <TABLE BORDER="0"><TR><TD VALIGN="TOP">
     <xsl:call-template name="error-icon">
       <xsl:with-param name="level" select="@level"/>
-    </xsl:call-template></TD></TR>
-  <TR><TD><xsl:apply-templates/><xsl:apply-templates select="error" mode="errordesc"/></TD></TR></TABLE>
+    </xsl:call-template></TD>
+  <TD><xsl:apply-templates/><xsl:apply-templates select="error" mode="errordesc"/></TD></TR></TABLE>
 </xsl:template>
 
 <xsl:template name="error-icon">
