@@ -228,7 +228,7 @@ public class Window extends Panel implements URIHandler, ParameterHandler {
 			synchronized (uriHandlerList) {
 				handlers = uriHandlerList.toArray();
 			}
-			for (int i=0; i<handlers.length; i++) {
+			for (int i = 0; i < handlers.length; i++) {
 				DownloadStream ds =
 					((URIHandler) handlers[i]).handleURI(context, relativeUri);
 				if (ds != null) {
@@ -472,17 +472,19 @@ public class Window extends Panel implements URIHandler, ParameterHandler {
 					+ "the window is in application");
 
 		// Check the name format
-		for (int i = 0; i < name.length(); i++) {
-			char c = name.charAt(i);
-			if (!(('a' <= c && c <= 'z')
-				|| ('A' <= c && c <= 'Z')
-				|| ('0' <= c && c <= '9')))
-				throw new IllegalArgumentException(
-					"Window name can contain "
-						+ "only a-z, A-Z and 0-9 characters: '"
-						+ name
-						+ "' given.");
-		}
+		if (name != null)
+			for (int i = 0; i < name.length(); i++) {
+				char c = name.charAt(i);
+				if (!(('a' <= c && c <= 'z')
+					|| ('A' <= c && c <= 'Z')
+					|| ('0' <= c && c <= '9')))
+					throw new IllegalArgumentException(
+						"Window name can contain "
+							+ "only a-z, A-Z and 0-9 characters: '"
+							+ name
+							+ "' given.");
+			}
+			
 		this.name = name;
 	}
 
