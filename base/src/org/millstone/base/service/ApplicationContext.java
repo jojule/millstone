@@ -39,9 +39,11 @@
 package org.millstone.base.service;
 
 import java.io.File;
+import java.util.Collection;
 
 /** Application context provides information about the running context of
- * the application.
+ * the application. Each context is shared by all applications that are open
+ * for one user. In web-environment this corresponds to HttpSession.
  * 
  * @author IT Mill Ltd.
  * @version @VERSION@
@@ -60,5 +62,13 @@ public interface ApplicationContext {
 	 * @return The application base directory
 	 */
 	public File getBaseDirectory();
-
+	
+	/** Get the applications in this context.
+	 * 
+	 * Get all applications in this context. Each application context contains
+	 * all applications that are open for one user.
+	 * 
+	 * @return Collection containing all applications in this context
+	 */
+	public Collection getApplications();
 }

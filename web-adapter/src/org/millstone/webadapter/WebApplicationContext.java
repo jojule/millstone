@@ -35,10 +35,13 @@
    Primary source for MillStone information and releases: www.millstone.org
 
    ********************************************************************** */
-   
+
 package org.millstone.webadapter;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 
 import javax.servlet.http.HttpSession;
 
@@ -52,28 +55,61 @@ import org.millstone.base.service.ApplicationContext;
  */
 public class WebApplicationContext implements ApplicationContext {
 
-	WebAdapterServlet servlet;
 	HttpSession session;
 
 	/** Create a new Web Application Context. */
-	protected WebApplicationContext(WebAdapterServlet servlet, HttpSession session) { 
+	WebApplicationContext(HttpSession session) {
 		this.session = session;
-		this.servlet = servlet;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.millstone.base.service.ApplicationContext#getBaseDirectory()
 	 */
 	public File getBaseDirectory() {
-		String realPath = servlet.getServletContext().getRealPath("/");
+		String realPath = session.getServletContext().getRealPath("/");
 		return new File(realPath);
 	}
-	
+
 	/** Get the http-session application is running in.
 	 * 
 	 * @return HttpSession this application context resides in
 	 */
-	public HttpSession getHttpSession() { 
-		return session;	
+	public HttpSession getHttpSession() {
+		return session;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.millstone.base.service.ApplicationContext#getApplications()
+	 */
+	public Collection getApplications() {
+		LinkedList applications =
+			(LinkedList) session.getAttribute(
+				WebAdapterServlet.SESSION_ATTR_APPS);
+
+		return Collections.unmodifiableCollection(
+			applications == null ? (new LinkedList()) : applications);
+	}
+	
+	/** Get application context for HttpSession.
+	 * 
+	 * @return application context for HttpSession.
+	 */
+	static public WebApplicationContext getApplicationContext(HttpSession session) {
+		return new WebApplicationContext(session);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		return session.equals(obj);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return session.hashCode();
+	}
+
 }

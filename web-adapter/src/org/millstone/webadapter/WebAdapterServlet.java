@@ -124,7 +124,7 @@ public class WebAdapterServlet
 	private static int DEFAULT_MAX_TRANSFORMERS = 1;
 	private static int MAX_BUFFER_SIZE = 64 * 1024;
 	private static String SESSION_ATTR_VARMAP = "varmap";
-	private static String SESSION_ATTR_APPS = "apps";
+	static String SESSION_ATTR_APPS = "apps";
 	private static String SESSION_BINDING_LISTENER = "bindinglistener";
 	private static String SESSION_DEFAULT_THEME = "default";
 	private static String RESOURCE_URI = "/RES/";
@@ -1072,7 +1072,7 @@ public class WebAdapterServlet
 			application.start(
 				applicationUrl,
 				this.applicationProperties,
-				new WebApplicationContext(this, session));
+				new WebApplicationContext(session));
 
 		} catch (IllegalAccessException e) {
 			Log.error(
