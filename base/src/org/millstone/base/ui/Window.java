@@ -142,8 +142,8 @@ public class Window extends Panel implements URIHandler, ParameterHandler {
 		setScrollable(true);
 	}
 
-	/** Get terminalType.
-	 * @return Value of property terminalType.
+	/** Get terminal type.
+	 * @return Value of property terminal.
 	 */
 	public Terminal getTerminal() {
 		return this.terminal;
@@ -486,7 +486,7 @@ public class Window extends Panel implements URIHandler, ParameterHandler {
 		this.name = name;
 	}
 
-	/** Set terminalType. The terminal type is set by the the terminal adapter and
+	/** Set terminal type. The terminal type is set by the the terminal adapter and
 	 * may change from time to time.
 	 * @param type terminal type to set
 	 */
