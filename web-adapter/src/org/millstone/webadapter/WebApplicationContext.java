@@ -94,7 +94,6 @@ public class WebApplicationContext implements ApplicationContext {
 	 * 
 	 * @param window Window for which the action is set
 	 * @param action New action for the window.
-	 * @return Action to be set into Form action attribute
 	 */ 
 	public void setWindowFormAction(Window window, String action) {
 		if (action == null || action == "") 
