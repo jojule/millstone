@@ -68,33 +68,21 @@
 	<!-- Copy files to output directory -->
 	<copy file="${work-dir}/webadapter/${webadapter-bin-jar-name}" todir="${output-dir}/lib"/>
 	<copy file="${work-dir}/webadapter/${webadapter-src-jar-name}" todir="${output-dir}/lib"/>
-    <copy file="${work-dir}/webadapter/${web-themes-jar-name}"     todir="${output-dir}/lib"/>
-    
-    <mkdir dir="${output-dir}/src/webthemes" />   
-	<copy todir="${output-dir}/src/webthemes">
-            <fileset dir="${root-dir}/web-adapter/themes">
+        <copy file="${work-dir}/webadapter/${web-themes-jar-name}"     todir="${output-dir}/lib"/>
+	<copy todir="${output-dir}">
+            <fileset dir="${root-dir}">
               <patternset>
-                <include name="default/**/*.xsl"/>
-                <include name="default/**/*.xml"/>
-                <include name="default/**/*.css"/>
-                <include name="default/**/*.js"/>
-                <include name="default/**/*.gif"/>
-                <include name="default/**/*.png"/>
-                <include name="default/**/*.jpg"/>
+                <include name="web-adapter/src/**/*.java"/>
+                <include name="web-adapter/themes/default/**/*.xsl"/>
+                <include name="web-adapter/themes/default/**/*.xml"/>
+                <include name="web-adapter/themes/default/**/*.css"/>
+                <include name="web-adapter/themes/default/**/*.js"/>
+                <include name="web-adapter/themes/default/**/*.gif"/>
+                <include name="web-adapter/themes/default/**/*.png"/>
+                <include name="web-adapter/themes/default/**/*.jpg"/>
               </patternset>
-            </fileset>
-	</copy> 
-
-    <!-- Copy the sources to distribution -->
-	<mkdir dir="${output-dir}/src/web-adapter" />
-	<copy  todir="${output-dir}/src/web-adapter">
-            <fileset dir="${root-dir}/web-adapter/src">
-              <patternset>
-                <include name="org/millstone/webadapter/**/*.java"/>
-              </patternset>
-            </fileset>
-	</copy>
-
+            </fileset>	
+	</copy>	
     </target>
 
 </project>

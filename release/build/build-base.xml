@@ -51,21 +51,18 @@
             </fileset>
         </jar>
 
-    <!-- Copy the sources to distribution -->
-	<mkdir dir="${output-dir}/src/base" />
-	<copy  todir="${output-dir}/src/base">
-            <fileset dir="${root-dir}/base/src">
-              <patternset>
-                <include name="org/millstone/base/**/*.java"/>
-              </patternset>
-            </fileset>
-	</copy>
-
 
 	<!-- Copy files to output directory -->
 	<copy file="${work-dir}/base/${base-bin-jar-name}" todir="${output-dir}/lib"/>
 	<copy file="${work-dir}/base/${base-src-jar-name}" todir="${output-dir}/lib"/>
-
+	<copy todir="${output-dir}">
+            <fileset dir="${root-dir}">
+              <patternset>
+                <include name="base/src/**/*.java"/>
+              </patternset>
+            </fileset>	
+	</copy>
+	
     </target>
 
 </project>

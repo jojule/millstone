@@ -17,7 +17,7 @@
         <property name="work-dir" value="release/build/work"/>
         <property name="original-manifests" value="release/manifest"/>
         <property name="tmp-dir" value="${work-dir}/tmp"/>
-        <property name="checkout-dir" value="${work-dir}/checkout"/>
+        <property name="checkout-dir" value="${work-dir}/CVS-CHECKOUT"/>
 
 	<!-- Are the compiler optimizations on/off -->
 	<property name="optimize" value="off"/>
@@ -46,8 +46,7 @@
         <property name="root-dir" value="${checkout-dir}" />
 
     	<echo message="Creating MillStone ${version} from ${cvs-root} with tag ${cvs-tag} to ${checkout-dir}" />
-        <input message="Press Return key to continue..." />
-	
+        <input message="Press Return key to continue..." />	
     </target>
 
 
