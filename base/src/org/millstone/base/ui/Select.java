@@ -57,6 +57,7 @@ import org.millstone.base.data.Item;
 import org.millstone.base.data.Property;
 import org.millstone.base.data.Container;
 import org.millstone.base.data.util.IndexedContainer;
+import org.millstone.base.data.validator.NullValidator;
 import org.millstone.base.terminal.KeyMapper;
 
 /** <p>A class representing a selection of items the user has selected in a
@@ -81,8 +82,6 @@ public class Select
 		Container.PropertySetChangeNotifier,
 		Container.ItemSetChangeNotifier,
 		Container.ItemSetChangeListener {
-
-	/* Caption modes *************************************************** */
 
 	/** Item caption mode: Item's ID's <code>String</code> representation
 	 * is used as caption.
@@ -145,12 +144,20 @@ public class Select
 
 	/** Item icon source property id */
 	private Object itemIconPropertyId = null;
-	
+
 	/** List of property set change event listeners */
 	private LinkedList propertySetEventListeners = null;
 
 	/** List of item set change event listeners */
 	private LinkedList itemSetEventListeners = null;
+
+	/** Item id that represents null selection of this select.
+	 * 
+	 * <p>Data interface does not support nulls as item ids. Selecting the item idetified 
+	 * by this id is the same as selecting no items at all. This setting only affects the
+	 * single select mode.</p>
+	 */
+	private Object nullSelectionItemId = null;
 
 	/* Constructors ********************************************************* */
 
@@ -214,7 +221,10 @@ public class Select
 		if (isMultiSelect())
 			selectedKeys = new String[((Set) getValue()).size()];
 		else
-			selectedKeys = new String[(getValue() == null ? 0 : 1)];
+			selectedKeys =
+				new String[(
+					getValue() == null
+						&& getNullSelectionItemId() == null ? 0 : 1)];
 		int keyIndex = 0;
 		target.startTag("options");
 		for (Iterator i = getItemIds().iterator(); i.hasNext();) {
@@ -265,6 +275,13 @@ public class Select
 				// Add new option
 				if (addItem(newitem) != null) {
 
+					// Set the caption property, if used
+					if (getItemCaptionPropertyId() != null)
+						getContainerProperty(
+							newitem,
+							getItemCaptionPropertyId()).setValue(
+							newitem);
+
 					// Select new option
 					if (isMultiSelect()) {
 						Set s = new HashSet((Set) getValue());
@@ -295,8 +312,10 @@ public class Select
 					Collection visible = getVisibleItemIds();
 					if (visible != null) {
 						Set newsel = (Set) getValue();
-						if (newsel == null) newsel = new HashSet();
-						else newsel = new HashSet(newsel);
+						if (newsel == null)
+							newsel = new HashSet();
+						else
+							newsel = new HashSet(newsel);
 						newsel.removeAll(visible);
 						newsel.addAll(s);
 						super.setValue(newsel);
@@ -312,8 +331,13 @@ public class Select
 						Collection visible = getVisibleItemIds();
 						if (visible != null && visible.contains(current))
 							setValue(null);
-					} else
-						setValue(itemIdMapper.get(ka[0]));
+					} else {
+						Object id = itemIdMapper.get(ka[0]);
+						if (id != null && id.equals(getNullSelectionItemId()))
+							setValue(null);
+						else
+							setValue(id);
+					}
 				}
 			}
 
@@ -374,9 +398,9 @@ public class Select
 				return s;
 			}
 
-			return Collections.unmodifiableSet((Set)retValue);
+			return Collections.unmodifiableSet((Set) retValue);
 
-		} else 
+		} else
 			return retValue;
 	}
 
@@ -394,8 +418,8 @@ public class Select
 		if (isMultiSelect()) {
 			if (newValue == null)
 				super.setValue(new HashSet());
-			else if (Collection.class.isAssignableFrom(newValue.getClass())) 
-				super.setValue(new HashSet((Collection)newValue));
+			else if (Collection.class.isAssignableFrom(newValue.getClass()))
+				super.setValue(new HashSet((Collection) newValue));
 		} else if (newValue == null || items.containsId(newValue))
 			super.setValue(newValue);
 	}
@@ -419,8 +443,8 @@ public class Select
 	/** Get property Id collection from the container.
 	 * @return Collection of property ids.
 	 */
-	public Collection getPropertyIds() {
-		return items.getPropertyIds();
+	public Collection getContainerPropertyIds() {
+		return items.getContainerPropertyIds();
 	}
 
 	/** Get property type.
@@ -447,8 +471,8 @@ public class Select
 	/**
 	 * @see org.millstone.base.data.Container#getProperty(Object, Object)
 	 */
-	public Property getProperty(Object itemId, Object propertyId) {
-		return items.getProperty(itemId, propertyId);
+	public Property getContainerProperty(Object itemId, Object propertyId) {
+		return items.getContainerProperty(itemId, propertyId);
 	}
 
 	/* Container.Managed methods ******************************************** */
@@ -462,16 +486,16 @@ public class Select
 	 *
 	 * @return True iff the operation succeeded.
 	 */
-	public boolean addProperty(
+	public boolean addContainerProperty(
 		Object propertyId,
 		Class type,
 		Object defaultValue)
 		throws UnsupportedOperationException {
 
-		boolean retval = items.addProperty(propertyId, type, defaultValue);
+		boolean retval = items.addContainerProperty(propertyId, type, defaultValue);
 		if (retval) {
 			fireValueChange();
-			firePropertySetChange();	
+			firePropertySetChange();
 		}
 		return retval;
 	}
@@ -552,10 +576,10 @@ public class Select
 	 *
 	 * @return True iff the operation succeeded.
 	 */
-	public boolean removeProperty(Object propertyId)
+	public boolean removeContainerProperty(Object propertyId)
 		throws UnsupportedOperationException {
 
-		boolean retval = items.removeProperty(propertyId);
+		boolean retval = items.removeContainerProperty(propertyId);
 		if (retval)
 			firePropertySetChange();
 		return retval;
@@ -591,7 +615,7 @@ public class Select
 			}
 
 			items = newDataSource;
-			
+
 			// Add listeners
 			if (items != null) {
 				try {
@@ -601,18 +625,13 @@ public class Select
 					// Ignored
 				}
 				try {
-					(
-						(
-							Container
-								.PropertySetChangeNotifier) items)
-								.addListener(
+					((Container.PropertySetChangeNotifier) items).addListener(
 						(Container.PropertySetChangeListener) this);
 				} catch (ClassCastException ignored) {
 					// Ignored
 				}
 			}
-			
-			
+
 			fireValueChange();
 		}
 	}
@@ -752,7 +771,7 @@ public class Select
 				break;
 
 			case ITEM_CAPTION_MODE_PROPERTY :
-				Property p = getProperty(itemId, getItemCaptionPropertyId());
+				Property p = getContainerProperty(itemId, getItemCaptionPropertyId());
 				if (p != null)
 					caption = p.toString();
 				break;
@@ -789,7 +808,7 @@ public class Select
 		if (getItemIconPropertyId() == null)
 			return null;
 
-		Property ip = getProperty(itemId, getItemIconPropertyId());
+		Property ip = getContainerProperty(itemId, getItemIconPropertyId());
 		if (ip == null)
 			return null;
 		Object icon = ip.getValue();
@@ -878,7 +897,7 @@ public class Select
 	 * 
 	 */
 	public void setItemCaptionPropertyId(Object propertyId) {
-		if (getPropertyIds().contains(propertyId)) {
+		if (getContainerPropertyIds().contains(propertyId)) {
 			itemCaptionPropertyId = propertyId;
 			setItemCaptionMode(ITEM_CAPTION_MODE_PROPERTY);
 			requestRepaint();
@@ -914,7 +933,7 @@ public class Select
 	 * items.
 	 */
 	public void setItemIconPropertyId(Object propertyId) {
-		if (getPropertyIds().contains(propertyId)
+		if (getContainerPropertyIds().contains(propertyId)
 			&& Resource.class.isAssignableFrom(getType(propertyId))) {
 			itemIconPropertyId = propertyId;
 			requestRepaint();
@@ -941,16 +960,35 @@ public class Select
 	}
 
 	/** Test if an item is selected
+	 * 
+	 * <p>In single select mode testing selection status of the item identified
+	 * by {@link getNullSelectionItemId()} returns true if the value of the 
+	 * property is null.</p>
+	 * 
+	 * @see getNullSelectionItemId()
+	 * @see setNullSelectionItemId(Object)
 	 * @param itemId Id the of the item to be tested
 	 */
 	public boolean isSelected(Object itemId) {
 		if (itemId == null)
 			return false;
-		return (!isMultiSelect() && itemId.equals(getValue()))
-			|| (isMultiSelect() && ((Set) getValue()).contains(itemId));
+		if (isMultiSelect())
+			return ((Set) getValue()).contains(itemId);
+		else {
+			Object value = getValue();
+			return itemId.equals(
+				value == null ? getNullSelectionItemId() : value);
+		}
 	}
 
 	/** Select an item.
+	 * 
+	 * <p>In single select mode selecting item identified
+	 * by {@link getNullSelectionItemId()} sets the value of the 
+	 * property to null.</p>
+	 * 
+	 * @see getNullSelectionItemId()
+	 * @see setNullSelectionItemId(Object)
 	 * @param itemId Item to be selected.
 	 */
 	public void select(Object itemId) {
@@ -959,12 +997,17 @@ public class Select
 				Set s = new HashSet((Set) getValue());
 				s.add(itemId);
 				setValue(s);
-			} else
+			} else if (itemId.equals(getNullSelectionItemId()))
+				setValue(null);
+			else
 				setValue(itemId);
 		}
 	}
 
 	/** Unselect an item.
+	 * 
+	 * @see getNullSelectionItemId()
+	 * @see setNullSelectionItemId(Object)
 	 * @param itemId Item to be unselected.
 	 */
 	public void unselect(Object itemId) {
@@ -977,7 +1020,7 @@ public class Select
 				setValue(null);
 		}
 	}
-	
+
 	/**
 	 * @see org.millstone.base.data.Container.PropertySetChangeListener#containerPropertySetChange(org.millstone.base.data.Container.PropertySetChangeEvent)
 	 */
@@ -1001,7 +1044,8 @@ public class Select
 	public void removeListener(Container.PropertySetChangeListener listener) {
 		if (propertySetEventListeners != null) {
 			propertySetEventListeners.remove(listener);
-			if (propertySetEventListeners.isEmpty()) propertySetEventListeners = null;				
+			if (propertySetEventListeners.isEmpty())
+				propertySetEventListeners = null;
 		}
 	}
 
@@ -1011,7 +1055,7 @@ public class Select
 	public void addListener(Container.ItemSetChangeListener listener) {
 		if (itemSetEventListeners == null)
 			itemSetEventListeners = new LinkedList();
-		itemSetEventListeners.add(listener);	
+		itemSetEventListeners.add(listener);
 	}
 
 	/**
@@ -1020,7 +1064,8 @@ public class Select
 	public void removeListener(Container.ItemSetChangeListener listener) {
 		if (itemSetEventListeners != null) {
 			itemSetEventListeners.remove(listener);
-			if (itemSetEventListeners.isEmpty()) itemSetEventListeners = null;	
+			if (itemSetEventListeners.isEmpty())
+				itemSetEventListeners = null;
 		}
 	}
 
@@ -1028,34 +1073,47 @@ public class Select
 	 * @see org.millstone.base.data.Container.ItemSetChangeListener#containerItemSetChange(org.millstone.base.data.Container.ItemSetChangeEvent)
 	 */
 	public void containerItemSetChange(Container.ItemSetChangeEvent event) {
-		fireItemSetChange();		
+		fireItemSetChange();
 	}
 
 	/** Fire property set change event */
 	protected void firePropertySetChange() {
-		if (propertySetEventListeners != null && !propertySetEventListeners.isEmpty())	{
-			Container.PropertySetChangeEvent event = new PropertySetChangeEvent();
+		if (propertySetEventListeners != null
+			&& !propertySetEventListeners.isEmpty()) {
+			Container.PropertySetChangeEvent event =
+				new PropertySetChangeEvent();
 			Object[] listeners = propertySetEventListeners.toArray();
-			for (int i=0; i<listeners.length; i++)
-				((Container.PropertySetChangeListener)listeners[i]).containerPropertySetChange(event);
+			for (int i = 0; i < listeners.length; i++)
+				(
+					(
+						Container
+							.PropertySetChangeListener) listeners[i])
+							.containerPropertySetChange(
+					event);
 		}
 		requestRepaint();
 	}
 
 	/** Fire item set change event */
 	protected void fireItemSetChange() {
-		if (itemSetEventListeners != null && !itemSetEventListeners.isEmpty())	{
+		if (itemSetEventListeners != null
+			&& !itemSetEventListeners.isEmpty()) {
 			Container.ItemSetChangeEvent event = new ItemSetChangeEvent();
 			Object[] listeners = itemSetEventListeners.toArray();
-			for (int i=0; i<listeners.length; i++)
-				((Container.ItemSetChangeListener)listeners[i]).containerItemSetChange(event);
+			for (int i = 0; i < listeners.length; i++)
+				(
+					(
+						Container
+							.ItemSetChangeListener) listeners[i])
+							.containerItemSetChange(
+					event);
 		}
 		requestRepaint();
 	}
 
-	/** Implementation of item set change event */	
+	/** Implementation of item set change event */
 	private class ItemSetChangeEvent implements Container.ItemSetChangeEvent {
-		
+
 		/**
 		 * @see org.millstone.base.data.Container.ItemSetChangeEvent#getContainer()
 		 */
@@ -1065,9 +1123,10 @@ public class Select
 
 	}
 
-	/** Implementation of property set change event */	
-	private class PropertySetChangeEvent implements Container.PropertySetChangeEvent {
-		
+	/** Implementation of property set change event */
+	private class PropertySetChangeEvent
+		implements Container.PropertySetChangeEvent {
+
 		/**
 		 * @see org.millstone.base.data.Container.PropertySetChangeEvent#getContainer()
 		 */
@@ -1075,5 +1134,34 @@ public class Select
 			return Select.this;
 		}
 
+	}
+	/** Returns the item id that represents null value of this select in single select mode.
+	 * 
+	 * <p>Data interface does not support nulls as item ids. Selecting the item idetified 
+	 * by this id is the same as selecting no items at all. This setting only affects the
+	 * single select mode.</p>
+	
+	 * @return Object Null value item id.
+	 * @see #setNullPropertyValueContainerItemId(Object)
+	 * @see #iSelected(Object)
+	 * @see #select(Object)
+	 */
+	public final Object getNullSelectionItemId() {
+		return nullSelectionItemId;
+	}
+
+	/** Sets the item id that represents null value of this select.
+	 * 
+	 * <p>Data interface does not support nulls as item ids. Selecting the item idetified 
+	 * by this id is the same as selecting no items at all. This setting only affects the
+	 * single select mode.</p>
+	 *
+	 * @param nullPropertyValueContainerItemId The nullPropertyValueContainerItemId to set
+	 * @see #getNullPropertyValueContainerItemId()
+	 * @see #iSelected(Object)
+	 * @see #select(Object)
+	 */
+	public void setNullSelectionItemId(Object nullSelectionItemId) {
+		this.nullSelectionItemId = nullSelectionItemId;
 	}
 }
