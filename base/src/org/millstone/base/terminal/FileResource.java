@@ -41,11 +41,9 @@ package org.millstone.base.terminal;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 import org.millstone.base.Application;
 import org.millstone.base.service.FileTypeResolver;
-import org.millstone.base.ui.Window;
 
 /** File resources are files or directories on local filesystem. The files and directories
  * are served trough URI:s to the client terminal and thus must be registered to an 
@@ -57,6 +55,9 @@ import org.millstone.base.ui.Window;
  * @since 3.0
  */
 public class FileResource implements ApplicationResource {
+
+	/** Default buffer size for this stream resource */
+	private int bufferSize = 0;
 
 	/** File where the downloaded content is fetched from. */
 	private File sourceFile;
@@ -144,4 +145,17 @@ public class FileResource implements ApplicationResource {
 	public void setCacheTime(long cacheTime) {
 		this.cacheTime = cacheTime;
 	}	
+	
+	/* documented in superclass */
+	public int getBufferSize() {
+		return bufferSize;
+	}
+
+	/** Set the size of the download buffer used for this resource.
+	 * @param bufferSize The size of the buffer in bytes.
+	 */
+	public void setBufferSize(int bufferSize) {
+		this.bufferSize = bufferSize;
+	}
+
 }

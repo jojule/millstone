@@ -38,7 +38,6 @@
 
 package org.millstone.base.terminal;
 
-import java.net.URL;
 import org.millstone.base.service.FileTypeResolver;
 
 /** Theme resource is a named theme dependant resource provided and 

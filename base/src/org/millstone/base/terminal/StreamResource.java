@@ -38,15 +38,10 @@
 
 package org.millstone.base.terminal;
 
-import java.io.File;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Random;
 
 import org.millstone.base.Application;
 import org.millstone.base.service.FileTypeResolver;
-import org.millstone.base.ui.Window;
 
 /** Stream resource is a resource provided to the client directly
  * by the application. The strean resource is fetched from URI
@@ -74,7 +69,7 @@ public class StreamResource implements ApplicationResource {
 	private int bufferSize = 0;
 
 	/** Default cache time for this stream resource */
-	private long cacheTime = DownloadStream.DEFAULT_CACHETIME;	
+	private long cacheTime = DEFAULT_CACHETIME;	
 
 	/** Create new stream resource for downloading from stream. */
 	public StreamResource(
@@ -166,9 +161,7 @@ public class StreamResource implements ApplicationResource {
 		public InputStream getStream();
 	}
 
-	/** Get the size of the download buffer used for this resource.
-	 * @return int The size of the buffer in bytes.
-	 */
+	/* documented in superclass */
 	public int getBufferSize() {
 		return bufferSize;
 	}
@@ -180,21 +173,20 @@ public class StreamResource implements ApplicationResource {
 		this.bufferSize = bufferSize;
 	}
 
-	/** Get lenght of cache expiracy time.
-	 *  This gives the adapter the possibility cache streams sent to the client.
-	 *  The caching may be made in adapter or at the client if the client supports
-	 *  caching. Default is DownloadStream.DEFAULT_CACHETIME.
-	 * @return Cache time in milliseconds
-	 */
+	/* documented in superclass */
 	public long getCacheTime() {
 		return cacheTime;
 	}
 
 	/** Set lenght of cache expiracy time.
-	 *  This gives the adapter the possibility cache streams sent to the client.
-	 *  The caching may be made in adapter or at the client if the client supports
-	 *  caching. Zero or negavive value disbales the caching of this stream.
+	 * 
+	 * <p>This gives the adapter the possibility cache streams sent to the
+	 * client. The caching may be made in adapter or at the client if the 
+	 * client supports caching. Zero or negavive value disbales the 
+	 * caching of this stream.</p>
+	 * 
 	 * @param cacheTime The cache time in milliseconds.
+	 * 
 	 */
 	public void setCacheTime(long cacheTime) {
 		this.cacheTime = cacheTime;

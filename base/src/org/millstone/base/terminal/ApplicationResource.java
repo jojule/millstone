@@ -38,8 +38,6 @@
    
 package org.millstone.base.terminal;
 
-import java.io.InputStream;
-
 import org.millstone.base.Application;
 
 /** This interface must be implemented by classes wishing to provide Application resources.
@@ -54,6 +52,9 @@ import org.millstone.base.Application;
  */
 public interface ApplicationResource extends Resource {
 
+	/** Default cache time. */
+	public static final long DEFAULT_CACHETIME = 1000*60*60*24;
+
 	/** Get resource as stream */
 	public DownloadStream getStream();
 		
@@ -63,4 +64,23 @@ public interface ApplicationResource extends Resource {
 	/** Get virtual filename for the resource */
 	public String getFilename();
 	
+	/** Get lenght of cache expiracy time.
+	 * 
+	 * <p>This gives the adapter the possibility cache streams sent to the 
+	 * client. The caching may be made in adapter or at the client if the 
+	 * client supports caching. Default is DEFAULT_CACHETIME.</p>
+	 * 
+	 * @return Cache time in milliseconds
+	 */
+	public long getCacheTime();
+
+	/** Get the size of the download buffer used for this resource.
+	 * 
+	 * <p>If the buffer size is 0, the buffer size is decided by the 
+	 * terminal adapter. The default value is 0.</p>
+	 * 
+	 * @return int The size of the buffer in bytes.
+	 */
+	public int getBufferSize();
+
 }

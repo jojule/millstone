@@ -38,8 +38,6 @@
 
 package org.millstone.base.terminal;
 
-import java.net.URL;
-
 /** Resource provided to the client terminal. Support for actually displaying the resource type
  *  is left to the terminal.
  *
