@@ -476,7 +476,7 @@ public class Select
 	}
 
 	/**
-	 * @see org.millstone.base.data.Container#getProperty(Object, Object)
+	 * @see org.millstone.base.data.Container#getContainerProperty(Object, Object)
 	 */
 	public Property getContainerProperty(Object itemId, Object propertyId) {
 		return items.getContainerProperty(itemId, propertyId);
@@ -971,11 +971,11 @@ public class Select
 	/** Test if an item is selected
 	 * 
 	 * <p>In single select mode testing selection status of the item identified
-	 * by {@link getNullSelectionItemId()} returns true if the value of the 
+	 * by {@link #getNullSelectionItemId()} returns true if the value of the 
 	 * property is null.</p>
 	 * 
-	 * @see getNullSelectionItemId()
-	 * @see setNullSelectionItemId(Object)
+	 * @see #getNullSelectionItemId()
+	 * @see #setNullSelectionItemId(Object)
 	 * @param itemId Id the of the item to be tested
 	 */
 	public boolean isSelected(Object itemId) {
@@ -993,11 +993,11 @@ public class Select
 	/** Select an item.
 	 * 
 	 * <p>In single select mode selecting item identified
-	 * by {@link getNullSelectionItemId()} sets the value of the 
+	 * by {@link #getNullSelectionItemId()} sets the value of the 
 	 * property to null.</p>
 	 * 
-	 * @see getNullSelectionItemId()
-	 * @see setNullSelectionItemId(Object)
+	 * @see #getNullSelectionItemId()
+	 * @see #setNullSelectionItemId(Object)
 	 * @param itemId Item to be selected.
 	 */
 	public void select(Object itemId) {
@@ -1015,8 +1015,8 @@ public class Select
 
 	/** Unselect an item.
 	 * 
-	 * @see getNullSelectionItemId()
-	 * @see setNullSelectionItemId(Object)
+	 * @see #getNullSelectionItemId()
+	 * @see #setNullSelectionItemId(Object)
 	 * @param itemId Item to be unselected.
 	 */
 	public void unselect(Object itemId) {
@@ -1151,8 +1151,8 @@ public class Select
 	 * single select mode.</p>
 	
 	 * @return Object Null value item id.
-	 * @see #setNullPropertyValueContainerItemId(Object)
-	 * @see #iSelected(Object)
+	 * @see #setNullSelectionItemId(Object)
+	 * @see #isSelected(Object)
 	 * @see #select(Object)
 	 */
 	public final Object getNullSelectionItemId() {
@@ -1166,8 +1166,8 @@ public class Select
 	 * single select mode.</p>
 	 *
 	 * @param nullPropertyValueContainerItemId The nullPropertyValueContainerItemId to set
-	 * @see #getNullPropertyValueContainerItemId()
-	 * @see #iSelected(Object)
+	 * @see #getNullSelectionItemId()
+	 * @see #isSelected(Object)
 	 * @see #select(Object)
 	 */
 	public void setNullSelectionItemId(Object nullSelectionItemId) {

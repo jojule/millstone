@@ -623,7 +623,7 @@ public class FilesystemContainer implements Container.Hierarchical {
 		}
 
 		/** Filesystem container does not support adding new properties.
-		 * @see org.millstone.base.data.Item#addProperty(Object, Property)
+		 * @see org.millstone.base.data.Item#addItemProperty(Object, Property)
 		 */
 		public boolean addItemProperty(Object id, Property property)
 			throws UnsupportedOperationException {
@@ -633,7 +633,7 @@ public class FilesystemContainer implements Container.Hierarchical {
 		}
 
 		/** Filesystem container does not support removing properties.
-		 * @see org.millstone.base.data.Item#removeProperty(Object)
+		 * @see org.millstone.base.data.Item#removeItemProperty(Object)
 		 */
 		public boolean removeItemProperty(Object id)
 			throws UnsupportedOperationException {
@@ -706,7 +706,7 @@ public class FilesystemContainer implements Container.Hierarchical {
 	}
 
 	/**
-	 * @see org.millstone.base.data.Container#addProperty(Object, Class, Object)
+	 * @see org.millstone.base.data.Container#addContainerProperty(Object, Class, Object)
 	 */
 	public boolean addContainerProperty(
 		Object propertyId,
@@ -746,7 +746,7 @@ public class FilesystemContainer implements Container.Hierarchical {
 	}
 
 	/**
-	 * @see org.millstone.base.data.Container#removeProperty(Object)
+	 * @see org.millstone.base.data.Container#removeContainerProperty(Object)
 	 */
 	public boolean removeContainerProperty(Object propertyId)
 		throws UnsupportedOperationException {

@@ -161,7 +161,7 @@ public class IndexedContainer
 	 * @param propertyId ID of the Property to retrieve
 	 * @return Property with the given ID or <code>null</code>
 	 * 
-	 * @see org.millstone.base.data.Container#getProperty(Object, Object)
+	 * @see org.millstone.base.data.Container#getContainerProperty(Object, Object)
 	 */
 	public Property getContainerProperty(Object itemId, Object propertyId) {
 		if (!items.containsKey(itemId))

@@ -1173,7 +1173,7 @@ public class Table extends Select implements Action.Container {
 	}
 
 	/**
-	 * @see org.millstone.base.data.Container#removeProperty(Object)
+	 * @see org.millstone.base.data.Container#removeContainerProperty(Object)
 	 */
 	public boolean removeContainerProperty(Object propertyId)
 		throws UnsupportedOperationException {
@@ -1199,7 +1199,7 @@ public class Table extends Select implements Action.Container {
 
 	/** Adds a new property to the table and show it as a visible column.
 	 * 
-	 * @see org.millstone.base.data.Container#addProperty(Object, Class, Object)
+	 * @see org.millstone.base.data.Container#addContainerProperty(Object, Class, Object)
 	 * 
 	 * @param propertyId Id of the proprty
 	 * @param type The class of the property
@@ -1223,7 +1223,7 @@ public class Table extends Select implements Action.Container {
 
 /** Adds a new property to the table and show it as a visible column.
 	 * 
-	 * @see org.millstone.base.data.Container#addProperty(Object, Class, Object)
+	 * @see org.millstone.base.data.Container#addContainerProperty(Object, Class, Object)
 	 * 
 	 * @param propertyId Id of the proprty
 	 * @param type The class of the property

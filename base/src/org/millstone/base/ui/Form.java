@@ -266,7 +266,7 @@ import org.millstone.base.terminal.PaintTarget;
 
 	/** Add a new property to form and create corresponding field.
 	 * 
-	 * @see org.millstone.base.data.Item#addProperty(Object, Property)
+	 * @see org.millstone.base.data.Item#addItemProperty(Object, Property)
 	 */
 	public boolean addItemProperty(Object id, Property property) {
 
@@ -341,7 +341,7 @@ import org.millstone.base.terminal.PaintTarget;
 	 * having no data source,
 	 * the field is returned instead of the data source.</p>
 	 * 
-	 * @see org.millstone.base.data.Item#getProperty(Object)
+	 * @see org.millstone.base.data.Item#getItemProperty(Object)
 	 */
 	public Property getItemProperty(Object id) {
 		AbstractField field = (AbstractField) fields.get(id);
@@ -367,7 +367,7 @@ import org.millstone.base.terminal.PaintTarget;
 
 	/** Removes the property and corresponding field from the form.
 	 * 
-	 * @see org.millstone.base.data.Item#removeProperty(Object)
+	 * @see org.millstone.base.data.Item#removeItemProperty(Object)
 	 */
 	public boolean removeItemProperty(Object id) {
 

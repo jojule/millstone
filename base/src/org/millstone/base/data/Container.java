@@ -49,7 +49,7 @@ import java.util.Collection;
  * <ul>
  * <li>All Items in the Container must include the same number of Properties
  * <li>All Items in the Container must include the same Property ID sets
- * (see {@link Item#getPropertyIds() Item::getPropertyIds}).
+ * (see {@link Item#getItemPropertyIds()}).
  * <li>all Properties in the Items corresponding to the same Property ID
  * must have the same data type.
  * </ul>
