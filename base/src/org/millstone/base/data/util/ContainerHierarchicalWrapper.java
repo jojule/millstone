@@ -139,7 +139,7 @@ public class ContainerHierarchicalWrapper
 				HashSet s = new HashSet();
 				s.add(parent.keySet());
 				s.add(children.keySet());
-				s.add(roots);
+				s.addAll(roots);
 
 				// Remove unnecessary items
 				for (Iterator i = s.iterator(); i.hasNext();) {
