@@ -227,7 +227,7 @@
   <NOBR>
   <!-- Action lists in javascript mode-->
   <xsl:if test="$dhtml">
-    <xsl:apply-templates select="./al">
+    <xsl:apply-templates select="./al" mode="dhtml">
       <xsl:with-param name="actionlistid"><xsl:value-of select="$actionlistid" /></xsl:with-param>
     </xsl:apply-templates>   
   </xsl:if>
@@ -247,8 +247,8 @@
             <xsl:if test="not($root/@readonly)">
       	  	  <xsl:attribute name="HREF">javascript:treeSelClick('<xsl:value-of select="$selectedvar/@id"/>','<xsl:value-of select="@key"/>','<xsl:value-of select="$root/@immediate"/>','<xsl:value-of select="$root/@selectmode"/>');</xsl:attribute>
       	  	</xsl:if>
-      		  <xsl:if test="@icon"><IMG class="icon" SRC="{@icon}" BORDER="0" /></xsl:if>
-      		  <xsl:value-of select="@caption" />
+      		<xsl:if test="@icon"><IMG class="icon" SRC="{@icon}" BORDER="0" /></xsl:if>
+      		<xsl:value-of select="@caption" />
   		  </A>              
       	</xsl:when>
       	

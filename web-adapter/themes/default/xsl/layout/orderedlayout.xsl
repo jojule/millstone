@@ -46,8 +46,16 @@
           </TD>
           <TD><xsl:apply-templates select="." mode="core"/></TD>
           <TD>      
-            <xsl:for-each select="./error"><xsl:apply-templates select="." mode="error"/></xsl:for-each>
-            <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
+            <xsl:choose>
+              <xsl:when test="$dhtml">
+                <xsl:for-each select="./error"><xsl:apply-templates select="." mode="dhtml"/></xsl:for-each>
+                <xsl:for-each select="./description"><xsl:apply-templates select="." mode="dhtml"/></xsl:for-each>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:for-each select="./error"><xsl:apply-templates select="." mode="inline"/></xsl:for-each>
+                <xsl:for-each select="./description"><xsl:apply-templates select="." mode="inline"/></xsl:for-each>
+              </xsl:otherwise>
+            </xsl:choose>
           </TD>
         </TR>
       </xsl:for-each>
@@ -69,8 +77,16 @@
 		      </NOBR>
 		    </xsl:if>
 		    <xsl:if test="not(@caption) and @icon"><IMG SRC="{@icon}" /></xsl:if>
-            <xsl:for-each select="./error"><xsl:apply-templates select="." mode="error"/></xsl:for-each>
-            <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
+            <xsl:choose>
+              <xsl:when test="$dhtml">
+                <xsl:for-each select="./error"><xsl:apply-templates select="." mode="dhtml"/></xsl:for-each>
+                <xsl:for-each select="./description"><xsl:apply-templates select="." mode="dhtml"/></xsl:for-each>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:for-each select="./error"><xsl:apply-templates select="." mode="inline"/></xsl:for-each>
+                <xsl:for-each select="./description"><xsl:apply-templates select="." mode="inline"/></xsl:for-each>
+              </xsl:otherwise>
+            </xsl:choose>
           </TD>
         </xsl:for-each>
       </TR>
