@@ -180,9 +180,9 @@ public interface Property {
         /** Constructs a new <code>ConversionException</code> from another
          * exception.
          * 
-         * @param exception cause of the the conversion failure
+         * @param cause The cause of the the conversion failure
          */
-        public ConversionException(Exception cause) {
+        public ConversionException(Throwable cause) {
             super(cause.toString());
         }
     }
