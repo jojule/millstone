@@ -93,9 +93,9 @@ public class PropertyPanel extends Panel implements Button.ClickListener {
 		showAllProperties.setSwitchMode(true);
 		allProperties.setVisible(false);
 		allProperties.addContainerProperty("Name", String.class, "");
-		allProperties.addContainerProperty("Class", String.class, "");
+		allProperties.addContainerProperty("Type", String.class, "");
 		allProperties.addContainerProperty("R/W", String.class, "");
-		allProperties.addContainerProperty("In demo", String.class, "");
+		allProperties.addContainerProperty("Demo", String.class, "");
 		allProperties.setColumnAlignments(
 			new String[] {
 				Table.ALIGN_LEFT,
