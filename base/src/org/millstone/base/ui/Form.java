@@ -75,7 +75,8 @@ import org.millstone.base.terminal.PaintTarget;
  * @author IT Mill Ltd.
  * @version @VERSION@
  * @since 3.0
- */public class Form
+ */
+public class Form
 	extends AbstractComponent
 	implements Item.Editor, Buffered, Item {
 
@@ -487,22 +488,46 @@ import org.millstone.base.terminal.PaintTarget;
 					+ "' can not be found.");
 		Object value = oldField.getValue();
 
-		// Check that the value exists
+		// Check that the value exists and check if the select should
+		// be forced in multiselect mode
 		boolean found = false;
+		boolean isMultiselect = false;
 		for (int i = 0; i < values.length && !found; i++)
 			if (values[i] == value
 				|| (value != null && value.equals(values[i])))
 				found = true;
-		if (value != null && !found)
-			throw new IllegalArgumentException(
-				"Current value '"
-					+ value
-					+ "' of property '"
-					+ propertyId.toString()
-					+ "' was not found");
+		if (value != null && !found) {
+			if (value instanceof Collection) {
+				for (Iterator it = ((Collection) value).iterator();
+					it.hasNext();
+					) {
+					Object val = it.next();
+					found = false;
+					for (int i = 0; i < values.length && !found; i++)
+						if (values[i] == val
+							|| (val != null && val.equals(values[i])))
+							found = true;
+					if (!found) 
+					throw new IllegalArgumentException(
+						"Currently selected value '"
+							+ val
+							+ "' of property '"
+							+ propertyId.toString()
+							+ "' was not found");
+				}
+				isMultiselect = true;
+			} else
+				throw new IllegalArgumentException(
+					"Current value '"
+						+ value
+						+ "' of property '"
+						+ propertyId.toString()
+						+ "' was not found");
+		}
 
 		// Create new field matching to old field parameters
 		Select newField = new Select();
+		if (isMultiselect) newField.setMultiSelect(true);
 		newField.setCaption(oldField.getCaption());
 		newField.setReadOnly(oldField.isReadOnly());
 		newField.setReadThrough(oldField.isReadThrough());
@@ -519,7 +544,8 @@ import org.millstone.base.terminal.PaintTarget;
 			}
 			Item item = newField.addItem(id);
 			if (item != null)
-				item.getItemProperty("desc").setValue(descriptions[i].toString());
+				item.getItemProperty("desc").setValue(
+					descriptions[i].toString());
 		}
 
 		// Set the property data source
@@ -537,7 +563,7 @@ import org.millstone.base.terminal.PaintTarget;
 
 		return newField;
 	}
-	
+
 	/**
 	 * @see org.millstone.base.ui.Component#attach()
 	 */
