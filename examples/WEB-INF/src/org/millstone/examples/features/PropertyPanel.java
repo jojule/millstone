@@ -426,7 +426,7 @@ public class PropertyPanel
 			Property p = config.getItemProperty(names[i]);
 			if (p != null) {
 				set.addItemProperty(names[i], p);
-				AbstractField f = set.getField(names[i]);
+				Field f = set.getField(names[i]);
 				if (f instanceof TextField) {
 					if (Integer.class.equals(p.getType())) 
 						((TextField)f).setColumns(4);
@@ -442,10 +442,10 @@ public class PropertyPanel
 	}
 
 	/** Find a field from all forms */
-	public AbstractField getField(Object propertyId) {
+	public Field getField(Object propertyId) {
 		for (Iterator i = forms.iterator(); i.hasNext();) {
 			Form f = (Form) i.next();
-			AbstractField af = f.getField(propertyId);
+			Field af = f.getField(propertyId);
 			if (af != null)
 				return af;
 		}
