@@ -45,6 +45,6 @@ package org.millstone.ajaxadapter.browser;
  * 
  * @author IT Mill Ltd, Joonas Lehtinen
  */
-public class InternetExplorer extends AbstractBrowser {
+public class InternetExplorer extends WebBrowser {
 
 }

@@ -52,7 +52,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.millstone.ajaxadapter.browser.Mozilla;
+import org.millstone.ajaxadapter.browser.Firefox;
 import org.millstone.base.Application;
 import org.millstone.base.terminal.DownloadStream;
 import org.millstone.base.terminal.Paintable;
@@ -162,7 +162,7 @@ public class ApplicationManager {
 
                         // TODO Terminal should be constructed in some
                         // meaningful way
-                        terminalType = new Mozilla();
+                        terminalType = new Firefox();
                     }
 
                     // Set the response type

@@ -14,7 +14,7 @@ import org.millstone.base.ui.Window;
 /**
  * @author IT Mill Ltd, Joonas Lehtinen
  */
-public class UnsupportedBrowser extends AbstractBrowser {
+public class UnsupportedBrowser extends WebBrowser {
 
     String userAgentHeader;
 

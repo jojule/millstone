@@ -56,7 +56,7 @@ import org.millstone.base.ui.Window;
  * 
  * @author IT Mill Ltd, Joonas Lehtinen
  */
-public abstract class AbstractBrowser implements Terminal {
+public abstract class WebBrowser implements Terminal {
 
     /*
      * (non-Javadoc)
@@ -88,7 +88,7 @@ public abstract class AbstractBrowser implements Terminal {
         return -1;
     }
 
-    public static AbstractBrowser getBrowser(String userAgentHeader) {
+    public static WebBrowser getBrowser(String userAgentHeader) {
 
         if (userAgentHeader.matches(".*Safari.*")) 
             return new Safari();

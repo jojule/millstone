@@ -44,6 +44,6 @@ package org.millstone.ajaxadapter.browser;
  * 
  * @author IT Mill Ltd, Joonas Lehtinen
  */
-public class Safari extends AbstractBrowser {
+public class Safari extends WebBrowser {
 
 }

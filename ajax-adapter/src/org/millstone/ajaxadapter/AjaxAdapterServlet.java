@@ -54,7 +54,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.swing.border.AbstractBorder;
 
-import org.millstone.ajaxadapter.browser.AbstractBrowser;
+import org.millstone.ajaxadapter.browser.WebBrowser;
 import org.millstone.base.Application;
 import org.millstone.base.ui.Window;
 
@@ -205,7 +205,7 @@ public class AjaxAdapterServlet extends HttpServlet {
                 String windowName = request.getParameter(GET_PARAM_WINDOW);
                 Window window = windowName != null && windowName.length() > 0 ? application.getWindow(windowName) : application.getMainWindow();
                 
-                AbstractBrowser browser = AbstractBrowser.getBrowser(request
+                WebBrowser browser = WebBrowser.getBrowser(request
                         .getHeader("User-Agent"));
                 browser.createAjaxClient(request, response, window);
             }
