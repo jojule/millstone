@@ -46,7 +46,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.millstone.base.data.Buffered;
-import org.millstone.base.data.BufferedValidatable;
 import org.millstone.base.data.Property;
 import org.millstone.base.data.Validatable;
 import org.millstone.base.data.Validator;
@@ -78,14 +77,7 @@ import org.millstone.base.terminal.PaintTarget;
  */
 public abstract class AbstractField
 	extends AbstractComponent
-	implements
-		BufferedValidatable,
-		Property,
-		Property.Editor,
-		Property.ValueChangeNotifier,
-		Property.ValueChangeListener,
-		Property.ReadOnlyStatusChangeNotifier,
-		Component.Focusable {
+	implements Field, Property.ReadOnlyStatusChangeNotifier {
 
 	/* Private members ************************************************* */
 
@@ -118,7 +110,7 @@ public abstract class AbstractField
 
 	/** Should the field be focused on next repaint */
 	private boolean focus = false;
-	
+
 	/** The tab order number of this field */
 	private int tabIndex = 0;
 
@@ -135,7 +127,7 @@ public abstract class AbstractField
 			target.addAttribute("focus", true);
 
 		// The tab ordering number
-		if (this.tabIndex >= 0)
+		if (this.tabIndex > 0)
 			target.addAttribute("tabindex", this.tabIndex);
 
 		// If the field is modified, but not committed, set modified attribute
@@ -254,7 +246,7 @@ public abstract class AbstractField
 			// If the new value differs from the previous one
 			if ((newValue == null && value != null)
 				|| (newValue != null && !newValue.equals(value))) {
-				value = newValue;
+				setInternalValue(newValue);
 				fireValueChange();
 			}
 
@@ -308,7 +300,7 @@ public abstract class AbstractField
 		throws Buffered.SourceException {
 		readTroughMode = readTrough;
 		if (!isModified() && readTroughMode && dataSource != null) {
-			value = dataSource.getValue();
+			setInternalValue(dataSource.getValue());
 			fireValueChange();
 		}
 	}
@@ -343,7 +335,7 @@ public abstract class AbstractField
 		Object val = dataSource.getValue();
 		if ((val == null && value != null)
 			|| (val != null && !val.equals(value))) {
-			value = val;
+			setInternalValue(value);
 			fireValueChange();
 		}
 
@@ -373,7 +365,7 @@ public abstract class AbstractField
 			}
 
 			// Change the value        
-			value = newValue;
+			setInternalValue(newValue);
 			modified = dataSource != null;
 
 			// In write trough mode , try to commit
@@ -457,7 +449,8 @@ public abstract class AbstractField
 
 		// Get the value from source
 		try {
-			value = dataSource != null ? dataSource.getValue() : value;
+			if (dataSource != null)
+				setInternalValue(dataSource.getValue());
 			modified = false;
 		} catch (Throwable e) {
 			currentBufferedSourceException =
@@ -648,34 +641,6 @@ public abstract class AbstractField
 		}
 	}
 
-	/** An <code>Event</code> object specifying the Property whose value
-	 * has been changed.
-	 * @author IT Mill Ltd.
-		 * @version @VERSION@
-		 * @since 3.0
-	 */
-	public class ValueChangeEvent
-		extends Component.Event
-		implements Property.ValueChangeEvent {
-
-		/** Constructs a new event object with the specified source
-		 * field object.
-		 * 
-		 * @param source the field that caused the event
-		 */
-		public ValueChangeEvent(AbstractField source) {
-			super(source);
-		}
-
-		/** Gets the Property which triggered the event.
-		 * 
-		 * @return Source Property of the event.
-		 */
-		public Property getProperty() {
-			return (Property) getSource();
-		}
-	}
-
 	/* Add a value change listener for the field.
 	 * Don't add a JavaDoc comment here, we use the default documentation
 	 * from the implemented interface.
@@ -794,7 +759,7 @@ public abstract class AbstractField
 		requestRepaint();
 	}
 
-	/** Create field by the type of the property.
+	/** Create abstract field by the type of the property.
 	 * 
 	 * <p>This returns most suitable field type for editing property of 
 	 * given type</p>
@@ -823,8 +788,7 @@ public abstract class AbstractField
 		// Text field is used by default
 		return new TextField();
 	}
-	
-	
+
 	/** Get the tab index of this field.
 	 * The tab index property is used to specify the
 	 * natural tab ordering of fields.
@@ -846,4 +810,13 @@ public abstract class AbstractField
 		this.tabIndex = tabIndex;
 	}
 
+	/** Set the internal field value.
+	 * This is purely used by AbstractField to change the internal Field value.
+	 * It does not trigger any events. It can be overriden by the inheriting
+	 * classes to update all dependent variables.
+	 * @param newValue The new value to be set.
+	 */
+	protected void setInternalValue(Object newValue) {
+		this.value = newValue;
+	}
 }
