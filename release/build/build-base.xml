@@ -40,21 +40,10 @@
             </fileset>
         </jar>
 
-        <!-- Create source JAR -->
-        <jar jarfile="${work-dir}/base/${base-src-jar-name}"
-             compress="true"
-             manifest="${manifest-dir}/millstone-base-src.mf">
-            <fileset dir="${root-dir}/base/src">
-              <patternset>
-                <include name="org/millstone/base/**/*.java"/>
-              </patternset>
-            </fileset>
-        </jar>
-
 	<!-- Copy files to output directory -->
 	<copy file="${work-dir}/base/${base-bin-jar-name}" todir="${output-dir}/lib"/>
-	<copy file="${work-dir}/base/${base-src-jar-name}" todir="${output-dir}/lib"/>
-	<!-- Filtered files -->
+
+        <!-- Filtered files -->
 	<copy todir="${output-dir}">
 	    <filterset>
     	       <filter token="VERSION" value="${version}"/>
@@ -85,6 +74,17 @@
               </patternset>
             </fileset>	
 	</copy>
+
+        <!-- Create source JAR in output-dir -->
+        <jar jarfile="${output-dir}/lib/${base-src-jar-name}"
+             compress="true"
+             manifest="${manifest-dir}/millstone-base-src.mf">
+            <fileset dir="${output-dir}/base/src">
+              <patternset>
+                <include name="org/millstone/base/**/*.java"/>
+              </patternset>
+            </fileset>
+        </jar>
 
     </target>
 

@@ -49,17 +49,6 @@
             </fileset>
         </jar>
 	
-        <!-- Create source JAR -->
-        <jar jarfile="${work-dir}/webadapter/${webadapter-src-jar-name}"
-             compress="true"
-             manifest="${manifest-dir}/millstone-webadapter-src.mf">
-            <fileset dir="${root-dir}/web-adapter/src">
-              <patternset>
-                <include name="org/millstone/webadapter/**/*.java"/>
-              </patternset>
-            </fileset>
-        </jar>	
-
         <!-- Create themes JAR -->
         <jar jarfile="${work-dir}/webadapter/${web-themes-jar-name}" 
 	     compress="false"
@@ -79,9 +68,9 @@
 
 	<!-- Copy files to output directory -->
 	<copy file="${work-dir}/webadapter/${webadapter-bin-jar-name}" todir="${output-dir}/lib"/>
-	<copy file="${work-dir}/webadapter/${webadapter-src-jar-name}" todir="${output-dir}/lib"/>
         <copy file="${work-dir}/webadapter/${web-themes-jar-name}"     todir="${output-dir}/lib"/>
-	<!-- Filtered files -->
+
+        <!-- Filtered files -->
 	<copy todir="${output-dir}">
 	    <filterset>
     	       <filter token="VERSION" value="${version}"/>
@@ -125,6 +114,19 @@
               </patternset>
             </fileset>	
 	</copy>	
+	
+        <!-- Create source JAR in output-dir -->
+        <jar jarfile="${output-dir}/lib/${webadapter-src-jar-name}"
+             compress="true"
+             manifest="${manifest-dir}/millstone-webadapter-src.mf">
+            <fileset dir="${output-dir}/web-adapter/src">
+              <patternset>
+                <include name="org/millstone/webadapter/**/*.java"/>
+              </patternset>
+            </fileset>
+        </jar>	
+
+
     </target>
 
 </project>
