@@ -1,4 +1,3 @@
-
 ------------------------------------------------------------------------------
 
                                 Millstone(tm) 
@@ -10,6 +9,44 @@
                       (c) 2000,2001,2002, IT Mill Ltd
 
 ------------------------------------------------------------------------------
+
+version 3.0.2
+---------------------------
+Base:
+  - Fixed FrameWindow paint to use parent paint.
+  - The table default for item caption mode is now EXPLICIT_DEFAULTS_ID as 
+    documented before.
+  - Removed the false unsupported validator exception in DateField.
+  - Removed possibly duplicate value,item and property change events in Select.
+  - The vertical scroll variable was painted regardless of scrollable property.
+  - Added toString function and possibility to iterate the error messages 
+    in CompositeErrorMessage.
+  - Updated documentation.
+
+WebAdapter:
+  - Rewrote the XML escape functions.
+  - Application locale now defaults to browser locale.
+  - HttpVariableMap now ignores non-changed values.
+  - Theme requirement rules are now correctly applied to filesets.
+  - Fixed an extra variable change in Tabsheet.
+  - Removed the unreliable CSS and frame checks
+  - Updated documentation.
+  - Updated browser probe HTML versions.
+  - Added JScript 5.1 indentification
+  - Set the DebugWindow default dimensions.
+  - Removed XSL transformer debug
+
+Default Theme:
+  - Added missing width and height handling to Window.
+  - The icon is now an active in Link component.
+  - Removed border in button and link icons.
+  - Added support for icon-only button.
+
+Examples:
+  - Disabled the window name property write when window is 
+    added to application.
+  - Updated StonePlayer example. 
+
 
 version 3.0.1
 ---------------------------
