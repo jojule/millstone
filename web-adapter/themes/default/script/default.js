@@ -14,6 +14,12 @@
 // --------------------------------------------------------------------------
 
 function millstoneSubmit() {
+
+	// Manually call this beacause it is not
+	// called automatically ???
+	if (form_submit) {
+   		form_submit();
+   	}
     showHourglassCursor();
 	document.millstone.submit();
 }
@@ -647,9 +653,12 @@ function tableSelClick(inputid,key,immediate,mode) {
       value = listRemoveInt(value,key);
     else 
       value = listAddInt(value,key);
-  } else 
+  } else {
     value = key;
+  }
+  
   setVarById(inputid,value);
+  var changed = (prev != value);
   
   // In single select mode change remove old selections
   if (mode == "single") {
@@ -671,7 +680,7 @@ function tableSelClick(inputid,key,immediate,mode) {
   }
 
   // Submit if in immediate mode  
-  if (immediate) {
+  if (changed && immediate) {
     millstoneSubmit();
   }
 }
