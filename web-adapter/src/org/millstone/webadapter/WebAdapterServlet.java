@@ -677,6 +677,9 @@ public class WebAdapterServlet
 			}			
 
 		} catch (UIDLTransformerException te) {
+			
+			try{			
+			
 			// Write the error report to client
 			response.setContentType("text/html");
 			BufferedWriter err =
@@ -687,6 +690,9 @@ public class WebAdapterServlet
 			err.write(te.getHTMLDescription());
 			err.write("</body></html>");
 			err.close();
+			} catch (Throwable t) {
+				Log.except("Failed to write error page: "+t+". Original exception was: ",te);
+			}
 		} catch (Throwable e) {
 			// Re-throw other exceptions
 			throw new ServletException(e);

@@ -53,15 +53,10 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
-/** Class implementing the MillStone WebAdapter UIDLTransformer.
- *
- * The thansformer should not be created directly; it should be contructed
- * using getTransformer() provided by UIDLTransformerFactory. 
- * 
- * After the transform has been done, the transformer can be recycled with
- * releaseTransformer() by UIDLTransformerFactory.
+/** Class implementing XMLReader for the MillStone WebAdapter UIDLTransformer.
  *
  * @author IT Mill Ltd.
  * @version @VERSION@
@@ -117,6 +112,10 @@ public class XSLReader implements XMLReader, ContentHandler {
 	private ContentHandler handler;
 	private XMLReader reader;
 
+	private XSLStreamLocator locator = null;
+	private Locator streamLocator = null;
+	private int streamStartLineNumber = 0;
+
 	public XSLReader(XMLReader reader, Collection streams) {
 		this.reader = reader;
 		reader.setContentHandler(this);
@@ -134,7 +133,11 @@ public class XSLReader implements XMLReader, ContentHandler {
 		handler.startDocument();
 		// Parse all files
 		for (Iterator i = streams.iterator(); i.hasNext();) {
-			InputStream in = (InputStream) i.next();
+			ThemeSource.XSLStream xslStream = (ThemeSource.XSLStream) i.next();
+			this.locator = new XSLStreamLocator(xslStream.getId());
+			InputStream in = (xslStream).getStream();
+			
+			// Parse the stream
 			reader.parse(new InputSource(in));
 
 		}
@@ -211,7 +214,10 @@ public class XSLReader implements XMLReader, ContentHandler {
 	 * @see org.xml.sax.ContentHandler#endDocument()
 	 */
 	public void endDocument() throws SAXException {
-		//Ignore document ends
+		//Ignore document ends, but add previous line numbers
+		if (this.streamLocator != null) {
+			this.streamStartLineNumber += this.streamLocator.getLineNumber();
+		}
 	}
 
 	/**
@@ -232,8 +238,12 @@ public class XSLReader implements XMLReader, ContentHandler {
 	/**
 	 * @see org.xml.sax.ContentHandler#setDocumentLocator(Locator)
 	 */
-	public void setDocumentLocator(Locator locator) {
-		handler.setDocumentLocator(locator);
+	public void setDocumentLocator(Locator locator) {				
+		// create new locator combined streams/files
+		if (!startTagHandled) {
+			handler.setDocumentLocator(this.locator);
+		}
+		this.streamLocator = locator;
 	}
 
 	/**
@@ -326,7 +336,7 @@ public class XSLReader implements XMLReader, ContentHandler {
 	 * @see org.xml.sax.XMLReader#setErrorHandler(ErrorHandler)
 	 */
 	public void setErrorHandler(ErrorHandler handler) {
-		reader.setErrorHandler(handler);
+		reader.setErrorHandler(new SAXStreamErrorHandler(handler));
 	}
 
 	/**
@@ -466,6 +476,73 @@ public class XSLReader implements XMLReader, ContentHandler {
 		 */
 		public String getValue(String qName) {
 			return original.getValue(qName);
+		}
+	}
+
+	public class XSLStreamLocator implements Locator {
+
+		private String id;
+
+		public XSLStreamLocator(String id) {
+			this.id = id;
+		}
+
+		public String getPublicId() {
+			return streamLocator.getPublicId();
+		}
+
+		public String getSystemId() {
+			return streamLocator.getSystemId()+""+id;
+		}
+
+		public int getLineNumber() {
+			return streamLocator.getLineNumber();
+		}
+		
+		public int getCombinedLineNumber() {
+			return streamLocator.getLineNumber()+streamStartLineNumber;
+		}		
+
+		public int getColumnNumber() {
+			return streamLocator.getColumnNumber();
+		}
+
+		public String getId() {
+			return id;
+		}
+	}
+
+	public class SAXStreamErrorHandler implements ErrorHandler {
+
+		private ErrorHandler handler;
+
+		SAXStreamErrorHandler(ErrorHandler origHandler) {
+			this.handler = origHandler;
+		}
+
+		public void warning(SAXParseException exception) throws SAXException {
+			handler.warning(
+				new SAXParseException(
+					"" + exception.getMessage()+" in "+locator.getId(),
+					locator,
+					exception));
+		}
+
+		public void error(SAXParseException exception) throws SAXException {
+			handler.error(
+				new SAXParseException(
+					"" + exception.getMessage()+" in "+locator.getId(),
+					locator,
+					exception));
+		}
+
+		public void fatalError(SAXParseException exception)
+			throws SAXException {
+			handler.fatalError(
+				new SAXParseException(
+					"" + exception.getMessage()+" in "+locator.getId(),
+					locator,
+					exception));
 		}
 	}
 }

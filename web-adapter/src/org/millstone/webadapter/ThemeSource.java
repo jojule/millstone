@@ -60,12 +60,11 @@ public interface ThemeSource {
 	 *  requirements.
 	 *  @param theme Theme, which XSL should be returned
 	 *  @param type The type of the current client.
-	 *  @return Colection  containing the XSL streams.
+	 *  @return Collection of ThemeSource.XSLStream objects.
 	 *  @see Theme
 	 */
 	public Collection getXSLStreams(Theme theme, WebBrowser type)
 		throws ThemeException;
-
 
 	/** Get the last modification time, used to reload theme on changes.
 	 *  @return Last modification time of the theme source.
@@ -77,8 +76,7 @@ public interface ThemeSource {
 	 *  @throws ThemeException If the resource is not found or there was
 	 * 			 some problem finding the resource.
 	 */
-	public InputStream getResource(String resourceId)
-	throws ThemeException;
+	public InputStream getResource(String resourceId) throws ThemeException;
 
 	/** Get list of themes in the theme source. 
 	 *  @return List of themes included in the theme source.
@@ -106,5 +104,31 @@ public interface ThemeSource {
 		public ThemeException(String description) {
 			super(description);
 		}
+	}
+
+	/** Wrapper class for XSL InputStreams */
+	public class XSLStream {
+		private String id;
+		private InputStream stream;
+
+		public XSLStream(String id, InputStream stream) {
+			this.id = id;
+			this.stream = stream;
+		}
+		
+		/** Return id of this stream.
+		 * @return
+		 */
+		public String getId() {
+			return id;
+		}
+
+		/** Return the actual XSL Stream.
+		 * @return
+		 */
+		public InputStream getStream() {
+			return stream;
+		}
+
 	}
 }

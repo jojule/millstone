@@ -161,10 +161,11 @@ public class ServletThemeSource implements ThemeSource {
 			Collection fileNames = theme.getFileNames(type);
 			// Add all XSL file streams
 			for (Iterator i = fileNames.iterator(); i.hasNext();) {
+				String entryName = (String) i.next();
 				entry =
 					context.getResourceAsStream(
-						(this.path + (String) i.next()));
-				xslFiles.add(entry);
+						(this.path + entryName));
+				xslFiles.add(new XSLStream(entryName,entry));
 			}
 
 		}

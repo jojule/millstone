@@ -137,6 +137,7 @@ public class UIDLTransformer {
 					themes.getXSLStreams(
 						type.getTheme(),
 						type.getWebBrowser()));
+
 			xmlReader.setErrorHandler(errorHandler);
 
 			// Create own SAXSource using a dummy inputSource.
@@ -266,7 +267,7 @@ public class UIDLTransformer {
 			throw new UIDLTransformerException(
 				e.toString(),
 				e,
-				errorHandler.getXSLErrorReport(themeSource, transformerType));
+				errorHandler.getUIDLErrorReport());
 		}
 
 		// Check if transform itself failed, meaning either
@@ -327,7 +328,16 @@ public class UIDLTransformer {
 						r += " - "
 							+ WebPaintTarget.escapeXML(
 								((javax.xml.transform.TransformerException) e)
-									.getMessageAndLocation());
+									.getMessage());
+						Throwable cause =
+							((javax.xml.transform.TransformerException) e)
+								.getException();
+
+						// Append cause if available
+						if (cause != null) {
+							r += ": "
+								+ WebPaintTarget.escapeXML(cause.getMessage());
+						}
 						r += line != null
 							? " (line:" + line.intValue() + ")"
 							: " (line unknown)";
@@ -355,11 +365,13 @@ public class UIDLTransformer {
 				SourceLocator l = exception.getLocator();
 				if (l != null) {
 					rowToErrorMap.put(
-						new Integer(l.getLineNumber()),
+						new Integer(
+							((XSLReader.XSLStreamLocator) l).getLineNumber()),
 						exception);
 					errorToRowMap.put(
 						exception,
-						new Integer(l.getLineNumber()));
+						new Integer(
+							((XSLReader.XSLStreamLocator) l).getLineNumber()));
 				}
 			}
 		}
@@ -413,7 +425,9 @@ public class UIDLTransformer {
 				Collection c =
 					themes.getXSLStreams(type.getTheme(), type.getWebBrowser());
 				for (Iterator i = c.iterator(); i.hasNext();) {
-					java.io.InputStream is = (java.io.InputStream) i.next();
+
+					java.io.InputStream is =
+						((ThemeSource.XSLStream) i.next()).getStream();
 					byte[] buffer = new byte[1024];
 					int read = 0;
 					while ((read = is.read(buffer)) >= 0)

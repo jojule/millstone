@@ -150,7 +150,7 @@ public class DirectoryThemeSource implements ThemeSource {
 			for (Iterator i = fileNames.iterator(); i.hasNext();) {
 				File f = new File(this.path, (String) i.next());
 				try {
-					xslFiles.add(new FileInputStream(f));
+					xslFiles.add(new XSLStream(f.getName(),new FileInputStream(f)));
 				} catch (FileNotFoundException e) {
 					throw new ThemeException("XSL File not found: " + f);
 				}

@@ -700,6 +700,10 @@ public class MultipartRequest
 	*/
 	private void addParameter(String strName, String value)
 	{
+		// Fix NPE in case of null name
+		if (strName == null)
+			return;
+		
 		// Fix 1.16: for multiple parameter values.
 		Object objParms = htParameters.get(strName);
 

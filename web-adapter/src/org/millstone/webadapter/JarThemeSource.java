@@ -181,7 +181,7 @@ public class JarThemeSource implements ThemeSource {
 			for (Iterator i = fileNames.iterator(); i.hasNext();) {
 				entry = jar.getJarEntry(this.path + (String) i.next());
 				try {
-					xslFiles.add(jar.getInputStream(entry));
+					xslFiles.add(new XSLStream(entry.getName(),jar.getInputStream(entry)));
 				} catch (java.io.FileNotFoundException e) {
 					throw new ThemeException(
 						"XSL File not found: " + this.file + ": " + entry);
