@@ -182,6 +182,17 @@
                 Component is disabled -flag (boolean).
              -->
 
+<!-- Common attributes for all focusable                                 -->
+<!ENTITY % focusableAttributes 
+            "focusid    CDATA           #IMPLIED
+             focus       (false|true)    #IMPLIED">
+             <!-- 
+             focusid: 
+                Unique id of this focusable.
+             focus:
+                The field should be focused. The terminal should place the cursor on it
+             -->
+
              
 <!-- Shared elements ____________________________________________________ -->             
 
@@ -348,16 +359,14 @@
     -->
     <!ATTLIST button 
         modified  (false|true)    #IMPLIED
-   		focus     (false|true)    #IMPLIED
         caption CDATA   #REQUIRED
         %componentAttributes;
+        %focusableAttributes;
         type    (push|switch)   "push">
                 <!-- 
                 modified:
                     True if component is modified but not commited to data 
                     storage.
-				focus:
-					The field should be focused. The terminal should place the cursor on it
                 caption: 
                     Visual button caption (string)
                 -->
@@ -402,13 +411,11 @@ Date selection component
     -->
     <!ATTLIST datefield
         %componentAttributes;
-        modified  (false|true)    #IMPLIED
-   		focus     (false|true)    #IMPLIED>
+        %focusableAttributes;
+        modified  (false|true)    #IMPLIED>
         <!--
         modified: 
             true if the component is modified but not commited to data storage
-		focus:
-			The field should be focused. The terminal should place the cursor on it
         -->
                  
 <!-- ........................................................................
@@ -657,16 +664,14 @@ Date selection component
     -->
     <!ATTLIST select
                 %componentAttributes;
+                %focusableAttributes;
 		        modified  (false|true)    #IMPLIED
-   				focus     (false|true)    #IMPLIED
                 selectmode      (single|multi)  "single" 
                 allownewitem  (false|true)    #IMPLIED>
                 <!--
                 modified:
                     True if component is modified but not commited to data 
                     storage.
-				focus:
-					The field should be focused. The terminal should place the cursor on it
                 selectmode:
                     'single' if only one option can be selected at a time.
                     'multi' of multiple options can be selected 
@@ -697,8 +702,8 @@ TextField component
     -->
     <!ATTLIST textfield
                 %componentAttributes;
+                %focusableAttributes;
                 modified    (false|true)    #IMPLIED
-		   		focus       (false|true)    #IMPLIED
                 cols        CDATA           #IMPLIED
                 rows        CDATA           #IMPLIED
                 wordwrap    (true|false)    #IMPLIED
@@ -709,8 +714,6 @@ TextField component
                 modified:
                     True if component is modified but not commited to data 
                     storage.
-				focus:
-					The field should be focused. The terminal should place the cursor on it
                 cols:
                     Number of visible columns in the textfield.
                 rows:
@@ -735,7 +738,7 @@ TextField component
     </upload>   
 -->                
 <!ELEMENT upload ((%componentSections;)*,uploadstream)>
-    <!ATTLIST upload %componentAttributes;>
+    <!ATTLIST upload %componentAttributes; %focusableAttributes; >
 
                     
 <!-- Component containers _______________________________________________ -->
@@ -967,6 +970,7 @@ TextField component
     -->
     <!ATTLIST table
                 %componentAttributes;
+                %focusableAttributes;
 		        modified  (false|true)    #IMPLIED
                 selectmode  (none|single|multi) "none"
                 cols        CDATA               #REQUIRED
@@ -1034,6 +1038,9 @@ TextField component
     integer name="scrollleft": 
         Content is scrolled left by given value (in pixels). If this variable 
         exists, scrolling is enabled.
+    integer name="focusid": 
+        One component (field) at time can be focused within window. If this
+        variable is present it contains the id of currently focused component.
     -->
     <!ATTLIST window 
     			name		CDATA			#REQUIRED
