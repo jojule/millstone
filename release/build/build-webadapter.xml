@@ -68,8 +68,10 @@
 	<!-- Copy files to output directory -->
 	<copy file="${work-dir}/webadapter/${webadapter-bin-jar-name}" todir="${output-dir}/lib"/>
 	<copy file="${work-dir}/webadapter/${webadapter-src-jar-name}" todir="${output-dir}/lib"/>
-        <copy file="${work-dir}/webadapter/${web-themes-jar-name}" todir="${output-dir}/lib"/>
-	<copy todir="${output-dir}/webthemes">
+    <copy file="${work-dir}/webadapter/${web-themes-jar-name}"     todir="${output-dir}/lib"/>
+    
+    <mkdir dir="${output-dir}/src/webthemes" />   
+	<copy todir="${output-dir}/src/webthemes">
             <fileset dir="${root-dir}/web-adapter/themes">
               <patternset>
                 <include name="default/**/*.xsl"/>

@@ -126,8 +126,6 @@
         <mkdir dir="${output-dir}/docs/apidocs" />
         <mkdir dir="${output-dir}/src" />
         <mkdir dir="${output-dir}/lib" />
-        <mkdir dir="${output-dir}/webthemes" />
-
 
         <!-- FIXME: Copy specifications to correct places
         <copy todir="${output-dir}/docs">
@@ -145,7 +143,6 @@
 		<manifest file="${manifest-dir}/${file}">
     		<attribute name="Built-By" value="${user.name}"/>
     		<section name="${name}">
-      		<!-- <attribute name="Name" value="${name}"/> -->
       		<attribute name="Specification-Title" value="${spec-title}"/>
       		<attribute name="Specification-Version" value="${version}"/>
       		<attribute name="Specification-Vendor" value="IT Mill Ltd"/>
