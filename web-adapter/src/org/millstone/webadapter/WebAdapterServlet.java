@@ -538,6 +538,7 @@ public class WebAdapterServlet
 
 					// Return blank page, if no window found
 					if (window == null) {
+						response.setContentType("text/html");
 						BufferedWriter page =
 							new BufferedWriter(new OutputStreamWriter(out));
 						page.write("<html><head><script>");
@@ -660,6 +661,7 @@ public class WebAdapterServlet
 
 		} catch (UIDLTransformerException te) {
 			// Write the error report to client
+			response.setContentType("text/html");
 			BufferedWriter err =
 				new BufferedWriter(new OutputStreamWriter(out));
 			err.write(
