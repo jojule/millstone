@@ -44,6 +44,7 @@ public class FeatureWindow extends Feature {
 	Button addButton = new Button("Add to application", this, "addWin");
 	Button removeButton = new Button("Remove from application", this, "delWin");
 	Window demoWindow;
+	Form windowProperties;
 
 	public FeatureWindow() {
 		super();
@@ -67,7 +68,7 @@ public class FeatureWindow extends Feature {
 		PropertyPanel p = new PropertyPanel(demoWindow);
 		p.dependsOn(addButton);
 		p.dependsOn(removeButton);
-		Form ap =
+		windowProperties =
 			p.createBeanPropertySet(
 				new String[] {
 					"width",
@@ -78,14 +79,14 @@ public class FeatureWindow extends Feature {
 					"scrollable",
 					"scrollOffsetX",
 					"scrollOffsetY" });
-		ap.replaceWithSelect(
+		windowProperties.replaceWithSelect(
 			"border",
 			new Object[] {
 				new Integer(Window.BORDER_DEFAULT),
 				new Integer(Window.BORDER_NONE),
 				new Integer(Window.BORDER_MINIMAL)},
 			new Object[] { "Default", "None", "Minimal" });
-		p.addProperties("Window Properties", ap);
+		p.addProperties("Window Properties", windowProperties);
 		l.addComponent(p);
 
 		return l;
@@ -115,11 +116,13 @@ public class FeatureWindow extends Feature {
 
 	public void addWin() {
 		getApplication().addWindow(demoWindow);
+		windowProperties.getField("name").setReadOnly(true);
 		updateWinStatus();
 	}
 
 	public void delWin() {
 		getApplication().removeWindow(demoWindow);
+		windowProperties.getField("name").setReadOnly(false);
 		updateWinStatus();
 	}
 
