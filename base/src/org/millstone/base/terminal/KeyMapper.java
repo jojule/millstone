@@ -94,4 +94,10 @@ public class KeyMapper {
             keyObjectMap.remove(o);
         }
     }
+    
+    /** Remove all objects from the mapper. */
+    public void removeAll() {
+    	objectKeyMap.clear();
+    	keyObjectMap.clear();
+    }    
 }

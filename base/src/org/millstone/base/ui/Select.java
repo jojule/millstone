@@ -540,6 +540,7 @@ public class Select
 	public boolean removeAllItems() throws UnsupportedOperationException {
 
 		boolean retval = items.removeAllItems();
+		this.itemIdMapper.removeAll();
 		if (retval) {
 			setValue(null);
 			if (!(items instanceof Container.ItemSetChangeNotifier))
@@ -595,6 +596,7 @@ public class Select
 
 		unselect(itemId);
 		boolean retval = items.removeItem(itemId);
+		this.itemIdMapper.remove(itemId);
 		if (retval && !(items instanceof Container.ItemSetChangeNotifier))
 			fireItemSetChange();
 		return retval;
@@ -646,8 +648,12 @@ public class Select
 				}
 			}
 
+			// Assign new data source
 			items = newDataSource;
 
+			// Clear itemIdMapper also
+			this.itemIdMapper.removeAll();
+			
 			// Add listeners
 			if (items != null) {
 				try {
@@ -1108,6 +1114,10 @@ public class Select
 	 * @see org.millstone.base.data.Container.ItemSetChangeListener#containerItemSetChange(org.millstone.base.data.Container.ItemSetChangeEvent)
 	 */
 	public void containerItemSetChange(Container.ItemSetChangeEvent event) {
+		// Clear item id mapping table
+		this.itemIdMapper.removeAll();
+		
+		// Notify all listeners
 		fireItemSetChange();
 	}
 

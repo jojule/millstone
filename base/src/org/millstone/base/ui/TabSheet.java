@@ -94,6 +94,7 @@ public class TabSheet extends AbstractComponentContainer {
 	public void removeComponent(Component c) {
 		if (c != null && tabs.contains(c)) {
 			super.removeComponent(c);
+			keyMapper.remove(c);
 			tabs.remove(c);
 			tabCaptions.remove(c);
 			if (c.equals(selected)) {
@@ -300,6 +301,7 @@ public class TabSheet extends AbstractComponentContainer {
 			addComponent(newComponent);
 		else if (newLocation == -1) {
 			removeComponent(oldComponent);
+			keyMapper.remove(oldComponent);
 			addComponent(newComponent);
 			tabs.remove(newComponent);
 			tabs.add(oldLocation, newComponent);
