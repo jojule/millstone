@@ -38,9 +38,12 @@
 
 package org.millstone.base;
 
+import org.millstone.base.terminal.*;
 import org.millstone.base.terminal.ApplicationResource;
 import org.millstone.base.terminal.DownloadStream;
+import org.millstone.base.terminal.Terminal;
 import org.millstone.base.terminal.URIHandler;
+import org.millstone.base.ui.AbstractComponent;
 import org.millstone.base.ui.Window;
 import java.util.Collection;
 import java.util.Collections;
@@ -99,7 +102,8 @@ import java.net.URL;
  * @version @VERSION@
  * @since 3.0
  */
-public abstract class Application implements URIHandler {
+public abstract class Application
+	implements URIHandler, Terminal.ErrorListener {
 
 	/** Random window name generator */
 	private static Random nameGenerator = new Random();
@@ -137,11 +141,14 @@ public abstract class Application implements URIHandler {
 	/** Window detach listeners */
 	private LinkedList windowDetachListeners = null;
 
+	/** Application error listeners */
+	private LinkedList errorListeners = null;
+
 	/** Application resource mapping: key <-> resource */
 	private Hashtable resourceKeyMap = new Hashtable();
 	private Hashtable keyResourceMap = new Hashtable();
 	private long lastResourceKeyNumber = 0;
-	
+
 	/** URL the user is redirected to on application close or
 	 * null if application is just closed */
 	private String logoutURL = null;
@@ -691,7 +698,7 @@ public abstract class Application implements URIHandler {
 				windowDetachListeners = null;
 		}
 	}
-	
+
 	/** Returns the URL user is redirected to on application close.
 	 * If the URL is null, the application is closed normally as 
 	 * defined by the application running environment: Desctop application
@@ -716,4 +723,29 @@ public abstract class Application implements URIHandler {
 		this.logoutURL = logoutURL;
 	}
 
+	/**
+	 * @see org.millstone.base.terminal.Terminal.ErrorListener#terminalError(org.millstone.base.terminal.Terminal.ErrorEvent)
+	 */
+	public void terminalError(Terminal.ErrorEvent event) {
+
+		// Find the original source of the error/exception
+		Object owner = null;
+		if (event instanceof VariableOwner.ErrorEvent) {
+			owner = ((VariableOwner.ErrorEvent) event).getVariableOwner();
+		} else if (event instanceof URIHandler.ErrorEvent) {
+			owner = ((URIHandler.ErrorEvent) event).getURIHandler();
+		} else if (event instanceof ParameterHandler.ErrorEvent) {
+			owner = ((ParameterHandler.ErrorEvent) event).getParameterHandler();
+		}
+
+		// Show the error in AbstractComponent
+		if (owner instanceof AbstractComponent) {
+			Throwable e = event.getThrowable();
+			if (e instanceof ErrorMessage)
+				((AbstractComponent) owner).setComponentError((ErrorMessage) e);
+			else
+				((AbstractComponent) owner).setComponentError(
+					new SystemError(e));
+		}
+	}
 }
