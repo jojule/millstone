@@ -650,8 +650,10 @@ Date selection component
         Array of keys of selected options.
     string name="newitem"
         ItemId of a new option, to be dynamically added if permitted by the
-        'allownewitem' attribute. In most cases this is the new item 
-        caption.
+        'allownewitem' attribute. The value of the newitem valiable is interpreted
+        as item id. Also if the component mode supports it, the contents are 
+        shown as the caption of the new id. New id is not selected by default. 
+        Selecting new items is done by selecting key "NEW" (without "-marks).
     -->
     <!ATTLIST select
                 %componentAttributes;
