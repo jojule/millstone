@@ -38,6 +38,8 @@
 
 package org.millstone.base.terminal;
 
+import java.util.HashSet;
+
 /** Class for combining multiple error messages together.
  *
  * @author  IT Mill Ltd
@@ -58,19 +60,25 @@ public class CompositeErrorMessage implements ErrorMessage {
 	 * Nulls are ignored, but at least one message is required.
 	 */
 	public CompositeErrorMessage(ErrorMessage[] errorMessages) {
-		int nonNullCount = 0;
-		for (int i = 0; i < errorMessages.length; i++)
-			if (errorMessages[i] != null)
-				nonNullCount++;
-		if (nonNullCount == 0)
+		int count = 0;
+		HashSet set = new HashSet();
+		for (int i = 0; i < errorMessages.length; i++) 
+			if (errorMessages[i] != null && !set.contains(errorMessages[i])) {
+					set.add(errorMessages[i]);
+					count++;
+				}
+		
+		if (count == 0)
 			throw new IllegalArgumentException("Composite error message must have at least one error");
 
 		level = Integer.MIN_VALUE;
-		errors = new ErrorMessage[nonNullCount];
+		errors = new ErrorMessage[count];
 		int index = 0;
+		set.clear();
 		for (int i = 0; i < errorMessages.length; i++)
-			if (errorMessages[i] != null) {
+			if (errorMessages[i] != null && !set.contains(errorMessages[i])) {
 				errors[index++] = errorMessages[i];
+				set.add(errorMessages[i]);
 				int l = errorMessages[i].getErrorLevel();
 				if (l > level)
 					level = l;
