@@ -183,6 +183,10 @@ public class TabSheet extends AbstractComponentContainer {
 			if (icon != null)
 				target.addAttribute("icon", icon);
 			String caption = getTabCaption(c);
+			if (!c.isEnabled()) {
+				target.addAttribute("disabled", true);				
+			}
+			
 			if (caption != null && caption.length() > 0)
 				target.addAttribute("caption", caption);
 			target.addAttribute("key", keyMapper.key(c));
