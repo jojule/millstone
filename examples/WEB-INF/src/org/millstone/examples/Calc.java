@@ -48,7 +48,7 @@ public class Calc
 		 * Create a new {@link org.millstone.base.ui.GridLayout GridLayout}
 		 * to hold the UI components needed by the calculator.
 		 */
-		GridLayout layout = new GridLayout(3, 4);
+		GridLayout layout = new GridLayout(4, 5);
 
 		//Create a new label component for displaying the result
 		display = new Label(Double.toString(current));
