@@ -117,8 +117,8 @@ public class OrderedLayout
 	 * @param index Index of the component position. 
 	 * The components currently in and after the position are shifted forwards.
 	 */
-	public void addComponent(Component c,int index) {
-		components.add(index,c);
+	public void addComponent(Component c, int index) {
+		components.add(index, c);
 		super.addComponent(c);
 		requestRepaint();
 	}
@@ -152,8 +152,12 @@ public class OrderedLayout
 			target.addAttribute("orientation", "horizontal");
 
 		// Add all items in all the locations
-		for (Iterator i = components.iterator(); i.hasNext();)
-			 ((Component) i.next()).paint(target);
+		for (Iterator i = components.iterator(); i.hasNext();) {
+			Component c = (Component) i.next();
+			if (c != null) {
+				c.paint(target);
+			}
+		}
 	}
 
 	/** Get the orientation of the container.
@@ -183,35 +187,37 @@ public class OrderedLayout
 
 		// Get the locations			
 		int oldLocation = -1;
-		int newLocation  = -1;
+		int newLocation = -1;
 		int location = 0;
-		for (Iterator i=components.iterator(); i.hasNext();) {
+		for (Iterator i = components.iterator(); i.hasNext();) {
 			Component component = (Component) i.next();
 
-			if (component == oldComponent) oldLocation = location;
-			if (component == newComponent) newLocation = location;
+			if (component == oldComponent)
+				oldLocation = location;
+			if (component == newComponent)
+				newLocation = location;
 
 			location++;
-		}	
+		}
 
 		if (oldLocation == -1)
 			addComponent(newComponent);
 		else if (newLocation == -1) {
 			removeComponent(oldComponent);
-			addComponent(newComponent,oldLocation);
+			addComponent(newComponent, oldLocation);
 		} else {
 			if (oldLocation > newLocation) {
 				components.remove(oldComponent);
-				components.add(newLocation,oldComponent);
+				components.add(newLocation, oldComponent);
 				components.remove(newComponent);
-				components.add(oldLocation,newComponent);	
+				components.add(oldLocation, newComponent);
 			} else {
 				components.remove(newComponent);
-				components.add(oldLocation,newComponent);	
+				components.add(oldLocation, newComponent);
 				components.remove(oldComponent);
-				components.add(newLocation,oldComponent);
+				components.add(newLocation, oldComponent);
 			}
-			
+
 			requestRepaint();
 		}
 	}
