@@ -160,7 +160,7 @@ public class Tree extends Select implements Container.Hierarchical {
 	 */
 	public boolean expandItemsRecursively(Object startItemId) {
 
-		boolean result = false;
+		boolean result = true;
 
 		// Initial TODO
 		Stack todo = new Stack();
@@ -169,7 +169,7 @@ public class Tree extends Select implements Container.Hierarchical {
 		// Expand recursively
 		while (!todo.isEmpty()) {
 			Object id = todo.pop();
-			result = result || expandItem(id);
+			result = result && expandItem(id);
 			if (hasChildren(id))
 				todo.addAll(getChildren(id));
 		}
@@ -202,7 +202,7 @@ public class Tree extends Select implements Container.Hierarchical {
 	 */
 	public boolean collapseItemsRecursively(Object startItemId) {
 
-		boolean result = false;
+		boolean result = true;
 
 		// Initial TODO
 		Stack todo = new Stack();
@@ -211,7 +211,7 @@ public class Tree extends Select implements Container.Hierarchical {
 		// Collapse recursively
 		while (!todo.isEmpty()) {
 			Object id = todo.pop();
-			result = result || collapseItem(id);
+			result = result && collapseItem(id);
 			if (hasChildren(id))
 				todo.addAll(getChildren(id));
 		}
