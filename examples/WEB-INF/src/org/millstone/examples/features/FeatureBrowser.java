@@ -103,6 +103,9 @@ public class FeatureBrowser
 
 		// Test component
 		registerFeature(
+			"/UI Components",
+			new UIComponents());
+		registerFeature(
 			"/UI Components/Basic/Text Field",
 			new FeatureTextField());
 		registerFeature(
