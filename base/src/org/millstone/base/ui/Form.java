@@ -85,6 +85,8 @@ public class Form
 	extends AbstractField
 	implements Item.Editor, Buffered, Item, Validatable {
 
+	private Object propertyValue;
+
 	/** Layout of the form */
 	private Layout layout;
 
@@ -735,8 +737,12 @@ public class Form
 	 * @see org.millstone.base.ui.AbstractField#setInternalValue(java.lang.Object)
 	 */
 	protected void setInternalValue(Object newValue) {
-		Object oldValue = getValue();
+		// Store old value
+		Object oldValue = this.propertyValue;
+		
+		// Set the current Value
 		super.setInternalValue(newValue);
+		this.propertyValue = newValue;
 
 		// Ignore form updating if data object has not changed.
 		if (oldValue != newValue) {
