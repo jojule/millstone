@@ -2,17 +2,32 @@
 
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
+<!-- No javascript warning -->
+<xsl:template match="customlayout[@style='goroom' and not($dhtml)]">
+	
+	<h1>Browser support missing</h1>
+	
+	<p>GO Game requires support for ECMA-262 complian JavaScript. The game
+	has been tested with the following browsers:
+	<ul>
+		<li>Mozilla 1.0, 1.1 and 1.2</li>
+		<li>Internet Explorer 6</li>
+	</ul>
+	</p>
+
+</xsl:template>
+
 <!-- Layouting GO with GO layout -->
-<xsl:template match="customlayout[@style='goroom']">
+<xsl:template match="customlayout[@style='goroom' and $dhtml]">
 
 	<!-- Login/out box -->
 	<DIV>
 		<xsl:choose>
 			<xsl:when test="location[@name='logoutbutton']/*">
-		 		<xsl:attribute name="STYLE">position: absolute; right: 20px; top: 5px; border: 1px solid #aaaaff; background-color: #ddddff; z-index: 100;</xsl:attribute>
+		 		<xsl:attribute name="STYLE">position: absolute; left: 5px; bottom: 5px;  z-index: 100;</xsl:attribute>
 			</xsl:when>
 			<xsl:otherwise>
-		 		<xsl:attribute name="STYLE">position: background-color: #ddddff; width: 100%; height: 100%; text-align: center;</xsl:attribute>
+		 		<xsl:attribute name="STYLE">position: background-color: #ddddff; width: 100%; height: 99%; text-align: center;</xsl:attribute>
 				<BR/><BR/><H1>Welcome to Millstone GO</H1>
 			</xsl:otherwise>
 		</xsl:choose>
@@ -23,10 +38,7 @@
 
 	<!-- Go board -->
 	<xsl:if test="location[@name='board']/*">
-		<DIV STYLE="width: 100%; position: absolute; top: 0px; height: 80%; overflow: hidden;">
-			<IMG SRC="{wa:resource('images/garden.jpg')}" WIDTH="100%"/>
-		</DIV>
-		<DIV STYLE="position: absolute; bottom: 20%; height: 80%; width: 100%; left: 0;">
+		<DIV STYLE="position: absolute; top: 0px; height: 99%; width: 70%; left: 30%;">
 			<TABLE BORDER="0" WIDTH="100%" HEIGHT="100%"><TR><TD WIDTH="50%"></TD><TD ALIGN="CENTER" VALIGN="CENTER">
 				<DIV STYLE="border: 2px solid #eeee99; background-color: #ffffdd; z-index: 100; padding: 20px; z-index: 200;">
 					<xsl:apply-templates select="location[@name='board']/*"/>
@@ -38,11 +50,11 @@
 	<!-- Show players and rules when logged in. Also listen server. -->
 	<xsl:if test="location[@name='players']/*">
 		<xsl:if test="not(location[@name='board']/*)">
-			<DIV STYLE="width: 100%; position: absolute; top: 0px; height: 80%; overflow: auto; background-color: #eeeeff;">
-				<xsl:call-template name="go-rules"/>
+			<DIV STYLE="width: 70%; position: absolute; left: 30%; top: 0px; height: 100%; overflow: auto; background-color: #eeeeff;">
+				<DIV STYLE="padding: 20px"><xsl:call-template name="go-rules"/></DIV>
 			</DIV>
 		</xsl:if>
-		<DIV STYLE="width: 100%; position: absolute; bottom: 0px; height: 20%; overflow: auto; background-color: #ddddff; border-bottom: 2px solid #aaaaff; z-index: 5;">
+		<DIV STYLE="width: 30%; position: absolute; top: 0px; height: 100%; left: 0px; overflow: auto; background-color: #ddddff; border-right: 2px solid #aaaaff; z-index: 5;">
 			<xsl:apply-templates select="location[@name='players']/*"/>
 		</DIV>
 
