@@ -82,6 +82,13 @@ public class TextField extends AbstractField {
 	 */
 	private boolean secret = false;
 
+	/** Null representation. */
+	private String nullRepresentation = "(null)";
+
+	/** Is setting to null from non-null value allowed by setting with 
+	 * null representation */
+	private boolean nullSettingAllowed = false;
+
 	/* Constructors **************************************************** */
 
 	/** Constructs an empty <code>TextField</code> with no caption. */
@@ -142,7 +149,7 @@ public class TextField extends AbstractField {
 		// Set secret attribute
 		if (this.isSecret())
 			target.addAttribute("secret", true);
-			
+
 		// Add the number of column and rows
 		int c = getColumns();
 		int r = getRows();
@@ -154,9 +161,14 @@ public class TextField extends AbstractField {
 			if (!wordwrap)
 				target.addAttribute("wordwrap", false);
 		}
-		
+
 		// Add content as variable
-		target.addVariable(this, "text", (String) toString());
+		String value = (String) toString();
+		if (value == null)
+			value = getNullRepresentation();
+		if (value == null)
+			throw new IllegalStateException("Null values are not allowed if the null-representation is null");
+		target.addVariable(this, "text", value);
 	}
 
 	/* Gets the components UIDL tag string.
@@ -181,6 +193,10 @@ public class TextField extends AbstractField {
 				// has been updated
 				String newValue = (String) variables.get("text");
 				String oldValue = toString();
+				if (newValue != null
+					&& (oldValue == null || isNullSettingAllowed())
+					&& newValue.equals(getNullRepresentation()))
+					newValue = null;
 				if (newValue != oldValue
 					&& (newValue == null || !newValue.equals(oldValue)))
 					setValue(newValue);
@@ -286,6 +302,74 @@ public class TextField extends AbstractField {
 	 */
 	public void setSecret(boolean secret) {
 		this.secret = secret;
+	}
+
+	/** Get the null-string representation.
+	 * 
+	 * <p>The null-valued strings are represented on the user interface by replacing the 
+	 * null value with this string. If the null representation is set null (not 'null' string),
+	 * painting null value throws exception.</p>
+	 * 
+	 * <p>The default value is string '(null)'</p>
+	 * 
+	 * @see isNullSettingAllowed()
+	 * @return String Textual representation for null strings.
+	 */
+	public String getNullRepresentation() {
+		return nullRepresentation;
+	}
+
+	/** Is setting nulls with null-string representation allowed.
+	 * 
+	 * <p>If this property is true, writing null-representation string to text 
+	 * field allways sets the field value to real null. If this property is 
+	 * false, null setting is not made, but the null values are maintained. 
+	 * Maintenance of null-values is made by only converting the textfield
+	 * contents to real null, if the text field matches the null-string 
+	 * representation and the current value of the field is null.</p>
+	 * 
+	 * <p>By default this setting is false</p>
+	 * 
+	 * @return boolean Should the null-string represenation be allways
+	 * converted to null-values.
+	 * @see getNullRepresentation()
+	 */
+	public boolean isNullSettingAllowed() {
+		return nullSettingAllowed;
+	}
+
+	/** Sets the null-string representation.
+	 * 
+	 * <p>The null-valued strings are represented on the user interface by replacing the 
+	 * null value with this string. If the null representation is set null (not 'null' string),
+	 * painting null value throws exception.</p>
+	 * 
+	 * <p>The default value is string '(null)'</p>
+	 * 
+	 * @see setNullSettingAllowed(boolean)
+	 * @param nullRepresentation Textual representation for null strings.
+	 */
+	public void setNullRepresentation(String nullRepresentation) {
+		this.nullRepresentation = nullRepresentation;
+	}
+
+	/** Set the null conversion mode.
+	 * 
+	 * <p>If this property is true, writing null-representation string to text 
+	 * field allways sets the field value to real null. If this property is 
+	 * false, null setting is not made, but the null values are maintained. 
+	 * Maintenance of null-values is made by only converting the textfield
+	 * contents to real null, if the text field matches the null-string 
+	 * representation and the current value of the field is null.</p>
+	 * 
+	 * <p>By default this setting is false</p>
+	 * 
+	 * @param nullSettingAllowed Should the null-string represenation be allways
+	 * converted to null-values.
+	 * @see getNullRepresentation()
+	 */
+	public void setNullSettingAllowed(boolean nullSettingAllowed) {
+		this.nullSettingAllowed = nullSettingAllowed;
 	}
 
 }
