@@ -64,6 +64,12 @@ import org.millstone.base.ui.Window;
  */
 public class ApplicationManager {
 
+    private static String GET_PARAM_VARIABLE_CHANGES = "changeVariables";
+
+    private static String GET_PARAM_REPAINT_ALL = "repaintAll";
+
+    private static String GET_PARAM_UI_CHANGES_FORMAT = "format";
+
     private WeakHashMap applicationToPaintListenerMap = new WeakHashMap();
 
     private WeakHashMap applicationToVariableMapMap = new WeakHashMap();
@@ -109,6 +115,12 @@ public class ApplicationManager {
 
     public void handleXmlHttpRequest(HttpServletRequest request,
             HttpServletResponse response) throws IOException {
+
+        String uiChangesFormat = request
+                .getParameter(GET_PARAM_UI_CHANGES_FORMAT);
+        String variableChanges = request
+                .getParameter(GET_PARAM_VARIABLE_CHANGES);
+        boolean repaintAll = request.getParameter(GET_PARAM_REPAINT_ALL) != null;
 
         OutputStream out = response.getOutputStream();
         try {
