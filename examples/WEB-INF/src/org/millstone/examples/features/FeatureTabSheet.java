@@ -77,14 +77,20 @@ public class FeatureTabSheet extends Feature {
 		"ts.addTab(new Label(\"Tab 2 Body\"),\"Tab 2 caption\",null);"+
 		"ts.addTab(new Label(\"Tab 3 Body\"),\"Tab 3 caption\",null);";
 	}
-	/**
-	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
-	 */
-	protected String[] getDescriptionXHTML() {
-		return new String[]{"TabSheet","A multicomponent container with tabs for switching between them.<br/>"+
+
+	protected String getDescriptionXHTML() {
+		return "A multicomponent container with tabs for switching between them.<br/>"+
 				"In the normal case, one would place a layout component on each tab.<br/><br />"+
 				"On the demo tab you can try out how the different properties affect "+
-				"the presentation of the component.","tabsheet.jpg"};
+				"the presentation of the component.";
+	}
+	
+	protected String getImage() {
+		return "tabsheet.jpg";
+	}
+
+	protected String getTitle() {
+		return "TabSheet";
 	}
 
 }

@@ -73,16 +73,17 @@ public class Feature extends CustomComponent {
 		initialized = true;
 
 		// Optional description
-		String[] desc = getDescriptionXHTML();
-		if (desc != null) {
+		String desc = getDescriptionXHTML();
+		String title = getTitle();
+		if (desc != null && title != null) {
 			GridLayout gl = new GridLayout(2, 1);
-			if (desc[2] != null)
+			if (getImage() != null)
 	 			gl.addComponent(
  					new Embedded(
-						"", new ClassResource(desc[2], this.getApplication())));
+						"", new ClassResource(getImage(), this.getApplication())));
 			gl.addComponent(
 				new Label(
-					"<h2>" + desc[0] + "</h2>" + desc[1],
+					"<h2>" + title + "</h2>" + desc,
 					Label.CONTENT_XHTML));
 			ts.addTab(gl, "Description", null);
 		}
@@ -98,16 +99,23 @@ public class Feature extends CustomComponent {
 			OrderedLayout l = new OrderedLayout();
 			l.addComponent(
 				new Label(
-					"<h2>" + getClass().getName() + " example</h2>",
+					"<h2>" + getTitle() + " example</h2>",
 					Label.CONTENT_XHTML));
 			l.addComponent(new Label(example, Label.CONTENT_PREFORMATTED));
 			ts.addTab(l, "Code Sample", null);
 		}
 	}
 
-	// Returns, "name","desc", and optional image name string to display
-	protected String[] getDescriptionXHTML() {
-		return new String[] {"","<h2>Feature description is under construction</h2>",null};
+	protected String getDescriptionXHTML() {
+		return "<h2>Feature description is under construction</h2>";
+	}
+
+	protected String getTitle() {
+		return this.getClass().getName();
+	}
+
+	protected String getImage() {
+		return null;
 	}
 
 	protected String getExampleSrc() {

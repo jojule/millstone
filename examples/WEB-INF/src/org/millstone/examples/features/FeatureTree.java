@@ -51,7 +51,8 @@ public class FeatureTree extends Feature implements Action.Handler {
 	private Tree t;
 
 	private boolean actionsActive = false;
-	private Button actionHandlerSwitch = new Button("Activate actions",this,"toggleActions");
+	private Button actionHandlerSwitch =
+		new Button("Activate actions", this, "toggleActions");
 
 	public FeatureTree() {
 		super();
@@ -60,11 +61,11 @@ public class FeatureTree extends Feature implements Action.Handler {
 	public void toggleActions() {
 		if (actionsActive) {
 			t.removeActionHandler(this);
-			actionsActive = false;	
+			actionsActive = false;
 			actionHandlerSwitch.setCaption("Activate Actions");
 		} else {
 			t.addActionHandler(this);
-			actionsActive = true;	
+			actionsActive = true;
 			actionHandlerSwitch.setCaption("Deactivate Actions");
 		}
 	}
@@ -74,17 +75,17 @@ public class FeatureTree extends Feature implements Action.Handler {
 
 		Panel show = new Panel("Tree component");
 		t = new Tree("Caption");
-		for (int i=0;i<10;i++) {
-			t.addItem("Parent "+i);
-			t.addItem("Child One "+i);
-		    t.setParent("Child One "+i, "Parent "+i);
-		    t.addItem("Child Two "+i);
-		    t.setParent("Child Two "+i, "Child One "+i);
-		    t.addItem("Child Three "+i);
-		    t.setParent("Child Three "+i,"Child Two "+i);
-		    t.addItem("Child Four "+i);
-		    t.setParent("Child Four "+i,"Child Three "+i);
-		   	t.setChildrenAllowed("Child Four "+i, false);
+		for (int i = 0; i < 10; i++) {
+			t.addItem("Parent " + i);
+			t.addItem("Child One " + i);
+			t.setParent("Child One " + i, "Parent " + i);
+			t.addItem("Child Two " + i);
+			t.setParent("Child Two " + i, "Child One " + i);
+			t.addItem("Child Three " + i);
+			t.setParent("Child Three " + i, "Child Two " + i);
+			t.addItem("Child Four " + i);
+			t.setParent("Child Four " + i, "Child Three " + i);
+			t.setChildrenAllowed("Child Four " + i, false);
 		}
 
 		show.addComponent(t);
@@ -92,7 +93,7 @@ public class FeatureTree extends Feature implements Action.Handler {
 
 		// Configuration
 		Hashtable alternateEditors = new Hashtable();
-		
+
 		Select s =
 			createSelect(
 				"Style",
@@ -100,14 +101,16 @@ public class FeatureTree extends Feature implements Action.Handler {
 				new String[] { "Default", "Menu" });
 
 		alternateEditors.put("style", s);
-		
+
 		l.addComponent(
-			 createPropertyPanel(t,
+			createPropertyPanel(
+				t,
 				new String[] {
 					"selectable",
 					"multiSelect",
 					"writeThrough",
-					"readThrough"},alternateEditors));
+					"readThrough" },
+				alternateEditors));
 
 		l.addComponent(this.actionHandlerSwitch);
 
@@ -115,29 +118,34 @@ public class FeatureTree extends Feature implements Action.Handler {
 	}
 
 	protected String getExampleSrc() {
-		return "t = new Tree(\"Caption\");\n"+
-					"for (int i=0;i<10;i++) {\n"+
-					" t.addItem(\"Parent \"+i);"+
-					" t.addItem(\"Child\"+i);\n"+
-		    		"t.setParent(\"Child\"+i, \"Parent \"+i);\n"+
-		   			"t.setChildrenAllowed(\"Child \"+i, false);";
+		return "t = new Tree(\"Caption\");\n"
+			+ "for (int i=0;i<10;i++) {\n"
+			+ " t.addItem(\"Parent \"+i);"
+			+ " t.addItem(\"Child\"+i);\n"
+			+ "t.setParent(\"Child\"+i, \"Parent \"+i);\n"
+			+ "t.setChildrenAllowed(\"Child \"+i, false);";
 	}
 	/**
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
-	protected String[] getDescriptionXHTML() {
-		return new String[] {
-			"Tree",
-			"A tree is a natural way to represent datasets that have hierarchical relationships, like for instance a filesystems. "+
-			"Millstone features a versatile and powerfull Tree component that works much like the tree components "+
-			"of most modern operating system userinterfaces, only regardeless of the terminal in question. "+
-			"The most prominent use of the Tree component is to use it for displaying a hierachical menu, like the "+
-			"menu on the left side of the screen for instance, or to display filesystems.<br/><br/>"+
-			"The tree, again like all Millstone data-components, may be bound to an underlying datasource like for "+
-			"a database or a filesystem.<br/>"+
-			"<br/>On the demo tab you can try out how the different properties "+
-			"affect the presentation of the component.",
-			"tree.jpg" };
+	protected String getDescriptionXHTML() {
+		return "A tree is a natural way to represent datasets that have hierarchical relationships, like for instance a filesystems. "
+			+ "Millstone features a versatile and powerfull Tree component that works much like the tree components "
+			+ "of most modern operating system userinterfaces, only regardeless of the terminal in question. "
+			+ "The most prominent use of the Tree component is to use it for displaying a hierachical menu, like the "
+			+ "menu on the left side of the screen for instance, or to display filesystems.<br/><br/>"
+			+ "The tree, again like all Millstone data-components, may be bound to an underlying datasource like for "
+			+ "a database or a filesystem.<br/>"
+			+ "<br/>On the demo tab you can try out how the different properties "
+			+ "affect the presentation of the component.";
+	}
+
+	protected String getImage() {
+		return "tree.jpg";
+	}
+
+	protected String getTitle() {
+		return "Tree";
 	}
 
 	private Action ACTION1 = new Action("Action 1");

@@ -56,62 +56,53 @@ public class FeatureSelect extends Feature {
 
 		// Example panel
 		Panel show = new Panel("Select component");
-
-		Vector options = new Vector();
-		options.add("Item 1");
-		options.add("Item 2");
-		options.add("Item 3");
-		options.add("Item 4");
-
-		Select s = new Select("Caption", options);
-
+		Select s = new Select("Select Car");
+		s.addItem("Audi");
+		s.addItem("BMW");
+		s.addItem("Chrysler");
+		s.addItem("Volvo");
 		show.addComponent(s);
 		l.addComponent(show);
 
-		// Configuration
-		Hashtable alternateEditors = new Hashtable();
-
-		Select t =
-			createSelect(
-				"Style",
-				new String[] { "", "optiongroup" },
-				new String[] { "Default", "Optiongroup" });
-
-		alternateEditors.put("style", t);
-
-		l.addComponent(
-			createPropertyPanel(s,
-			new String[] {
-				"writeThrough",
-				"readThrough",
-				"multiSelect",
-				"newItemsAllowed"},
-			alternateEditors));
+		// Properties
+		PropertyPanel p = new PropertyPanel(s);
+		Select themes = (Select) p.getField("style");
+		themes
+			.addItem("optiongroup")
+			.getItemProperty(themes.getItemCaptionPropertyId())
+			.setValue("optiongroup");
+		l.addComponent(p);
 
 		return l;
 	}
 
 	protected String getExampleSrc() {
-		return "Vector options = new Vector();\n"
-			+ "options.add(\"Item 1\");\n"
-			+ "options.add(\"Item 2\");\n"
-			+ "Select s = new Select(\"Caption\", options);";
+		return "Select s = new Select(\"Select Car\");\n"+
+		"s.addItem(\"Audi\");\n"+
+		"s.addItem(\"BMW\");\n"+
+		"s.addItem(\"Chrysler\");\n"+
+		"s.addItem(\"Volvo\");\n";
 
 	}
 	/**
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
-	protected String[] getDescriptionXHTML() {
-		return new String[] {
-			"Select",
-			"The select feature embodies  two different modes of item selection.  "
-				+ "Firstly it presents the single selection mode which is usually represented as "
-				+ "either a drop-down menu or a radio-group of switches, secondly it "
-				+ "allows for multiple item selection, this is usually represented as either a "
-				+ "listbox of selectable items or as a group of checkboxes.<br/><br/>"
-				+ "On the demo tab you can try out how the different properties affect the"
-				+ " presentation of the component.",
-			"select.jpg" };
+	protected String getDescriptionXHTML() {
+		return "The select feature embodies  two different modes of item selection.  "
+			+ "Firstly it presents the single selection mode which is usually represented as "
+			+ "either a drop-down menu or a radio-group of switches, secondly it "
+			+ "allows for multiple item selection, this is usually represented as either a "
+			+ "listbox of selectable items or as a group of checkboxes.<br/><br/>"
+			+ "On the demo tab you can try out how the different properties affect the"
+			+ " presentation of the component.";
+	}
+
+	protected String getImage() {
+		return "select.jpg";
+	}
+
+	protected String getTitle() {
+		return "Select";
 	}
 
 }

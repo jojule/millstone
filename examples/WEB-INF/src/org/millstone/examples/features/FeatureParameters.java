@@ -74,16 +74,21 @@ public class FeatureParameters
 					+ "the feature browser installed in your local host, try url: ");
 		info.setCaption("Usage info");
 		l.addComponent(info);
-		try  {
+		try {
 
-			l.addComponent(new Link("/examples/features/test/uri?test=1&test=2",
-				new ExternalResource("/examples/features/test/uri?test=1&test=2")));
+			l.addComponent(
+				new Link(
+					"/examples/features/test/uri?test=1&test=2",
+					new ExternalResource("/examples/features/test/uri?test=1&test=2")));
 			l.addComponent(new Label("Or this: "));
-			l.addComponent(new Link("/examples/features/test/uri?mary=john&count=3",
-				new ExternalResource("/examples/features/test/uri?mary=john&count=3")));
+			l.addComponent(
+				new Link(
+					"/examples/features/test/uri?mary=john&count=3",
+					new ExternalResource("/examples/features/test/uri?mary=john&count=3")));
 		} catch (Exception e) {
-			System.out.println("Couldn't get hostname for this machine: "+e.toString());
-			e.printStackTrace();	
+			System.out.println(
+				"Couldn't get hostname for this machine: " + e.toString());
+			e.printStackTrace();
 		}
 
 		// URI 
@@ -105,21 +110,23 @@ public class FeatureParameters
 		return l;
 	}
 
-	/**
-	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
-	 */
-	protected String[] getDescriptionXHTML() {
-		return new String[] {
-			"Parameters",
-			"This is a demonstration of how URL parameters can be recieved and handled."
-				+ "Parameters and URL:s can be received trough the windows by registering "
-				+ "URIHandler and ParameterHandler classes window.",
-			"parameters.jpg" };
+	protected String getDescriptionXHTML() {
+		return "This is a demonstration of how URL parameters can be recieved and handled."
+			+ "Parameters and URL:s can be received trough the windows by registering "
+			+ "URIHandler and ParameterHandler classes window.";
+	}
+
+	protected String getImage() {
+		return "parameters.jpg";
+	}
+
+	protected String getTitle() {
+		return "Parameters";
 	}
 
 	protected String getExampleSrc() {
-		return "This is a more advanced example, please see the source of this example, FeatureParameters.java,"+
-		"as the complete class is a better demonstration then could be given here.";
+		return "This is a more advanced example, please see the source of this example, FeatureParameters.java,"
+			+ "as the complete class is a better demonstration then could be given here.";
 	}
 
 	/** Add URI and parametes handlers to window.

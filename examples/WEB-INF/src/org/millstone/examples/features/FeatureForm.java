@@ -43,7 +43,9 @@ import java.util.Date;
 import org.millstone.base.ui.*;
 import org.millstone.base.data.Property;
 
-public class FeatureForm extends Feature implements Property.ValueChangeListener {
+public class FeatureForm
+	extends Feature
+	implements Property.ValueChangeListener {
 
 	OrderedLayout demo = null;
 	Form test;
@@ -57,22 +59,25 @@ public class FeatureForm extends Feature implements Property.ValueChangeListener
 			demo = new OrderedLayout();
 			createDemo();
 		}
-			
+
 		return demo;
 	}
 
 	private void createDemo() {
-		
+
 		demo.removeAllComponents();
-		
+
 		// Test form
 		Panel testPanel = new Panel("Form component");
-		if (formLayout == null) test = new Form();
-		else test = new Form(formLayout);
+		if (formLayout == null)
+			test = new Form();
+		else
+			test = new Form(formLayout);
 		testPanel.addComponent(test);
 		demo.addComponent(testPanel);
-		OrderedLayout actions = new OrderedLayout(OrderedLayout.ORIENTATION_HORIZONTAL);
-		demo.addComponent(actions);	
+		OrderedLayout actions =
+			new OrderedLayout(OrderedLayout.ORIENTATION_HORIZONTAL);
+		demo.addComponent(actions);
 
 		// form adder
 		addField.setImmediate(true);
@@ -84,7 +89,7 @@ public class FeatureForm extends Feature implements Property.ValueChangeListener
 		addField.addItem("Calendar");
 		addField.addListener(this);
 		actions.addComponent(addField);
-		
+
 		// Layout reset
 		resetLayout.setImmediate(true);
 		resetLayout.addItem("Select layout example");
@@ -94,27 +99,28 @@ public class FeatureForm extends Feature implements Property.ValueChangeListener
 		resetLayout.addItem("Flow (OrderedLayout flow-orientation)");
 		resetLayout.addListener(this);
 		actions.addComponent(resetLayout);
-		
+
 		// Properties
 		PropertyPanel p = new PropertyPanel(test);
 		p.addProperties("Form special properties", new Form());
 		demo.addComponent(p);
 	}
-	
+
 	public void valueChange(Property.ValueChangeEvent event) {
-		
+
 		if (event.getProperty() == resetLayout) {
 
-			String value = (String) resetLayout.getValue();		
+			String value = (String) resetLayout.getValue();
 
-			if (value != null) {			
+			if (value != null) {
 				formLayout = null;
-				
-				if (value.equals("Two columns (2x1 GridLayout)")) 
-					formLayout = new GridLayout(2,1);
-				if (value.equals("Flow (OrderedLayout flow-orientation)")) 
-					formLayout = new OrderedLayout(OrderedLayout.ORIENTATION_FLOW);
-					
+
+				if (value.equals("Two columns (2x1 GridLayout)"))
+					formLayout = new GridLayout(2, 1);
+				if (value.equals("Flow (OrderedLayout flow-orientation)"))
+					formLayout =
+						new OrderedLayout(OrderedLayout.ORIENTATION_FLOW);
+
 				createDemo();
 				resetLayout.setValue(null);
 			}
@@ -122,24 +128,26 @@ public class FeatureForm extends Feature implements Property.ValueChangeListener
 
 		if (event.getProperty() == addField) {
 
-			String value = (String) addField.getValue();		
+			String value = (String) addField.getValue();
 
-			if (value != null) {			
-				if (value.equals("Text field")) 
-					test.addField(new Object(), new TextField("Test field"));	
+			if (value != null) {
+				if (value.equals("Text field"))
+					test.addField(new Object(), new TextField("Test field"));
 				if (value.equals("Time")) {
-					DateField d = new DateField("Time",new Date());
-					d.setDescription("This is a DateField-component with text-style");
+					DateField d = new DateField("Time", new Date());
+					d.setDescription(
+						"This is a DateField-component with text-style");
 					d.setResolution(DateField.RESOLUTION_MIN);
 					d.setStyle("text");
-					test.addField(new Object(),d);	
+					test.addField(new Object(), d);
 				}
 				if (value.equals("Calendar")) {
-					DateField c = new DateField("Calendar",new Date());
-					c.setDescription("DateField-component with calendar-style and day-resolution");
+					DateField c = new DateField("Calendar", new Date());
+					c.setDescription(
+						"DateField-component with calendar-style and day-resolution");
 					c.setStyle("calendar");
 					c.setResolution(DateField.RESOLUTION_DAY);
-					test.addField(new Object(), c);	
+					test.addField(new Object(), c);
 				}
 				if (value.equals("Option group")) {
 					Select s = new Select("Options");
@@ -149,13 +157,41 @@ public class FeatureForm extends Feature implements Property.ValueChangeListener
 					s.addItem("Solaris");
 					s.addItem("Symbian");
 					s.setStyle("optiongroup");
-					
-					test.addField(new Object(), s);	
+
+					test.addField(new Object(), s);
 				}
-			
+
 				addField.setValue(null);
 			}
 		}
 	}
 
-}
+	protected String getDescriptionXHTML() {
+		return 
+			"<p>Form is a container for fields extending {@link AbstractField} class."
+				+ " It provides support for any layouts and provides buffering interface for"
+				+ " easy connection of commit- and discard buttons. All the form"
+				+ " fields can be customized by adding validators, setting captions and icons, "
+				+ " setting immediateness, etc. Also direct mechanism for replacing existing"
+				+ " fields with selections is given.</p>"
+				+ " <p>Form provides customizable editor for classes implementing"
+				+ " {@link org.millstone.base.data.Item} interface. Also the form itself"
+				+ " implements this interface for easier connectivity to other items."
+				+ " To use the form as editor for an item, just connect the item to"
+				+ " form with {@link Form#setItemDataSource(Item)}. If only a part of the"
+				+ " item needs to be edited, {@link Form#setItemDataSource(Item,Collection)}"
+				+ " can be used instead. After the item has been connected to the form,"
+				+ " the automatically created fields can be customized and new fields can"
+				+ " be added. If you need to connect a class that does not implement"
+				+ " {@link org.millstone.base.data.Item} interface, most properties of any"
+				+ " class following bean pattern, can be accessed trough"
+				+ " {@link org.millstone.base.data.util.BeanItem}.</p>";
+		}
+		
+		
+	protected String getTitle() {
+		return "Form";
+	}
+
+
+	}

@@ -76,14 +76,20 @@ public class FeatureWindow extends Feature {
 			
 	}
 
-	protected String[] getDescriptionXHTML() {
-		return new String[]{"Window",
-		"The window support of Millstone allows for opening and closing windows, "+
+	protected String getDescriptionXHTML() {
+		return "The window support of Millstone allows for opening and closing windows, "+
 		"refreshing one window from another (for asynchronous terminals), "+
 		"resizing windows and scrolling window content. "+
 		"There are also a number of preset window border styles defined by "+
-		"this feature.",
-		"window.jpg"};
+		"this feature.";
+	}
+	
+	protected String getImage() {
+		return "window.jpg";
+	}
+
+	protected String getTitle() {
+		return "Window";
 	}
 
 	public void addWin() {

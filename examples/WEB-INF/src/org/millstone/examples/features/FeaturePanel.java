@@ -87,19 +87,23 @@ public class FeaturePanel extends Feature {
 	/**
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
-	protected String[] getDescriptionXHTML() {
-		return new String[] {
-			"Panel",
-			"The Panel is a container for other components, it usually draws a frame around it's "+
+	protected String getDescriptionXHTML() {
+		return "The Panel is a container for other components, it usually draws a frame around it's "+
 			"extremities and may have a caption to clarify the nature of the contained components purpose."+
 			"A panel always contains firstly a layout onto which the actual contained components are added, "+
 			"this layout may be switched on the fly. <br/><br/>"+
 			"On the demo tab you can try out how the different properties "+
-			"affect the presentation of the component.",
-			"panel.jpg" };
+			"affect the presentation of the component.";
+	}
+
+
+	protected String getImage() {
+		return "panel.jpg";
+	}
+
+	protected String getTitle() {
+		return "Panel";
 	}
 
 }
 
-/* This Millstone sample code is public domain. *  
- * For more information see www.millstone.org.  */

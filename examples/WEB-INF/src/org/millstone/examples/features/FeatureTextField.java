@@ -83,10 +83,8 @@ public class FeatureTextField extends Feature {
 	/**
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
-	protected String[] getDescriptionXHTML() {
-		return new String[] {
-			"TextField",
-			"Being one of the most quintessential components of any business application, "
+	protected String getDescriptionXHTML() {
+		return "Being one of the most quintessential components of any business application, "
 				+ "the ubiquitus Textfield is featured in Millstone with a variety of styles and modes. <br/><br/>"
 				+ "Millstone combines the logic of both the single line text-entry field and the multi-line "
 				+ "text-area into one component. "
@@ -96,8 +94,16 @@ public class FeatureTextField extends Feature {
 				+ "that the value has changed but is not committed.<br/>"
 				+ "<br/>Furthermore a validator may be bound to the component to check and validate the given input.<br/>"
 				+ "<br/>On the demo tab you can try out how the different properties affect "
-				+ "the presentation of the component.",
-			"textfield.gif" };
+				+ "the presentation of the component.";
+	}
+
+
+	protected String getImage() {
+		return "textfield.gif";
+	}
+
+	protected String getTitle() {
+		return "TextField";
 	}
 
 }

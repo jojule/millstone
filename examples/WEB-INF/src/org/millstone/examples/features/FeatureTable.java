@@ -47,14 +47,38 @@ import org.millstone.base.event.Action;
 
 public class FeatureTable extends Feature implements Action.Handler {
 
-	private Table t;
+	private static final String[] firstnames =
+		new String[] {
+			"John",
+			"Mary",
+			"Joe",
+			"Sarah",
+			"Jeff",
+			"Jane",
+			"Peter",
+			"Marc",
+			"Josie",
+			"Linus" };
+	private static final String[] lastnames =
+		new String[] {
+			"Torvalds",
+			"Smith",
+			"Jones",
+			"Beck",
+			"Sheridan",
+			"Picard",
+			"Hill",
+			"Fielding",
+			"Einstein" };
+	private static final String[] eyecolors =
+		new String[] { "Blue", "Green", "Brown" };
+	private static final String[] haircolors =
+		new String[] { "Brown", "Black", "Red", "Blonde" };
 
+	private Table t;
 	private boolean actionsActive = false;
 	private Button actionHandlerSwitch =
 		new Button("Activate actions", this, "toggleActions");
-	public FeatureTable() {
-		super();
-	}
 
 	public void toggleActions() {
 		if (actionsActive) {
@@ -72,152 +96,128 @@ public class FeatureTable extends Feature implements Action.Handler {
 
 		OrderedLayout l = new OrderedLayout();
 
-		IndexedContainer ic = new IndexedContainer();
-
-		String[] firstnames =
-			new String[] {
-				"John",
-				"Mary",
-				"Joe",
-				"Sarah",
-				"Jeff",
-				"Jane",
-				"Peter",
-				"Marc",
-				"Josie",
-				"Linus" };
-		String[] lastnames =
-			new String[] {
-				"Torvalds",
-				"Smith",
-				"Jones",
-				"Beck",
-				"Sheridan",
-				"Picard",
-				"Hill",
-				"Fielding",
-				"Einstein" };
-		String[] eyecolors = new String[] { "Blue", "Green", "Brown" };
-		String[] haircolors =
-			new String[] { "Brown", "Black", "Red", "Blonde" };
-
-		ic.addContainerProperty("Firstname", String.class, "");
-		ic.addContainerProperty("Lastname", String.class, "");
-		ic.addContainerProperty("Age", String.class, "");
-		ic.addContainerProperty("Eyecolor", String.class, "");
-		ic.addContainerProperty("Haircolor", String.class, "");
-
-		for (int j = 0; j < 50; j++) {
-			Item i = ic.getItem(ic.addItem());
-			i.getItemProperty("Firstname").setValue(
-				firstnames[(int) (Math.random() * 9)]);
-			i.getItemProperty("Lastname").setValue(
-				lastnames[(int) (Math.random() * 9)]);
-			i.getItemProperty("Age").setValue(
-				new Integer((int) (Math.random() * 80)));
-			i.getItemProperty("Eyecolor").setValue(
-				eyecolors[(int) (Math.random() * 3)]);
-			i.getItemProperty("Haircolor").setValue(
-				haircolors[(int) (Math.random() * 4)]);
-		}
-		t = new Table("Table component", ic);
+		// Sample table
+		t = new Table("Most Wanted Persons List");
 		t.setPageLength(10);
 		l.addComponent(t);
 
-		// Configuration
-		Hashtable alternateEditors = new Hashtable();
+		// Add columns to table
+		t.addContainerProperty("Firstname", String.class, "");
+		t.addContainerProperty("Lastname", String.class, "");
+		t.addContainerProperty("Age", String.class, "");
+		t.addContainerProperty("Eyecolor", String.class, "");
+		t.addContainerProperty("Haircolor", String.class, "");
 
-		Select s =
-			createSelect(
-				"Column Header Mode",
-				new Integer[] {
-					new Integer(Table.COLUMN_HEADER_MODE_EXPLICIT),
-					new Integer(Table.COLUMN_HEADER_MODE_EXPLICIT_DEFAULTS_ID),
-					new Integer(Table.COLUMN_HEADER_MODE_HIDDEN),
-					new Integer(Table.COLUMN_HEADER_MODE_ID)},
+		// Add random rows to table
+		for (int j = 0; j < 50; j++) {
+			t.addItem(
+				new Object[] {
+					firstnames[(int) (Math.random() * 9)],
+					lastnames[(int) (Math.random() * 9)],
+					new Integer((int) (Math.random() * 80)),
+					eyecolors[(int) (Math.random() * 3)],
+					haircolors[(int) (Math.random() * 4)] },
+				new Integer(j));
+		}
+
+		// Actions
+		l.addComponent(this.actionHandlerSwitch);
+
+		// Properties
+		PropertyPanel p = new PropertyPanel(t);
+		Form ap =
+			p.createBeanPropertySet(
 				new String[] {
-					"Explicit",
-					"Explicit defaults ID",
-					"Hidden",
-					"ID" });
-		alternateEditors.put("columnHeaderMode", s);
-
-		Select ts =
-			createSelect(
-				"Row Header Mode",
-				new Integer[] {
-					new Integer(Table.ROW_HEADER_MODE_EXPLICIT),
-					new Integer(Table.ROW_HEADER_MODE_EXPLICIT_DEFAULTS_ID),
-					new Integer(Table.ROW_HEADER_MODE_HIDDEN),
-					new Integer(Table.ROW_HEADER_MODE_ICON_ONLY),
-					new Integer(Table.ROW_HEADER_MODE_ID),
-					new Integer(Table.ROW_HEADER_MODE_INDEX),
-					new Integer(Table.ROW_HEADER_MODE_ITEM),
-					new Integer(Table.ROW_HEADER_MODE_PROPERTY)},
-				new String[] {
-					"Explicit",
-					"Explicit defaults ID",
-					"Hidden",
-					"Icon only",
-					"ID",
-					"Index",
-					"Item",
-					"Property" });
-		alternateEditors.put("rowHeaderMode", ts);
-
-		Select u =
-			createSelect(
-				"Style",
-				new String[] { "", "list" },
-				new String[] { "Default", "List" });
-
-		alternateEditors.put("style", u);
-
-		l.addComponent(
-			createPropertyPanel(
-				t,
-				new String[] {
-					"multiSelect",
 					"pageLength",
 					"selectable",
 					"columnHeaderMode",
-					"rowHeaderMode" },
-				alternateEditors));
+					"rowHeaderMode" });
+		ap.replaceWithSelect(
+			"columnHeaderMode",
+			new Object[] {
+				new Integer(Table.COLUMN_HEADER_MODE_EXPLICIT),
+				new Integer(Table.COLUMN_HEADER_MODE_EXPLICIT_DEFAULTS_ID),
+				new Integer(Table.COLUMN_HEADER_MODE_HIDDEN),
+				new Integer(Table.COLUMN_HEADER_MODE_ID)},
+			new Object[] {
+				"Explicit",
+				"Explicit defaults ID",
+				"Hidden",
+				"ID" });
+		ap.replaceWithSelect(
+			"rowHeaderMode",
+			new Object[] {
+				new Integer(Table.ROW_HEADER_MODE_EXPLICIT),
+				new Integer(Table.ROW_HEADER_MODE_EXPLICIT_DEFAULTS_ID),
+				new Integer(Table.ROW_HEADER_MODE_HIDDEN),
+				new Integer(Table.ROW_HEADER_MODE_ICON_ONLY),
+				new Integer(Table.ROW_HEADER_MODE_ID),
+				new Integer(Table.ROW_HEADER_MODE_INDEX),
+				new Integer(Table.ROW_HEADER_MODE_ITEM),
+				new Integer(Table.ROW_HEADER_MODE_PROPERTY)},
+			new Object[] {
+				"Explicit",
+				"Explicit defaults ID",
+				"Hidden",
+				"Icon only",
+				"ID",
+				"Index",
+				"Item",
+				"Property" });
+		Select themes = (Select) p.getField("style");
+		themes
+			.addItem("list")
+			.getItemProperty(themes.getItemCaptionPropertyId())
+			.setValue("list");
+		p.addProperties("Table Properties", ap);
+		l.addComponent(p);
 
-		l.addComponent(this.actionHandlerSwitch);
 		return l;
 	}
 
 	protected String getExampleSrc() {
-		return "IndexedContainer ic = new IndexedContainer();\n"
-			+ "ic.addProperty(\"Column 1\", String.class, \"\");\n"
-			+ "ic.addProperty(\"Column 2\", String.class, \"\");\n"
-			+ "\n"
-			+ "for (int j = 0; j < 10; j++) {\n"
-			+ "Item i = ic.getItem(ic.addItem());\n"
-			+ "i.getProperty(\"Column 1\").setValue(\"Testdata 1\");\n"
-			+ "i.getProperty(\"Column 2\").setValue(\"Testdata 2\");\n"
-			+ "}\n"
-			+ "Table t = new Table(\"Table component\",ic);\n"
-			+ "t.setPageLength(10);\n";
+		return "// Sample table\n"
+			+ "t = new Table(\"Most Wanted Persons List\");\n"
+			+ "t.setPageLength(10);\n\n"
+			+ "// Add columns to table\n"
+			+ "t.addContainerProperty(\"Firstname\", String.class, \"\");\n"
+			+ "t.addContainerProperty(\"Lastname\", String.class, \"\");\n"
+			+ "t.addContainerProperty(\"Age\", String.class, \"\");\n"
+			+ "t.addContainerProperty(\"Eyecolor\", String.class, \"\");\n"
+			+ "t.addContainerProperty(\"Haircolor\", String.class, \"\");\n\n"
+			+ "// Add random rows to table\n"
+			+ "for (int j = 0; j < 50; j++) {\n"
+			+ "	t.addItem(\n"
+			+ "		new Object[] {\n"
+			+ "			firstnames[(int) (Math.random() * 9)],\n"
+			+ "			lastnames[(int) (Math.random() * 9)],\n"
+			+ "			new Integer((int) (Math.random() * 80)),\n"
+			+ "			eyecolors[(int) (Math.random() * 3)],\n"
+			+ "			haircolors[(int) (Math.random() * 4)] },\n"
+			+ "		new Integer(j));\n"
+			+ "}\n";
 	}
-	/**
-	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
-	 */
-	protected String[] getDescriptionXHTML() {
-		return new String[] {
-			"Table",
-			"The Table feature caters for displaying large volumes of tabular data, "
-				+ "in multiple pages where needed.<br/><br/> "
-				+ "Selection of the displayed data is supported both in selecting exclusively one row "
-				+ "or multiple rows at the same time. For each row, there may be a set of actions associated, "
-				+ "depending on the skin implementation these actions may be displayed either as a drop-down "
-				+ "menu for each row or a set of command buttons. <br/><br/>"
-				+ "As with all Millstone data-components , so also the Table may be bound to an underlying "
-				+ "datasource, such as for instance a database table.<br/><br/>"
-				+ "On the demo tab you can try out how the different properties "
-				+ "affect the presentation of the component.",
-			"table.jpg" };
+
+	protected String getDescriptionXHTML() {
+
+		return "The Table feature caters for displaying large volumes of tabular data, "
+			+ "in multiple pages where needed.<br/><br/> "
+			+ "Selection of the displayed data is supported both in selecting exclusively one row "
+			+ "or multiple rows at the same time. For each row, there may be a set of actions associated, "
+			+ "depending on the skin implementation these actions may be displayed either as a drop-down "
+			+ "menu for each row or a set of command buttons. <br/><br/>"
+			+ "As with all Millstone data-components , so also the Table may be bound to an underlying "
+			+ "datasource, such as for instance a database table.<br/><br/>"
+			+ "On the demo tab you can try out how the different properties "
+			+ "affect the presentation of the component.";
+	}
+
+	protected String getImage() {
+		return "table.jpg";
+	}
+
+	protected String getTitle() {
+		return "Table";
 	}
 
 	private Action ACTION1 = new Action("Action 1");
@@ -226,22 +226,16 @@ public class FeatureTable extends Feature implements Action.Handler {
 
 	private Action[] actions = new Action[] { ACTION1, ACTION2, ACTION3 };
 
-	/**
-	 * @see org.millstone.base.event.Action.Handler#getActions(Object)
-	 */
 	public Action[] getActions(Object target, Object sender) {
 		return actions;
 	}
 
-	/**
-	 * @see org.millstone.base.event.Action.Handler#handleAction(Action, Object, Object)
-	 */
 	public void handleAction(Action action, Object sender, Object target) {
 		t.setDescription(
 			"Last action clicked was '"
 				+ action.getCaption()
 				+ "' on item '"
-				+ t.getItem(target).getItemProperty("Column 1")
+				+ t.getItem(target).toString()
 				+ "'");
 	}
 

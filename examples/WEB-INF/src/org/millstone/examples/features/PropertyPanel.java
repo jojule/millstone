@@ -83,6 +83,8 @@ public class PropertyPanel extends Panel implements Button.ClickListener {
 
 		// Add default properties
 		addBasicComponentProperties();
+		if (objectToConfigure instanceof Select)
+			addSelectProperties();
 
 		// The list of all properties
 		addComponent(showAllProperties);
@@ -181,6 +183,15 @@ public class PropertyPanel extends Panel implements Button.ClickListener {
 				new Object[] { "Default"}).setNewItemsAllowed(true);
 		
 		addProperties("Component basics", set);
+	}
+
+	private void addSelectProperties() {
+		Form set =
+			createBeanPropertySet(
+				new String[] {
+					"multiSelect",
+					"newItemsAllowed"  });
+		addProperties("Select properties", set);
 	}
 
 	public Form createBeanPropertySet(String names[]) {

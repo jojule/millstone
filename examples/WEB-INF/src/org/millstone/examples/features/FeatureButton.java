@@ -63,8 +63,11 @@ public class FeatureButton extends Feature {
 		// Properties
 		PropertyPanel p = new PropertyPanel(b);
 		Select themes = (Select) p.getField("style");
-		themes.addItem("link").getItemProperty(themes.getItemCaptionPropertyId()).setValue("link");
-		Form ap = p.createBeanPropertySet(new String[] {"switchMode"});
+		themes
+			.addItem("link")
+			.getItemProperty(themes.getItemCaptionPropertyId())
+			.setValue("link");
+		Form ap = p.createBeanPropertySet(new String[] { "switchMode" });
 		p.addProperties("Button Properties", ap);
 		l.addComponent(p);
 
@@ -79,14 +82,18 @@ public class FeatureButton extends Feature {
 	/**
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
-	protected String[] getDescriptionXHTML() {
-		new ClassResource("button.gif", this.getApplication());
-		return new String[] {
-			"Button",
-			"In Millstone, buttons may function either as a pushbuttons or switches. (checkboxes)<br/><br/>"
-				+ "On the demo tab you can try out how the different properties affect "
-				+ "the presentation of the component.",
-			"button.gif" };
+	protected String getDescriptionXHTML() {
+		return "In Millstone, buttons may function either as a pushbuttons or switches. (checkboxes)<br/><br/>"
+			+ "On the demo tab you can try out how the different properties affect "
+			+ "the presentation of the component.";
+	}
+
+	protected String getImage() {
+		return "button.gif";
+	}
+
+	protected String getTitle() {
+		return "Button";
 	}
 
 }

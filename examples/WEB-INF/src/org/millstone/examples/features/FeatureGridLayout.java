@@ -83,15 +83,19 @@ public class FeatureGridLayout extends Feature {
 	/**
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
-	protected String[] getDescriptionXHTML() {
-		return new String[]{"Gridlayout",
-				"This feature provides a container that lays out components into a grid of given "+
+	protected String getDescriptionXHTML() {
+		return "This feature provides a container that lays out components into a grid of given "+
 				"width and height.<br/><br/>"+
 				"On the demo tab you can try out how the different properties affect "+
-				"the presentation of the component.","gridlayout.jpg"};
+				"the presentation of the component.";
 	}
 
-}
 
-/* This Millstone sample code is public domain. *  
- * For more information see www.millstone.org.  */
+	protected String getImage() {
+		return "gridlayout.jpg";
+	}
+
+	protected String getTitle() {
+		return "GridLayout";
+	}
+}

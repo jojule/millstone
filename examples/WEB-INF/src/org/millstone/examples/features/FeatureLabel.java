@@ -59,7 +59,8 @@ public class FeatureLabel extends Feature {
 
 		// Properties
 		PropertyPanel p = new PropertyPanel(lab);
-		Form ap = p.createBeanPropertySet(new String[] { "contentMode", "value" });
+		Form ap =
+			p.createBeanPropertySet(new String[] { "contentMode", "value" });
 		ap.replaceWithSelect(
 			"contentMode",
 			new Object[] {
@@ -86,15 +87,20 @@ public class FeatureLabel extends Feature {
 	/**
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
-	protected String[] getDescriptionXHTML() {
-		return new String[] {
-			"Label",
-			"Millstone Labels are used not only for captions and plain text but also for embedding "
-				+ "more complicated content such as for instance XHTML."
-				+ "<br/>"
-				+ "On the demo tab you can try out how the different properties affect "
-				+ "the presentation of the component.",
-			"label.jpg" };
+	protected String getDescriptionXHTML() {
+		return "Millstone Labels are used not only for captions and plain text but also for embedding "
+			+ "more complicated content such as for instance XHTML."
+			+ "<br/>"
+			+ "On the demo tab you can try out how the different properties affect "
+			+ "the presentation of the component.";
+	}
+
+	protected String getImage() {
+		return "label.jpg";
+	}
+
+	protected String getTitle() {
+		return "Label";
 	}
 
 }

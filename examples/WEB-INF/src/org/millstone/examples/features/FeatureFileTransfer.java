@@ -63,8 +63,6 @@ public class FeatureFileTransfer
 	Panel status = new Panel("Uploaded file:");
 	Panel download_window = new Panel("Uploaded files:");
 
-	
-
 	public FeatureFileTransfer() {
 		super();
 	}
@@ -85,13 +83,10 @@ public class FeatureFileTransfer
 		l.addComponent(show);
 
 		// Configuration
-		l.addComponent(
-			createPropertyPanel(
-				up,
-				new String[] {},null));
+		l.addComponent(createPropertyPanel(up, new String[] {
+		}, null));
 		download_window.setVisible(false);
 		l.addComponent(download_window);
-		
 
 		return l;
 	}
@@ -110,11 +105,19 @@ public class FeatureFileTransfer
 	/**
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
-	protected String[] getDescriptionXHTML() {
-		return new String[]{"Filetransfer","This demonstrates the use of the Upload component together with the Link component. "
+	protected String getDescriptionXHTML() {
+		return "This demonstrates the use of the Upload component together with the Link component. "
 			+ "This implementation does not actually store the file to disk, it only keeps it in a buffer. "
 			+ "The example given on the example-tab on the other hand stores the file to disk and binds the link to that file.<br/>"
-			+ "<br/>On the demo tab you can try out how the different properties affect the presentation of the component.","filetransfer.jpg"};
+			+ "<br/>On the demo tab you can try out how the different properties affect the presentation of the component.";
+	}
+
+	protected String getImage() {
+		return "filetransfer.jpg";
+	}
+
+	protected String getTitle() {
+		return "Upload";
 	}
 
 	/**
@@ -123,41 +126,50 @@ public class FeatureFileTransfer
 	public void uploadFinished(FinishedEvent event) {
 		status.removeAllComponents();
 		if (buffer.getStream() == null)
-				status.addComponent(
-					new Label("Upload finished, but output buffer is null!!"));
-			else {
-				status.addComponent(
-					new Label(
-						"<b>Name:</b> " + event.getFilename(),Label.CONTENT_XHTML));
-				status.addComponent(
-					new Label(
-						"<b>Mimetype:</b> " + event.getMIMEType(),Label.CONTENT_XHTML));
-				status.addComponent(
-					new Label(
-						"<b>Size:</b> "
-							+ event.getLength() + " bytes.",Label.CONTENT_XHTML)
-							);
+			status.addComponent(
+				new Label("Upload finished, but output buffer is null!!"));
+		else {
+			status.addComponent(
+				new Label(
+					"<b>Name:</b> " + event.getFilename(),
+					Label.CONTENT_XHTML));
+			status.addComponent(
+				new Label(
+					"<b>Mimetype:</b> " + event.getMIMEType(),
+					Label.CONTENT_XHTML));
+			status.addComponent(
+				new Label(
+					"<b>Size:</b> " + event.getLength() + " bytes.",
+					Label.CONTENT_XHTML));
 
-				Link l = new Link(buffer.getFileName(),new StreamResource(buffer,buffer.getFileName(),this.getApplication()));
-				download_window.addComponent(l);
-				download_window.setVisible(true);
-				status.setVisible(true);						  
-			}
+			Link l =
+				new Link(
+					buffer.getFileName(),
+					new StreamResource(
+						buffer,
+						buffer.getFileName(),
+						this.getApplication()));
+			download_window.addComponent(l);
+			download_window.setVisible(true);
+			status.setVisible(true);
+		}
 	}
 
-	public class Buffer implements StreamResource.StreamSource, Upload.Receiver {
+	public class Buffer
+		implements StreamResource.StreamSource, Upload.Receiver {
 		ByteArrayOutputStream outputBuffer = null;
 		String mimeType;
 		String fileName;
-		
+
 		public Buffer() {
-			
-		}		
+
+		}
 		/**
 		 * @see org.millstone.base.terminal.StreamResource.StreamSource#getStream()
 		 */
 		public InputStream getStream() {
-			if (outputBuffer == null) return null;
+			if (outputBuffer == null)
+				return null;
 			return new ByteArrayInputStream(outputBuffer.toByteArray());
 		}
 

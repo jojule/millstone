@@ -78,26 +78,34 @@ public class FeatureDateField extends Feature {
 
 		// Properties
 		PropertyPanel p = new PropertyPanel(df);
-		Form ap = p.createBeanPropertySet(new String[] {"resolution"});
-		ap.replaceWithSelect("resolution", new Object[] {
-					new Integer(DateField.RESOLUTION_YEAR),
-					new Integer(DateField.RESOLUTION_MONTH),
-					new Integer(DateField.RESOLUTION_DAY),
-					new Integer(DateField.RESOLUTION_HOUR),
-					new Integer(DateField.RESOLUTION_MIN),
-					new Integer(DateField.RESOLUTION_SEC),
-					new Integer(DateField.RESOLUTION_MSEC)},
-					 new Object[] {
-					"Year",
-					"Month",
-					"Day",
-					"Hour",
-					"Minute",
-					"Second",
-					"Millisecond" });
+		Form ap = p.createBeanPropertySet(new String[] { "resolution" });
+		ap.replaceWithSelect(
+			"resolution",
+			new Object[] {
+				new Integer(DateField.RESOLUTION_YEAR),
+				new Integer(DateField.RESOLUTION_MONTH),
+				new Integer(DateField.RESOLUTION_DAY),
+				new Integer(DateField.RESOLUTION_HOUR),
+				new Integer(DateField.RESOLUTION_MIN),
+				new Integer(DateField.RESOLUTION_SEC),
+				new Integer(DateField.RESOLUTION_MSEC)},
+			new Object[] {
+				"Year",
+				"Month",
+				"Day",
+				"Hour",
+				"Minute",
+				"Second",
+				"Millisecond" });
 		Select themes = (Select) p.getField("style");
-		themes.addItem("text").getItemProperty(themes.getItemCaptionPropertyId()).setValue("text");
-		themes.addItem("calendar").getItemProperty(themes.getItemCaptionPropertyId()).setValue("calendar");
+		themes
+			.addItem("text")
+			.getItemProperty(themes.getItemCaptionPropertyId())
+			.setValue("text");
+		themes
+			.addItem("calendar")
+			.getItemProperty(themes.getItemCaptionPropertyId())
+			.setValue("calendar");
 		p.addProperties("DateField Properties", ap);
 		l.addComponent(p);
 
@@ -109,21 +117,24 @@ public class FeatureDateField extends Feature {
 			+ "df.setValue(new java.util.Date());\n";
 
 	}
-	/**
-	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
-	 */
-	protected String[] getDescriptionXHTML() {
-		return new String[] {
-			"Datefield",
-			"Representing Dates and times and providing a way to select or enter some specific date or time "
-				+ "is an oft recuring need in data-entry userinterfaces. Millstone provides a DateField feature that "
-				+ "is both clear and easy to use and yet powerfull in its task allowing for granularity control and "
-				+ "full support for different locales. "
-				+ "A validator may be bound to the component to check and "
-				+ "validate the given input.<br/>"
-				+ "<br/>On the demo tab you can try out how the different properties affect the "
-				+ "presentation of the component.",
-			"datefield.jpg" };
+
+	protected String getDescriptionXHTML() {
+		return "Representing Dates and times and providing a way to select or enter some specific date or time "
+			+ "is an oft recuring need in data-entry userinterfaces. Millstone provides a DateField feature that "
+			+ "is both clear and easy to use and yet powerfull in its task allowing for granularity control and "
+			+ "full support for different locales. "
+			+ "A validator may be bound to the component to check and "
+			+ "validate the given input.<br/>"
+			+ "<br/>On the demo tab you can try out how the different properties affect the "
+			+ "presentation of the component.";
+	}
+
+	protected String getImage() {
+		return "datefield.jpg";
+	}
+
+	protected String getTitle() {
+		return "DateField";
 	}
 
 }

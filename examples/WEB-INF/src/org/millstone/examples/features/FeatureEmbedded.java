@@ -70,7 +70,7 @@ public class FeatureEmbedded extends Feature {
 		l.addComponent(show);
 
 		Hashtable alternateEditors = new Hashtable();
-		
+
 		Select s = new Select("heightUnits");
 		s.addContainerProperty("name", String.class, "");
 		s.setItemCaptionPropertyId("name");
@@ -79,7 +79,7 @@ public class FeatureEmbedded extends Feature {
 				Sizeable.UNIT_SYMBOLS[i]);
 
 		}
-		alternateEditors.put("heightUnits",s);
+		alternateEditors.put("heightUnits", s);
 
 		s = new Select("widthUnits");
 		s.addContainerProperty("name", String.class, "");
@@ -89,21 +89,21 @@ public class FeatureEmbedded extends Feature {
 				Sizeable.UNIT_SYMBOLS[i]);
 
 		}
-		
+
 		alternateEditors.put("widthUnits", s);
 
 		// Configuration
 		l.addComponent(
-				createPropertyPanel(emb,
-					new String[] {
-						"type",
-						"classId",
-						"width",
-						"height",
-						"widthUnits",
-						"heightUnits" },alternateEditors));
-
-		
+			createPropertyPanel(
+				emb,
+				new String[] {
+					"type",
+					"classId",
+					"width",
+					"height",
+					"widthUnits",
+					"heightUnits" },
+				alternateEditors));
 
 		return l;
 	}
@@ -121,20 +121,22 @@ public class FeatureEmbedded extends Feature {
 			+ "emb.setParameter(\"Max\",\"10\");\n";
 
 	}
-	/**
-	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
-	 */
-	protected String[] getDescriptionXHTML() {
-		return new String[]{"Embedded",
-			"The embedding feature allows for adding multimedia and other non-specified content to your application. "
+
+	protected String getDescriptionXHTML() {
+		return "The embedding feature allows for adding multimedia and other non-specified content to your application. "
 			+ "The feature has provisions for embedding both applets and Active X controls. "
 			+ "Actual support for embedded media types is left to the terminal."
 			+ "<br/>"
 			+ "On the demo tab you can try out how the different properties affect the presentation "
-			+ "of the component.","embedded.jpg"};
+			+ "of the component.";
+	}
+
+	protected String getImage() {
+		return "embedded.jpg";
+	}
+
+	protected String getTitle() {
+		return "Embedded";
 	}
 
 }
-
-/* This Millstone sample code is public domain. *  
- * For more information see www.millstone.org.  */

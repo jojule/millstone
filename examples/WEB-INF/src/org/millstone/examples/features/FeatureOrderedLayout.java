@@ -91,10 +91,10 @@ public class FeatureOrderedLayout extends Feature {
 		alternateEditors.put("style", t);
 
 		l.addComponent(
-			createPropertyPanel(ol,
-			new String[] {
-				"orientation"},
-			alternateEditors));
+			createPropertyPanel(
+				ol,
+				new String[] { "orientation" },
+				alternateEditors));
 
 		return l;
 	}
@@ -108,18 +108,23 @@ public class FeatureOrderedLayout extends Feature {
 	/**
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
-	protected String[] getDescriptionXHTML() {
-		return new String[] {
-			"OrderedLayout",
-			"This feature provides a container for laying out components either "
-				+ "vertically, horizontally or flowingly. The orientation may be changed "
-				+ "during runtime. It also defines a special style for themes to implement called \"form\""
-				+ "that is used for input forms where the components are layed-out side-by-side "
-				+ "with their captions."
-				+ "<br/><br/>"
-				+ "On the demo tab you can try out how the different properties "
-				+ "affect the presentation of the component.",
-			"orderedlayout.jpg" };
+	protected String getDescriptionXHTML() {
+		return "This feature provides a container for laying out components either "
+			+ "vertically, horizontally or flowingly. The orientation may be changed "
+			+ "during runtime. It also defines a special style for themes to implement called \"form\""
+			+ "that is used for input forms where the components are layed-out side-by-side "
+			+ "with their captions."
+			+ "<br/><br/>"
+			+ "On the demo tab you can try out how the different properties "
+			+ "affect the presentation of the component.";
+	}
+
+	protected String getImage() {
+		return "orderedlayout.jpg";
+	}
+
+	protected String getTitle() {
+		return "OrderedLayout";
 	}
 
 }
