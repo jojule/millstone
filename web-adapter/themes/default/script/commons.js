@@ -8,7 +8,7 @@
 
 // Constructor
 function MillstoneCommonUtils() {
-	this.debug = true;
+	this.debug = false;
 	this.loadedScripts = new Object();
 }
 
