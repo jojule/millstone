@@ -269,7 +269,7 @@ public class Select
 			if (id != null && id.equals(getNullSelectionItemId()))
 				target.addAttribute("nullselection", true);
 			target.addAttribute("key", key);
-			if (isSelected(id)) {
+			if (isSelected(id) && keyIndex < selectedKeys.length) {
 				target.addAttribute("selected", true);
 				selectedKeys[keyIndex++] = key;
 			}
@@ -929,7 +929,7 @@ public class Select
 	 * 
 	 */
 	public void setItemCaptionPropertyId(Object propertyId) {
-		if (getContainerPropertyIds().contains(propertyId)) {
+		if (propertyId != null) {
 			itemCaptionPropertyId = propertyId;
 			setItemCaptionMode(ITEM_CAPTION_MODE_PROPERTY);
 			requestRepaint();
@@ -965,7 +965,7 @@ public class Select
 	 * items.
 	 */
 	public void setItemIconPropertyId(Object propertyId) {
-		if (getContainerPropertyIds().contains(propertyId)
+		if ((propertyId != null)
 			&& Resource.class.isAssignableFrom(getType(propertyId))) {
 			itemIconPropertyId = propertyId;
 			requestRepaint();
