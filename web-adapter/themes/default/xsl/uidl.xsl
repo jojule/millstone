@@ -3,8 +3,7 @@
 <xsl:stylesheet version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"  
     xmlns:wa="xalan://org.millstone.webadapter.ThemeFunctionLibrary" 
-    xmlns:browser="xalan://org.millstone.webadapter.WebBrowser"
-    xmlns="http://www.w3.org/TR/WD-html-in-xml/DTD/xhtml1-strict.dtd">
+    xmlns:browser="xalan://org.millstone.webadapter.WebBrowser">
 
 <xsl:output method="html" doctype-public="-//W3C//DTD HTML 4.0 Transitional//EN"/>
 
