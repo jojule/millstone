@@ -104,7 +104,7 @@
         <!-- Component caption, icon, errors, descriptions -->
         <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
         <xsl:if test="@icon"><IMG SRC="{@icon}"/></xsl:if>
-        <xsl:value-of select="@caption"/>
+        <xsl:if test="(string-length(@caption) &gt; 0) and (local-name()!='link' and local-name()!='button')"><xsl:value-of select="@caption"/><br /></xsl:if>
         <xsl:choose>
           <xsl:when test="$dhtml">
             <xsl:for-each select="./error"><xsl:apply-templates select="." mode="dhtml"/></xsl:for-each>
@@ -117,9 +117,13 @@
         </xsl:choose>
 
         <!-- Avoid empty cells (which are mistreated by browsers) 
-             by adding an 'nbsp' to end of cell. -->
-        <xsl:apply-templates select="." mode="core"
-      />&#160;</TD>      
+             by adding an 'nbsp' to end of cell. -->             
+        <xsl:apply-templates select="." mode="core"/>
+        <xsl:choose>
+          <xsl:when test="local-name()='button' and @type='switch' and (string-length(@caption) &gt; 0)"><xsl:value-of select="@caption"/></xsl:when>
+          <xsl:otherwise>&#160;</xsl:otherwise>
+        </xsl:choose>
+        </TD>      
     </xsl:for-each>
 
     <!-- Actions  -->
