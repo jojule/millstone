@@ -30,13 +30,13 @@ The disrtibution package contains the following files and directories:
 
 lib                Binary jar-packages for Millstone components, web-
                    adapter and examples
-src                Source files
-docs               Millstone base package and WebAdapter documentation
-                   See docs.index.html for details.
-webthemes          Web-adapter theme files
+base               Millstone Base package source files
+web-adapter        Millstone Web-Adapter package source files
+examples           Millstone Example applications. The examples
+                   are also included as war-package under lib-directory.
 readme.txt         This readme-file
 license.txt        The GNU lesser general public license that applies
-                   to this release
+                   to this release (unless otherwise noted)
 install.txt        Installation notes
 release-notes.txt  Notes about this release
 
