@@ -61,6 +61,7 @@ import org.millstone.base.terminal.Paintable.RepaintRequestEvent;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -124,6 +125,7 @@ public class WebAdapterServlet
 	private WeakHashMap applicationToServerCommandStreamLock =
 		new WeakHashMap();
 	private WeakHashMap applicationToLastRequestDate = new WeakHashMap();
+	private List allWindows = new LinkedList();
 
 	/** Called by the servlet container to indicate to a servlet that the
 	 * servlet is being placed into service.
@@ -366,9 +368,27 @@ public class WebAdapterServlet
 						return;
 					}
 
-					// Return if no window found
-					if (window == null)
+					// Return blank page, if no window found
+					if (window == null) {
+						BufferedWriter page =
+							new BufferedWriter(new OutputStreamWriter(out));
+						page.write("<html><head><script>");
+						page.write(
+							ThemeFunctionLibrary.generateWindowScript(
+								null,
+								application,
+								this,
+								WebBrowserProbe.getTerminalType(
+									request.getSession())));
+						page.write("</script></head><body>");
+						page.write(
+							"The requested window has been removed from application.");
+						page.write("</body></html>");
+						page.close();
+						
+
 						return;
+					}
 
 					// Get the terminal type for the window
 					WebBrowser terminalType = (WebBrowser) window.getTerminal();
@@ -897,9 +917,23 @@ public class WebAdapterServlet
 			}
 			window = application.getWindow(windowName);
 
-			// By default, we use main window
-			if (window == null)
+			if (window == null) {
+
+				// If the window has existed, and is now removed
+				// send a blank page
+				if (allWindows.contains(windowName))
+					return null;
+
+				// By default, we use main window
 				window = application.getMainWindow();
+			} else if (!window.isVisible()) {
+
+				// Implicitly painting without actually invoking paint()
+				window.requestRepaintRequests();
+
+				// If the window is invisible send a blank page
+				return null;
+			}
 		}
 
 		// Create and open new debug window for application if requested
@@ -974,11 +1008,19 @@ public class WebAdapterServlet
 	 * @see org.millstone.base.Application.WindowAttachListener#windowAttached(Application.WindowAttachEvent)
 	 */
 	public void windowAttached(WindowAttachEvent event) {
-		event.getWindow().addListener((Paintable.RepaintRequestListener) this);
+		Window win = event.getWindow();
+		win.addListener((Paintable.RepaintRequestListener) this);
+
+		// Add to window names
+		allWindows.add(win.getName());
 
 		// Add window to dirty window references if it is visible
-		if (event.getWindow().isVisible())
-			addDirtyWindow(event.getApplication(), event.getWindow());
+		// Or request the window to pass on the repaint requests
+		if (win.isVisible())
+			addDirtyWindow(event.getApplication(), win);
+		else
+			win.requestRepaintRequests();
+			
 	}
 
 	/**
