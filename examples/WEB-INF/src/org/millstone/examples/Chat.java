@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 import java.lang.ref.WeakReference;
 
+import org.millstone.base.terminal.ExternalResource;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.StreamResource;
@@ -68,14 +69,11 @@ public class Chat
 		say.dependsOn(sayText);
 		say.addListener((Button.ClickListener) this);
 		listUsers.addListener((Button.ClickListener) this);
-		Window discussion = new Window();
-		discussion.setName("chatDiscussion");
 		StreamResource chatStream =
 			new StreamResource(this, "discussion.html", this);
 		chatStream.setBufferSize(1);
 		chatStream.setCacheTime(0);
-		discussion.open(chatStream);
-		frames.getFrameset().newFrame(discussion);
+		frames.getFrameset().newFrame(chatStream,"chatDiscussion");
 		Window controls =
 			new Window(
 				"",
@@ -114,6 +112,7 @@ public class Chat
 
 			// Clear the saytext field
 			sayText.setValue("");
+			sayText.focus();
 		}
 
 		// List the users
@@ -133,6 +132,10 @@ public class Chat
 			// Show say controls
 			say.setVisible(true);
 			sayText.setVisible(true);
+			
+			// Announce discussion joining
+			say("<i>" + getUser() + 
+			" joined the discussion (" + (new Date()).toString() + ")</i><br>");
 		}
 	}
 	
@@ -150,11 +153,12 @@ public class Chat
 				try {
 					Chat c = (Chat) ((WeakReference) i.next()).get();
 					String name = (String) c.getUser();
-					if (name != null)
-					userlist.append("<li>" + name);
-					userlist.append(" (idle "
-							+ ((new Date()).getTime() - c.idleSince) / 1000
-							+ "s)");
+					if (name != null && name.length() > 0) {
+						userlist.append("<li>" + name);
+						userlist.append(" (idle "
+								+ ((new Date()).getTime() - c.idleSince) / 1000
+								+ "s)");
+					}
 				} catch (NullPointerException ignored) {
 				}
 			}
@@ -200,6 +204,10 @@ public class Chat
 	/** Open chat stream */
 	public InputStream getStream() {
 
+		// Close any existing streams
+		if (chatWriter != null)
+			chatWriter.close();
+
 		// Create piped stream
 		PipedOutputStream chatStream = new PipedOutputStream();
 		chatWriter = new PrintWriter(chatStream);
@@ -218,8 +226,7 @@ public class Chat
 				+ "</title>"
 				+ "</head><body>\n");
 
-		// List all the participants and join the discussion
-		say("<i>" + getUser() + " joined the discussion</i><br>");
+		// Allways list the users
 		listUsers();
 
 		return is;
