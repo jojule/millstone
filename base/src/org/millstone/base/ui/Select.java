@@ -38,6 +38,7 @@
 
 package org.millstone.base.ui;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -293,10 +294,12 @@ public class Select
 					// (non-visible items can not be deselected)
 					Collection visible = getVisibleItemIds();
 					if (visible != null) {
-						Set current = (Set) getValue();
-						current.removeAll(visible);
-						current.addAll(s);
-						setValue(s);
+						Set newsel = (Set) getValue();
+						if (newsel == null) newsel = new HashSet();
+						else newsel = new HashSet(newsel);
+						newsel.removeAll(visible);
+						newsel.addAll(s);
+						super.setValue(newsel);
 					}
 				}
 
@@ -371,31 +374,28 @@ public class Select
 				return s;
 			}
 
+			return Collections.unmodifiableSet((Set)retValue);
+
+		} else 
 			return retValue;
-
-		} else {
-
-			// For single selects, chech that the retvalue is in set
-			if (retValue == null || !items.containsId(retValue))
-				return null;
-		}
-
-		return retValue;
 	}
 
 	/** Set the visible value of the property.
 	 *
-	 * @param newValue New value of the property. This should be assignable to
-	 * the type returned by getType(), but also String type should be supported.
+	 * <p>The value of the select is the selected item id. If the select is in 
+	 * multiselect-mode, the value is a set of selected item keys. In multiselect
+	 * mode all collections of id:s can be assigned.</p>
+	 * 
+	 * @param newValue New selected item or collection of selected items.
 	 */
 	public void setValue(Object newValue)
 		throws Property.ReadOnlyException, Property.ConversionException {
 
 		if (isMultiSelect()) {
-			if (newValue != null
-				&& Set.class.isAssignableFrom(newValue.getClass())) {
-				super.setValue(newValue);
-			}
+			if (newValue == null)
+				super.setValue(new HashSet());
+			else if (Collection.class.isAssignableFrom(newValue.getClass())) 
+				super.setValue(new HashSet((Collection)newValue));
 		} else if (newValue == null || items.containsId(newValue))
 			super.setValue(newValue);
 	}
