@@ -24,9 +24,15 @@ public class FeatureTree extends Feature implements Action.Handler {
 		t = new Tree("Caption");
 		for (int i=0;i<10;i++) {
 			t.addItem("Parent "+i);
-			t.addItem("Child "+i);
-		    t.setParent("Child "+i, "Parent "+i);
-		   	t.setChildrenAllowed("Child "+i, false);
+			t.addItem("Child One "+i);
+		    t.setParent("Child One "+i, "Parent "+i);
+		    t.addItem("Child Two "+i);
+		    t.setParent("Child Two "+i, "Child One "+i);
+		    t.addItem("Child Three "+i);
+		    t.setParent("Child Three "+i,"Child Two "+i);
+		    t.addItem("Child Four "+i);
+		    t.setParent("Child Four "+i,"Child Three "+i);
+		   	t.setChildrenAllowed("Child Four "+i, false);
 		}
 
 		// Handle actions for the tree
@@ -68,8 +74,8 @@ public class FeatureTree extends Feature implements Action.Handler {
 		return "t = new Tree(\"Caption\");\n"+
 					"for (int i=0;i<10;i++) {\n"+
 					" t.addItem(\"Parent \"+i);"+
-					" t.addItem(\"Child \"+i);\n"+
-		    		"t.setParent(\"Child \"+i, \"Parent \"+i);\n"+
+					" t.addItem(\"Child\"+i);\n"+
+		    		"t.setParent(\"Child\"+i, \"Parent \"+i);\n"+
 		   			"t.setChildrenAllowed(\"Child \"+i, false);";
 	}
 	/**
