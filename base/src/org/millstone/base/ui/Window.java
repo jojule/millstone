@@ -578,8 +578,12 @@ public class Window extends Panel implements URIHandler, ParameterHandler {
 		// Get focused component
 		String focusedId = (String) variables.get("focused");
 		if (focusedId != null) {
-			long id = Long.parseLong(focusedId);
-			this.focusedComponent = Window.getFocusableById(id);
+			try {
+				long id = Long.parseLong(focusedId);
+				this.focusedComponent = Window.getFocusableById(id);
+			} catch (NumberFormatException ignored) {
+				// We ignore invalid focusable ids
+			}
 		}
 
 	}
