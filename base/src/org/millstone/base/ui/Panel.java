@@ -362,4 +362,17 @@ public class Panel
 			fireComponentDetachEvent(event.getDetachedComponent());
 	}
 
+	/*
+	 * @see org.millstone.base.ui.Component#attach()
+	 */
+	public void attach() {
+		if (layout != null) layout.attach();
+	}
+
+	/*
+	 * @see org.millstone.base.ui.Component#detach()
+	 */
+	public void detach() {
+		if (layout != null) layout.detach();
+	}	
 }
