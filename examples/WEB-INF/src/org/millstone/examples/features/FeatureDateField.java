@@ -51,11 +51,26 @@ public class FeatureDateField extends Feature {
 				new String[] { "Default", "Text", "Calendar" });
 
 		alternateEditors.put("style", s);
+		
+		Select t =
+			createSelect(
+				"Resolution",
+					new Integer[]{new Integer(DateField.RESOLUTION_YEAR),
+											new Integer(DateField.RESOLUTION_MONTH),
+											new Integer(DateField.RESOLUTION_DAY),
+											new Integer(DateField.RESOLUTION_HOUR),
+											new Integer(DateField.RESOLUTION_MIN),
+											new Integer(DateField.RESOLUTION_SEC),
+											new Integer(DateField.RESOLUTION_MSEC)},
+					new String[]{"Year","Month","Day","Hour","Minute","Second","Millisecond"}
+					);
+					
+		alternateEditors.put("resolution",t);
 
 		// Configuration
 		l.addComponent(
 			createPropertyPanel(df,
-				new String[] {},
+				new String[] {"resolution"},
 				alternateEditors));
 
 		l.addComponent(localePanel);
