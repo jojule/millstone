@@ -38,12 +38,8 @@
 
 package org.millstone.base.terminal;
 
-import java.io.InputStream;
-import java.net.URL;
-
 import org.millstone.base.Application;
 import org.millstone.base.service.FileTypeResolver;
-import sun.rmi.log.ReliableLog;
 
 /** Class resource is a named resource accessed with the class loader.
  *  

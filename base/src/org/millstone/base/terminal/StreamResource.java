@@ -38,15 +38,10 @@
 
 package org.millstone.base.terminal;
 
-import java.io.File;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Random;
 
 import org.millstone.base.Application;
 import org.millstone.base.service.FileTypeResolver;
-import org.millstone.base.ui.Window;
 
 /** Stream resource is a resource provided to the client directly
  * by the application. The strean resource is fetched from URI

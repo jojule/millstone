@@ -38,8 +38,6 @@
 
 package org.millstone.base.data;
 
-import java.lang.reflect.Method;
-
 /** Property is a simple data object that contains one typed value. This
  * interface contains methods to inspect and modify the stored value and its
  * type, and the object's read-only state.  

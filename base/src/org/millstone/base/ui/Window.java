@@ -50,12 +50,8 @@ import org.millstone.base.Application;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.InvalidParameterException;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 import java.util.Iterator;
 
 /** Application window component.

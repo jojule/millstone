@@ -45,7 +45,6 @@ import org.millstone.base.terminal.*;
 import org.millstone.base.terminal.VariableOwner;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.PaintException;
-import org.millstone.base.terminal.Paintable.RepaintRequestListener;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -53,7 +52,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.lang.reflect.Method;
 
 /** An abstract class that defines default implementation for the

@@ -42,10 +42,8 @@ import java.util.Date;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
-import java.security.InvalidParameterException;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
-import java.io.IOException;
 
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;

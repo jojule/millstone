@@ -48,7 +48,6 @@ import org.millstone.base.terminal.*;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.KeyMapper;
 import org.millstone.base.terminal.PaintException;
-import org.millstone.base.terminal.VariableOwner;
 
 /** Tabsheet component. 
  *

@@ -46,7 +46,6 @@ import java.util.Hashtable;
 import java.util.Collections;
 import java.util.Collection;
 import java.util.EventObject;
-import java.beans.PropertyChangeListener;
 import java.lang.reflect.Constructor;
 import org.millstone.base.data.Container;
 import org.millstone.base.data.Item;

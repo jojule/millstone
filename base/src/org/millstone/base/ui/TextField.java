@@ -38,10 +38,7 @@
 
 package org.millstone.base.ui;
 
-import java.util.LinkedList;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Collection;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.ErrorMessage;
 import org.millstone.base.terminal.SystemError;

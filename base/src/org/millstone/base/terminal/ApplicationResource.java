@@ -38,8 +38,6 @@
    
 package org.millstone.base.terminal;
 
-import java.io.InputStream;
-
 import org.millstone.base.Application;
 
 /** This interface must be implemented by classes wishing to provide Application resources.

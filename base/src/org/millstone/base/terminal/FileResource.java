@@ -41,11 +41,9 @@ package org.millstone.base.terminal;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 import org.millstone.base.Application;
 import org.millstone.base.service.FileTypeResolver;
-import org.millstone.base.ui.Window;
 
 /** File resources are files or directories on local filesystem. The files and directories
  * are served trough URI:s to the client terminal and thus must be registered to an 

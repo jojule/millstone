@@ -42,7 +42,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Hashtable;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.PaintException;
 

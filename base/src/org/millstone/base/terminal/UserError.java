@@ -38,11 +38,6 @@
 
 package org.millstone.base.terminal;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
-import org.millstone.base.event.ListenerMethod;
-
 /** User error is a controlled error occurred in application. User errors
  * are occur in normal usage of the application and guide the user.
  *

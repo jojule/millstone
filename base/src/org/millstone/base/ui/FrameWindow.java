@@ -39,7 +39,6 @@
 package org.millstone.base.ui;
 
 import java.net.URL;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;

@@ -45,8 +45,6 @@ import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.Sizeable;
 import org.millstone.base.terminal.Scrollable;
-import org.millstone.base.ui.ComponentContainer.ComponentAttachEvent;
-import org.millstone.base.ui.ComponentContainer.ComponentDetachEvent;
 
 /** Panel - a simple single component container.
  * @author IT Mill Ltd.
