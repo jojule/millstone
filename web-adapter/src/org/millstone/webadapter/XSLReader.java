@@ -1,3 +1,41 @@
+/* *************************************************************************
+ 
+   								Millstone(TM) 
+   				   Open Sourced User Interface Library for
+   		 		       Internet Development with Java
+
+             Millstone is a registered trademark of IT Mill Ltd
+                  Copyright (C) 2000,2001,2002 IT Mill Ltd
+                     
+   *************************************************************************
+
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with this library; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+   *************************************************************************
+   
+   For more information, contact:
+   
+   IT Mill Ltd                           phone: +358 2 4802 7180
+   Ruukinkatu 2-4                        fax:  +358 2 4802 7181
+   20540, Turku                          email: info@itmill.com
+   Finland                               company www: www.itmill.com
+   
+   Primary source for MillStone information and releases: www.millstone.org
+
+   ********************************************************************** */
+
 package org.millstone.webadapter;
 
 import java.io.IOException;
@@ -16,12 +54,62 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
-/**
- * @author Sami Ekblad
+
+/** Class implementing the MillStone WebAdapter UIDLTransformer.
  *
+ * The thansformer should not be created directly; it should be contructed
+ * using getTransformer() provided by UIDLTransformerFactory. 
+ * 
+ * After the transform has been done, the transformer can be recycled with
+ * releaseTransformer() by UIDLTransformerFactory.
+ *
+ * @author IT Mill Ltd.
+ * @version @VERSION@
+ * @since 3.0
  */
+
 public class XSLReader implements XMLReader, ContentHandler {
 
+	static protected final int XSLT_UNKNOWN = 0;
+	static protected final int XSLT_XALAN = 1;
+	static protected final int XSLT_SAXON6 = 2;
+	static protected final int XSLT_SAXON7 = 3;
+	static protected int xsltProcessor = XSLT_UNKNOWN;
+	static {
+		String transformerName =
+			UIDLTransformer.xsltFactory.getClass().getName();
+
+		// FIXME
+		System.out.println("DEBUG: transformerFactory == " + transformerName);
+
+		// Saxon 7.x
+		if ("net.sf.saxon.TransformerFactoryImpl".equals(transformerName))
+			xsltProcessor = XSLT_SAXON7;
+
+		// Saxon 6.x
+		else if (
+			"com.icl.saxon.TransformerFactoryImpl".equals(transformerName))
+			xsltProcessor = XSLT_SAXON6;
+
+		// Xalan
+		else if ("org.apache.xalan.processor.TransformerFactoryImpl"
+			.equals(transformerName))
+			xsltProcessor = XSLT_XALAN;
+
+		else {
+			throw new RuntimeException(
+				"\nThis version of Millstone Web Adapter "
+					+ " does not support the selected XSLT-processer:\n  "
+					+ transformerName
+					+ "\n"
+					+ "You can specify the used XSLT processor with JVM "
+					+ "parameter like: \n"
+					+ "  -Djavax.xml.transform.TransformerFactory=net.sf.saxon.TransformerFactoryImpl\n"
+					+ "  -Dorg.xml.sax.driver=org.apache.crimson.parser.XMLReaderImpl\n");
+		}
+	}
+
+	private static final String MILLSTONE_PREFIX = "millstone://";
 	private Collection streams;
 	private boolean startTagHandled = false;
 	private String xslNamespace = "";
@@ -33,7 +121,7 @@ public class XSLReader implements XMLReader, ContentHandler {
 		reader.setContentHandler(this);
 		this.streams = streams;
 	}
-	
+
 	/** Parse all streams given for constructor parameter.
 	 *  The input parameter is ignored.
 	 * @see org.xml.sax.XMLReader#parse(InputSource)
@@ -80,16 +168,29 @@ public class XSLReader implements XMLReader, ContentHandler {
 		String qName,
 		Attributes atts)
 		throws SAXException {
-		if (!startTagHandled) {
-			if (localName.equals("stylesheet")) {
-				startTagHandled = true;
-				this.xslNamespace = namespaceURI;
-			}
-		} else if (localName.equals("stylesheet")) {
+
+		// Only the first stylesheet is used
+		if (startTagHandled && localName.equals("stylesheet"))
 			return; //skip
-		}
-		handler.startElement(namespaceURI, localName, qName, atts);
+
+		// Get the namespace that will be used for closing the theme
+		if (localName.equals("stylesheet")) {
+			startTagHandled = true;
+			this.xslNamespace = namespaceURI;
+
+			// Manage calls to external functions in XSLT-processor independent
+			// way, but still using XSLT 1.0
+			handler.startElement(
+				namespaceURI,
+				localName,
+				qName,
+				new AttributeMapper(atts));
+		} else
+
+			// Handle the element in superclass directly
+			handler.startElement(namespaceURI, localName, qName, atts);
 	}
+
 	/**
 	 * @see org.xml.sax.ContentHandler#characters(char[], int, int)
 	 */
@@ -161,7 +262,7 @@ public class XSLReader implements XMLReader, ContentHandler {
 	 */
 	public void setContentHandler(ContentHandler handler) {
 		this.handler = handler;
-	}	
+	}
 	/**
 	 * @see org.xml.sax.XMLReader#getDTDHandler()
 	 */
@@ -203,7 +304,7 @@ public class XSLReader implements XMLReader, ContentHandler {
 	 * @see org.xml.sax.XMLReader#parse(String)
 	 */
 	public void parse(String systemId) throws IOException, SAXException {
-		this.parse((InputSource)null);
+		this.parse((InputSource) null);
 	}
 
 	/**
@@ -232,7 +333,7 @@ public class XSLReader implements XMLReader, ContentHandler {
 	 */
 	public void setFeature(String name, boolean value)
 		throws SAXNotRecognizedException, SAXNotSupportedException {
-			reader.setFeature(name,value);
+		reader.setFeature(name, value);
 	}
 
 	/**
@@ -240,6 +341,125 @@ public class XSLReader implements XMLReader, ContentHandler {
 	 */
 	public void setProperty(String name, Object value)
 		throws SAXNotRecognizedException, SAXNotSupportedException {
-			reader.setProperty(name,value);
-	}	
+		reader.setProperty(name, value);
+	}
+
+	public class AttributeMapper implements Attributes {
+
+		private Attributes original;
+
+		public AttributeMapper(Attributes originalAttributes) {
+			original = originalAttributes;
+		}
+
+		/**
+		 * @see org.xml.sax.Attributes#getIndex(String, String)
+		 */
+		public int getIndex(String uri, String localName) {
+			return original.getIndex(uri, localName);
+		}
+
+		/**
+		 * @see org.xml.sax.Attributes#getIndex(String)
+		 */
+		public int getIndex(String qName) {
+			return original.getIndex(qName);
+		}
+
+		/**
+		 * @see org.xml.sax.Attributes#getLength()
+		 */
+		public int getLength() {
+			return original.getLength();
+		}
+
+		/**
+		 * @see org.xml.sax.Attributes#getLocalName(int)
+		 */
+		public String getLocalName(int index) {
+			return original.getLocalName(index);
+		}
+
+		/**
+		 * @see org.xml.sax.Attributes#getQName(int)
+		 */
+		public String getQName(int index) {
+			return original.getQName(index);
+		}
+
+		/**
+		 * @see org.xml.sax.Attributes#getType(int)
+		 */
+		public String getType(int index) {
+			return original.getType(index);
+		}
+
+		/**
+		 * @see org.xml.sax.Attributes#getType(String, String)
+		 */
+		public String getType(String uri, String localName) {
+			return original.getType(uri, localName);
+		}
+
+		/**
+		 * @see org.xml.sax.Attributes#getType(String)
+		 */
+		public String getType(String qName) {
+			return original.getType(qName);
+		}
+
+		/**
+		 * @see org.xml.sax.Attributes#getURI(int)
+		 */
+		public String getURI(int index) {
+			String uri = original.getURI(index);
+
+			// Map millstone:// namespaces to transformer specific namespaces
+			if (uri != null && uri.startsWith(MILLSTONE_PREFIX)) {
+
+				System.out.print("DEBUG " + uri + " --> ");
+				switch (xsltProcessor) {
+					case XSLT_SAXON6 :
+						uri =
+							"saxon://"
+								+ uri.substring(MILLSTONE_PREFIX.length());
+						break;
+					case XSLT_SAXON7 :
+						uri =
+							"saxon://"
+								+ uri.substring(MILLSTONE_PREFIX.length());
+						break;
+					case XSLT_XALAN :
+						uri =
+							"xalan://"
+								+ uri.substring(MILLSTONE_PREFIX.length());
+						break;
+				}
+				System.out.println(uri);
+			}
+
+			return uri;
+		}
+
+		/**
+		 * @see org.xml.sax.Attributes#getValue(int)
+		 */
+		public String getValue(int index) {
+			return original.getValue(index);
+		}
+
+		/**
+		 * @see org.xml.sax.Attributes#getValue(String, String)
+		 */
+		public String getValue(String uri, String localName) {
+			return original.getValue(uri, localName);
+		}
+
+		/**
+		 * @see org.xml.sax.Attributes#getValue(String)
+		 */
+		public String getValue(String qName) {
+			return original.getValue(qName);
+		}
+	}
 }

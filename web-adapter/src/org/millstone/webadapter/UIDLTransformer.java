@@ -75,6 +75,18 @@ import javax.xml.transform.OutputKeys;
 
 public class UIDLTransformer {
 
+	/** XSLT factory */
+	protected static javax.xml.transform.TransformerFactory xsltFactory;
+	static {
+		xsltFactory = javax.xml.transform.TransformerFactory.newInstance();
+		if (xsltFactory == null)
+			throw new RuntimeException(
+				"Could not instantiate "
+					+ "transformer factory. Maybe XSLT processor is "
+					+ "not included in classpath.");
+	}
+
+	/** Source of the transform containing UIDL */
 	private WebPaintTarget paintTarget;
 
 	/** Holds the type of the transformer. */
@@ -94,7 +106,8 @@ public class UIDLTransformer {
 	/** UIDLTransformer constructor.
 	 * @param type Type of the transformer
 	 * @param themes Theme implemented by the transformer
-	 * @throws UIDLTransformerException UIDLTransformer exception is thrown, if the transform can not be created.
+	 * @throws UIDLTransformerException UIDLTransformer exception is thrown, 
+	 * if the transform can not be created.
 	 */
 	public UIDLTransformer(
 		UIDLTransformerType type,
@@ -104,10 +117,6 @@ public class UIDLTransformer {
 		this.transformerType = type;
 		this.themeSource = themes;
 		this.webAdapterServlet = webAdapterServlet;
-
-		// Instantiate a XSL TransformerFactory.
-		javax.xml.transform.TransformerFactory xsltFactory =
-		javax.xml.transform.TransformerFactory.newInstance();
 
 		// Register error handler
 		errorHandler = new TransformerErrorHandler();
@@ -140,12 +149,10 @@ public class UIDLTransformer {
 				uidlTransformer.setErrorListener(errorHandler);
 
 				// Ensure HTML output
-				uidlTransformer.setOutputProperty(
-					OutputKeys.METHOD,"html");
+				uidlTransformer.setOutputProperty(OutputKeys.METHOD, "html");
 
 				// Ensure no indent
-				uidlTransformer.setOutputProperty(
-					OutputKeys.INDENT,"no");
+				uidlTransformer.setOutputProperty(OutputKeys.INDENT, "no");
 			}
 
 			// Check if transform itself failed, meaning either
