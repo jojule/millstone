@@ -6,7 +6,7 @@
   <xsl:choose>
 
     <!-- Link Style -->
-    <xsl:when test="$dhtml and ((@icon) or @style='link')">
+    <xsl:when test="$dhtml and (@style='link')">
       <A CLASS="button-link">
         <xsl:if test="not(@disabled)"><xsl:attribute name="HREF">javascript:setVarById('<xsl:value-of select="./boolean/@id"/>','true',true)</xsl:attribute></xsl:if>
         <xsl:if test="@disabled"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
@@ -18,11 +18,19 @@
     
     <!-- Normal Style -->
     <xsl:otherwise>
+      <xsl:if test="@icon"><INPUT TYPE="image" src="{@icon}" NAME="set:{./boolean/@id}=true" VALUE=" {@caption} ">
+        <xsl:attribute name="CLASS">button<xsl:if test="string-length(./@style) &gt; 0">-<xsl:value-of select="./@style"/></xsl:if></xsl:attribute>    
+   	    <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
+        <xsl:if test="@readonly='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
+        <xsl:if test="not(string-length(@caption) &gt; 0)"><xsl:attribute name="ID"><xsl:value-of select="./boolean/@id"/></xsl:attribute></xsl:if>
+      </INPUT></xsl:if>
+      <xsl:if test="string-length(@caption) &gt; 0">
       <INPUT CLASS="button" TYPE="SUBMIT" ID="{./boolean/@id}" NAME="set:{./boolean/@id}=true" VALUE=" {@caption} ">
         <xsl:attribute name="CLASS">button<xsl:if test="string-length(./@style) &gt; 0">-<xsl:value-of select="./@style"/></xsl:if></xsl:attribute>    
    	    <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
         <xsl:if test="@readonly='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
       </INPUT>
+      </xsl:if>
    
       <!-- Set focus to field -->
       <xsl:if test="@focus='true' and $dhtml">

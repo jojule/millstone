@@ -3,22 +3,89 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 <xsl:template match="window">
+
+
   <HTML>
     <HEAD>
       <xsl:call-template name="window-head"/>
     </HEAD>
     <BODY>	 
-    
-	  <!-- Window scrolling events and initialization -->
+	  <!-- Window resize variable ids -->
+      <xsl:variable name="heightid"><xsl:value-of select="./integer[@name='height']/@id"/></xsl:variable>
+      <xsl:variable name="widthid"><xsl:value-of select="./integer[@name='width']/@id"/></xsl:variable>
+
+	  <!-- Window scrolling variable ids -->
 	  <xsl:variable name="scrolldownid"><xsl:value-of select="./integer[@name='scrolldown']/@id"/></xsl:variable>
 	  <xsl:variable name="scrollleftid"><xsl:value-of select="./integer[@name='scrollleft']/@id"/></xsl:variable>
-      <xsl:if test="$dhtml and $scrolldownid and $scrollleftid">
-        <xsl:attribute name="onscroll">setVarById('<xsl:value-of select="$scrolldownid"/>',document.body.scrollTop,false);setVarById('<xsl:value-of select="$scrollleftid"/>',document.body.scrollLeft,false)</xsl:attribute>
-        <xsl:attribute name="onload">document.body.scrollTop = <xsl:value-of select="./integer[@name='scrolldown']/@value"/>; document.body.scrollLeft = <xsl:value-of select="./integer[@name='scrollleft']/@value"/></xsl:attribute>
-      </xsl:if>     
+
+      <!-- Window body attributes initialization -->
+	  <xsl:if test="$dhtml">
+	  
+	    <!-- Run onload-script -->
+        <xsl:attribute name="onload">window_onload();</xsl:attribute>
+
+        <!-- Capture resize events -->
+		<xsl:if test="$dhtml and $heightid and $widthid">
+		  <xsl:attribute name="onResize">window_resize();</xsl:attribute>
+		</xsl:if>     
+        
+        <!-- Capture scroll events -->
+		<xsl:if test="$scrolldownid and $scrollleftid">
+		  <xsl:attribute name="onscroll">setVarById('<xsl:value-of select="$scrolldownid"/>',document.body.scrollTop,false);setVarById('<xsl:value-of select="$scrollleftid"/>',document.body.scrollLeft,false)</xsl:attribute>
+		</xsl:if>
+		
+		<!-- Window onload script -->
+		<SCRIPT LANGUAGE="JavaScript">
+
+		var chromeX = -1;
+		var chromeY = -1;
+		  
+	    function window_onload() {
+			<!-- Initial window size -->
+			<xsl:if test="(./integer[@name='height']/@value &gt; 0) and (./integer[@name='width']/@value &gt; 0)">
+			    var newWidth = <xsl:value-of select="./integer[@name='width']/@value"/>;
+			    var newHeight = <xsl:value-of select="./integer[@name='height']/@value"/>;
+			    window.resizeTo(newWidth,newHeight);
+				if (window.innerWidth) {
+					chromeX = newWidth - window.innerWidth;
+					chromeY = newHeight - window.innerHeight;
+				} else  {	
+					chromeX = newWidth - document.body.clientWidth;
+					chromeY = newHeight - document.body.clientHeight;				
+				}
+			</xsl:if>			
+			<!-- Initial scroll position -->
+			<xsl:if test="$scrolldownid and $scrollleftid">
+			  window.scrollTo(<xsl:value-of select="./integer[@name='scrollleft']/@value"/>,<xsl:value-of select="./integer[@name='scrolldown']/@value"/>);
+			</xsl:if>     
+	    }
+	      
+	    <!-- Resize script -->
+	    function window_resize() {
+	    	var w,h;	    	
+			if (window.innerWidth) {
+				w = window.innerWidth;
+				h = window.innerHeight;
+			} else {
+				w = document.body.clientWidth;
+				h = document.body.clientHeight;				
+			}
+			if(chromeX>=0) setVarById('<xsl:value-of select="$widthid"/>',w+chromeX, false);
+		  	if(chromeY>=0) setVarById('<xsl:value-of select="$heightid"/>',h+chromeY,false);	    
+	    }
+	    
+		</SCRIPT>
+	  </xsl:if>     
+
       
       <!-- Main form -->
       <FORM NAME="millstone" METHOD="POST" ACCEPT-CHARSET="UTF-8" ENCTYPE="multipart/form-data">
+
+  	    <!-- Window size variables -->
+        <xsl:if test="$dhtml and $heightid and $widthid">
+          <INPUT TYPE="HIDDEN" ID="{$widthid}" NAME="{$widthid}" VALUE="{./integer[@name='width']/@value}"/>
+          <INPUT TYPE="HIDDEN" ID="{$heightid}" NAME="{$heightid}" VALUE="{./integer[@name='height']/@value}"/>
+        </xsl:if>     
 
   	    <!-- Window scrolling variables -->
         <xsl:if test="$dhtml and $scrolldownid and $scrollleftid">

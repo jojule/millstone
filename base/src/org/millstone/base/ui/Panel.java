@@ -170,9 +170,10 @@ public class Panel
 		layout.paint(target);
 		target.addVariable(this, "height", getHeight());
 		target.addVariable(this, "width", getWidth());
-		if (isScrollable())
+		if (isScrollable()) {
 			target.addVariable(this, "scrollleft", getScrollOffsetX());
-		target.addVariable(this, "scrolldown", getScrollOffsetY());
+			target.addVariable(this, "scrolldown", getScrollOffsetY());
+		}
 	}
 
 	/** Get component UIDL tag.
@@ -208,23 +209,21 @@ public class Panel
 	}
 
 	/**
-	 * Returns the height.
-	 * @return int
+	 * @return  The height in pixels or negative value if not assigned.
 	 */
 	public int getHeight() {
 		return height;
 	}
 
 	/**
-	 * Returns the width.
-	 * @return int
+	 * @return The width in pixels or negative value if not assigned. 
 	 */
 	public int getWidth() {
 		return width;
 	}
 
-	/**
-	 * Sets the height.
+	/** Sets the height in pixels.
+	 * Use negative value to let the client decide the height.
 	 * @param height The height to set
 	 */
 	public void setHeight(int height) {
@@ -232,8 +231,8 @@ public class Panel
 		requestRepaint();
 	}
 
-	/**
-	 * Sets the width.
+	/** Sets the width in pixels.
+	 * Use negative value to allow the client decide the width.
 	 * @param width The width to set
 	 */
 	public void setWidth(int width) {
@@ -278,24 +277,20 @@ public class Panel
 		return widthUnit;
 	}
 
-	/**
-	 * @see org.millstone.base.terminal.Sizeable#setHeightUnits(int)
+	/** Set height units.
+	 * Panel supports only Sizeable.UNITS_PIXELS and this is ignored.
+	 * @see org. millstone.base.terminal.Sizeable#setHeightUnits(int)
 	 */
 	public void setHeightUnits(int units) {
-		if (heightUnit != units) {
-			heightUnit = units;
-			requestRepaint();
-		}
+		// Ignored
 	}
 
-	/**
+	/** Set width units.
+	 *  Panel supports only Sizeable.UNITS_PIXELS, and this is ignored.
 	 * @see org.millstone.base.terminal.Sizeable#setWidthUnits(int)
 	 */
 	public void setWidthUnits(int units) {
-		if (widthUnit != units) {
-			widthUnit = units;
-			requestRepaint();
-		}
+		// Ignored
 	}
 
 	/* Scrolling functionality */

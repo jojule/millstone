@@ -47,6 +47,7 @@ import org.millstone.base.terminal.ThemeResource;
 import org.millstone.base.terminal.VariableOwner;
 import org.millstone.base.terminal.UploadStream;
 import org.millstone.base.terminal.PaintTarget;
+
 import java.util.Stack;
 
 /** User Interface Description Language Target.
@@ -74,6 +75,7 @@ public class WebPaintTarget implements PaintTarget {
 	private boolean closed = false;
 	private WebAdapterServlet webAdapterServlet;
 	private Theme theme;
+
 
 	/** Create a new XMLPrintWriter, without automatic line flushing.
 	 * 
@@ -105,7 +107,7 @@ public class WebPaintTarget implements PaintTarget {
 
 		//Add document declaration
 		this.print(UIDL_XML_DECL + "\n\n");
-		
+
 		// In debug mode add DOCTYPE element
 		if (webAdapterServlet.isDebugMode()) {
 			//this.print(UIDL_DOCTYPE_DECL + "\n\n");
@@ -194,65 +196,12 @@ public class WebPaintTarget implements PaintTarget {
 		//Write the end (closing) tag
 		uidlBuffer.append("</" + lastTag + "\n>");
 	}
-
-	/**
-	 * Code shared by String and StringBuffer to do searches. The
-	 * source is the character array being searched, and the target
-	 * is the string being searched for.
+	
+	
+	/** Substitute the XML sensitive characters with predefined XML entities.
 	 *
-	 * @param   source       the characters being searched.
-	 * @param   target       the characters being searched for.
-	 * @param   fromIndex    the index to begin searching from.
-	 */
-	private static int indexOf(
-		StringBuffer source,
-		String target,
-		int fromIndex) {
-		int sourceCount = source.length();
-		int sourceOffset = 0;
-		int targetCount = target.length();
-		int targetOffset = 0;
-
-		if (fromIndex >= sourceCount) {
-			return (targetCount == 0 ? sourceCount : -1);
-		}
-		if (fromIndex < 0) {
-			fromIndex = 0;
-		}
-		if (targetCount == 0) {
-			return fromIndex;
-		}
-
-		char first = target.charAt(targetOffset);
-		int i = sourceOffset + fromIndex;
-		int max = sourceOffset + (sourceCount - targetCount);
-
-		startSearchForFirstChar : while (true) {
-			/* Look for first character. */
-			while (i <= max && source.charAt(i) != first) {
-				i++;
-			}
-			if (i > max) {
-				return -1;
-			}
-
-			/* Found first character, now look at the rest of v2 */
-			int j = i + 1;
-			int end = j + targetCount - 1;
-			int k = targetOffset + 1;
-			while (j < end) {
-				if (source.charAt(j++) != target.charAt(k++)) {
-					i++;
-					/* Look for str's first char again. */
-					continue startSearchForFirstChar;
-				}
-			}
-			return i - sourceOffset; /* Found whole string. */
-		}
-	}
-
-	/** Escape all XML tags from string.
-	 *
+	 * @return A new string instance where all occurrences of XML sensitive
+	 * characters are substituted with entities.
 	 */
 	static public String escapeXML(String xml) {
 		if (xml == null || xml.length() <= 0)
@@ -260,42 +209,51 @@ public class WebPaintTarget implements PaintTarget {
 		return escapeXML(new StringBuffer(xml)).toString();
 	}
 
-	/** Escape all XML tags from string.
+	/** Substitute the XML sensitive characters with predefined XML entities.
+	 * @param xml the String to be substituted
+	 * @return A new StringBuffer instance where all occurrences of XML
+	 * sensitive characters are substituted with entities.
+	 *
 	 */
 	static public StringBuffer escapeXML(StringBuffer xml) {
 		if (xml == null || xml.length() <= 0)
 			return new StringBuffer("");
 
-		// & => &amp;
-		int i = -1;
-		while ((i = indexOf(xml, "&", i + 1)) >= 0) {
-			xml.replace(i, i + 1, "&amp;");
-		}
+		StringBuffer result = new StringBuffer(xml.length()*2);
 
-		// > => &lt;
-		i = -1;
-		while ((i = indexOf(xml, ">", i + 1)) >= 0) {
-			xml.replace(i, i + 1, "&gt;");
+		int start = 0, end =0;
+		for (int i = 0; i < xml.length(); i++) {
+			char c = xml.charAt(i);
+			String s = toXmlChar(c);
+			if (s != null) {
+				result.append(s);
+			} else {
+				result.append(c);
+			}			
 		}
-		// < => &lt;
-		i = -1;
-		while ((i = indexOf(xml, "<", i + 1)) >= 0) {
-			xml.replace(i, i + 1, "&lt;");
-		}
+		return result;
+	}
 
-		// " => &quot;
-		i = -1;
-		while ((i = indexOf(xml, "\"", i + 1)) >= 0) {
-			xml.replace(i, i + 1, "&quot;");
+	/** Substitute a XML sensitive character with predefined XML entity.
+	 * @param c Character to be replaced with an entity.
+	 * @return String of the entity or null if character is not to be replaced
+	 * with an entity.
+	 */
+	private static String toXmlChar(char c) {
+		switch (c) {
+			case '&' :
+				return "&amp;"; // & => &amp;		
+			case '>' :
+				return "&gt;"; // > => &gt;		
+			case '<' :
+				return "&lt;"; // < => &lt;		
+			case '"' :
+				return "&quot;"; // " => &quot;			
+			case '\'' :
+				return "&apos;"; // ' => &apos;		
+			default :
+				return null;
 		}
-
-		// ' => &apos;
-		i = -1;
-		while ((i = indexOf(xml, "\'", i + 1)) >= 0) {
-			xml.replace(i, i + 1, "&apos;");
-		}
-
-		return xml;
 	}
 
 	/** Print XML.
@@ -428,7 +386,7 @@ public class WebPaintTarget implements PaintTarget {
 	 */
 	public void addVariable(VariableOwner owner, String name, String value)
 		throws PaintException {
-		String code = variableMap.registerVariable(name, String.class, owner);
+		String code = variableMap.registerVariable(name, String.class, value, owner);
 		startTag("string");
 		addAttribute(UIDL_ARG_ID, code);
 		addAttribute(UIDL_ARG_NAME, name);
@@ -444,7 +402,7 @@ public class WebPaintTarget implements PaintTarget {
 	 */
 	public void addVariable(VariableOwner owner, String name, int value)
 		throws PaintException {
-		String code = variableMap.registerVariable(name, Integer.class, owner);
+		String code = variableMap.registerVariable(name, Integer.class, new Integer(value), owner);
 		startTag("integer");
 		addAttribute(UIDL_ARG_ID, code);
 		addAttribute(UIDL_ARG_NAME, name);
@@ -460,7 +418,7 @@ public class WebPaintTarget implements PaintTarget {
 	 */
 	public void addVariable(VariableOwner owner, String name, boolean value)
 		throws PaintException {
-		String code = variableMap.registerVariable(name, Boolean.class, owner);
+		String code = variableMap.registerVariable(name, Boolean.class, new Boolean(value), owner);
 		startTag("boolean");
 		addAttribute(UIDL_ARG_ID, code);
 		addAttribute(UIDL_ARG_NAME, name);
@@ -476,7 +434,7 @@ public class WebPaintTarget implements PaintTarget {
 	 */
 	public void addVariable(VariableOwner owner, String name, String[] value)
 		throws PaintException {
-		String code = variableMap.registerVariable(name, String[].class, owner);
+		String code = variableMap.registerVariable(name, String[].class, value, owner);
 		startTag("array");
 		addAttribute(UIDL_ARG_ID, code);
 		addAttribute(UIDL_ARG_NAME, name);
@@ -494,7 +452,7 @@ public class WebPaintTarget implements PaintTarget {
 	public void addUploadStreamVariable(VariableOwner owner, String name)
 		throws PaintException {
 		String code =
-			variableMap.registerVariable(name, UploadStream.class, owner);
+			variableMap.registerVariable(name, UploadStream.class, null, owner);
 		startTag("uploadstream");
 		addAttribute(UIDL_ARG_ID, code);
 		addAttribute(UIDL_ARG_NAME, name);

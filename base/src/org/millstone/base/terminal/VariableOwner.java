@@ -63,48 +63,47 @@ import java.util.Set;
  * @since 3.0
  */
 public interface VariableOwner {
-
-	/** Gets the variable change listeners this <code>VariableOwner</code>
-	 * directly depends on. This list does not contain any indirect
-	 * dependencies, for example, if A depends on B and B depends on C,
-	 * the dependency list of A does not include C.
-	 *
-	 * @return Set of <code>VariableOwner</code>s this component directly
-	 * depend on, <code>null</code> if this component does not depend on
-	 * anybody.
-	 */
-	public Set getDirectDependencies();
-
-	/** Called when one or more variables handled by the implementing class
-	 * are changed.
-	 * 
-	 * @param source Source of the variable change. This is the origin of the
-	 * event. In Web Adapter this is the javax.servlet.http.HttpServletRequest 
-	 * instance that contains the variable change.
-	 * @param variables Mapping from variable names to new variable values
-	 */
-	public void changeVariables(Object source, Map variables);
-
-	/** Makes this <code>VariableOwner</code> depend on the given 
-	 * <code>VariableOwner</code>. This means that any variable change
-	 * events relating to <code>depended</code> must be sent before any
-	 * such events that relate to this object.
-	 *
-	 * @param denpended the <code>VariableOwner</code> component who
-	 * this component depends on
-	 */
-	public void dependsOn(VariableOwner depended);
-
-	/** Removes the given component from this component's dependency list.
-	 * After the call this component will no longer depend on
-	 * <code>depended</code> wdepende direct dependency from the component.
-	 * Indirect dependencies are not removed.
-	 *
-	 * @param denpended the component to be removed from this component's
-	 * dependency list.
-	 */
-	public void removeDirectDependency(VariableOwner depended);
-
+    
+    /** Gets the variable change listeners this <code>VariableOwner</code>
+     * directly depends on. This list does not contain any indirect
+     * dependencies, for example, if A depends on B and B depends on C,
+     * the dependency list of A does not include C.
+     *
+     * @return Set of <code>VariableOwner</code>s this component directly
+     * depend on, <code>null</code> if this component does not depend on
+     * anybody.
+     */
+    public Set getDirectDependencies();
+    
+    /** Called when one or more variables handled by the implementing class
+     * are changed.
+     * 
+     * @param source Source of the variable change. This is the origin of the
+     * event. For example in Web Adapter this is the request.
+     * @param variables Mapping from variable names to new variable values
+     */
+    public void changeVariables(Object source, Map variables);
+    
+    /** Makes this <code>VariableOwner</code> depend on the given 
+     * <code>VariableOwner</code>. This means that any variable change
+     * events relating to <code>depended</code> must be sent before any
+     * such events that relate to this object.
+     *
+     * @param denpended the <code>VariableOwner</code> component who
+     * this component depends on
+     */
+    public void dependsOn(VariableOwner depended);
+    
+    /** Removes the given component from this component's dependency list.
+     * After the call this component will no longer depend on
+     * <code>depended</code> wdepende direct dependency from the component.
+     * Indirect dependencies are not removed.
+     *
+     * @param denpended the component to be removed from this component's
+     * dependency list.
+     */
+    public void removeDirectDependency(VariableOwner depended);
+    
 	/** <p>Tests if the variable owner is enabled or not. The terminal
 	 * should not send any variable changes to disabled variable owners.
 	 * </p>
@@ -113,5 +112,5 @@ public interface VariableOwner {
 	 * <code>false</code> if not
 	 */
 	public boolean isEnabled();
-
+    
 }

@@ -50,14 +50,15 @@ public class UIDLTransformerException extends java.lang.Exception {
 	private Throwable transformException = null;
 	
 	/**
-	 * Creates a new instance of <code>UIDLTransformerException</code> without detail message.
+	 * Creates a new instance of UIDLTransformerException without detail
+	 * message.
 	 */
 	public UIDLTransformerException() {
 	}
 
 	/**
-	 * Constructs an instance of <code>UIDLTransformerException</code> 
-	 * with the specified detail message.
+	 * Constructs an instance of UIDLTransformerException with the specified
+	 * detail message.
 	 * @param msg description of exception that occurred
 	 * @param te Transform exception that occurred.
 	 * @param desc the detailed description.

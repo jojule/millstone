@@ -79,14 +79,7 @@ import java.net.URL;
  * a simple example of a fully working MillStone Application.</p>
  * 
  * <p><strong>Window access.</strong> <code>Application</code> provides
- * methods to list, add and remove the windows it contains. An application
- * may have one special window, the <i>login window</i>. If it exists, it
- * is the first one shown to the user when the application is first started.
- * The login window may perform whatever actions it wishes, typically
- * authenticating the user or performing operations that differ for each
- * user. See <code>link org.millstone.examples.Login</code> for a simple example
- * that asks for the user's name and gives the user "Joe" a different theme
- * it gives to others.</p>
+ * methods to list, add and remove the windows it contains.</p> 
  * 
  * <p><strong>Execution control.</strong> This class includes method to
  * start and finish the execution of the application. Being finished means

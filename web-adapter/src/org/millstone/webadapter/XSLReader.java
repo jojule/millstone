@@ -74,13 +74,11 @@ public class XSLReader implements XMLReader, ContentHandler {
 	static protected final int XSLT_XALAN = 1;
 	static protected final int XSLT_SAXON6 = 2;
 	static protected final int XSLT_SAXON7 = 3;
+	static protected final int XSLT_RESIN = 4;
 	static protected int xsltProcessor = XSLT_UNKNOWN;
 	static {
 		String transformerName =
 			UIDLTransformer.xsltFactory.getClass().getName();
-
-		// FIXME
-		System.out.println("DEBUG: transformerFactory == " + transformerName);
 
 		// Saxon 7.x
 		if ("net.sf.saxon.TransformerFactoryImpl".equals(transformerName))
@@ -92,10 +90,13 @@ public class XSLReader implements XMLReader, ContentHandler {
 			xsltProcessor = XSLT_SAXON6;
 
 		// Xalan
-		else if ("org.apache.xalan.processor.TransformerFactoryImpl"
-			.equals(transformerName))
+		else if (
+			"org.apache.xalan.processor.TransformerFactoryImpl".equals(
+				transformerName))
 			xsltProcessor = XSLT_XALAN;
-
+		// Resin
+		else if ("com.caucho.xsl.Xsl".equals(transformerName))
+			xsltProcessor = XSLT_RESIN;
 		else {
 			throw new RuntimeException(
 				"\nThis version of Millstone Web Adapter "
@@ -430,6 +431,11 @@ public class XSLReader implements XMLReader, ContentHandler {
 								+ uri.substring(MILLSTONE_PREFIX.length());
 						break;
 					case XSLT_XALAN :
+						uri =
+							"xalan://"
+								+ uri.substring(MILLSTONE_PREFIX.length());
+						break;
+					default :
 						uri =
 							"xalan://"
 								+ uri.substring(MILLSTONE_PREFIX.length());

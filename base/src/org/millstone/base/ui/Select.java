@@ -500,8 +500,7 @@ public class Select
 
 		boolean retval =
 			items.addContainerProperty(propertyId, type, defaultValue);
-		if (retval) {
-			fireValueChange();
+		if (retval && !(items instanceof Container.PropertySetChangeNotifier)) {
 			firePropertySetChange();
 		}
 		return retval;
@@ -518,9 +517,9 @@ public class Select
 
 		boolean retval = items.removeAllItems();
 		if (retval) {
-			setValue(isMultiSelect() ? new HashSet() : null);
-			fireValueChange();
-			fireItemSetChange();
+			setValue(null);
+			if (!(items instanceof Container.ItemSetChangeNotifier))		
+				fireItemSetChange();
 		}
 		return retval;
 	}
@@ -535,7 +534,7 @@ public class Select
 	public Object addItem() throws UnsupportedOperationException {
 
 		Object retval = items.addItem();
-		if (retval != null)
+		if (retval != null && !(items instanceof Container.ItemSetChangeNotifier))
 			fireItemSetChange();
 		return retval;
 	}
@@ -554,7 +553,7 @@ public class Select
 	public Item addItem(Object itemId) throws UnsupportedOperationException {
 
 		Item retval = items.addItem(itemId);
-		if (retval != null)
+		if (retval != null && !(items instanceof Container.ItemSetChangeNotifier))
 			fireItemSetChange();
 		return retval;
 	}
@@ -570,7 +569,7 @@ public class Select
 
 		unselect(itemId);
 		boolean retval = items.removeItem(itemId);
-		if (retval)
+		if (retval && !(items instanceof Container.ItemSetChangeNotifier))
 			fireItemSetChange();
 		return retval;
 	}
@@ -587,7 +586,7 @@ public class Select
 		throws UnsupportedOperationException {
 
 		boolean retval = items.removeContainerProperty(propertyId);
-		if (retval)
+		if (retval && !(items instanceof Container.PropertySetChangeNotifier))
 			firePropertySetChange();
 		return retval;
 	}

@@ -101,12 +101,7 @@ public class FrameWindow extends Window {
 	 */
 	public void paintContent(PaintTarget target) throws PaintException {
 
-		// Set the window name
-		target.addAttribute("name", getName());
-
-		// Mark main window
-		if (this == getApplication().getMainWindow())
-			target.addAttribute("main", true);
+		super.paintContent(target);
 
 		// Paint frameset
 		getFrameset().paint(target);

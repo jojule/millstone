@@ -338,7 +338,9 @@ public class WebAdapterServlet
 				Map unhandledParameters = variableMap.handleVariables(request);
 
 				// Check/handle client side feature checks
-				WebBrowserProbe.handleProbeRequest(request, unhandledParameters);
+				WebBrowserProbe.handleProbeRequest(
+					request,
+					unhandledParameters);
 
 				// Handle the URI if the application is still running
 				if (application.isRunning())
@@ -820,6 +822,7 @@ public class WebAdapterServlet
 			applications.add(application);
 			application.addListener((Application.WindowAttachListener) this);
 			application.addListener((Application.WindowDetachListener) this);
+			application.setLocale(request.getLocale());
 			application.start(applicationUrl, this.applicationProperties);
 
 		} catch (IllegalAccessException e) {
@@ -908,6 +911,8 @@ public class WebAdapterServlet
 						application,
 						request.getSession(false),
 						this);
+				debugWindow.setWidth(370);
+				debugWindow.setHeight(480);
 				application.addWindow(debugWindow);
 			} catch (Exception e) {
 				throw new ServletException(
@@ -1093,7 +1098,9 @@ public class WebAdapterServlet
 									+ ThemeFunctionLibrary
 										.getWindowRefreshScript(
 										application,
-										win)
+										win,
+										WebBrowserProbe.getTerminalType(
+											request.getSession()))
 									+ "</script>");
 
 							removeDirtyWindow(application, win);

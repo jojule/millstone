@@ -43,6 +43,7 @@ import org.millstone.base.terminal.VariableOwner;
 import org.millstone.base.terminal.UploadStream;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -71,6 +72,7 @@ public class HttpVariableMap {
 	private Map idToNameMap = new HashMap();
 	private Map idToTypeMap = new HashMap();
 	private Map idToOwnerMap = new HashMap();
+	private Map idToValueMap = new HashMap();
 	private Map ownerToNameToIdMap = new WeakHashMap();
 	private Object mapLock = new Object();
 
@@ -108,6 +110,7 @@ public class HttpVariableMap {
 	public String registerVariable(
 		String name,
 		Class type,
+		Object value,
 		VariableOwner owner) {
 
 		// Check that the type of the class is supported
@@ -133,10 +136,12 @@ public class HttpVariableMap {
 				// Generate new id and register it
 				id = "v" + String.valueOf(++lastId);
 				nameToIdMap.put(name, id);
-				idToOwnerMap.put(id, new WeakReference(owner));
+				idToOwnerMap.put(id, new WeakReference(owner));				
 				idToNameMap.put(id, name);
 				idToTypeMap.put(id, type);
 			}
+			
+			idToValueMap.put(id, value);
 
 			return id;
 		}
@@ -161,6 +166,7 @@ public class HttpVariableMap {
 				ownerToNameToIdMap.remove(owner);
 			idToNameMap.remove(id);
 			idToTypeMap.remove(id);
+			idToValueMap.remove(id);
 			idToOwnerMap.remove(id);
 
 		}
@@ -372,6 +378,7 @@ public class HttpVariableMap {
 					idToNameMap.remove(name);
 					idToOwnerMap.remove(name);
 					idToTypeMap.remove(name);
+					idToValueMap.remove(name);
 				}
 
 				// Add the parameter to set of non-variables
@@ -425,6 +432,7 @@ public class HttpVariableMap {
 		// Handle all parameters for all listeners
 		while (!listeners.isEmpty()) {
 			VariableOwner listener = (VariableOwner) listeners.remove(0);
+			boolean changed = false; // Has any of this owners variabes changed
 			// Handle all parameters for listener
 			Set params = parcon.getParameters(listener);
 			if (params != null) { // Name value mapping
@@ -435,6 +443,7 @@ public class HttpVariableMap {
 					// Extract more information about the parameter
 					String varName = (String) idToNameMap.get(param);
 					Class varType = (Class) idToTypeMap.get(param);
+					Object varOldValue = idToValueMap.get(param);
 					if (varName == null || varType == null)
 						Log.error(
 							"VariableMap: No variable found for parameter "
@@ -470,6 +479,7 @@ public class HttpVariableMap {
 										filename,
 										contentType);
 								variables.put(varName, upload);
+								changed = true;
 							}
 						}
 
@@ -478,21 +488,27 @@ public class HttpVariableMap {
 							// First try to parse the event without multipart
 							String[] values = parcon.getValue(param);
 							if (values != null) {
-								if (varType.equals(String[].class))
+
+								if (varType.equals(String[].class)) {									
 									variables.put(varName, values);
-								else
+									changed |= (!Arrays.equals(values,(String[])varOldValue));
+								} else {
 									try {
-										if (values.length == 1)
-											variables.put(
-												varName,
-												convert(varType, values[0]));
-										else if (
+										if (values.length == 1) {
+											Object val =
+												convert(varType, values[0]);
+											variables.put(varName, val);
+											changed
+												|= (val != null && !val.equals(varOldValue));
+										} else if (
 											values.length == 0
-												&& varType.equals(Boolean.class))
-											variables.put(
-												varName,
-												new Boolean(false));
-										else {
+												&& varType.equals(
+													Boolean.class)) {
+											Object val = new Boolean(false);
+											variables.put(varName, val);
+											changed
+												|= (!val.equals(varOldValue));
+										} else {
 											Log.error(
 												"Empty variable "
 													+ varName
@@ -505,14 +521,16 @@ public class HttpVariableMap {
 											"WebVariableMap conversion exception",
 											e);
 									}
+								}
 							}
 						}
 					}
 				}
 
 				// Do the valuechange if the listener is enabled
-				if (listener.isEnabled())
+				if (listener.isEnabled() && changed) {
 					listener.changeVariables(req, variables);
+				}
 			}
 		}
 
