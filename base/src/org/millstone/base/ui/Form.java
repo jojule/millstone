@@ -301,7 +301,7 @@ public class Form
 			return false;
 
 		// Get suitable field
-		Field field = this.fieldFactory.createField(this, id, this);
+		Field field = this.fieldFactory.createField(property, this);
 		if (field == null)
 			return false;
 
