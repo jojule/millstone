@@ -146,6 +146,7 @@ public class MethodProperty implements Property {
 			}
 		}
 
+		// In case the get method is found, resolve the type
 		type = getMethod.getReturnType();
 
 		// Find the set method
@@ -178,10 +179,8 @@ public class MethodProperty implements Property {
 				type = Long.class;
 		}
 
-		this.getArgs = new Object[] {
-		};
-		this.setArgs = new Object[] { null };
-		this.setArgumentIndex = 0;
+		setArguments(new Object[] {
+		},new Object[] { null },0);
 		this.readOnly = (setMethod == null);
 		this.instance = instance;
 	}
@@ -266,39 +265,52 @@ public class MethodProperty implements Property {
 		Object[] setArgs,
 		int setArgumentIndex) {
 
-		// FIXME: The following code should be cleaned up. 
-		//        How should null getArgs/setArgs be treated?
-
+		// Check the setargs and setargs index
 		if (setMethodName != null && setArgs == null)
 			throw new IndexOutOfBoundsException("The setArgs can not be null");
-
 		if (setArgumentIndex < 0 || setArgumentIndex >= setArgs.length)
 			throw new IndexOutOfBoundsException("The setArgumentIndex must be >= 0 and < setArgs.length");
 
+		// Set type
+		this.type = type;
+
 		// Find set and get -methods    
 		Method[] m = instance.getClass().getMethods();
+		
 		// Find get method
 		boolean found = false;
 		for (int i = 0; i < m.length; i++) {
-			if (m[i].getName() != getMethodName) {
+			
+			// Test the name of the get Method
+			if (!m[i].getName().equals(getMethodName)) {
+
 				// name does not match, try next method
 				continue;
 			}
+
+			// Test return type
+			if (!type.equals(m[i].getReturnType()))
+				continue;
+
+			// Test the parameter types
 			Class[] c = m[i].getParameterTypes();
 			if (c.length != getArgs.length) {
+
 				// not the right amount of parameters, try next method
 				continue;
 			}
 			int j = 0;
 			while (j < c.length) {
-				if (c[j] != null
+				if (getArgs[j] != null
 					&& !c[j].isAssignableFrom(getArgs[j].getClass())) {
+
 					// parameter type does not match, try next method
 					break;
 				}
 				j++;
 			}
 			if (j == c.length) {
+
 				// all paramteters matched
 				if (found == true) {
 					throw new MethodProperty.MethodException(
@@ -316,28 +328,44 @@ public class MethodProperty implements Property {
 				"Could not find " + getMethodName + "-method");
 		}
 
+		// Find set method
 		if (setMethodName != null) {
+
 			// Find setMethod
 			found = false;
 			for (int i = 0; i < m.length; i++) {
-				if (m[i].getName() != setMethodName) {
+
+				// Check name
+				if (!m[i].getName().equals(setMethodName)) {
+
 					// name does not match, try next method
 					continue;
 				}
+
+				// Check parameter compatibility
 				Class[] c = m[i].getParameterTypes();
 				if (c.length != setArgs.length) {
+
 					// not the right amount of parameters, try next method
 					continue;
 				}
 				int j = 0;
 				while (j < c.length) {
-					if (c[j] != null
+					if (setArgs[j] != null
 						&& !c[j].isAssignableFrom(setArgs[j].getClass())) {
+
 						// parameter type does not match, try next method
 						break;
+					} else if (j == setArgumentIndex && 
+						!c[j].equals(type)) {
+							
+						// Property type is not the same as setArg type
+						break;
 					}
+					j++;	
 				}
 				if (j == c.length) {
+
 					// all parameters match
 					if (found == true) {
 						throw new MethodProperty.MethodException(
@@ -349,17 +377,13 @@ public class MethodProperty implements Property {
 						setMethod = m[i];
 					}
 				}
-
 			}
 			if (found != true) {
 				throw new MethodProperty.MethodException(
 					"Could not identify " + setMethodName + "-method");
 			}
-		} // if (setMethodName != null)
-
-		// Get the return type from get method
-		type = getMethod.getReturnType();
-
+		} 
+		
 		// Get the return type from get method
 		if (type.isPrimitive()) {
 			if (type.equals(Boolean.TYPE))
@@ -380,9 +404,7 @@ public class MethodProperty implements Property {
 				type = Long.class;
 		}
 
-		this.getArgs = getArgs;
-		this.setArgs = setArgs;
-		this.setArgumentIndex = setArgumentIndex;
+		setArguments(getArgs, setArgs, setArgumentIndex);
 		this.readOnly = (setMethod == null);
 		this.instance = instance;
 	}
@@ -443,10 +465,8 @@ public class MethodProperty implements Property {
 		}
 
 		this.getMethod = getMethod;
-		this.getArgs = getArgs;
 		this.setMethod = setMethod;
-		this.setArgs = setArgs;
-		this.setArgumentIndex = setArgumentIndex;
+		setArguments(getArgs, setArgs, setArgumentIndex);
 		this.readOnly = (setMethod == null);
 		this.instance = instance;
 		this.type = type;
@@ -514,9 +534,13 @@ public class MethodProperty implements Property {
 	public void setArguments(
 		Object[] getArgs,
 		Object[] setArgs,
-		int setArumentIndex) {
-		this.getArgs = getArgs;
-		this.setArgs = setArgs;
+		int setArgumentIndex) {
+		this.getArgs = new Object[getArgs.length];
+		for (int i=0; i<getArgs.length; i++)
+			this.getArgs[i] = getArgs[i];
+		this.setArgs = new Object[setArgs.length];
+		for (int i=0; i<setArgs.length; i++)
+			this.setArgs[i] = setArgs[i];
 		this.setArgumentIndex = setArgumentIndex;
 	}
 
@@ -564,6 +588,7 @@ public class MethodProperty implements Property {
 	 * property.
 	 */
 	private void invokeSetMethod(Object value) {
+	
 		try {
 			// Construct a temporary argument array only if needed
 			if (setArgs.length == 1)
@@ -577,7 +602,8 @@ public class MethodProperty implements Property {
 				setMethod.invoke(instance, args);
 			}
 		} catch (InvocationTargetException e) {
-			throw new MethodProperty.MethodException(e.getTargetException().fillInStackTrace());
+			Throwable targetException = e.getTargetException();
+			throw new MethodProperty.MethodException(targetException);
 		} catch (Exception e) {
 			throw new MethodProperty.MethodException(e);
 		}
@@ -603,11 +629,8 @@ public class MethodProperty implements Property {
 	 */
 	public class MethodException extends RuntimeException {
 
-		/** Creates new <code>MethodException</code> without a detail
-		 * message.
-		 */
-		public MethodException() {
-		}
+		/** Cause of the method exception */
+		private Throwable cause;	
 
 		/** Constructs a new <code>MethodException</code> with the
 		 * specified detail message.
@@ -624,7 +647,18 @@ public class MethodProperty implements Property {
 		 * @param exception cause of the exception
 		 */
 		public MethodException(Throwable cause) {
-			super(cause.toString());
+			this.cause = cause;
+		}
+		/**
+		 * @see java.lang.Throwable#getCause()
+		 */
+		public Throwable getCause() {
+			return cause;
+		}
+
+		/** Get the method property this exception originates from */
+		public MethodProperty getMethodProperty() {
+			return MethodProperty.this;	
 		}
 	}
 
