@@ -445,6 +445,7 @@ public class ListenerMethod implements EventListener {
 		private String message;
 
 		private MethodException(String message, Throwable cause) {
+			super(message);
 			this.cause = cause;
 		}
 
