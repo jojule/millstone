@@ -536,6 +536,13 @@ public class Theme extends DefaultHandler {
 			return !this.requirement.isMet(terminal);
 		}
 
+		/**
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString() {
+			return "not("+requirement+")";
+		}
+
 	}
 
 	/** Logical AND requirement. 
