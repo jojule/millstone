@@ -1174,8 +1174,7 @@ public class Table extends Select implements Action.Container,
         // Sorting
         boolean doSort = false;
         if (variables.containsKey("sortcolumn")) {
-            setSortColumnIndex(((Integer) variables.get("sortcolumn"))
-                    .intValue());
+            setSortContainerPropertyId(this.columnIdMap.get(variables.get("sortcolumn").toString()));
             doSort = true;
         }
         if (variables.containsKey("sortascending")) {
@@ -1383,7 +1382,7 @@ public class Table extends Select implements Action.Container,
 
         // Sorting
         if (getContainerDataSource() instanceof Container.Sortable) {
-            target.addVariable(this, "sortcolumn", this.getSortColumnIndex());
+            target.addVariable(this, "sortcolumn", this.columnIdMap.key(this.sortContainerPropertyId));
             target.addVariable(this, "sortascending", this.sortAscending);
         }
 
@@ -2042,40 +2041,6 @@ public class Table extends Select implements Action.Container,
                 || (this.sortContainerPropertyId == null && propertyId != null)) {
             this.sortContainerPropertyId = propertyId;
             sort();
-        }
-
-        // Assure visual refresh
-        refreshCurrentPage();
-    }
-
-    /**
-     * Get index of the currently sorted visible column.
-     * 
-     * @return Index of the currently sorted visible column.
-     */
-    private int getSortColumnIndex() {
-        // Get column index
-        Object[] cols = getVisibleColumns();
-        if (cols != null && this.sortContainerPropertyId != null) {
-            for (int i = 0; i < cols.length; i++) {
-                if (this.sortContainerPropertyId.equals(cols[i])) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * Set index of the currently sorted visible column.
-     * 
-     * @param i
-     *            Index of the currently sorted visible column.
-     */
-    private void setSortColumnIndex(int i) {
-        Object[] c = getVisibleColumns();
-        if (c != null && i >= 0 && i < c.length) {
-            setSortContainerPropertyId(c[i]);
         }
 
         // Assure visual refresh
