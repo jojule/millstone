@@ -60,8 +60,11 @@ public class Chat
 	/** Last time this chat application said something */
 	private long idleSince = (new Date()).getTime();
 
- 	/** framewindow for following the discussion and control */
+	/** framewindow for following the discussion and control */
 	FrameWindow frames = new FrameWindow("Millstone chat");
+
+	/** Last messages */
+	private static LinkedList lastMessages = new LinkedList();
 
 	/** Initialize the chat application */
 	public void init() {
@@ -74,7 +77,7 @@ public class Chat
 			new StreamResource(this, "discussion.html", this);
 		chatStream.setBufferSize(1);
 		chatStream.setCacheTime(0);
-		frames.getFrameset().newFrame(chatStream,"chatDiscussion");
+		frames.getFrameset().newFrame(chatStream, "chatDiscussion");
 		Window controls =
 			new Window(
 				"",
@@ -123,26 +126,32 @@ public class Chat
 			listUsers();
 
 		// Login to application
-		else if (event.getSource() == loginButton) {
+		else if (
+			event.getSource() == loginButton
+				&& loginName.toString().length() > 0) {
 
 			// Set user name
 			setUser(loginName.toString());
-	
+
 			// Hide logins controls
 			loginName.setVisible(false);
 			loginButton.setVisible(false);
-			
+
 			// Show say controls
 			say.setVisible(true);
 			sayText.setVisible(true);
 			sayText.focus();
-			
+
 			// Announce discussion joining
-			say("<i>" + getUser() + 
-			" joined the discussion (" + (new Date()).toString() + ")</i><br>");
+			say(
+				"<i>"
+					+ getUser()
+					+ " joined the discussion ("
+					+ (new Date()).toString()
+					+ ")</i><br>");
 		}
 	}
-	
+
 	/** List chatters to chat stream */
 	private void listUsers() {
 
@@ -159,7 +168,8 @@ public class Chat
 					String name = (String) c.getUser();
 					if (name != null && name.length() > 0) {
 						userlist.append("<li>" + name);
-						userlist.append(" (idle "
+						userlist.append(
+							" (idle "
 								+ ((new Date()).getTime() - c.idleSince) / 1000
 								+ "s)");
 					}
@@ -203,6 +213,13 @@ public class Chat
 
 		// Update idle time
 		idleSince = (new Date()).getTime();
+
+		// Update last messages
+		synchronized (lastMessages) {
+			lastMessages.addLast(text);
+			while (lastMessages.size() > 5)
+				lastMessages.removeFirst();
+		}
 	}
 
 	/** Open chat stream */
@@ -230,6 +247,14 @@ public class Chat
 				+ "</title>"
 				+ "</head><body>\n");
 
+		// Print last messages 
+		Object[] msgs;
+		synchronized (lastMessages) {
+			msgs = lastMessages.toArray();
+		}
+		for (int i = 0; i < msgs.length; i++)
+			printToStream(msgs[i].toString());
+
 		// Allways list the users
 		listUsers();
 
@@ -241,25 +266,35 @@ public class Chat
 
 		// If we have been logged in, say goodbye
 		if (listEntry != null) {
-			say(
-				"<i>"
-					+ getUser()
-					+ " left the chat ("
-					+ (new Date())
-					+ ")</i><br>");
+			if (getUser() != null)
+				say(
+					"<i>"
+						+ getUser()
+						+ " left the chat ("
+						+ (new Date())
+						+ ")</i><br>");
 
 			synchronized (chatters) {
 				chatters.remove(listEntry);
+				listEntry = null;
 			}
 		}
 		if (chatWriter != null)
 			chatWriter.close();
 
 		// Close the chat frames
-		frames.getFrameset().removeAllFrames();		
-		Window restartWin = new Window();
-		frames.getFrameset().newFrame(restartWin);
-		restartWin.addComponent(new Button("Restart chat",this,"close"));
+		if (frames != null) {
+			frames.getFrameset().removeAllFrames();
+			Window restartWin = new Window();
+			frames.getFrameset().newFrame(restartWin);
+			restartWin.addComponent(new Button("Restart chat", this, "close"));
+			frames = null;
+		}
+	}
+
+	/** Make sure that everybody leaves the chat */
+	public void finalize() {
+		leave();
 	}
 
 }
