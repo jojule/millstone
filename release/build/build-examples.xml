@@ -87,6 +87,7 @@
 		<include name="*.html"/>
 		<include name="millstoneorg.css"/>
                	<include name="img/*.gif"/>
+               	<include name="WEB-INF/**/*.xml"/>
 		
                	<include name="WEB-INF/src/**/*.java"/>
                	<include name="WEB-INF/src/**/*.jpg"/>
