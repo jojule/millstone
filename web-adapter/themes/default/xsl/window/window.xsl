@@ -25,12 +25,26 @@
           <INPUT TYPE="HIDDEN" ID="{$scrolldownid}" NAME="{$scrolldownid}" VALUE="{./integer[@name='scrolldown']/@value}"/>
           <INPUT TYPE="HIDDEN" ID="{$scrollleftid}" NAME="{$scrollleftid}" VALUE="{./integer[@name='scrollleft']/@value}"/>
         </xsl:if>     
-
+       
+		<!-- Probe client features -->
+  		<xsl:choose>
+  		  <xsl:when test="wa:probeClient()">
+		    <xsl:call-template name="client-probe" />
+		  </xsl:when>
+		  <xsl:otherwise>
+			<xsl:comment>
+			  <xsl:value-of select="browser:toString(wa:browser())"/>
+			</xsl:comment>
+		  </xsl:otherwise>
+		</xsl:choose>
+	    
         <!-- Sub component -->
         <xsl:apply-templates/>
         
         <!-- Popup layers -->
-        <xsl:apply-templates mode="popup"/>
+        <xsl:if test="$dhtml">
+        	<xsl:apply-templates mode="popup"/>
+        </xsl:if>
 
       </FORM>
     </BODY>
@@ -38,6 +52,12 @@
 </xsl:template>
 
 <xsl:template name="window-head">
+
+  	<xsl:if test="wa:probeClient()">
+      <NOSCRIPT>
+        <META http-equiv="refresh" content="0; url=?WA_NOSCRIPT=1" />
+      </NOSCRIPT>
+    </xsl:if>
 
     <META http-equiv="Content-Type" content="text/html; charset=UTF-8" />    
     <TITLE><xsl:value-of select="@caption" /></TITLE>
