@@ -23,7 +23,6 @@
 <xsl:template match="link" mode="core">
   <SPAN>
     <xsl:attribute name="CLASS">link-body<xsl:if test="./@style">-<xsl:value-of select="./@style"/></xsl:if></xsl:attribute>    
-    <xsl:if test="@icon"><IMG class="icon" SRC="{@icon}" /></xsl:if>
 	<A>
 	  <xsl:if test="not(@disabled='true')">
         <xsl:choose> 
@@ -41,6 +40,7 @@
           </xsl:otherwise>
         </xsl:choose>
       </xsl:if>
+      <xsl:if test="@icon"><IMG class="icon" SRC="{@icon}" /></xsl:if>
       <xsl:value-of select="@caption" />
     </A>
     </SPAN>	
