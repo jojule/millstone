@@ -5,6 +5,18 @@
 // 
 // ==========================================================================
 
+// --------------------------------------------------------------------------
+// Submit the millstone form.
+//
+// Params:
+//
+// Returns nothing
+// --------------------------------------------------------------------------
+
+function millstoneSubmit() {
+    showHourglassCursor();
+	document.millstone.submit();
+}
 
 // --------------------------------------------------------------------------
 // Get variable
@@ -40,7 +52,7 @@ function setVarById(id,value,immediate) {
   if (e) {
     e.value = value;
     if (immediate) {
-      document.millstone.submit();
+      millstoneSubmit();
     }
     return false; 
   }
@@ -463,7 +475,7 @@ function fireAction(actionListId,actionVariableId,actionKey) {
 	currentItem = document.getElementById(actionListId+"_ACTIVE_ITEM");
 	if (currentItem && actionVariable) {
 		actionVariable.value = currentItem.value+","+actionKey;
-		void(document.millstone.submit());	
+		void(millstoneSubmit());	
 	}
 }
 
@@ -603,8 +615,9 @@ function toggleCheckbox(id,immediate) {
   if (e) {
 	e.checked = (e.checked ? false : true);
 
-	if (immediate) document.millstone.submit();
-	
+	if (immediate) {
+		millstoneSubmit();
+	}
 	return false;
   }
   
@@ -658,9 +671,9 @@ function tableSelClick(inputid,key,immediate,mode) {
   }
 
   // Submit if in immediate mode  
-  if (immediate) 
-    document.millstone.submit();
-
+  if (immediate) {
+    millstoneSubmit();
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -707,9 +720,9 @@ function treeSelClick(inputid,key,immediate,mode) {
   }
 
   // Submit if in immediate mode  
-  if (immediate) 
-    document.millstone.submit();
-
+  if (immediate) {
+    millstoneSubmit();
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -787,7 +800,7 @@ function treeExpClick(expandid,collapseid,key,immediate) {
     }
   } else {
       // Fetch the missing items
-      document.millstone.submit();
+      millstoneSubmit();
   }
 }
 
@@ -899,8 +912,9 @@ function updateCalendar(calendarId, yearId, monthId, dayId, weekBegin, immediate
   }
 
   // Submit if in immediate mode  
-  if (immediate && immediate == "true") 
-    document.millstone.submit();
+  if (immediate && immediate == "true") {
+    millstoneSubmit();
+  }
 	
 }
 
@@ -977,8 +991,9 @@ function calSel(calendarId, dayVariableId, dayElementId, immediate) {
 	}	
 	
   // Submit if in immediate mode  
-  if (immediate) 
-    document.millstone.submit();
+  if (immediate) {
+    millstoneSubmit();
+  }
 }
 
 // ==========================================================================
@@ -1084,7 +1099,7 @@ function cancelModal() {
 //
 // Params: The window object to add the layer.
 //
-// Return:
+// Return: The layer
 // --------------------------------------------------------------------------
 function showOverlayLayer(win)
 {
@@ -1098,7 +1113,7 @@ function showOverlayLayer(win)
 	if (layer == null) {
 		var width =  win.document.body.scrollWidth;
 		var height = win.document.body.scrollHeight;
-		var divhtml = '<div  id=' + id + ' style="visibility:visible;left:' + left + 
+		var divhtml = '<div  id=' + id + ' style="zIndex:100000; visibility:visible;left:' + left + 
 			'px;top:' + top + 'px;width:' + width + 
 			'px;height:' + height + 'px;position:absolute;">' + 
 		html + '</div>';
@@ -1108,6 +1123,7 @@ function showOverlayLayer(win)
 	if (layer) {
 		showElement(layer);
 	}
+	return layer;
 }
 
 
@@ -1118,7 +1134,7 @@ function showOverlayLayer(win)
 //
 // Params: The window object containing the the layer.
 //
-// Return:
+// Return: nothing.
 // --------------------------------------------------------------------------
 function hideOverlayLayer(win) {
 	var layer = win.document.getElementById("ms_overlay");
@@ -1126,3 +1142,53 @@ function hideOverlayLayer(win) {
 		hideElement(layer);
 	}
 }
+
+
+// --------------------------------------------------------------------------
+// Shows an overlay div and sets the cursor to be style "wait" in current 
+// window. This can be used to show a hourglass cursor while processing.
+//
+// Params: nothing.
+//
+// Return: nothing.
+// --------------------------------------------------------------------------
+function showHourglassCursor() {
+	var layer = showOverlayLayer(window);
+	layer.style.cursor = "wait";
+}
+
+// ==========================================================================
+// ==========================================================================
+//
+// Window load and unload callback manager
+// 
+// ==========================================================================
+
+Function.prototype.andThen=function(g) {
+  var f=this;
+  return function() {
+    f();g();
+  }
+}
+
+function MillstoneEventManager() {
+
+  this.loadCallback=function () { }; // do nothing
+  this.unloadCallback=function () { }; // do nothing
+  this.submitCallback=function () { }; // do nothing
+
+  this.registerLoadCallback=function(callbackFunction) {
+    this.loadCallback=(this.loadCallback).andThen(callbackFunction);
+  }
+
+  this.registerUnloadCallback=function(callbackFunction) {
+    this.unloadCallback=(this.unloadCallback).andThen(callbackFunction);
+  }
+  
+  this.registerSubmitCallback=function(callbackFunction) {
+    this.submitCallback=(this.submitCallback).andThen(callbackFunction);
+  }
+}
+
+var millstoneEventManager = new MillstoneEventManager();
+
