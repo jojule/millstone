@@ -69,7 +69,7 @@ public class DirectoryThemeSource implements ThemeSource {
 	 * @throws FileNotFoundException if no theme files are found
 	 */
 	public DirectoryThemeSource(File path, WebAdapterServlet webAdapterServlet)
-		throws ThemeException,FileNotFoundException, IOException {
+		throws ThemeException, FileNotFoundException, IOException {
 
 		this.path = path;
 		this.theme = null;
@@ -83,14 +83,17 @@ public class DirectoryThemeSource implements ThemeSource {
 		File description = new File(path, Theme.DESCRIPTIONFILE);
 		if (description.exists()) {
 			try {
-			this.theme = new Theme(description);
+				this.theme = new Theme(description);
 			} catch (Exception e) {
 				throw new ThemeException(
-					"ServletThemeSource: Failed to load '"
-						+ path
-						+ "': "
-						+ e);			
+					"ServletThemeSource: Failed to load '" + path + "': " + e);
 			}
+
+			// Debug info
+			if (webAdapterServlet.isDebugMode()) {
+				Log.info("Added DirectoryThemeSource: " + this.path);
+			}
+
 		} else {
 			// There was no description file found. 
 			// Handle subdirectories recursively		
@@ -107,7 +110,7 @@ public class DirectoryThemeSource implements ThemeSource {
 
 			if (this.subdirs.isEmpty()) {
 				if (webAdapterServlet.isDebugMode()) {
-					Log.info(
+					Log.debug(
 						"DirectoryThemeSource: Ignoring empty directory: "
 							+ path);
 				}

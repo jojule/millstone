@@ -97,9 +97,6 @@ public class JarThemeSource implements ThemeSource {
 			this.name = this.name.substring(0, this.name.length() - 4);
 		}
 
-		if (webAdapterServlet.isDebugMode()) {
-			Log.info("JarThemeSource: " + this.file + ":" + this.path);
-		}
 
 		this.webAdapterServlet = webAdapterServlet;
 
@@ -112,6 +109,12 @@ public class JarThemeSource implements ThemeSource {
 				throw new ThemeException(
 					"JarThemeSource: Failed to load '" + path + "': " + e);
 			}
+
+			// Debug info
+			if (webAdapterServlet.isDebugMode()) {
+				Log.debug("Added JarThemeSource: " + this.file + ":" + this.path);
+			}
+
 		} else {
 			// There was no description file found. 
 			// Handle subdirectories recursively		

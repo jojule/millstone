@@ -112,7 +112,7 @@ public class ServletThemeSource implements ThemeSource {
 
 				// Debug info
 				if (webAdapterServlet.isDebugMode()) {
-					Log.info("ServletThemeSource: " + this.path);
+					Log.debug("Added ServletThemeSource: " + this.path);
 				}
 
 			} else {
