@@ -1596,8 +1596,10 @@ public class Table extends Select implements Action.Container,
         if (this.isEditable() && this.fieldFactory != null) {
             Field f = this.fieldFactory.createField(getContainerDataSource(),
                     rowId, colId, this);
-            f.setPropertyDataSource(property);
-            return f;
+            if (f != null) {
+                f.setPropertyDataSource(property);
+                return f;
+            }
         }
 
         return formatPropertyValue(rowId, colId, property);
