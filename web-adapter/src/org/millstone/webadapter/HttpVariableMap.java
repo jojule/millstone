@@ -293,6 +293,34 @@ public class HttpVariableMap {
 				}
 			}
 
+			// Support for setting arrays in format
+			// set-array:name=value1,value2,value3,...
+			else if (name.startsWith("set-array:")) {
+				int equalsIndex = name.indexOf('=');
+				if (equalsIndex < 0) return;
+
+				StringTokenizer commalist =
+					new StringTokenizer(name.substring(equalsIndex + 1), ",");
+				name = name.substring(10, equalsIndex);
+				String[] curVal = (String[]) values.get(name);
+				ArrayList elems = new ArrayList();
+
+				// Add old values if present.
+				if (curVal != null) {
+					for (int i = 0; i < curVal.length; i++)
+						elems.add(curVal[i]);
+				}
+				while (commalist.hasMoreTokens()) {
+					String token = commalist.nextToken();
+					if (token != null && token.length() > 0)
+						elems.add(token);
+				}
+				value = new String[elems.size()];
+				for (int i = 0; i < value.length; i++)
+					value[i] = (String) elems.get(i);
+
+			}
+
 			// Support name="array:name" value="val1,val2,val3" notation
 			// All the empty elements are ignored
 			else if (name.startsWith("array:")) {
@@ -339,11 +367,11 @@ public class HttpVariableMap {
 				p.add(name);
 				if (value != null)
 					values.put(name, value);
-			} 
-			
+			}
+
 			// If the owner can not be found
 			else {
-				
+
 				// If parameter has been mapped before, remove the old owner mapping
 				if (ref != null) {
 
@@ -351,12 +379,12 @@ public class HttpVariableMap {
 					idToNameMap.remove(name);
 					idToOwnerMap.remove(name);
 					idToTypeMap.remove(name);
-				} 
-			
+				}
+
 				// Add the parameter to set of non-variables
-				nonVariables.put(name,value);	
+				nonVariables.put(name, value);
 			}
-			
+
 		}
 
 		/** Get the set of all parameters connected to given variable owner */
