@@ -442,11 +442,11 @@ public class Table extends Select implements Action.Container {
 	public Object getCurrentPageFirstItemId() {
 
 		// Priorise index over id if indexes are supported
-		if (Container.Indexed.class.isAssignableFrom(items.getClass())) {
+		if (items instanceof Container.Indexed) {
 			int index = getCurrentPageFirstItemIndex();
 			Object id = null;
 			if (index >= 0 && index < size())
-				 ((Container.Indexed) items).getIdByIndex(index);
+				 id = ((Container.Indexed) items).getIdByIndex(index);
 			if (id != null && !id.equals(currentPageFirstItemId))
 				currentPageFirstItemId = id;
 		}
@@ -511,10 +511,14 @@ public class Table extends Select implements Action.Container {
 			currentPageFirstItemIndex = size() - 1;
 
 		// Refresh first item id
-		if (Container.Indexed.class.isAssignableFrom(items.getClass())) {
+		if (items instanceof Container.Indexed) {
+			try {
 			currentPageFirstItemId =
 				((Container.Indexed) items).getIdByIndex(
 					currentPageFirstItemIndex);
+			} catch (IndexOutOfBoundsException e) {
+				currentPageFirstItemId = null;
+			}
 			this.currentPageFirstItemIndex = currentPageFirstItemIndex;
 		} else {
 
@@ -749,7 +753,7 @@ public class Table extends Select implements Action.Container {
 
 		// Assure that the data source is ordered by making unordered 
 		// containers ordered by wrapping them
-		if (Container.Ordered.class.isAssignableFrom(newDataSource.getClass()))
+		if (newDataSource instanceof Container.Ordered)
 			super.setContainerDataSource(newDataSource);
 		else
 			super.setContainerDataSource(
@@ -914,7 +918,7 @@ public class Table extends Select implements Action.Container {
 					ahi.hasNext();
 					) {
 					Action[] aa =
-						((Action.Handler) ahi.next()).getActions(itemId,this);
+						((Action.Handler) ahi.next()).getActions(itemId, this);
 					if (aa != null)
 						for (int ai = 0; ai < aa.length; ai++) {
 							String key = actionMapper.key(aa[ai]);
@@ -1037,10 +1041,7 @@ public class Table extends Select implements Action.Container {
 				for (int j = 0; j < cols; j++) {
 					if (item != null) {
 						Property p = item.getItemProperty(colids[j]);
-						if (Property
-							.ValueChangeNotifier
-							.class
-							.isAssignableFrom(p.getClass())) {
+						if (p instanceof Property.ValueChangeNotifier) {
 							((Property.ValueChangeNotifier) p).addListener(
 								this);
 							listenedProperties.add(p);
@@ -1218,17 +1219,17 @@ public class Table extends Select implements Action.Container {
 		return true;
 	}
 
-/** Adds a new property to the table and show it as a visible column.
-	 * 
-	 * @see org.millstone.base.data.Container#addContainerProperty(Object, Class, Object)
-	 * 
-	 * @param propertyId Id of the proprty
-	 * @param type The class of the property
-	 * @param defaultValue The default value given for all existing items
-	 * @param columnHeader Explicit header of the column. If explicit header is not needed, this should be set null.
-	 * @param columnIcon Icon of the column. If icon is not needed, this should be set null.
-	 * @param columnAlignment Alignment of the column. Null implies align left.
-	 */
+	/** Adds a new property to the table and show it as a visible column.
+		 * 
+		 * @see org.millstone.base.data.Container#addContainerProperty(Object, Class, Object)
+		 * 
+		 * @param propertyId Id of the proprty
+		 * @param type The class of the property
+		 * @param defaultValue The default value given for all existing items
+		 * @param columnHeader Explicit header of the column. If explicit header is not needed, this should be set null.
+		 * @param columnIcon Icon of the column. If icon is not needed, this should be set null.
+		 * @param columnAlignment Alignment of the column. Null implies align left.
+		 */
 	public boolean addContainerProperty(
 		Object propertyId,
 		Class type,
@@ -1239,7 +1240,7 @@ public class Table extends Select implements Action.Container {
 		throws UnsupportedOperationException {
 		if (!this.addContainerProperty(propertyId, type, defaultValue))
 			return false;
-		int lastcol = visibleColumns.length-1;
+		int lastcol = visibleColumns.length - 1;
 		columnHeaders[lastcol] = columnHeader;
 		columnIcons[lastcol] = columnIcon;
 		String[] a = getColumnAlignments();
@@ -1268,6 +1269,7 @@ public class Table extends Select implements Action.Container {
 	public void containerItemSetChange(Container.ItemSetChangeEvent event) {
 		pageBuffer = null;
 		super.containerItemSetChange(event);
+		setCurrentPageFirstItemIndex(this.getCurrentPageFirstItemIndex());
 	}
 
 	/** Container datasource property set change. Table must flush its buffers on change.
@@ -1284,8 +1286,7 @@ public class Table extends Select implements Action.Container {
 	 * @throws UnsupportedOperationException if set to true.
 	 */
 	public void setNewItemsAllowed(boolean allowNewOptions)
-	throws UnsupportedOperationException
-	{
+		throws UnsupportedOperationException {
 		if (allowNewOptions)
 			throw new UnsupportedOperationException();
 	}
@@ -1294,9 +1295,7 @@ public class Table extends Select implements Action.Container {
 	 * @see org.millstone.base.ui.AbstractField#focus()
 	 * @throws UnsupportedOperationException if invoked.
 	 */
-	public void focus() 
-	throws UnsupportedOperationException
-	{
+	public void focus() throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}
 
