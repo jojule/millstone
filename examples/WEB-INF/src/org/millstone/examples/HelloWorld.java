@@ -30,7 +30,7 @@ public class HelloWorld extends org.millstone.base.Application {
         setMainWindow(main);
         
         /*
-         * - Create Add a label with the classic text
+         * - Create a label with the classic text
          * - Add the label to the main window
          */
         main.addComponent(new Label("Hello World!"));
