@@ -98,6 +98,7 @@
 
                	<include name="WEB-INF/lib/*.jar"/>
 
+              	<include name="WEB-INF/lib/**/*.txt"/>
               	<include name="WEB-INF/lib/**/*.xsl"/>
                	<include name="WEB-INF/lib/**/*.xml"/>
                	<include name="WEB-INF/lib/**/*.css"/>
