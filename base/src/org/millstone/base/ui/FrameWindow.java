@@ -214,7 +214,7 @@ public class FrameWindow extends Window {
 		 * <p>The new frame will be in the end of the frames list.</p>
 		 */
 		public Frame newFrame(Window window) {
-			return newFrame(window,size());
+			return newFrame(window, size());
 		}
 
 		/** Create new frame containing a window.
@@ -228,7 +228,8 @@ public class FrameWindow extends Window {
 			Frame f = new Frame();
 			f.window = window;
 			frames.add(index, f);
-			if (getApplication() != null) getApplication().addWindow(window);
+			if (getApplication() != null)
+				getApplication().addWindow(window);
 			requestRepaint();
 			return f;
 		}
@@ -238,7 +239,7 @@ public class FrameWindow extends Window {
 		 * <p>The new frame will be put in the end of the frames list..</p>
 		 */
 		public Frame newFrame(URL url, String name) {
-			return newFrame(url,name,size());
+			return newFrame(url, name, size());
 		}
 
 		/** Create new frame containing a resource.
@@ -246,7 +247,7 @@ public class FrameWindow extends Window {
 		 * <p>The new frame will be put in the end of the frames list..</p>
 		 */
 		public Frame newFrame(Resource resource, String name) {
-			return newFrame(resource,name,size());
+			return newFrame(resource, name, size());
 		}
 
 		/** Create new frame containing a url.
@@ -352,7 +353,7 @@ public class FrameWindow extends Window {
 		 * not found
 		 */
 		public Frame getFrame(int index) {
-			if (index != 0 && index <frames.size())
+			if (index != 0 && index < frames.size())
 				return (Frame) frames.get(index);
 			return null;
 		}
@@ -360,34 +361,37 @@ public class FrameWindow extends Window {
 		/** Paint the frameset */
 		private void paint(PaintTarget target) throws PaintException {
 			target.startTag("frameset");
-			StringBuffer widths = null;
-			for (Iterator i = frames.iterator(); i.hasNext();) {
-				Frame f = (Frame) i.next();
-				if (widths == null)
-					widths = new StringBuffer();
+			if (!frames.isEmpty()) {
+				StringBuffer widths = null;
+				for (Iterator i = frames.iterator(); i.hasNext();) {
+					Frame f = (Frame) i.next();
+					if (widths == null)
+						widths = new StringBuffer();
+					else
+						widths.append(',');
+					widths.append(f.width);
+				}
+				if (vertical)
+					target.addAttribute("rows", widths.toString());
 				else
-					widths.append(',');
-				widths.append(f.width);
-			}
-			if (vertical)
-				target.addAttribute("rows", widths.toString());
-			else
-				target.addAttribute("cols", widths.toString());
-			for (Iterator i = frames.iterator(); i.hasNext();) {
-				Frame f = (Frame) i.next();
-				if (Frameset.class.isAssignableFrom(f.getClass()))
-					((Frameset)f).paint(target);
-				else f.paint(target);
+					target.addAttribute("cols", widths.toString());
+				for (Iterator i = frames.iterator(); i.hasNext();) {
+					Frame f = (Frame) i.next();
+					if (Frameset.class.isAssignableFrom(f.getClass()))
+						 ((Frameset) f).paint(target);
+					else
+						f.paint(target);
+				}
 			}
 			target.endTag("frameset");
 		}
-		
+
 		/** Set the application for all the frames in this frameset */
 		private void setApplication(Application application) {
 			for (Iterator i = frames.iterator(); i.hasNext();) {
 				Frame f = (Frame) i.next();
-				if (f instanceof Frameset) 
-					((Frameset)f).setApplication(application);
+				if (f instanceof Frameset)
+					 ((Frameset) f).setApplication(application);
 				else if (f.window != null)
 					application.addWindow(f.window);
 			}
@@ -401,7 +405,8 @@ public class FrameWindow extends Window {
 	public void setApplication(Application application) {
 		super.setApplication(application);
 		Frameset fs = getFrameset();
-		if (fs != null) fs.setApplication(application);
+		if (fs != null)
+			fs.setApplication(application);
 	}
 
 	/** Frame windows does not support scrolling.
@@ -439,8 +444,8 @@ public class FrameWindow extends Window {
 	 * @see org.millstone.base.ui.ComponentContainer#addComponent(Component)
 	 * @throws UnsupportedOperationException if invoked.
 	 */
-	public void addComponent(Component c) 
-	throws UnsupportedOperationException {
+	public void addComponent(Component c)
+		throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}
 
