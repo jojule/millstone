@@ -17,8 +17,8 @@ This version of the Millstone is the first release of the Millstone
 Base 3.0 and Millstone WebAdapter 3.0 modules. 
 
 The development of Millstone has been branched as 'version-3_0 'to create 
-stable distribution of Millstone for production application and this is 
-the initial release of CVS branch 'version-3_0'.
+stable distribution of Millstone for production applications and this is 
+the initial release of that CVS branch.
 
 See changes.txt for information about what has been changed since the 
 previous release.
@@ -26,11 +26,11 @@ previous release.
 
 Future Releases
 ---------------
-The Millstone 3.0 version will be supported by making  support releases 
+The Millstone 3.0 version will be supported by making support releases 
 as necessary. Furhermore, the development of new features continues in 
 the CVS HEAD branch and new all features will be introduced there. These 
 updates will be released as development releases. Please check the 
-Millstone website for the latest releases.
+Millstone website for the latest support and development releases.
 
 
 The Millstone.org
