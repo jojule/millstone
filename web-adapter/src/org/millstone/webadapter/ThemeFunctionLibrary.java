@@ -189,7 +189,8 @@ public class ThemeFunctionLibrary {
 	 * in the body of the millstone-form.
 	 */
 	static public boolean probeClient() {
-		return (browser().performClientCheck() && !browser().isClientSideChecked());
+		return (
+			browser().performClientCheck() && !browser().isClientSideChecked());
 	}
 
 	/** Generate JavaScript for page header that handles 
@@ -442,26 +443,32 @@ public class ThemeFunctionLibrary {
 				break;
 		}
 
-		return "win = window.open(\"\",\""
-			+ getWindowTargetName(application, window)
-			+ "\",\""
-			+ features
-			+ "\");\n"
-			+ "if (win != null) {\n"
-			+ "if (win.location.href == \"about:blank\") {\n"
-			+ "win.location.href = \""
+		String script =
+			"win = window.open(\"\",\""
+				+ getWindowTargetName(application, window)
+				+ "\",\""
+				+ features
+				+ "\");\n"
+				+ "if (win != null) {"
+				+ "var form = null;";
+
+		if (browser()
+			.getJavaScriptVersion()
+			.supports(WebBrowser.JAVASCRIPT_1_5)
+			|| browser().getJavaScriptVersion().supports(
+				WebBrowser.JSCRIPT_1_0)) {
+			script += "try { form = win.document.forms[\"millstone\"];"
+				+ "} catch (e) { form = null;}";
+		} else {
+			script += "form = win.document.forms[\"millstone\"];";
+		}
+
+		script += "if (form != null) {"
+			+ "form.submit();"
+			+ "} else {win.location.href = \""
 			+ url
-			+ "\";}\n"
-			+ "else {\n"
-			+ "doc = win.document;\n"
-			+ "if (doc == null) {\n"
-			+ "win.navigate(\""
-			+ url
-			+ "\"); }\n"
-			+ "else { form = doc.forms[\"millstone\"];\n"
-			+ " //alert(\"form[0] = \" + form[0] + \"forms = \" + doc.forms);\n"
-			+ "if (form == null) {doc.location.reload();}"
-			+ "else {form.submit();}"
-			+ "}}}\n";
+			+ "\";}}";
+
+		return script;
 	}
 }
