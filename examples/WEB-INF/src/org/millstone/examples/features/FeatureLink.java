@@ -33,7 +33,8 @@ public class FeatureLink extends Feature {
 					"targetName",
 					"targetWidth",
 					"targetHeight",
-					"targetBorder"
+					"targetBorder",
+					"style"
 					 }));
 		cpp.setLayout(new OrderedLayout());
 

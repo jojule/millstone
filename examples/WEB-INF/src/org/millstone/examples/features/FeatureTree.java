@@ -43,9 +43,8 @@ public class FeatureTree extends Feature implements Action.Handler {
 		l.addComponent(show);
 
 		// Configuration
-		l.addComponent(
-			createPropertyPanel(
-				t,
+		ItemEditor cpp =
+			(ItemEditor) createPropertyPanel(t,
 				new String[] {
 					"enabled",
 					"visible",
@@ -57,7 +56,16 @@ public class FeatureTree extends Feature implements Action.Handler {
 					"readThrough",
 					"caption",
 					"style",
-					"description" }));
+					"description" });
+
+		Select t =
+			createSelect(
+				"Style",
+				new String[] { "default", "menu","dropmenu" },
+				new String[] { "Default", "Menu","Dropmenu" });
+		t.setNewItemsAllowed(true);
+		cpp.setPropertyEditor("style", t);
+		l.addComponent(cpp);
 
 		return l;
 	}
@@ -69,10 +77,13 @@ public class FeatureTree extends Feature implements Action.Handler {
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
 	protected String[] getDescriptionXHTML() {
-		return new String[]{"Tree","This is the Tree component.<br/>"
-			+ "It is used to display hierarchical data, such as for instance a menu or filesystem.<br/>"
-			+ "<br/>On the demo tab you can try out how the different properties "+
-			"affect the presentation of the component.","tree.jpg"};
+		return new String[] {
+			"Tree",
+			"This is the Tree component.<br/>"
+				+ "It is used to display hierarchical data, such as for instance a menu or filesystem.<br/>"
+				+ "<br/>On the demo tab you can try out how the different properties "
+				+ "affect the presentation of the component.",
+			"tree.jpg" };
 	}
 
 	private Action ACTION1 = new Action("Action 1");

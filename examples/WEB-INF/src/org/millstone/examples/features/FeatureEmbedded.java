@@ -44,7 +44,8 @@ public class FeatureEmbedded extends Feature {
 						"width",
 						"height",
 						"widthUnits",
-						"heightUnits" }));
+						"heightUnits" ,
+						"style"}));
 		cpp.setLayout(new OrderedLayout());
 		Select s = new Select("heightUnits");
 		s.addProperty("name", String.class, "");

@@ -41,6 +41,7 @@ public class FeatureOrderedLayout extends Feature {
 						  new Integer(OrderedLayout.ORIENTATION_VERTICAL),
 						  new Integer(OrderedLayout.ORIENTATION_FLOW)},
 			new String[]{"Horizontal","Vertical","Flow"});
+		s.setNewItemsAllowed(true);
 		cpp.setPropertyEditor("orientation", s);
 		
 		Select t = createSelect("Style", 

@@ -55,7 +55,8 @@ public class FeatureFileTransfer
 					"visible",
 					"caption",
 					"immediate",
-					"description" }));
+					"description" ,
+					"style"}));
 		download_window.setVisible(false);
 		l.addComponent(download_window);
 		

@@ -41,9 +41,8 @@ public class FeatureTable extends Feature implements Action.Handler {
 		t.addActionHandler(this);
 
 		// Configuration
-		ItemEditor cpp = 
-			(ItemEditor)createPropertyPanel(
-				t,
+		ItemEditor cpp =
+			(ItemEditor) createPropertyPanel(t,
 				new String[] {
 					"enabled",
 					"visible",
@@ -57,27 +56,52 @@ public class FeatureTable extends Feature implements Action.Handler {
 					"style",
 					"description" });
 		cpp.setLayout(new OrderedLayout());
-		Select s = createSelect("Column Header Mode", 
-			new Integer[]{new Integer(Table.COLUMN_HEADER_MODE_EXPLICIT),
-						  new Integer(Table.COLUMN_HEADER_MODE_EXPLICIT_DEFAULTS_ID),
-						  new Integer(Table.COLUMN_HEADER_MODE_HIDDEN),
-						  new Integer(Table.COLUMN_HEADER_MODE_ID)},
-			new String[]{"Explicit","Explicit defaults ID","Hidden","ID"});
+		Select s =
+			createSelect(
+				"Column Header Mode",
+				new Integer[] {
+					new Integer(Table.COLUMN_HEADER_MODE_EXPLICIT),
+					new Integer(Table.COLUMN_HEADER_MODE_EXPLICIT_DEFAULTS_ID),
+					new Integer(Table.COLUMN_HEADER_MODE_HIDDEN),
+					new Integer(Table.COLUMN_HEADER_MODE_ID)},
+				new String[] {
+					"Explicit",
+					"Explicit defaults ID",
+					"Hidden",
+					"ID" });
 		cpp.setPropertyEditor("columnHeaderMode", s);
-		
-		Select t = createSelect("Row Header Mode", 
-			new Integer[]{new Integer(Table.ROW_HEADER_MODE_EXPLICIT),
-						  new Integer(Table.ROW_HEADER_MODE_EXPLICIT_DEFAULTS_ID),
-						  new Integer(Table.ROW_HEADER_MODE_HIDDEN),
-						  new Integer(Table.ROW_HEADER_MODE_ICON_ONLY),
-						  new Integer(Table.ROW_HEADER_MODE_ID),
-						  new Integer(Table.ROW_HEADER_MODE_INDEX),
-						  new Integer(Table.ROW_HEADER_MODE_ITEM),
-						  new Integer(Table.ROW_HEADER_MODE_PROPERTY)},
-			new String[]{"Explicit","Explicit defaults ID","Hidden","Icon only","ID","Index","Item","Property"});
+
+		Select t =
+			createSelect(
+				"Row Header Mode",
+				new Integer[] {
+					new Integer(Table.ROW_HEADER_MODE_EXPLICIT),
+					new Integer(Table.ROW_HEADER_MODE_EXPLICIT_DEFAULTS_ID),
+					new Integer(Table.ROW_HEADER_MODE_HIDDEN),
+					new Integer(Table.ROW_HEADER_MODE_ICON_ONLY),
+					new Integer(Table.ROW_HEADER_MODE_ID),
+					new Integer(Table.ROW_HEADER_MODE_INDEX),
+					new Integer(Table.ROW_HEADER_MODE_ITEM),
+					new Integer(Table.ROW_HEADER_MODE_PROPERTY)},
+				new String[] {
+					"Explicit",
+					"Explicit defaults ID",
+					"Hidden",
+					"Icon only",
+					"ID",
+					"Index",
+					"Item",
+					"Property" });
 		cpp.setPropertyEditor("rowHeaderMode", t);
-					
-					
+
+		Select u =
+			createSelect(
+				"Style",
+				new String[] { "default", "list" },
+				new String[] { "Default", "List" });
+		u.setNewItemsAllowed(true);
+		cpp.setPropertyEditor("style", u);
+
 		l.addComponent(cpp);
 		return l;
 	}
@@ -99,13 +123,16 @@ public class FeatureTable extends Feature implements Action.Handler {
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
 	protected String[] getDescriptionXHTML() {
-		return new String[]{"Table","This is the Table component."
-			+ "It is used for displaying data in rows and columns "
-			+ "on multiple pages when neccessary.<br/>"
-			+ "It can be bound to an underlying datasource, such as for instance a database table.<br/>"
-			+ "<br/>"
-			+ "On the demo tab you can try out how the different properties "+
-			"affect the presentation of the component.","table.jpg"};
+		return new String[] {
+			"Table",
+			"This is the Table component."
+				+ "It is used for displaying data in rows and columns "
+				+ "on multiple pages when neccessary.<br/>"
+				+ "It can be bound to an underlying datasource, such as for instance a database table.<br/>"
+				+ "<br/>"
+				+ "On the demo tab you can try out how the different properties "
+				+ "affect the presentation of the component.",
+			"table.jpg" };
 	}
 
 	private Action ACTION1 = new Action("Action 1");

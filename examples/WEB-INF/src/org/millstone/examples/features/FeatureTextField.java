@@ -35,7 +35,8 @@ public class FeatureTextField extends Feature {
 					"readThrough",
 					"caption",
 					"description",
-					"secret" }));
+					"secret",
+					"style" }));
 
 		return l;
 	}

@@ -16,7 +16,7 @@ public class FeaturePanel extends Feature {
 		// Example panel
 		Panel show = new Panel("Panel caption");
 		show.addComponent(new Label("Label in Panel"));
-	
+
 		l.addComponent(show);
 
 		// Configuration
@@ -30,7 +30,16 @@ public class FeaturePanel extends Feature {
 					"style",
 					"width",
 					"height",
-					"description"});
+					"description" });
+
+		Select t =
+			createSelect(
+				"Style",
+				new String[] { "default", "light","strong" },
+				new String[] { "Default", "Light","Strong" });
+		t.setNewItemsAllowed(true);
+		cpp.setPropertyEditor("style", t);
+
 		l.addComponent(cpp);
 
 		return l;
@@ -45,10 +54,13 @@ public class FeaturePanel extends Feature {
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
 	protected String[] getDescriptionXHTML() {
-		return new String[]{"Panel","The panel container is a bordered and captioned container for components.<br/>"
-			+ "<br/>"
-			+ "On the demo tab you can try out how the different properties "+
-			"affect the presentation of the component.","panel.jpg"};
+		return new String[] {
+			"Panel",
+			"The panel container is a bordered and captioned container for components.<br/>"
+				+ "<br/>"
+				+ "On the demo tab you can try out how the different properties "
+				+ "affect the presentation of the component.",
+			"panel.jpg" };
 	}
 
 }

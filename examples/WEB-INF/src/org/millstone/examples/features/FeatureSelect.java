@@ -17,23 +17,21 @@ public class FeatureSelect extends Feature {
 
 		// Example panel
 		Panel show = new Panel("Select component");
-		
+
 		Vector options = new Vector();
 		options.add("Item 1");
 		options.add("Item 2");
 		options.add("Item 3");
 		options.add("Item 4");
-		
-		
+
 		Select s = new Select("Caption", options);
-		
-		
+
 		show.addComponent(s);
 		l.addComponent(show);
 
 		// Configuration
-		l.addComponent(
-			createPropertyPanel(
+		ItemEditor cpp = 
+			(ItemEditor)createPropertyPanel(
 				s,
 				new String[] {
 					"enabled",
@@ -46,27 +44,39 @@ public class FeatureSelect extends Feature {
 					"newItemsAllowed",
 					"style",
 					"caption",
-					"description" }));
+					"description" });
+
+		Select t =
+			createSelect(
+				"Style",
+				new String[] { "default", "optiongroup" },
+				new String[] { "Default", "Optiongroup" });
+		t.setNewItemsAllowed(true);
+		cpp.setPropertyEditor("style", t);
+		l.addComponent(cpp);
 
 		return l;
 	}
 
 	protected String getExampleSrc() {
 		return "Vector options = new Vector();\n"
-			  + "options.add(\"Item 1\");\n"
-			  + "options.add(\"Item 2\");\n"
-			  + "Select s = new Select(\"Caption\", options);";
-			
+			+ "options.add(\"Item 1\");\n"
+			+ "options.add(\"Item 2\");\n"
+			+ "Select s = new Select(\"Caption\", options);";
+
 	}
 	/**
 	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
 	 */
 	protected String[] getDescriptionXHTML() {
-		return new String[]{"Select","This is the Select control."+
-			"It is used for selecting either a single or multiple items from a list.<br/>"+
-			"<br/>"+
-			"On the demo tab you can try out how the different properties affect the"+
-			" presentation of the component.","select.jpg"};
+		return new String[] {
+			"Select",
+			"This is the Select control."
+				+ "It is used for selecting either a single or multiple items from a list.<br/>"
+				+ "<br/>"
+				+ "On the demo tab you can try out how the different properties affect the"
+				+ " presentation of the component.",
+			"select.jpg" };
 	}
 
 }

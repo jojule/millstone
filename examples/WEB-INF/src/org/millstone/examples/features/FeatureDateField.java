@@ -42,6 +42,7 @@ public class FeatureDateField extends Feature {
 		Select s = createSelect("Style", 
 			new String[]{"field","text","calendar"},
 			new String[]{"Field","Text","Calendar"});
+		s.setNewItemsAllowed(true);
 		cpp.setPropertyEditor("style", s);
 		l.addComponent(cpp);
 

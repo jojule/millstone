@@ -28,7 +28,8 @@ public class FeatureLabel extends Feature {
 					"enabled",
 					"visible",
 					"caption",
-					"description" }));
+					"description",
+					"style" }));
 
 		return l;
 	}

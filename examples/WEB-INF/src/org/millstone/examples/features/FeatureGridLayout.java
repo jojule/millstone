@@ -34,7 +34,8 @@ public class FeatureGridLayout extends Feature {
 					"caption",
 					"width",
 					"height",
-					"description" }));
+					"description",
+					"style" }));
 
 		return l;
 	}
