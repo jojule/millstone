@@ -123,7 +123,7 @@ public class MultipartRequest
 	/**
 		Define Character Encoding method here.
 	*/
-	private static String charEncoding = "utf-8";
+	private String charEncoding = "UTF-8";
 
 	// If not null, send debugging out here.
 	private PrintWriter debug = null;
@@ -196,7 +196,7 @@ public class MultipartRequest
 		executing, the method will utilise this new encoding, which may cause serious
 		problems.</p>
 	*/
-	public static synchronized void setEncoding(String enc) throws UnsupportedEncodingException
+	public  void setEncoding(String enc) throws UnsupportedEncodingException
 	{
 		if (enc==null || enc.trim()=="")
 			charEncoding = System.getProperty("file.encoding");
@@ -212,7 +212,7 @@ public class MultipartRequest
 	/**
 		Returns the current encoding method.
 	*/
-	public static String getEncoding()
+	public String getEncoding()
 	{
 		return charEncoding;
 	}
