@@ -37,7 +37,7 @@ PRE {
 	margin: 0px 
 	}
 	
-IMG.icon {vertical-align: middle; }
+IMG.icon {vertical-align: middle; border: none; }
 	
 /* General component properties ------------------------------------------ */
 .caption {
