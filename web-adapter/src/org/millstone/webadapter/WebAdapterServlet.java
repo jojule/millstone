@@ -603,11 +603,14 @@ public class WebAdapterServlet
 
 					// Use default theme if selected theme was not found.
 					if (transformerType == null) {
+						Theme defaultTheme = this.themeSource.getThemeByName(WebAdapterServlet.SESSION_DEFAULT_THEME);						 
+						if (defaultTheme == null) {
+							throw new ServletException("Default theme not found in the specified theme source(s).");
+						}
 						transformerType =
 							new UIDLTransformerType(
-								terminalType,
-								this.themeSource.getThemeByName(
-									WebAdapterServlet.SESSION_DEFAULT_THEME));
+								terminalType,defaultTheme
+								);
 					}
 
 					transformer =
