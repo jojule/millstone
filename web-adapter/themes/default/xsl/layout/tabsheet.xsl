@@ -4,7 +4,9 @@
 
 <xsl:template match="tabsheet" mode="core">
   <xsl:variable name="selectid" select="string[@name='selected']/@id" />
-  <INPUT TYPE="hidden" NAME="{$selectid}" VALUE="{string[@id=$selectid]/value}"/>
+  <xsl:if test="$dhtml">
+    <INPUT TYPE="hidden" NAME="{$selectid}" VALUE="{string[@id=$selectid]/value}"/>
+  </xsl:if>
   <TABLE CELLPADDING="0" CELLSPACING="0" BORDER="0">
     <TR>
       <TD>
@@ -14,12 +16,25 @@
 	          <TD>
 	            <xsl:attribute name="CLASS"><xsl:choose><xsl:when test="@selected='true'">tab-l-s</xsl:when><xsl:otherwise>tab-l</xsl:otherwise></xsl:choose></xsl:attribute>
 	          </TD>
-	          <TD onClick="document.millstone.{$selectid}.value='{@key}';document.millstone.submit();">
-	            <xsl:attribute name="CLASS"><xsl:choose><xsl:when test="@selected='true'">tab-c-s</xsl:when><xsl:otherwise>tab-c</xsl:otherwise></xsl:choose></xsl:attribute>
-			    <NOBR>
-			      <xsl:if test="@icon"><IMG SRC="{@icon}"/></xsl:if>
-				  <xsl:value-of select="@caption"/>
-				</NOBR>
+	          <TD>
+	            <xsl:choose>
+	              <xsl:when test="$dhtml"> 
+	                <xsl:attribute name="ONCLICK">document.millstone.<xsl:value-of select="$selectid"/>.value='<xsl:value-of select="@key"/>';document.millstone.submit();</xsl:attribute>
+	            	<xsl:attribute name="CLASS"><xsl:choose><xsl:when test="@selected='true'">tab-c-s</xsl:when><xsl:otherwise>tab-c</xsl:otherwise></xsl:choose></xsl:attribute>
+			    	<NOBR>
+			      	  <xsl:if test="@icon"><IMG SRC="{@icon}"/></xsl:if>
+				  	  <xsl:value-of select="@caption"/>
+					</NOBR>
+	              </xsl:when>
+	              <xsl:otherwise>
+			    	<NOBR>
+			      	  <xsl:if test="@icon"><IMG SRC="{@icon}"/></xsl:if>
+				  	  <INPUT TYPE="submit" NAME="set:{$selectid}={@key}" VALUE="{@caption}">
+	            	    <xsl:attribute name="CLASS"><xsl:choose><xsl:when test="@selected='true'">tab-c-s</xsl:when><xsl:otherwise>tab-c</xsl:otherwise></xsl:choose></xsl:attribute>
+	            	  </INPUT>
+					</NOBR>
+	              </xsl:otherwise>
+	            </xsl:choose>
 	          </TD>
 	          <TD>
 	            <xsl:attribute name="CLASS"><xsl:choose><xsl:when test="@selected='true'">tab-r-s</xsl:when><xsl:otherwise>tab-r</xsl:otherwise></xsl:choose></xsl:attribute>

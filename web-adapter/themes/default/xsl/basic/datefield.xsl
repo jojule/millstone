@@ -81,13 +81,16 @@
         <!-- Select the current day -->
         <xsl:variable name="yearid"><xsl:value-of select="./integer[@name='year']/@id"/></xsl:variable>
         <xsl:variable name="monthid"><xsl:value-of select="./integer[@name='month']/@id"/></xsl:variable>
-        <xsl:variable name="dayid"><xsl:value-of select="./integer[@name='day']/@id"/></xsl:variable>  
-        <SCRIPT LANGUAGE="JavaScript">
+        <xsl:variable name="dayid"><xsl:value-of select="./integer[@name='day']/@id"/></xsl:variable>
+        
+        <xsl:if test="$dhtml">
+          <SCRIPT LANGUAGE="JavaScript">
             updateCalendar('<xsl:value-of select="$calendarid"/>','<xsl:value-of select="$yearid"/>','<xsl:value-of select="$monthid"/>','<xsl:value-of select="$dayid"/>','<xsl:value-of select="$weekbegin"/>');
             <xsl:if test="./integer[@name='day']">
                 calendarDaySelect('<xsl:value-of select="$calendarid"/>',<xsl:value-of select="./integer[@name='day']/@value"/>);
              </xsl:if>
-        </SCRIPT>
+          </SCRIPT>
+        </xsl:if>
       </TD>
 
       <!-- Time -->

@@ -11,8 +11,8 @@
 
     <!-- Create dummy images for expanded/collapsed state -->
     <!-- These are used in javascript to change the images -->
-    <IMG ID="{array[@name='collapse']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/menu/expanded.gif')}"/>  
-    <IMG ID="{array[@name='expand']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/menu/collapsed.gif')}"/>  
+    <IMG ID="{array[@name='collapse']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/menu/expanded.gif')}" ALT=""/>  
+    <IMG ID="{array[@name='expand']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/menu/collapsed.gif')}" ALT=""/>  
 
     <!-- Actions -->
     <xsl:variable name="actionlistid"><xsl:value-of select="generate-id(./actions)"/></xsl:variable>
@@ -33,8 +33,10 @@
     </xsl:for-each>
   </DIV>
 
-  <!-- Output variables -->  
-  <xsl:call-template name="tree-variables" />  	
+  <!-- Output variables -->
+  <xsl:if test="$dhtml">
+  	<xsl:call-template name="tree-variables" />
+  </xsl:if>
 </xsl:template>
 
 <xsl:template match="tree" mode="core">
@@ -51,7 +53,6 @@
   
   <xsl:for-each select="node|leaf">
     <xsl:apply-templates select="." mode="tree">
-      <xsl:with-param name="selectable"><xsl:value-of select="(../@selectable) and not(../@readonly)"/></xsl:with-param>
       <xsl:with-param name="selectmode"><xsl:value-of select="../@selectmode"/></xsl:with-param>
       <xsl:with-param name="nodeselect"><xsl:value-of select="../@nodeselect"/></xsl:with-param>
       <xsl:with-param name="selectedid"><xsl:value-of select="../array[@name='selected']/@id"/></xsl:with-param>
@@ -65,14 +66,16 @@
 
 
   <!-- Output variables -->  
-  <xsl:call-template name="tree-variables" />  
+  <xsl:if test="$dhtml">
+  	<xsl:call-template name="tree-variables" />
+  </xsl:if>
 	
 </xsl:template>
 
+
 <!-- Tree node template -->
 
-<xsl:template match="node|leaf" mode="tree">
-<xsl:param name="selectable"/>
+<xsl:template match="node" mode="tree">
 <xsl:param name="selectmode"/>
 <xsl:param name="nodeselect"/>
 <xsl:param name="selectedid"/>
@@ -84,70 +87,68 @@
 
 <xsl:variable name="isLastNode" select="not(following-sibling::node | following-sibling::leaf)" />
 <xsl:variable name="isLeafNode" select="local-name()='leaf'" />
-<xsl:variable name="isSelectable" select="($selectable)  and (($selectmode='multi') or ($selectmode='single'))" />	
 <xsl:variable name="childid"><xsl:value-of select="$expandid"/>_<xsl:value-of select="@key"/></xsl:variable>
 
 <TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
   <TR>
     <TD>     
       <!-- Check if node has following siblings -->
-		<xsl:if test="not($isLastNode)">
-			<xsl:attribute name="BACKGROUND"><xsl:value-of select="wa:resource('img/tree/dots.gif')"/> 
-			</xsl:attribute>
-		</xsl:if>
+      <xsl:if test="not($isLastNode)">
+		<xsl:attribute name="BACKGROUND"><xsl:value-of select="wa:resource('img/tree/dots.gif')"/> 
+		</xsl:attribute>
+	  </xsl:if>
 
-		<xsl:choose>
-		
-		  <!-- Leaf nodes -->
-          <xsl:when test="$isLeafNode">
-            <IMG BORDER="0" CLASS="{$class}">
-              <xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/leaf.gif')"/></xsl:attribute>
-            </IMG>
-          </xsl:when>
-          
-          
-          <!-- Internal nodes -->
-          <xsl:otherwise>
-            <xsl:attribute name="ONCLICK">treeExpClick('<xsl:value-of select="$expandid"/>','<xsl:value-of select="$collapseid"/>','<xsl:value-of select="@key"/>','<xsl:value-of select="$immediate"/>')</xsl:attribute>
-            
-            <IMG ID="img{$childid}" BORDER="0" CLASS="{$class}">
             <xsl:choose>
-              <xsl:when test="@expanded">
-                <xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/expanded.gif')"/></xsl:attribute>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/collapsed.gif')"/></xsl:attribute>
-              </xsl:otherwise>
-            </xsl:choose>
-            </IMG>
-          </xsl:otherwise>
-        </xsl:choose>
+              <xsl:when test="$dhtml">           
+            	<IMG ID="img{$childid}" BORDER="0" CLASS="{$class}">
+            	<xsl:attribute name="ONCLICK">treeExpClick('<xsl:value-of select="$expandid"/>','<xsl:value-of select="$collapseid"/>','<xsl:value-of select="@key"/>','<xsl:value-of select="$immediate"/>')</xsl:attribute>
+            	<xsl:choose>
+              	  <xsl:when test="@expanded">
+                	<xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/expanded.gif')"/></xsl:attribute>
+                	<xsl:attribute name="ALT">-</xsl:attribute>
+              	  </xsl:when>
+              	  <xsl:otherwise>
+                	<xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/collapsed.gif')"/></xsl:attribute>
+                	<xsl:attribute name="ALT">+</xsl:attribute>
+              	  </xsl:otherwise>
+            	</xsl:choose>
+                </IMG>
+          	  </xsl:when>
+
+          	  <!-- Non-js version using image inputs -->
+          	  <xsl:otherwise>
+            	<INPUT TYPE="image" ID="img{$childid}" BORDER="0" CLASS="{$class}">
+            	<xsl:choose>
+              	  <xsl:when test="@expanded">
+            		<xsl:attribute name="NAME">set:<xsl:value-of select="$collapseid"/>=<xsl:value-of select="@key"/></xsl:attribute>
+                	<xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/expanded.gif')"/></xsl:attribute>
+                	<xsl:attribute name="ALT">-</xsl:attribute>
+              	  </xsl:when>
+              	  <xsl:otherwise>
+            		<xsl:attribute name="NAME">set:<xsl:value-of select="$expandid"/>=<xsl:value-of select="@key"/></xsl:attribute>
+                	<xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/collapsed.gif')"/></xsl:attribute>
+                	<xsl:attribute name="ALT">+</xsl:attribute>
+              	  </xsl:otherwise>
+            	</xsl:choose>
+                </INPUT>
+          	  </xsl:otherwise>
+          	</xsl:choose>
 
     </TD>
-
+    
     <!-- Icon and caption cell -->
-    <TD>          
-      <xsl:apply-templates select="./al">
-   	    <xsl:with-param name="actionlistid"><xsl:value-of select="$actionlistid" /></xsl:with-param>
-      </xsl:apply-templates>   
-      <A>      
-        <!-- Current selection state -->
-        <xsl:attribute name="CLASS"><xsl:value-of select="$class" />-node<xsl:if test="@selected">-selected</xsl:if></xsl:attribute>    
-
-        <!-- Selection -->
-        <xsl:if test="$isSelectable">		
-          <xsl:variable name="selid"><xsl:value-of select="$selectedid"/>_<xsl:value-of select="@key"/></xsl:variable>  
-          <xsl:attribute name="ID"><xsl:value-of select="$selid"/></xsl:attribute>
-          <xsl:attribute name="HREF">javascript:treeSelClick('<xsl:value-of select="$selectedid"/>','<xsl:value-of select="@key"/>','<xsl:value-of select="$immediate"/>','<xsl:value-of select="$selectmode"/>')</xsl:attribute>            
-        </xsl:if>
-
-        <NOBR>
-          <xsl:if test="@icon"><IMG class="icon" SRC="{@icon}" BORDER="0" /></xsl:if>
-          <xsl:value-of select="@caption" />
-        </NOBR>
-      </A>              
+    <TD>
+      <xsl:call-template name="tree-caption">
+  		<xsl:with-param name="class"><xsl:value-of select="$class"/>-node<xsl:if test="@selected">-selected</xsl:if></xsl:with-param>
+		<xsl:with-param name="selectmode"><xsl:value-of select="$selectmode"/></xsl:with-param>
+  		<xsl:with-param name="actionlistid"><xsl:value-of select="$actionlistid"/></xsl:with-param>
+  		<xsl:with-param name="selectedid"><xsl:value-of select="$selectedid"/></xsl:with-param>
+  		<xsl:with-param name="immediate"><xsl:value-of select="$immediate"/></xsl:with-param>
+      </xsl:call-template>    
 	</TD>	
   </TR>
+  
+  <!-- Subnodes -->
   <xsl:if test="node|leaf">
     <TR>
       <xsl:attribute name="ID"><xsl:value-of select="$childid"/></xsl:attribute>    
@@ -162,7 +163,6 @@
       </TD>
       <TD>
 		<xsl:apply-templates select="leaf|node" mode="tree">
-			<xsl:with-param name="selectable"><xsl:value-of select="$selectable"/></xsl:with-param>
 			<xsl:with-param name="selectmode"><xsl:value-of select="$selectmode"/></xsl:with-param>
 			<xsl:with-param name="nodeselect"><xsl:value-of select="$nodeselect"/></xsl:with-param>
 			<xsl:with-param name="selectedid"><xsl:value-of select="$selectedid"/></xsl:with-param>
@@ -179,10 +179,144 @@
 </xsl:template>
 
 
+<!-- Tree leaf template -->
+
+<xsl:template match="leaf" mode="tree">
+<xsl:param name="selectmode"/>
+<xsl:param name="nodeselect"/>
+<xsl:param name="selectedid"/>
+<xsl:param name="expandid"/>
+<xsl:param name="collapseid"/>
+<xsl:param name="class"/>
+<xsl:param name="immediate"/>
+<xsl:param name="actionlistid"/>
+
+<xsl:variable name="isLastNode" select="not(following-sibling::node | following-sibling::leaf)" />
+<xsl:variable name="childid"><xsl:value-of select="$expandid"/>_<xsl:value-of select="@key"/></xsl:variable>
+
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0">
+  <TR>
+    <TD>     
+      <!-- Check if node has following siblings -->
+	  <xsl:if test="not($isLastNode)">
+		<xsl:attribute name="BACKGROUND"><xsl:value-of select="wa:resource('img/tree/dots.gif')"/></xsl:attribute>
+	  </xsl:if>
+
+      <IMG BORDER="0" CLASS="{$class}" ALT="">
+        <xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/leaf.gif')"/></xsl:attribute>
+      </IMG>
+    </TD>
+
+    <!-- Icon and caption cell -->
+    <TD>          
+      <xsl:call-template name="tree-caption">
+  		<xsl:with-param name="class"><xsl:value-of select="$class"/>-node<xsl:if test="@selected">-selected</xsl:if></xsl:with-param>
+		<xsl:with-param name="selectmode"><xsl:value-of select="$selectmode"/></xsl:with-param>
+  		<xsl:with-param name="actionlistid"><xsl:value-of select="$actionlistid"/></xsl:with-param>
+  		<xsl:with-param name="selectedid"><xsl:value-of select="$selectedid"/></xsl:with-param>
+  		<xsl:with-param name="immediate"><xsl:value-of select="$immediate"/></xsl:with-param>
+      </xsl:call-template>
+	</TD>	
+  </TR>
+</TABLE>
+
+</xsl:template>
+
+
+
+<!-- Tree node/leaf Caption Template -->
+<xsl:template name="tree-caption">
+  
+  <xsl:param name="class"/>
+  <xsl:param name="selectmode"/>
+  <xsl:param name="actionlistid"/>
+  <xsl:param name="selectedid"/>
+  <xsl:param name="immediate"/>
+
+
+  <xsl:variable name="isSelectable" select="($selectmode='multi') or ($selectmode='single')" />	
+
+  <!-- Action lists -->
+  <xsl:apply-templates select="./al">
+    <xsl:with-param name="actionlistid"><xsl:value-of select="$actionlistid" /></xsl:with-param>
+  </xsl:apply-templates>   
+  
+  
+  <!-- Selection -->
+  <xsl:choose>
+    <xsl:when test="$isSelectable">
+      <xsl:choose>
+      
+        <!-- DHTML/Javascript selection -->
+        <xsl:when test="$dhtml">
+  		  <A>      
+    		<!-- Current selection state -->
+    		<xsl:attribute name="CLASS"><xsl:value-of select="$class" /></xsl:attribute>    
+      	  	<xsl:variable name="selid"><xsl:value-of select="$selectedid"/>_<xsl:value-of select="@key"/></xsl:variable>  
+			<xsl:attribute name="ID"><xsl:value-of select="$selid"/></xsl:attribute>
+      	  	<xsl:attribute name="HREF">javascript:treeSelClick('<xsl:value-of select="$selectedid"/>','<xsl:value-of select="@key"/>','<xsl:value-of select="$immediate"/>','<xsl:value-of select="$selectmode"/>')</xsl:attribute>
+    		<NOBR>
+      		  <xsl:if test="@icon"><IMG class="icon" SRC="{@icon}" BORDER="0" /></xsl:if>
+      		  <xsl:value-of select="@caption" />
+    		</NOBR>
+  		  </A>              
+      	</xsl:when>
+      	
+      	<!-- Non-DHTML/Javascript version uses submit for selection -->
+      	<xsl:otherwise>
+   		  <NOBR>
+   		    <xsl:if test="@icon"><IMG class="icon" SRC="{@icon}" BORDER="0" /></xsl:if>
+            <!-- Radiobutton or button for selection -->
+            <INPUT>
+                <xsl:choose>
+                  <xsl:when test="$selectmode='multi'">
+                     <xsl:attribute name="TYPE">CHECKBOX</xsl:attribute>
+                     <xsl:attribute name="NAME"><xsl:value-of select="$selectedid"/></xsl:attribute>
+                     <xsl:attribute name="VALUE"><xsl:value-of select="@key"/></xsl:attribute>
+             		 <xsl:if test="@selected='true'">
+                	   <xsl:attribute name="CHECKED">CHECKED</xsl:attribute>
+              		 </xsl:if>
+                  </xsl:when>
+                  <xsl:when test="$selectmode='single' and $immediate='true'">
+                     <xsl:attribute name="TYPE">SUBMIT</xsl:attribute>
+                     <xsl:attribute name="NAME">set:<xsl:value-of select="$selectedid"/>=<xsl:value-of select="@key"/></xsl:attribute>
+                     <xsl:attribute name="VALUE"><xsl:value-of select="@caption"/></xsl:attribute>
+    				 <xsl:attribute name="CLASS"><xsl:value-of select="$class" /></xsl:attribute>    
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:attribute name="TYPE">RADIO</xsl:attribute>
+                    <xsl:attribute name="NAME"><xsl:value-of select="$selectedid"/></xsl:attribute>
+                    <xsl:attribute name="VALUE"><xsl:value-of select="@key"/></xsl:attribute>
+             		<xsl:if test="@selected='true'">
+                	  <xsl:attribute name="CHECKED">CHECKED</xsl:attribute>
+              		</xsl:if>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </INPUT>   		    
+             <xsl:if test="not($selectmode='single' and $immediate='true')">
+               <xsl:value-of select="@caption" />
+             </xsl:if>
+      	  </NOBR>
+      	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:when>
+    
+    <!-- Non-selectable tree caption -->
+    <xsl:otherwise>
+      <NOBR>
+        <xsl:if test="@icon"><IMG class="icon" SRC="{@icon}" BORDER="0" /></xsl:if>
+        <xsl:value-of select="@caption" />
+      </NOBR>
+    </xsl:otherwise>
+  </xsl:choose>
+
+</xsl:template>
+
+
 
 <!-- Menu node template -->
 
-<xsl:template match="node|leaf" mode="menu">
+<xsl:template match="node" mode="menu">
 <xsl:param name="level"/>
 <xsl:param name="selectable"/>
 <xsl:param name="selectmode"/>
@@ -195,7 +329,6 @@
 <xsl:param name="actionlistid"/>
 
 <xsl:variable name="isLastNode" select="not(following-sibling::node | following-sibling::leaf)" />
-<xsl:variable name="isLeafNode" select="local-name()='leaf'" />
 <xsl:variable name="isSelectable" select="($selectable)  and (($selectmode='multi') or ($selectmode='single'))" />	
 <xsl:variable name="childid"><xsl:value-of select="$expandid"/>_<xsl:value-of select="@key"/></xsl:variable>
   <DIV>
@@ -211,49 +344,53 @@
 
     <NOBR>
 
-	<!-- Menu indent -->
-    <xsl:choose>
-      <!-- Leaf nodes -->
-      <xsl:when test="$isLeafNode">
-        <IMG BORDER="0" CLASS="{$class}-exp">
-          <xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/menu/leaf.gif')"/></xsl:attribute>
-        </IMG>
-      </xsl:when>
-          
-      <!-- Internal nodes -->
-      <xsl:otherwise>
-            
-        <IMG ID="img{$childid}" BORDER="0" CLASS="{$class}-exp">
-          <xsl:if test="$dhtml">
-            <xsl:attribute name="ONCLICK">treeExpClick('<xsl:value-of select="$expandid"/>','<xsl:value-of select="$collapseid"/>','<xsl:value-of select="@key"/>','<xsl:value-of select="$immediate"/>')</xsl:attribute>
-          </xsl:if>
-                  
-          <xsl:choose>
-            <xsl:when test="@expanded">
-              <xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/menu/expanded.gif')"/></xsl:attribute>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/menu/collapsed.gif')"/></xsl:attribute>
-            </xsl:otherwise>
-          </xsl:choose>
-        </IMG>
-      </xsl:otherwise>
-    </xsl:choose>
 
-    <xsl:apply-templates select="./al">
-      <xsl:with-param name="actionlistid"><xsl:value-of select="$actionlistid" /></xsl:with-param>
-    </xsl:apply-templates>   
+            <xsl:choose>
+              <xsl:when test="$dhtml">           
+            	<IMG ID="img{$childid}" BORDER="0" CLASS="{$class}">
+            	<xsl:attribute name="ONCLICK">treeExpClick('<xsl:value-of select="$expandid"/>','<xsl:value-of select="$collapseid"/>','<xsl:value-of select="@key"/>','<xsl:value-of select="$immediate"/>')</xsl:attribute>
+            	<xsl:choose>
+              	  <xsl:when test="@expanded">
+                	<xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/menu/expanded.gif')"/></xsl:attribute>
+                	<xsl:attribute name="ALT">-</xsl:attribute>
+              	  </xsl:when>
+              	  <xsl:otherwise>
+                	<xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/menu/collapsed.gif')"/></xsl:attribute>
+                	<xsl:attribute name="ALT">+</xsl:attribute>
+              	  </xsl:otherwise>
+            	</xsl:choose>
+                </IMG>
+          	  </xsl:when>
 
-    <!-- Icon and caption -->
-      <xsl:choose>      
-        <xsl:when test="not($dhtml)">
-          <INPUT TYPE="submit" name="set:{$selectedid}={@key}" value="{@caption}" />
-        </xsl:when>
-        <xsl:otherwise>
-          <xsl:if test="@icon"><IMG class="icon" SRC="{@icon}" /></xsl:if>
-         <xsl:value-of select="@caption" />
-        </xsl:otherwise>
-      </xsl:choose>
+          	  <!-- Non-js expand/collapse using image inputs -->
+          	  <xsl:otherwise>
+            	<INPUT TYPE="image" ID="img{$childid}" BORDER="0" CLASS="{$class}">
+            	<xsl:choose>
+              	  <xsl:when test="@expanded">
+            		<xsl:attribute name="NAME">set:<xsl:value-of select="$collapseid"/>=<xsl:value-of select="@key"/></xsl:attribute>
+                	<xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/menu/expanded.gif')"/></xsl:attribute>
+                	<xsl:attribute name="ALT">-</xsl:attribute>
+              	  </xsl:when>
+              	  <xsl:otherwise>
+            		<xsl:attribute name="NAME">set:<xsl:value-of select="$expandid"/>=<xsl:value-of select="@key"/></xsl:attribute>
+                	<xsl:attribute name="SRC"><xsl:value-of select="wa:resource('img/tree/menu/collapsed.gif')"/></xsl:attribute>
+                	<xsl:attribute name="ALT">+</xsl:attribute>
+              	  </xsl:otherwise>
+            	</xsl:choose>
+                </INPUT>
+          	  </xsl:otherwise>
+          	</xsl:choose>
+    
+
+      <!-- Icon and caption -->
+      <xsl:call-template name="tree-caption">
+  		<xsl:with-param name="class"><xsl:value-of select="$class"/>-<xsl:value-of select="$level" /><xsl:if test="@selected">-selected</xsl:if></xsl:with-param>
+		<xsl:with-param name="selectmode"><xsl:value-of select="$selectmode"/></xsl:with-param>
+  		<xsl:with-param name="actionlistid"><xsl:value-of select="$actionlistid"/></xsl:with-param>
+  		<xsl:with-param name="selectedid"><xsl:value-of select="$selectedid"/></xsl:with-param>
+  		<xsl:with-param name="immediate"><xsl:value-of select="$immediate"/></xsl:with-param>
+      </xsl:call-template>
+    
     </NOBR>
   </DIV>
   <xsl:if test="node|leaf">
@@ -274,6 +411,54 @@
     </DIV>
   </xsl:if>
 </xsl:template>
+
+
+
+<!-- Menu leaf template -->
+
+<xsl:template match="leaf" mode="menu">
+<xsl:param name="level"/>
+<xsl:param name="selectable"/>
+<xsl:param name="selectmode"/>
+<xsl:param name="nodeselect"/>
+<xsl:param name="selectedid"/>
+<xsl:param name="expandid"/>
+<xsl:param name="collapseid"/>
+<xsl:param name="class"/>
+<xsl:param name="immediate"/>
+<xsl:param name="actionlistid"/>
+
+<xsl:variable name="isLastNode" select="not(following-sibling::node | following-sibling::leaf)" />
+<xsl:variable name="isSelectable" select="($selectable)  and (($selectmode='multi') or ($selectmode='single'))" />	
+<xsl:variable name="childid"><xsl:value-of select="$expandid"/>_<xsl:value-of select="@key"/></xsl:variable>
+  <DIV>
+    <!-- Current selection state -->
+    <xsl:attribute name="CLASS"><xsl:value-of select="$class" />-<xsl:value-of select="$level" /><xsl:if test="@selected">-selected</xsl:if></xsl:attribute>    
+
+    <!-- Selection -->
+    <xsl:if test="$isSelectable and $dhtml">
+      <xsl:variable name="selid"><xsl:value-of select="$selectedid"/>_<xsl:value-of select="@key"/></xsl:variable>  
+      <xsl:attribute name="ID"><xsl:value-of select="$selid"/></xsl:attribute>
+      <xsl:attribute name="ONCLICK">javascript:treeSelClick('<xsl:value-of select="$selectedid"/>','<xsl:value-of select="@key"/>','<xsl:value-of select="$immediate"/>','<xsl:value-of select="$selectmode"/>')</xsl:attribute>
+    </xsl:if>
+
+    <NOBR>
+
+      <IMG ALT="" SRC="{wa:resource('img/tree/menu/leaf.gif')}" ID="img{$childid}" BORDER="0" CLASS="{$class}-exp"/>
+          
+      <!-- Actions Icon and caption -->
+      <xsl:call-template name="tree-caption">
+  		<xsl:with-param name="class"><xsl:value-of select="$class"/>-<xsl:value-of select="$level" /><xsl:if test="@selected">-selected</xsl:if></xsl:with-param>
+		<xsl:with-param name="selectmode"><xsl:value-of select="$selectmode"/></xsl:with-param>
+  		<xsl:with-param name="actionlistid"><xsl:value-of select="$actionlistid"/></xsl:with-param>
+  		<xsl:with-param name="selectedid"><xsl:value-of select="$selectedid"/></xsl:with-param>
+  		<xsl:with-param name="immediate"><xsl:value-of select="$immediate"/></xsl:with-param>
+      </xsl:call-template>
+    
+    </NOBR>
+  </DIV>
+</xsl:template>
+
 
 
 <!-- Tree variables -->

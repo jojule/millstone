@@ -8,8 +8,8 @@
 	  <TEXTAREA name="{./string[@name='text']/@id}" ID="{./string[@name='text']/@id}"> 
 		<xsl:if test="@modified='true'"><xsl:attribute name="CLASS">modified</xsl:attribute></xsl:if>
 	    <xsl:if test="@readonly='true'"><xsl:attribute name="READONLY">true</xsl:attribute></xsl:if>
-		<xsl:if test="@immediate='true'"><xsl:attribute name="onchange">millstone.submit()</xsl:attribute></xsl:if>
-		<xsl:if test="not(@immediate='true')"><xsl:attribute name="onchange">this.className='modified'</xsl:attribute></xsl:if>
+		<xsl:if test="@immediate='true' and $dhtml"><xsl:attribute name="onchange">millstone.submit()</xsl:attribute></xsl:if>
+		<xsl:if test="not(@immediate='true') and $dhtml"><xsl:attribute name="onchange">this.className='modified'</xsl:attribute></xsl:if>
 		<xsl:if test="@cols"><xsl:attribute name="COLS"><xsl:value-of select="@cols"/></xsl:attribute></xsl:if>
 		<xsl:if test="@rows"><xsl:attribute name="ROWS"><xsl:value-of select="@rows"/></xsl:attribute></xsl:if>
 		<xsl:if test="@wordwrap='false'"><xsl:attribute name="WRAP">off</xsl:attribute></xsl:if>
@@ -21,8 +21,8 @@
 	  <INPUT NAME="{./string[@name='text']/@id}" ID="{./string[@name='text']/@id}" VALUE="{./string[@name='text']}"> 
 		<xsl:if test="@modified='true'"><xsl:attribute name="CLASS">modified</xsl:attribute></xsl:if>
 	    <xsl:if test="@readonly='true'"><xsl:attribute name="READONLY">true</xsl:attribute></xsl:if>
-		<xsl:if test="@immediate='true'"><xsl:attribute name="onchange">millstone.submit()</xsl:attribute></xsl:if>
-		<xsl:if test="not(@immediate='true')"><xsl:attribute name="onchange">this.className='modified'</xsl:attribute></xsl:if>
+		<xsl:if test="@immediate='true' and $dhtml"><xsl:attribute name="onchange">millstone.submit()</xsl:attribute></xsl:if>
+		<xsl:if test="not(@immediate='true') and $dhtml"><xsl:attribute name="onchange">this.className='modified'</xsl:attribute></xsl:if>
 		<xsl:if test="@cols"><xsl:attribute name="SIZE"><xsl:value-of select="@cols"/></xsl:attribute></xsl:if>
 		<xsl:if test="@maxlength"><xsl:attribute name="MAXLENGTH"><xsl:value-of select="@maxlength"/></xsl:attribute></xsl:if>
 		<xsl:if test="@secret"><xsl:attribute name="TYPE">password</xsl:attribute></xsl:if>
@@ -30,7 +30,7 @@
     </xsl:otherwise>
   </xsl:choose>
 
-  <xsl:if test="@focus='true'">
+  <xsl:if test="@focus='true' and $dhtml">
     <SCRIPT>document.millstone.<xsl:value-of select="./string[@name='text']/@id"/>.focus()</SCRIPT>
   </xsl:if>
 
