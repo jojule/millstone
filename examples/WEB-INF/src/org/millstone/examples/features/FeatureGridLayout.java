@@ -29,13 +29,8 @@ public class FeatureGridLayout extends Feature {
 			createPropertyPanel(
 				gl,
 				new String[] {
-					"enabled",
-					"visible",
-					"caption",
 					"width",
-					"height",
-					"description",
-					"style" },null));
+					"height"},null));
 
 		return l;
 	}

@@ -25,18 +25,12 @@ public class FeatureTextField extends Feature {
 			createPropertyPanel(
 				tf,
 				new String[] {
-					"enabled",
-					"visible",
 					"columns",
 					"rows",
 					"wordwrap",
-					"readOnly",
 					"writeThrough",
 					"readThrough",
-					"caption",
-					"description",
-					"secret",
-					"style" },null));
+					"secret"},null));
 
 		return l;
 	}

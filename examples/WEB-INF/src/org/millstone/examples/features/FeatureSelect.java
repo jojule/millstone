@@ -44,17 +44,10 @@ public class FeatureSelect extends Feature {
 		l.addComponent(
 			createPropertyPanel(s,
 			new String[] {
-				"enabled",
-				"visible",
-				"readOnly",
 				"writeThrough",
 				"readThrough",
-				"immediate",
 				"multiSelect",
-				"newItemsAllowed",
-				"style",
-				"caption",
-				"description" },
+				"newItemsAllowed"},
 			alternateEditors));
 
 		return l;

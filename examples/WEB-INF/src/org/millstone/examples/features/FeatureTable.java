@@ -126,17 +126,11 @@ public class FeatureTable extends Feature implements Action.Handler {
 		l.addComponent(
 			 createPropertyPanel(t,
 			new String[] {
-				"enabled",
-				"visible",
 				"multiSelect",
 				"pageLength",
-				"immediate",
 				"selectable",
 				"columnHeaderMode",
-				"rowHeaderMode",
-				"caption",
-				"style",
-				"description" },
+				"rowHeaderMode"},
 			alternateEditors));
 
 		return l;

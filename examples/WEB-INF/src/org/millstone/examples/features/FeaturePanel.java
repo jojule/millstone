@@ -35,13 +35,8 @@ public class FeaturePanel extends Feature {
 		l.addComponent(
 		 createPropertyPanel(show,
 				new String[] {
-					"enabled",
-					"visible",
-					"caption",
-					"style",
 					"width",
-					"height",
-					"description" },alternateEditors));
+					"height"},alternateEditors));
 
 		return l;
 	}

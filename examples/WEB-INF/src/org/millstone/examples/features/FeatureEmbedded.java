@@ -58,17 +58,12 @@ public class FeatureEmbedded extends Feature {
 		l.addComponent(
 				createPropertyPanel(emb,
 					new String[] {
-						"enabled",
-						"visible",
-						"caption",
-						"description",
 						"type",
 						"classId",
 						"width",
 						"height",
 						"widthUnits",
-						"heightUnits" ,
-						"style"},alternateEditors));
+						"heightUnits" },alternateEditors));
 
 		
 

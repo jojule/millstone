@@ -24,12 +24,7 @@ public class FeatureLabel extends Feature {
 		l.addComponent(
 			createPropertyPanel(
 				lab,
-				new String[] {
-					"enabled",
-					"visible",
-					"caption",
-					"description",
-					"style" },null));
+				new String[] {},null));
 
 		return l;
 	}

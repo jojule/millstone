@@ -1,5 +1,10 @@
 package org.millstone.examples.features;
 
+import java.net.Authenticator;
+import java.net.HttpURLConnection;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.URI;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,8 +40,17 @@ public class FeatureParameters
 					+ "the feature browser installed in your local host, try url: ");
 		info.setCaption("Usage info");
 		l.addComponent(info);
-		l.addComponent(new Link("http://localhost:8080/examples/features/test/uri?test=1&test=2",
-			new ExternalResource("http://localhost:8080/examples/features/test/uri?test=1&test=2")));
+		try  {
+ 			String localAddr = InetAddress.getLocalHost().getCanonicalHostName();
+			l.addComponent(new Link("http://"+localAddr+":8080/examples/features/test/uri?test=1&test=2",
+				new ExternalResource("http://"+localAddr+":8080/examples/features/test/uri?test=1&test=2")));
+			l.addComponent(new Label("Or this: "));
+			l.addComponent(new Link("http://"+localAddr+":8080/examples/features/test/uri?mary=john&count=3",
+				new ExternalResource("http://"+localAddr+":8080/examples/features/test/uri?mary=john&count=3")));
+		} catch (Exception e) {
+			System.out.println("Couldn't get hostname for this machine: "+e.toString());
+			e.printStackTrace();	
+		}
 
 		// URI 
 		Panel p1 = new Panel("URI Handler");

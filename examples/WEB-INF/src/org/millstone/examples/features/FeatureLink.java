@@ -41,15 +41,10 @@ public class FeatureLink extends Feature {
 		l.addComponent(
 			createPropertyPanel(lnk,
 			new String[] {
-				"enabled",
-				"visible",
-				"caption",
-				"description",
 				"targetName",
 				"targetWidth",
 				"targetHeight",
-				"targetBorder",
-				"style" },
+				"targetBorder",},
 			alternateEditors));
 
 		return l;

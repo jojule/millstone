@@ -55,17 +55,10 @@ public class FeatureTree extends Feature implements Action.Handler {
 		l.addComponent(
 			 createPropertyPanel(t,
 				new String[] {
-					"enabled",
-					"visible",
-					"readOnly",
-					"immediate",
 					"selectable",
 					"multiSelect",
 					"writeThrough",
-					"readThrough",
-					"caption",
-					"style",
-					"description" },alternateEditors));
+					"readThrough"},alternateEditors));
 
 		return l;
 	}

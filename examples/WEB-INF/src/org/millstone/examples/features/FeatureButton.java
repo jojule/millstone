@@ -38,14 +38,7 @@ public class FeatureButton extends Feature {
 		l.addComponent(
 			createPropertyPanel(b,
 				new String[] {
-					"enabled",
-					"visible",
-					"readOnly",
-					"immediate",
-					"style",
-					"switchMode",
-					"caption",
-					"description" },
+					"switchMode" },
 				alternateEditors));
 
 		return l;

@@ -28,12 +28,7 @@ public class FeatureTabSheet extends Feature {
 		l.addComponent(
 			createPropertyPanel(
 				ts,
-				new String[] {
-					"enabled",
-					"visible",
-					"caption",
-					"description",
-					"style" },null));
+				new String[] {},null));
 
 		return l;
 	}

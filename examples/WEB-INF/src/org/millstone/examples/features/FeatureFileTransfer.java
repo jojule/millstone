@@ -50,13 +50,7 @@ public class FeatureFileTransfer
 		l.addComponent(
 			createPropertyPanel(
 				up,
-				new String[] {
-					"enabled",
-					"visible",
-					"caption",
-					"immediate",
-					"description" ,
-					"style"},null));
+				new String[] {},null));
 		download_window.setVisible(false);
 		l.addComponent(download_window);
 		

@@ -91,15 +91,11 @@ public class FeatureWindow extends Feature {
 				conf = createPropertyPanel(
 				win,
 				new String[] {
-					"enabled",
-					"visible",
-					"style",
 					"width",
 					"height",
 					"scrollOffsetX",
 					"scrollOffsetY",
-					"border",
-					"caption"},null);
+					"border"},null);
 				
 				demoComponent.addComponent(conf);
 			}

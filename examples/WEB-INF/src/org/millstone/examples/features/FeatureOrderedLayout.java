@@ -55,12 +55,7 @@ public class FeatureOrderedLayout extends Feature {
 		l.addComponent(
 			createPropertyPanel(ol,
 			new String[] {
-				"enabled",
-				"visible",
-				"caption",
-				"orientation",
-				"description",
-				"style" },
+				"orientation"},
 			alternateEditors));
 
 		return l;

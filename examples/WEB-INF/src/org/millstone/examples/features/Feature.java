@@ -18,8 +18,9 @@ public abstract class Feature extends CustomComponent {
 
 	private TabSheet ts;
 
-	/** These are properties common to all features. FIXME */
-	private String[] commonProperties = new String[]{"enabled","visible"};
+	/** These are properties common to all features. */
+	private String[] commonProperties = new String[]{"enabled","visible","caption","readOnly",
+																						 "immediate","disabled","description","style"};
 
 	public Feature() {
 		ts = new TabSheet();
@@ -88,11 +89,22 @@ public abstract class Feature extends CustomComponent {
 			Vector fields = new Vector();
 			Vector others = new Vector();
 
+			// Add common properties to the beginning of propertyNames
+			String[] tmp = propertyNames;
+			propertyNames = new String[propertyNames.length+commonProperties.length];
+			for (int i=0;i<commonProperties.length;i++) {
+				propertyNames[i] = commonProperties[i];	
+			}
+			for (int i=0;i<tmp.length;i++) {
+				propertyNames[i+commonProperties.length] = tmp[i];	
+			}
+			
 			// Add all the bean properties as MethodProperties to this Item
 			for (int k = 0; k < propertyNames.length; k++) {
 				for (int i = 0; i < pd.length; i++) {
 					if (i == (pd.length-1) && !propertyNames[k].equals(pd[i].getName())) {
 						System.out.println("!!! Property : "+	propertyNames[k] + " was not found in object!!");
+						System.out.println("Object class is: "+objectToConfigure.getClass().toString());
 						System.out.print("Available properties in object are: ");
 						for (int y=0;y<pd.length;y++) {
 							System.out.print(pd[y].getName()+" ");

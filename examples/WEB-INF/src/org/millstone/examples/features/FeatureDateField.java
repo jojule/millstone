@@ -55,14 +55,7 @@ public class FeatureDateField extends Feature {
 		// Configuration
 		l.addComponent(
 			createPropertyPanel(df,
-				new String[] {
-					"enabled",
-					"visible",
-					"readOnly",
-					"immediate",
-					"caption",
-					"description",
-					"style" },
+				new String[] {},
 				alternateEditors));
 
 		l.addComponent(localePanel);
