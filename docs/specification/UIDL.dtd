@@ -2,7 +2,7 @@
 
 <!-- 
 =============================================================================
- MillStone UIDL
+ Millstone UIDL
 .............................................................................
 
     Attributes are 'inherited' by defining an entity with the attributes, 
@@ -125,7 +125,7 @@
 =============================================================================
  Components & component containers
 .............................................................................
- Components are the buildingstones of MillStone interfaces. Some components
+ Components are the buildingstones of Millstone interfaces. Some components
  are component containers as well - single component containers can contain 
  one component, while multi component containers can contain several
  components. Layout components are multi component containers that are meant 
@@ -912,7 +912,7 @@ TextField component
         </al>
       </tr>
       <tr caption="2" key="row2" selected="true">
-        <label>MillStone</label>
+        <label>Millstone</label>
         <link src="http://www.millstone.org" caption="www.millstone.org"/>
         <al>
             <ak>action1</ak>
