@@ -173,7 +173,7 @@ public class PropertyPanel
 		try {
 			info = Introspector.getBeanInfo(objectToConfigure.getClass());
 		} catch (IntrospectionException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException(e.toString());
 		}
 		PropertyDescriptor[] pd = info.getPropertyDescriptors();
 
