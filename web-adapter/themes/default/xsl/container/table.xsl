@@ -102,7 +102,7 @@
   </xsl:if>
   
   <!-- Sorting variables -->
-  <INPUT TYPE="HIDDEN" ID="{./integer[@name='sortcolumn']/@id}" NAME="{./integer[@name='sortcolumn']/@id}" VALUE="{./integer[@name='sortcolumn']/@value}" />
+  <INPUT TYPE="HIDDEN" ID="{./string[@name='sortcolumn']/@id}" NAME="{./string[@name='sortcolumn']/@id}" VALUE="{./string[@name='sortcolumn']}" />
   <INPUT TYPE="HIDDEN" ID="{./boolean[@name='sortascending']/@id}" NAME="{./boolean[@name='sortascending']/@id}" VALUE="{./boolean[@name='sortascending']/@value}" />
   
 </xsl:template>
@@ -133,7 +133,7 @@
                <xsl:when test="@sortable='true'">
 		         <DIV CLASS="{$class}-column-header" cid="{@cid}" id="{$hid}">
 		           <xsl:choose>
-		               <xsl:when test="../../integer[@name='sortcolumn']/@value=$thispos">
+		               <xsl:when test="../../string[@name='sortcolumn']=@cid">
 		                   <xsl:attribute name="onclick">javascript:Millstone.setVarById('<xsl:value-of select="../../boolean[@name='sortascending']/@id"/>','<xsl:value-of select="not(../../boolean[@name='sortascending']/@value='true')"/>',true);</xsl:attribute>
 		                   <xsl:value-of select="@caption" />
 		                   <IMG BORDER="0" CLASS="{$class}-column-header" valign="middle">
@@ -142,7 +142,7 @@
 		                   </IMG>
 		               </xsl:when>
 		               <xsl:otherwise>
-		                       <xsl:attribute name="onclick">javascript:Millstone.setVarById('<xsl:value-of select="../../integer[@name='sortcolumn']/@id"/>','<xsl:value-of select="$thispos"/>',true);</xsl:attribute>
+		                       <xsl:attribute name="onclick">javascript:Millstone.setVarById('<xsl:value-of select="../../string[@name='sortcolumn']/@id"/>','<xsl:value-of select="@cid"/>',true);</xsl:attribute>
 		                       <xsl:value-of select="@caption" />
 		               </xsl:otherwise>
 		           </xsl:choose>
