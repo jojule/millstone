@@ -295,4 +295,23 @@ public interface Component extends Paintable, VariableOwner {
 		public void componentError(Component.ErrorEvent event);
 	}
 
+	/** Interface implemented by components which can obtain input focus. */
+	public interface Focusable {
+		
+		/** Set focus to this component.*/
+		public void focus();
+		
+		/** Get Tabulator index of this Focusable component. 
+		 * @return Positive tab order of this focusable. Negative of zero means
+		 * unspecified tab order.
+		 */
+		public int getTabIndex();
+		
+		/** Set Tabulator index of this Focusable component.
+		 * @param tabIndex Positive tab order of this focusable. Negative of
+		 * zero means unspecified tab order.
+		 */
+		public void setTabIndex(int tabIndex);
+		
+	}
 }

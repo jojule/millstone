@@ -140,6 +140,7 @@
       <INPUT TYPE="text" SIZE="4" MAXLENGTH="4" ID="{@id}" NAME="{@id}" VALUE="{$value}" CLASS="{$class}-y">
        <xsl:if test="../@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
        <xsl:if test="../@readonly='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
+       <xsl:if test="../@tabindex"><xsl:attribute name="tabindex"><xsl:value-of select="../@tabindex"/></xsl:attribute></xsl:if>
        
        <!-- calendar is updated on change -->
        <xsl:choose>       

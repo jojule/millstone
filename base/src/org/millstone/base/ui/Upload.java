@@ -53,10 +53,16 @@ import java.io.OutputStream;
  * @version @VERSION@
  * @since 3.0
  */
-public class Upload extends AbstractComponent {
+public class Upload extends AbstractComponent implements Component.Focusable {
 
 	/** Upload buffer size. */
 	private static final int BUFFER_SIZE = 64 * 1024; // 64k
+
+	/** Should the field be focused on next repaint */
+	private boolean focus = false;
+
+	/** The tab order number of this field */
+	private int tabIndex = 0;
 
 	/** The output of the upload is redirected to this receiver. */
 	private Receiver receiver;
@@ -79,41 +85,41 @@ public class Upload extends AbstractComponent {
 	/** Invoked when the value of a variable has changed.  */
 	public void changeVariables(Object source, Map variables) {
 
-			// Check the variable name
-			if (!variables.containsKey("stream"))
-				return;
+		// Check the variable name
+		if (!variables.containsKey("stream"))
+			return;
 
-			// Get the upload stream    
-			UploadStream upload = (UploadStream) variables.get("stream");
+		// Get the upload stream    
+		UploadStream upload = (UploadStream) variables.get("stream");
 
-			// Get file properties
-			String filename = upload.getContentName();
-			String type = upload.getContentType();
+		// Get file properties
+		String filename = upload.getContentName();
+		String type = upload.getContentType();
 
-			// Get the output target stream
-			OutputStream out = receiver.receiveUpload(filename, type);
-			if (out == null)
-				throw new RuntimeException("Error getting outputstream from upload receiver");
+		// Get the output target stream
+		OutputStream out = receiver.receiveUpload(filename, type);
+		if (out == null)
+			throw new RuntimeException("Error getting outputstream from upload receiver");
 
-			InputStream in = upload.getStream();
-			byte buffer[] = new byte[BUFFER_SIZE];
-			int bytesRead = 0;
-			long totalBytes = 0;
-			try {
-				while ((bytesRead = in.read(buffer)) > 0) {
-					out.write(buffer, 0, bytesRead);
-					totalBytes += bytesRead;
-				}
-
-				// Download successfull
-				out.close();
-				fireUploadSuccess(filename, type, totalBytes);
-
-			} catch (IOException e) {
-
-				// Download interrupted
-				fireUploadInterrupted(filename, type, totalBytes);
+		InputStream in = upload.getStream();
+		byte buffer[] = new byte[BUFFER_SIZE];
+		int bytesRead = 0;
+		long totalBytes = 0;
+		try {
+			while ((bytesRead = in.read(buffer)) > 0) {
+				out.write(buffer, 0, bytesRead);
+				totalBytes += bytesRead;
 			}
+
+			// Download successfull
+			out.close();
+			fireUploadSuccess(filename, type, totalBytes);
+
+		} catch (IOException e) {
+
+			// Download interrupted
+			fireUploadInterrupted(filename, type, totalBytes);
+		}
 	}
 
 	/** Paint the content of this component.
@@ -121,6 +127,14 @@ public class Upload extends AbstractComponent {
 	 * @throws PaintException The paint operation failed.
 	 */
 	public void paintContent(PaintTarget target) throws PaintException {
+		// The field should be focused
+		if (focus)
+			target.addAttribute("focus", true);
+
+		// The tab ordering number
+		if (this.tabIndex >= 0)
+			target.addAttribute("tabindex", this.tabIndex);
+		
 		target.addUploadStreamVariable(this, "stream");
 	}
 
@@ -277,7 +291,7 @@ public class Upload extends AbstractComponent {
 
 	/** Receives events when the uploads are finished, but unsuccessfull. 
 	 * @author IT Mill Ltd.
-  	 * @version @VERSION@
+		 * @version @VERSION@
 	 * @since 3.0
 	 */
 	public interface FailedListener {
@@ -290,7 +304,7 @@ public class Upload extends AbstractComponent {
 
 	/** Receives events when the uploads are successfully finished.
 	 * @author IT Mill Ltd.
- 	 * @version @VERSION@
+		 * @version @VERSION@
 	 * @since 3.0
 	 */
 	public interface SucceededListener {
@@ -378,6 +392,24 @@ public class Upload extends AbstractComponent {
 	 */
 	public void setReceiver(Receiver receiver) {
 		this.receiver = receiver;
+	}
+	/**
+	 * @see org.millstone.base.ui.Component.Focusable#focus()
+	 */
+	public void focus() {
+		this.focus = true;
+	}
+	/**
+	 * @see org.millstone.base.ui.Component.Focusable#getTabIndex()
+	 */
+	public int getTabIndex() {
+		return this.tabIndex;
+	}
+	/**
+	 * @see org.millstone.base.ui.Component.Focusable#setTabIndex(int)
+	 */
+	public void setTabIndex(int tabIndex) {
+		this.tabIndex = tabIndex;
 	}
 
 }

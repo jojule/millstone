@@ -29,6 +29,7 @@
         <xsl:attribute name="CLASS">button<xsl:if test="string-length(./@style) &gt; 0">-<xsl:value-of select="./@style"/></xsl:if></xsl:attribute>    
    	    <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
         <xsl:if test="@readonly='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
+     	<xsl:if test="@tabindex"><xsl:attribute name="tabindex"><xsl:value-of select="@tabindex"/></xsl:attribute></xsl:if>
       </INPUT>
       </xsl:if>
    

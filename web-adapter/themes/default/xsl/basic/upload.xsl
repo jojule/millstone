@@ -7,6 +7,7 @@
     <xsl:if test="@modified='true'"><xsl:attribute name="CLASS">modified</xsl:attribute></xsl:if>
     <xsl:if test="@readonly='true'"><xsl:attribute name="READONLY">true</xsl:attribute></xsl:if>
     <xsl:if test="not(@immediate='true') and $dhtml"><xsl:attribute name="onchange">this.CLASS='modified'</xsl:attribute></xsl:if>
+    <xsl:if test="@tabindex"><xsl:attribute name="tabindex"><xsl:value-of select="@tabindex"/></xsl:attribute></xsl:if>
   </INPUT>
   
   <!-- Set focus to field -->

@@ -14,6 +14,7 @@
 		<xsl:if test="@rows"><xsl:attribute name="ROWS"><xsl:value-of select="@rows"/></xsl:attribute></xsl:if>
 		<xsl:if test="@wordwrap='false'"><xsl:attribute name="WRAP">off</xsl:attribute></xsl:if>
 		<xsl:if test="@maxlength"><xsl:attribute name="MAXLENGTH"><xsl:value-of select="@maxlength"/></xsl:attribute></xsl:if>
+    	<xsl:if test="@tabindex"><xsl:attribute name="tabindex"><xsl:value-of select="@tabindex"/></xsl:attribute></xsl:if>
 		<xsl:value-of select="./string[@name='text']"/>
       </TEXTAREA>
 	</xsl:when>
@@ -26,6 +27,7 @@
 		<xsl:if test="@cols"><xsl:attribute name="SIZE"><xsl:value-of select="@cols"/></xsl:attribute></xsl:if>
 		<xsl:if test="@maxlength"><xsl:attribute name="MAXLENGTH"><xsl:value-of select="@maxlength"/></xsl:attribute></xsl:if>
 		<xsl:if test="@secret"><xsl:attribute name="TYPE">password</xsl:attribute></xsl:if>
+     	<xsl:if test="@tabindex"><xsl:attribute name="tabindex"><xsl:value-of select="@tabindex"/></xsl:attribute></xsl:if>
       </INPUT>
     </xsl:otherwise>
   </xsl:choose>

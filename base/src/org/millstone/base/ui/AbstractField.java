@@ -84,7 +84,8 @@ public abstract class AbstractField
 		Property.Editor,
 		Property.ValueChangeNotifier,
 		Property.ValueChangeListener,
-		Property.ReadOnlyStatusChangeNotifier {
+		Property.ReadOnlyStatusChangeNotifier,
+		Component.Focusable {
 
 	/* Private members ************************************************* */
 
@@ -117,6 +118,9 @@ public abstract class AbstractField
 
 	/** Should the field be focused on next repaint */
 	private boolean focus = false;
+	
+	/** The tab order number of this field */
+	private int tabIndex = 0;
 
 	/* Component basics ************************************************ */
 
@@ -129,6 +133,10 @@ public abstract class AbstractField
 		// The field should be focused
 		if (focus)
 			target.addAttribute("focus", true);
+
+		// The tab ordering number
+		if (this.tabIndex >= 0)
+			target.addAttribute("tabindex", this.tabIndex);
 
 		// If the field is modified, but not committed, set modified attribute
 		if (isModified())
@@ -815,4 +823,27 @@ public abstract class AbstractField
 		// Text field is used by default
 		return new TextField();
 	}
+	
+	
+	/** Get the tab index of this field.
+	 * The tab index property is used to specify the
+	 * natural tab ordering of fields.
+	 * 
+	 * @return Tab index of this field. Negative value means unspecified.
+	 */
+	public int getTabIndex() {
+		return tabIndex;
+	}
+
+	/** Get the tab index of this field.
+	 * The tab index property is used to specify the
+	 * natural tab ordering of fields.
+	 * 
+	 * @param tabIndex The tab order of this component. Negative value means
+	 * unspecified.
+	 */
+	public void setTabIndex(int tabIndex) {
+		this.tabIndex = tabIndex;
+	}
+
 }
