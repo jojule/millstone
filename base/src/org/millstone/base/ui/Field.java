@@ -24,6 +24,23 @@ public interface Field
 	
 	void setDescription(String caption);
 
+	/** Is this field required.
+	 * 
+	 * Required fields must filled by the user.
+	 * 
+	 * @return true if the
+	 * @since 3.1 
+	 */
+	public boolean isRequired();
+
+	/** Set the field required.
+	 * Required fields must filled by the user.
+	 * 
+	 * @param required Is the field required
+	 * @since 3.1 
+	 */
+	public void setRequired(boolean required);
+
 	/** An <code>Event</code> object specifying the Field whose value
 	 * has been changed.
 	 * @author IT Mill Ltd.

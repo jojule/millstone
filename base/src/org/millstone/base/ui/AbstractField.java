@@ -80,6 +80,8 @@ public abstract class AbstractField
 
 	/* Private members ************************************************* */
 
+	private boolean delayedFocus;
+
 	/** Value of the datafield */
 	private Object value;
 
@@ -113,6 +115,8 @@ public abstract class AbstractField
 	/** Unique focusable id */
 	private long focusableId = -1;
 	
+	/** Required field */
+	private boolean required = false;
 	
 	/* Component basics ************************************************ */
 
@@ -139,6 +143,11 @@ public abstract class AbstractField
 		// If the field is modified, but not committed, set modified attribute
 		if (isModified())
 			target.addAttribute("modified", true);
+
+		// Add required attribute
+		if (isRequired())
+			target.addAttribute("required", true);
+
 	}
 
 	/* Gets the field type
@@ -338,14 +347,14 @@ public abstract class AbstractField
 		if (dataSource == null || !isReadThrough() || isModified())
 			return value;
 
-		Object val = dataSource.getValue();
-		if ((val == null && value != null)
-			|| (val != null && !val.equals(value))) {
-			setInternalValue(value);
+		Object newValue = dataSource.getValue();
+		if ((newValue == null && value != null)
+			|| (newValue != null && !newValue.equals(value))) {
+			setInternalValue(newValue);
 			fireValueChange();
 		}
 
-		return val;
+		return newValue;
 	}
 
 	/** Set the value of the field.
@@ -767,6 +776,8 @@ public abstract class AbstractField
 		Window w = getWindow();
 		if (w != null) {
 			w.setFocusedComponent(this);
+		} else {
+			this.delayedFocus = true;
 		}
 	}
 
@@ -836,5 +847,36 @@ public abstract class AbstractField
 	 */
 	public long getFocusableId() {
 		return this.focusableId;
-	}	
+	}
+	
+	/**
+	 * @see org.millstone.base.ui.Component#attach()
+	 */
+	public void attach() {
+		super.attach();
+		if (this.delayedFocus) {
+			this.delayedFocus = false;
+			this.focus();
+		}
+	}
+
+	/** Is this field required.
+	 * 
+	 * Required fields must filled by the user.
+	 * 
+	 * @return true if the 
+	 */
+	public boolean isRequired() {
+		return required;
+	}
+
+	/** Set the field required.
+	 * Required fields must filled by the user.
+	 * 
+	 * @param required Is the field required
+	 */
+	public void setRequired(boolean required) {
+		this.required = required;
+	}
+
 }
