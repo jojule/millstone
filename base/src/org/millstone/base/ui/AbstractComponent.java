@@ -384,6 +384,7 @@ public abstract class AbstractComponent
 	 */
 	public void setComponentError(ErrorMessage componentError) {
 		this.componentError = componentError;
+		fireComponentErrorEvent();
 		requestRepaint();
 	}
 
@@ -533,7 +534,9 @@ public abstract class AbstractComponent
 					if (alreadyNotified == null)
 						alreadyNotified = new LinkedList();
 					if (!alreadyNotified.contains(listeners[i])) {
-						((RepaintRequestListener) listeners[i])
+						(
+							(
+								RepaintRequestListener) listeners[i])
 									.repaintRequested(
 							event);
 						alreadyNotified.add(listeners[i]);
@@ -599,7 +602,7 @@ public abstract class AbstractComponent
 	public void removeDirectDependency(VariableOwner depended) {
 
 		// Remove the listener if necessary
-		if (dependencies == null && depended != null)
+		if (dependencies != null && depended != null)
 			dependencies.remove(depended);
 	}
 
@@ -794,4 +797,10 @@ public abstract class AbstractComponent
 		fireEvent(new Component.Event(this));
 	}
 
+	/** Emits a component error event. It is transmitted to all registered
+	 * listeners interested in such events.
+	 */
+	protected void fireComponentErrorEvent() {
+		fireEvent(new Component.ErrorEvent(this.getComponentError(),this));
+	}
 }
