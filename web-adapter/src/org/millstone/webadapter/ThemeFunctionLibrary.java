@@ -265,7 +265,7 @@ public class ThemeFunctionLibrary {
 		// Generate window updatescript
 		for (Iterator i = update.iterator(); i.hasNext();) {
 			Window w = (Window) i.next();
-			script.append(getWindowRefreshScript(app, w));
+			script.append(getWindowRefreshScript(app, w, browser()));
 
 			wa.removeDirtyWindow(app, w);
 
@@ -396,7 +396,8 @@ public class ThemeFunctionLibrary {
 	/** Generate JavaScript for updating given window */
 	static protected String getWindowRefreshScript(
 		Application application,
-		Window window) {
+		Window window,
+		WebBrowser browser) {
 
 		if (application == null)
 			return "";
@@ -452,11 +453,10 @@ public class ThemeFunctionLibrary {
 				+ "if (win != null) {"
 				+ "var form = null;";
 
-		if (browser()
-			.getJavaScriptVersion()
-			.supports(WebBrowser.JAVASCRIPT_1_5)
-			|| browser().getJavaScriptVersion().supports(
-				WebBrowser.JSCRIPT_1_0)) {
+		if (browser != null
+			&& (browser.getJavaScriptVersion().supports(WebBrowser.JAVASCRIPT_1_5)
+				|| browser.getJavaScriptVersion().supports(
+					WebBrowser.JSCRIPT_1_0))) {
 			script += "try { form = win.document.forms[\"millstone\"];"
 				+ "} catch (e) { form = null;}";
 		} else {

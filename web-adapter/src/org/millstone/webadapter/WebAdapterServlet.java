@@ -302,7 +302,7 @@ public class WebAdapterServlet
 					request.getContextPath()
 						+ request.getServletPath()
 						+ RESOURCE_URI;
-						
+
 			// Handle resource requests
 			if (handleResourceRequest(request, response))
 				return;
@@ -338,7 +338,9 @@ public class WebAdapterServlet
 				Map unhandledParameters = variableMap.handleVariables(request);
 
 				// Check/handle client side feature checks
-				WebBrowserProbe.handleProbeRequest(request, unhandledParameters);
+				WebBrowserProbe.handleProbeRequest(
+					request,
+					unhandledParameters);
 
 				// Handle the URI if the application is still running
 				if (application.isRunning())
@@ -1096,7 +1098,9 @@ public class WebAdapterServlet
 									+ ThemeFunctionLibrary
 										.getWindowRefreshScript(
 										application,
-										win)
+										win,
+										WebBrowserProbe.getTerminalType(
+											request.getSession()))
 									+ "</script>");
 
 							removeDirtyWindow(application, win);
