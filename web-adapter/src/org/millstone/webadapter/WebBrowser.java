@@ -554,6 +554,8 @@ public class WebBrowser implements Terminal {
 		DEFAULT.new JavaScriptVersion("JScript 4.0", 140);
 	public static final JavaScriptVersion JSCRIPT_5_0 =
 		DEFAULT.new JavaScriptVersion("JScript 5.0", 150);
+	public static final JavaScriptVersion JSCRIPT_5_1 =
+		DEFAULT.new JavaScriptVersion("JScript 5.1", 151);
 	public static final JavaScriptVersion JSCRIPT_5_5 =
 		DEFAULT.new JavaScriptVersion("JScript 5.5", 155);
 	public static final JavaScriptVersion JSCRIPT_5_6 =
@@ -575,6 +577,7 @@ public class WebBrowser implements Terminal {
 			JSCRIPT_3_0,
 			JSCRIPT_4_0,
 			JSCRIPT_5_0,
+			JSCRIPT_5_1,
 			JSCRIPT_5_5,
 			JSCRIPT_5_6,
 			ECMA_262 };
