@@ -41,6 +41,7 @@ package org.millstone.examples.features;
 import java.util.Hashtable;
 
 import org.millstone.base.data.util.BeanItem;
+import org.millstone.base.terminal.ClassResource;
 import org.millstone.base.terminal.Sizeable;
 import org.millstone.base.ui.*;
 
@@ -65,45 +66,50 @@ public class FeatureEmbedded extends Feature {
 		emb.setParameter("Enabled", "1");
 		emb.setParameter("Min", "1");
 		emb.setParameter("Max", "10");
-
 		show.addComponent(emb);
 		l.addComponent(show);
 
-		Hashtable alternateEditors = new Hashtable();
-
-		Select s = new Select("heightUnits");
-		s.addContainerProperty("name", String.class, "");
-		s.setItemCaptionPropertyId("name");
-		for (int i = 0; i < Sizeable.UNIT_SYMBOLS.length; i++) {
-			s.addItem(new Integer(i)).getItemProperty("name").setValue(
-				Sizeable.UNIT_SYMBOLS[i]);
-
-		}
-		alternateEditors.put("heightUnits", s);
-
-		s = new Select("widthUnits");
-		s.addContainerProperty("name", String.class, "");
-		s.setItemCaptionPropertyId("name");
-		for (int i = 0; i < Sizeable.UNIT_SYMBOLS.length; i++) {
-			s.addItem(new Integer(i)).getItemProperty("name").setValue(
-				Sizeable.UNIT_SYMBOLS[i]);
-
-		}
-
-		alternateEditors.put("widthUnits", s);
-
-		// Configuration
-		l.addComponent(
-			createPropertyPanel(
-				emb,
+		// Properties
+		PropertyPanel p = new PropertyPanel(emb);
+		Form ap =
+			p.createBeanPropertySet(
 				new String[] {
 					"type",
-					"classId",
+					"source",
 					"width",
 					"height",
 					"widthUnits",
-					"heightUnits" },
-				alternateEditors));
+					"heightUnits",
+					"codeBase",
+					"codeType",
+					"archive",
+					"mimeType",
+					"standby",
+					"classId" });
+		ap.replaceWithSelect(
+			"type",
+			new Object[] {
+				new Integer(Embedded.TYPE_IMAGE),
+				new Integer(Embedded.TYPE_OBJECT)},
+			new Object[] { "Image", "Object" });
+		Object[] units = new Object[Sizeable.UNIT_SYMBOLS.length];
+		Object[] symbols = new Object[Sizeable.UNIT_SYMBOLS.length];
+		for (int i = 0; i < units.length; i++) {
+			units[i] = new Integer(i);
+			symbols[i] = Sizeable.UNIT_SYMBOLS[i];
+		}
+		ap.replaceWithSelect("heightUnits", units, symbols);
+		ap.replaceWithSelect("widthUnits", units, symbols);
+		ap.replaceWithSelect(
+			"source",
+			new Object[] {
+				null,
+				new ClassResource("millstone-logo.gif", getApplication())},
+			new Object[] { "null", "Millstone logo" });
+		p.addProperties("Embedded Properties", ap);
+		p.getField("standby").setDescription("The text to display while loading the object");
+		p.getField("codeBase").setDescription("root-path used to access resources with relative paths");
+		l.addComponent(p);
 
 		return l;
 	}
