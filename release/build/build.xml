@@ -45,7 +45,10 @@
         <!-- Set release base directory -->
         <property name="root-dir" value="${checkout-dir}" />
 
-    	<echo message="Creating MillStone ${version} from ${cvs-root} with tag ${cvs-tag} to ${checkout-dir}" />
+    	<echo message="Creating MillStone ${version}"/>
+	<echo message="Checkout from: ${cvs-root} with tag ${cvs-tag}"/>
+	<echo message="Checkout to: ${checkout-dir}" />
+	<echo message="Root: ${root-dir}" />
         <input message="Press Return key to continue..." />	
     </target>
 
@@ -55,10 +58,13 @@
         <!-- MillStone version -->
 	<property name="version" value="${DSTAMP}.${TSTAMP}" />
 
-      <property name="root-dir" value="." />
+        <property name="root-dir" value="." />
         
     	<echo message="Preparing for development snapshot."/>
+    	<echo message="Creating MillStone ${version}"/>
+	<echo message="Root: ${root-dir}" />
 	<echo message="You can build releases by setting the 'release' property to true."/>
+        <input message="Press Return key to continue..." />	
     </target>
 
 
@@ -82,7 +88,11 @@
         <property name="examples-war-name" value="millstone-examples-${version}.war"/>
 
         <echo message="Prepared to build MillStone ${version} packages"/>
-    </target>
+       
+       <!-- Create Version filter -->
+       <filter token="VERSION" value="${version}"/>
+
+   </target>
 
 
 
@@ -123,16 +133,8 @@
 
         <!-- Create Output Directory Hierarchy -->
         <mkdir dir="${output-dir}/docs/apidocs" />
-        <mkdir dir="${output-dir}/src" />
         <mkdir dir="${output-dir}/lib" />
 
-        <!-- FIXME: Copy specifications to correct places
-        <copy todir="${output-dir}/docs">
-            <fileset dir="${docs-dir}">
-                <include name="specification/*.dtd"/>
-            </fileset>
-        </copy>
-	-->
     </target>
     
     

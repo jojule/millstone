@@ -69,10 +69,29 @@
 	<copy file="${work-dir}/webadapter/${webadapter-bin-jar-name}" todir="${output-dir}/lib"/>
 	<copy file="${work-dir}/webadapter/${webadapter-src-jar-name}" todir="${output-dir}/lib"/>
         <copy file="${work-dir}/webadapter/${web-themes-jar-name}"     todir="${output-dir}/lib"/>
-	<copy todir="${output-dir}">
+	<!-- Filtered files -->
+	<copy todir="${output-dir}" filtering="true">
             <fileset dir="${root-dir}">
               <patternset>
                 <include name="web-adapter/src/**/*.java"/>
+                <include name="web-adapter/src/**/*.html"/>
+              </patternset>
+            </fileset>	
+	</copy>	
+	<!-- Un-Filtered files -->
+	<copy todir="${output-dir}" filtering="true">
+            <fileset dir="${root-dir}">
+              <patternset>
+                <include name="web-adapter/src/**/*.gif"/>
+                <include name="web-adapter/src/**/*.jpg"/>
+                <include name="web-adapter/src/**/*.png"/>
+              </patternset>
+            </fileset>	
+	</copy>	
+
+        <copy todir="${output-dir}">
+            <fileset dir="${root-dir}">
+              <patternset>
                 <include name="web-adapter/themes/default/**/*.xsl"/>
                 <include name="web-adapter/themes/default/**/*.xml"/>
                 <include name="web-adapter/themes/default/**/*.css"/>
