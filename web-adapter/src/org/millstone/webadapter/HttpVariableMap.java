@@ -606,7 +606,8 @@ public class HttpVariableMap {
 	 */
 	private List getDependencySortedListenerList(Set listeners) {
 
-		LinkedList result = new LinkedList();
+		LinkedList resultNormal = new LinkedList();
+		LinkedList resultImmediate = new LinkedList();
 
 		// Go trough the listeners and either add them to result or resolve
 		// their dependencies
@@ -622,9 +623,9 @@ public class HttpVariableMap {
 				// list directly
 				if (dependencies == null || dependencies.isEmpty()) {
 					if (listener.isImmediate())
-						result.addLast(listener);
+						resultImmediate.addFirst(listener);
 					else
-						result.addFirst(listener);
+						resultNormal.addFirst(listener);
 				}
 
 				// Resolve deep dependencies for the listeners with dependencies
@@ -672,6 +673,7 @@ public class HttpVariableMap {
 		// Add the listeners with dependencies in sane order to the result
 		for (Iterator li = deepdeps.keySet().iterator(); li.hasNext();) {
 			VariableOwner l = (VariableOwner) li.next();
+			boolean immediate = l.isImmediate();
 
 			// Add each listener after the last depended listener already in
 			// the list
@@ -679,13 +681,27 @@ public class HttpVariableMap {
 			for (Iterator di = ((Set) deepdeps.get(l)).iterator();
 				di.hasNext();
 				) {
-				int k = result.lastIndexOf(di.next());
+				int k;
+				Object depended = di.next();
+				if (immediate) {
+					k = resultImmediate.lastIndexOf(depended);				
+				}else {
+					k = resultNormal.lastIndexOf(depended);								
+				}				
 				if (k > index)
 					index = k;
 			}
-			result.add(index + 1, l);
+			if (immediate) {
+				resultImmediate.add(index + 1, l);
+			} else {
+				resultNormal.add(index + 1, l);			
+			}
 		}
 
-		return result;
+		// Append immediate listeners to normal listeners
+		// This way the normal handlers are always called before
+		// immediate ones
+		resultNormal.addAll(resultImmediate);
+		return resultNormal;
 	}
 }
