@@ -592,15 +592,12 @@ Date selection component
     <!ATTLIST tree
                 %componentAttributes;
 		        modified  (false|true)    #IMPLIED
-   				focus     (false|true)    #IMPLIED
                 selectmode              (none|single|multi) "none" 
                 disablenodeselection    (false|true)        #IMPLIED>
                 <!--
                 modified:
                     True if component is modified but not commited to data 
                     storage.
-				focus:
-					The field should be focused. The terminal should place the cursor on it
                 selectmode: 
                     'none' turns selection off
                     'single' allows only one node/leaf to be selected at a time
@@ -972,7 +969,6 @@ TextField component
     <!ATTLIST table
                 %componentAttributes;
 		        modified  (false|true)    #IMPLIED
-   				focus     (false|true)    #IMPLIED
                 selectmode  (none|single|multi) "none"
                 cols        CDATA               #REQUIRED
                 rows        CDATA               #REQUIRED
@@ -986,8 +982,6 @@ TextField component
                 modified:
                     True if component is modified but not commited to data 
                     storage.
-				focus:
-					The field should be focused. The terminal should place the cursor on it
                 cols:
                     Visible columns in the table.
                 rows:
