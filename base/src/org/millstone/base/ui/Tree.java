@@ -43,18 +43,17 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
+
 import org.millstone.base.data.Container;
 import org.millstone.base.data.util.ContainerHierarchicalWrapper;
-import org.millstone.base.event.*;
-import org.millstone.base.terminal.PaintException;
-import org.millstone.base.terminal.ErrorMessage;
-import org.millstone.base.terminal.SystemError;
-import org.millstone.base.terminal.PaintTarget;
+import org.millstone.base.event.Action;
 import org.millstone.base.terminal.KeyMapper;
+import org.millstone.base.terminal.PaintException;
+import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.Resource;
 
 /** MenuTree component.

@@ -51,12 +51,10 @@ import org.millstone.base.data.Container;
 import org.millstone.base.data.Item;
 import org.millstone.base.data.Property;
 import org.millstone.base.data.util.IndexedContainer;
-import org.millstone.base.terminal.ErrorMessage;
 import org.millstone.base.terminal.KeyMapper;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.Resource;
-import org.millstone.base.terminal.SystemError;
 
 /** <p>A class representing a selection of items the user has selected in a
  * UI. The set of choices is presented as a set of
