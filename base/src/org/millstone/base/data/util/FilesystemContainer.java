@@ -39,10 +39,13 @@
 package org.millstone.base.data.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -198,10 +201,9 @@ public class FilesystemContainer implements Container.Hierarchical {
 	 * from implemented interface.
 	 */
 	public Collection getChildren(Object itemId) {
-
-		LinkedList l = new LinkedList();
+		
 		if (!(itemId instanceof File))
-			return Collections.unmodifiableCollection(l);
+			return Collections.unmodifiableCollection(new LinkedList());
 		File[] f;
 		if (this.filter != null)
 			f = ((File) itemId).listFiles(this.filter);
@@ -209,10 +211,11 @@ public class FilesystemContainer implements Container.Hierarchical {
 			f = ((File) itemId).listFiles();
 
 		if (f == null)
-			return Collections.unmodifiableCollection(l);
-		for (int i = 0; i < f.length; i++) {
-			l.add(f[i]);
-		}
+			return Collections.unmodifiableCollection(new LinkedList());
+
+		List l = Arrays.asList(f);
+		Collections.sort(l);
+
 		return Collections.unmodifiableCollection(l);
 	}
 
@@ -264,7 +267,6 @@ public class FilesystemContainer implements Container.Hierarchical {
 	 */
 	public Collection rootItemIds() {
 
-		LinkedList l = new LinkedList();
 		File[] f;
 
 		// in single root case we use children
@@ -278,10 +280,10 @@ public class FilesystemContainer implements Container.Hierarchical {
 		}
 
 		if (f == null)
-			return Collections.unmodifiableCollection(l);
-		for (int i = 0; i < f.length; i++) {
-			l.add(f[i]);
-		}
+			return Collections.unmodifiableCollection(new LinkedList());
+
+		List l = Arrays.asList(f);
+		Collections.sort(l);
 
 		return Collections.unmodifiableCollection(l);
 	}
@@ -362,11 +364,15 @@ public class FilesystemContainer implements Container.Hierarchical {
 			l = f.listFiles(this.filter);
 		else
 			l = f.listFiles();
-		for (int i = 0; i < l.length; i++) {
-			if (l[i].isDirectory())
-				addItemIds(col, l[i]);
+		List ll = Arrays.asList(l);
+		Collections.sort(ll);
+
+		for (Iterator i = ll.iterator();i.hasNext();) {
+			File lf = (File)i.next();
+			if (lf.isDirectory())
+				addItemIds(col, lf);
 			else
-				col.add(l[i]);
+				col.add(lf);
 		}
 	}
 
@@ -376,7 +382,7 @@ public class FilesystemContainer implements Container.Hierarchical {
 	 */
 	public Collection getItemIds() {
 
-		LinkedList l = new LinkedList();
+		
 
 		if (recursive) {
 			Collection col = new ArrayList();
@@ -396,12 +402,13 @@ public class FilesystemContainer implements Container.Hierarchical {
 			}
 
 			if (f == null)
-				return Collections.unmodifiableCollection(l);
-			for (int i = 0; i < f.length; i++) {
-				l.add(f[i]);
-			}
+				return Collections.unmodifiableCollection(new LinkedList());
+				
+			List l = Arrays.asList(f);
+			Collections.sort(l);
+			return Collections.unmodifiableCollection(l);
 		}
-		return Collections.unmodifiableCollection(l);
+		
 	}
 
 	/** Gets the specified property of the specified file Item. The
@@ -533,9 +540,9 @@ public class FilesystemContainer implements Container.Hierarchical {
 
 	/** A Item wrapper for files in a filesystem.
 	 * @author IT Mill Ltd.
-     * @version @VERSION@
-     * @since 3.0
-     */
+	 * @version @VERSION@
+	 * @since 3.0
+	 */
 	public class FileItem implements Item {
 
 		/** The wrapped file. */
@@ -641,8 +648,8 @@ public class FilesystemContainer implements Container.Hierarchical {
 
 	/** Generic file extension filter for displaying only files having certain extension.
 	 * @author IT Mill Ltd.
-     * @version @VERSION@
-     * @since 3.0
+	 * @version @VERSION@
+	 * @since 3.0
 	 */
 	public class FileExtensionFilter implements FilenameFilter {
 
