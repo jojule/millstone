@@ -43,7 +43,7 @@
       <xsl:for-each select="*">
         <TR>
           <TD>
-		    <xsl:if test="local-name()!='button' and local-name()!='link' and @caption">
+		    <xsl:if test="not(local-name()!='button' and @type='switch') and local-name()!='link' and @caption">
 		      <NOBR CLASS="caption">
   		        <xsl:if test="@icon"><IMG SRC="{@icon}" /></xsl:if>
   	            <xsl:value-of select="@caption"/>
@@ -64,7 +64,7 @@
     <TABLE BORDER="0" WIDTH="{$maxtablewidth}">
       <TR CLASS="flowform-caption">
         <TD>
-	      <xsl:if test="local-name()!='button' and local-name()!='link' and @caption">
+	      <xsl:if test="not(local-name()!='button' and @type='switch') and local-name()!='link' and @caption">
 		    <NOBR CLASS="caption">
   		      <xsl:if test="@icon"><IMG SRC="{@icon}" /></xsl:if>
 	          <xsl:value-of select="@caption"/>
@@ -87,7 +87,7 @@
       <TR>
         <xsl:for-each select="*">
           <TD>
-		    <xsl:if test="local-name()!='button' and local-name()!='link' and @caption">
+		    <xsl:if test="not(local-name()!='button' and @type='switch') and local-name()!='link' and @caption">
 		      <NOBR CLASS="caption">
   		        <xsl:if test="@icon"><IMG SRC="{@icon}" /></xsl:if>
 		        <xsl:value-of select="@caption"/>
