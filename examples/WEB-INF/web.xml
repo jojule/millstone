@@ -15,6 +15,15 @@
         </init-param>
     </servlet>
 
+    <servlet>
+        <servlet-name>ajax-calc</servlet-name>
+        <servlet-class>org.millstone.ajaxadapter.AjaxAdapterServlet</servlet-class>
+        <init-param>
+            <param-name>application</param-name>
+            <param-value>org.millstone.examples.Calc</param-value>
+        </init-param>
+    </servlet>
+
 
 	<!-- Servlet definitions for example applications - - - - - - - - - - -->
 
@@ -86,6 +95,11 @@
     <servlet-mapping>
         <servlet-name>ajax-hello</servlet-name>
         <url-pattern>/ajax/hello/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ajax-calc</servlet-name>
+        <url-pattern>/ajax/calc/*</url-pattern>
     </servlet-mapping>
 
 	<!-- Namespace mappings for example applications - - - - - - - - - - - -->
