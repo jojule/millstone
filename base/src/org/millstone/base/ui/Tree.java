@@ -65,7 +65,7 @@ import org.millstone.base.terminal.Resource;
  * @version @VERSION@
  * @since 3.0
  */
-public class Tree extends Select implements Container.Hierarchical {
+public class Tree extends Select implements Container.Hierarchical, Action.Container {
 
 	/* Static members ***************************************************** */
 
@@ -365,7 +365,8 @@ public class Tree extends Select implements Container.Hierarchical {
 				Object itemId = i.next();
 
 				// Start the item / node
-				if (areChildrenAllowed(itemId))
+				boolean isNode = areChildrenAllowed(itemId);
+				if (isNode)
 					target.startTag("node");
 				else
 					target.startTag("leaf");
@@ -410,7 +411,7 @@ public class Tree extends Select implements Container.Hierarchical {
 				if (isExpanded(itemId) && hasChildren(itemId)) {
 					iteratorStack.push(getChildren(itemId).iterator());
 				} else {
-					if (areChildrenAllowed(itemId))
+					if (isNode)
 						target.endTag("node");
 					else
 						target.endTag("leaf");
