@@ -27,6 +27,7 @@ function TableHeaderDragger(variableId,cidName) {
     this.start = function(e) {
         e = (e?e:window.event);
        	var o = (e.srcElement?e.srcElement:e.target);
+       	if (!o.thd) o = o.parentNode; 
         o.thd.dragging = o;
         o.thd.moved = false;
         var y = parseInt(o.style.bottom);
@@ -167,6 +168,7 @@ function TableHeaderDragger(variableId,cidName) {
     this.catchClick = function(e) {
         e= (e?e:window.event);
         var o = (e.srcElement?e.srcElement:e.target);
+        if (!o.thd) o = o.parentNode;
         var thd = o.thd;
          if (!thd.moved) {
            if (o.dragclickhandler) o.dragclickhandler(e);
