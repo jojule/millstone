@@ -39,13 +39,10 @@
 
 package org.millstone.base.data;
 
-import java.util.Collection;
-import java.util.LinkedList;
 import org.millstone.base.terminal.ErrorMessage;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.SystemError;
-import org.millstone.base.terminal.Paintable.RepaintRequestListener;
 
 /** <p>Defines the interface to commit and discard changes to an object,
  * supporting read-through and write-through modes.</p>
