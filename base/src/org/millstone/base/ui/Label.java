@@ -76,7 +76,7 @@ public class Label
 		Property.ValueChangeNotifier {
 
 	/** Content mode, where the label contains only plain text. The getValue()
-	 * result is coded to XML when painting 
+	 * result is coded to XML when painting. 
 	 */
 	public static final int CONTENT_TEXT = 0;
 
@@ -85,7 +85,7 @@ public class Label
 	public static final int CONTENT_PREFORMATTED = 1;
 
 	/** Formatted content mode, where the contents is XML restricted to the
-	 * UIDL 1.0 formatting markups
+	 * UIDL 1.0 formatting markups.
 	 */
 	public static final int CONTENT_UIDL = 2;
 
@@ -98,6 +98,14 @@ public class Label
 	 * Each of the root elements must have their default namespace specified.
 	 */
 	public static final int CONTENT_XML = 4;
+
+	/** Content mode, where the label contains RAW output. Output is not 
+	 * required to comply to with XML. In Web Adapter output is inserted inside
+	 * the resulting HTML document as-is. This is useful for some specific 
+	 * purposes where possibly broken HTML content needs to be shown, but in 
+	 * most cases XHTML mode should be preferred.
+	 */
+	public static final int CONTENT_RAW = 5;
 
 	/** The default content mode is plain text */
 	public static final int CONTENT_DEFAULT = CONTENT_TEXT;
@@ -169,16 +177,22 @@ public class Label
 			target.addUIDL(toString());
 		else if (contentMode == CONTENT_XHTML) {
 			target.startTag("data");
-			target.addXMLSection("div", toString(),"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd");
+			target.addXMLSection(
+				"div",
+				toString(),
+				"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd");
 			target.endTag("data");
-		}
-		else if (contentMode == CONTENT_PREFORMATTED) {
+		} else if (contentMode == CONTENT_PREFORMATTED) {
 			target.startTag("pre");
 			target.addText(toString());
 			target.endTag("pre");
-		}
-		else if (contentMode == CONTENT_XML) {
-			target.addXMLSection("data", toString(),null);
+		} else if (contentMode == CONTENT_XML) {
+			target.addXMLSection("data", toString(), null);
+		} else if (contentMode == CONTENT_RAW) {
+			target.startTag("data");
+			target.addAttribute("escape",false);
+			target.addCharacterData(toString());
+			target.endTag("data");
 		}
 
 	}
@@ -238,20 +252,74 @@ public class Label
 			 ((Property.ValueChangeNotifier) dataSource).addListener(this);
 	}
 
-	/**
-	 * Returns the namespace.
-	 * @return String
+	/** Get the content mode of the Label.
+	 * 
+	 * <p>Possible content modes include:
+	 *   <ul>
+	 *     <li><b>CONTENT_TEXT</b> 
+	 * 			Content mode, where the label contains only plain text. The 
+	 * 			getValue() result is coded to XML when painting.</li>
+	 *     <li><b>CONTENT_PREFORMATTED</b>
+	 * 			Content mode, where the label contains preformatted text.</li>
+	 *     <li><b>CONTENT_UIDL</b>
+	 * 			Formatted content mode, where the contents is XML restricted to 
+	 * 			the UIDL 1.0 formatting markups.</li>
+	 *     <li><b>CONTENT_XHTML</b>
+	 * 			Content mode, where the label contains XHTML. Contents is then 
+	 * 			enclosed in DIV elements having namespace of 
+	 * 			"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd".</li>
+	 *     <li><b>CONTENT_XML</b>
+	 * 			Content mode, where the label contains well-formed or 
+	 * 			well-balanced XML. Each of the root elements must have their 
+	 * 			default namespace specified.</li>
+	 *     <li><b>CONTENT_RAW</b>
+	 * 			Content mode, where the label contains RAW output. Output is not 
+	 * 			required to comply to with XML. In Web Adapter output is 
+	 * 			inserted inside the resulting HTML document as-is. This is 
+	 * 			useful for some specific purposes where possibly broken HTML 
+	 * 			content needs to be shown, but in most cases XHTML mode should 
+	 * 			be preferred.</li>
+	 *   </ul></p>
+	 * 
+	 * @return Content mode of the label.
 	 */
 	public int getContentMode() {
 		return contentMode;
 	}
 
-	/**
-	 * Sets the namespace.
-	 * @param namespace The namespace to set
+	/** Set the content mode of the Label.
+	 * 
+	 * <p>Possible content modes include:
+	 *   <ul>
+	 *     <li><b>CONTENT_TEXT</b> 
+	 * 			Content mode, where the label contains only plain text. The 
+	 * 			getValue() result is coded to XML when painting.</li>
+	 *     <li><b>CONTENT_PREFORMATTED</b>
+	 * 			Content mode, where the label contains preformatted text.</li>
+	 *     <li><b>CONTENT_UIDL</b>
+	 * 			Formatted content mode, where the contents is XML restricted to 
+	 * 			the UIDL 1.0 formatting markups.</li>
+	 *     <li><b>CONTENT_XHTML</b>
+	 * 			Content mode, where the label contains XHTML. Contents is then 
+	 * 			enclosed in DIV elements having namespace of 
+	 * 			"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd".</li>
+	 *     <li><b>CONTENT_XML</b>
+	 * 			Content mode, where the label contains well-formed or 
+	 * 			well-balanced XML. Each of the root elements must have their 
+	 * 			default namespace specified.</li>
+	 *     <li><b>CONTENT_RAW</b>
+	 * 			Content mode, where the label contains RAW output. Output is not 
+	 * 			required to comply to with XML. In Web Adapter output is 
+	 * 			inserted inside the resulting HTML document as-is. This is 
+	 * 			useful for some specific purposes where possibly broken HTML 
+	 * 			content needs to be shown, but in most cases XHTML mode should 
+	 * 			be preferred.</li>
+	 *   </ul></p>
+	 * 
+	 * @param contentMode New content mode of the label.
 	 */
 	public void setContentMode(int contentMode) {
-		if (contentMode >= CONTENT_TEXT && contentMode <= CONTENT_XML)
+		if (contentMode >= CONTENT_TEXT && contentMode <= CONTENT_RAW)
 			this.contentMode = contentMode;
 	}
 

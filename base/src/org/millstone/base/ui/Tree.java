@@ -399,7 +399,8 @@ public class Tree extends Select implements Container.Hierarchical, Action.Conta
 				}
 
 				// Add children if expanded, or close the tag
-				if (isExpanded(itemId) && hasChildren(itemId)) {
+				if (isExpanded(itemId) && hasChildren(itemId) 
+					&& areChildrenAllowed(itemId)) {
 					iteratorStack.push(getChildren(itemId).iterator());
 				} else {
 					if (isNode)
