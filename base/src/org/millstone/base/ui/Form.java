@@ -51,6 +51,7 @@ import org.millstone.base.data.Property;
 import org.millstone.base.data.Buffered.SourceException;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
+import org.millstone.base.terminal.VariableOwner;
 
 /** Form component provides easy way of creating and managing sets fields.
  * 
@@ -321,6 +322,7 @@ import org.millstone.base.terminal.PaintTarget;
 	public void addField(Object propertyId, AbstractField field) {
 
 		this.dependsOn(field);
+		field.dependsOn(this);
 		fields.put(propertyId, field);
 		propertyIds.addLast(propertyId);
 		field.setReadThrough(readTrough);
@@ -377,6 +379,7 @@ import org.millstone.base.terminal.PaintTarget;
 			propertyIds.remove(id);
 			fields.remove(id);
 			this.removeDirectDependency(field);
+			field.removeDirectDependency(this);
 			layout.removeComponent(field);
 			return true;
 		}
@@ -530,8 +533,11 @@ import org.millstone.base.terminal.PaintTarget;
 		layout.replaceComponent(oldField, newField);
 		fields.put(propertyId, newField);
 		this.removeDirectDependency(oldField);
+		oldField.removeDirectDependency(this);
 		this.dependsOn(newField);
+		newField.dependsOn(this);
 
 		return newField;
 	}
+	
 }
