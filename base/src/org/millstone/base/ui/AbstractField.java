@@ -40,11 +40,10 @@ package org.millstone.base.ui;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.Collection;
-
-import javax.swing.RepaintManager;
 
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
@@ -788,5 +787,34 @@ public abstract class AbstractField
 	public void focus() {
 		focus = true;
 		requestRepaint();
+	}
+	
+	/** Create field by the type of the property.
+	 * 
+	 * <p>This returns most suitable field type for editing property of 
+	 * given type</p>
+	 * 
+	 * @param propertyType Type of the property, that needs to be edited.
+	 */
+	public static AbstractField constructField(Class propertyType) {
+
+		// Null typed properties can not be edited
+		if (propertyType == null) return null;	
+		
+		// Date field
+		if (Date.class.isAssignableFrom(propertyType)) {
+			return new DateField();
+		}
+		
+		// Boolean field
+		if (Boolean.class.isAssignableFrom(propertyType)) {
+			Button button = new Button("");
+			button.setSwitchMode(true);
+			button.setImmediate(false);
+			return button;
+		}
+		
+		// Text field is used by default
+		return new TextField();
 	}
 }
