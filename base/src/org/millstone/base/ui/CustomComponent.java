@@ -86,7 +86,7 @@ public class CustomComponent implements Component {
 
 	/** List of repaint request listeners or null if not listened at all */
 	private LinkedList repaintRequestListeners = null;
-	
+
 	/** Are all the repaint listeners notified about recent changes ? */
 	private boolean repaintRequestListenersNotified = false;
 
@@ -216,7 +216,7 @@ public class CustomComponent implements Component {
 
 	/* Documentation copied from interface */
 	public void requestRepaint() {
-		
+
 		// The effect of the repaint request is identical to case where a
 		// child requests repaint
 		childRequestedRepaint(null);
@@ -229,25 +229,31 @@ public class CustomComponent implements Component {
 		if (!repaintRequestListenersNotified) {
 
 			// Notify the listeners
-			if (repaintRequestListeners != null && !repaintRequestListeners.isEmpty()) {
+			if (repaintRequestListeners != null
+				&& !repaintRequestListeners.isEmpty()) {
 				Object[] listeners = repaintRequestListeners.toArray();
 				RepaintRequestEvent event = new RepaintRequestEvent(this);
-				for (int i=0; i<listeners.length; i++) {
-					if (alreadyNotified == null) 
+				for (int i = 0; i < listeners.length; i++) {
+					if (alreadyNotified == null)
 						alreadyNotified = new LinkedList();
 					if (!alreadyNotified.contains(listeners[i])) {
-						((RepaintRequestListener)listeners[i]).repaintRequested(event);
+						(
+							(
+								RepaintRequestListener) listeners[i])
+									.repaintRequested(
+							event);
 						alreadyNotified.add(listeners[i]);
 					}
 				}
 			}
-			
+
 			repaintRequestListenersNotified = true;
-	
+
 			// Notify the parent
 			Component parent = getParent();
-			if (parent != null) parent.childRequestedRepaint(alreadyNotified);
-			
+			if (parent != null)
+				parent.childRequestedRepaint(alreadyNotified);
+
 		}
 	}
 
@@ -268,8 +274,6 @@ public class CustomComponent implements Component {
 				repaintRequestListeners = null;
 		}
 	}
-
-
 
 	/** The custom component is allways enabled by default. */
 	public void setEnabled(boolean enabled) {
@@ -321,15 +325,16 @@ public class CustomComponent implements Component {
 				"Composition root must be set to"
 					+ " non-null value before the component can be painted");
 
-		String type = getComponentType();
-		if (type != null) {
-			target.startTag("component");
-			target.addAttribute("type", type);
-			root.paint(target);
-			target.endTag("component");
-		} else
-			root.paint(target);
-			
+		if (isVisible()) {
+			String type = getComponentType();
+			if (type != null) {
+				target.startTag("component");
+				target.addAttribute("type", type);
+				root.paint(target);
+				target.endTag("component");
+			} else
+				root.paint(target);
+		}
 		repaintRequestListenersNotified = false;
 	}
 
