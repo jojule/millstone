@@ -61,4 +61,19 @@ public interface Terminal {
      * @return Height of the terminal window
      */    
     public int getScreenHeight();    
+    
+	/** Terminal error event */
+	public interface ErrorEvent {
+
+		/** Get the contained throwable */
+		public Throwable getThrowable();
+
+	}
+
+	/** Terminal error listener interface */
+	public interface ErrorListener {
+
+		/** Invoked when terminal error occurs. */
+		public void terminalError(Terminal.ErrorEvent event);
+	}    
 }
