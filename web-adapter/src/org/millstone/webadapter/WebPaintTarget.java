@@ -559,4 +559,12 @@ public class WebPaintTarget implements PaintTarget {
 		return false;
 	}
 
+	/** Add CDATA node to target UIDL-tree.
+	 * @param text Character data to add
+	 * @since 3.1
+	 */
+	public void addCharacterData(String text) throws PaintException {
+		addUIDL("<![CDATA["+text+"]]>");
+	}
+
 }

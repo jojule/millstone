@@ -208,4 +208,9 @@ public interface PaintTarget {
 	 */
 	void addText(String text) throws PaintException;
 
+	/** Add CDATA node to target UIDL-tree.
+	 * @param text Character data to add
+	 * @since 3.1
+	 */
+	void addCharacterData(String text) throws PaintException;
 }

@@ -57,5 +57,10 @@
 	   <xsl:copy-of select="text()|*"/>
 </xsl:template>
 
+<!-- XML raw data with escape="false" -->
+<xsl:template match="data[@escape='false']">
+	   <xsl:value-of select="text()|*" disable-output-escaping="yes" />
+</xsl:template>
+
 </xsl:stylesheet>
 
