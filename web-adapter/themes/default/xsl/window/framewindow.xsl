@@ -10,6 +10,11 @@
     </HEAD>
     <xsl:apply-templates select="frameset"/>
   </HTML>
+  <BODY>
+      <xsl:if test="$dhtml and (./integer[@name='height']/@value &gt; 0) and (./integer[@name='width']/@value &gt; 0)">
+        <xsl:attribute name="onload">window.resizeTo(<xsl:value-of select="./integer[@name='width']/@value"/>,<xsl:value-of select="./integer[@name='height']/@value"/>);</xsl:attribute>
+      </xsl:if>  
+  </BODY>
 </xsl:template>
 
 <xsl:template match="frameset">
