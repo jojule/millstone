@@ -1489,7 +1489,7 @@ public class Table extends Select implements Action.Container,
         int rows = size();
         if (rows > 0 && firstIndex >= 0)
             rows -= firstIndex;
-        ;
+        
         if (pagelen > 0 && pagelen < rows)
             rows = pagelen;
         Object[][] cells = new Object[cols + CELL_FIRSTCOL][rows];
@@ -1982,7 +1982,10 @@ public class Table extends Select implements Action.Container,
             throws UnsupportedOperationException {
         Container c = getContainerDataSource();
         if (c instanceof Container.Sortable) {
+        	int pageIndex = this.getCurrentPageFirstItemIndex();
             ((Container.Sortable) c).sort(propertyId, ascending);
+            setCurrentPageFirstItemIndex(pageIndex);
+            this.currentPageFirstItemId = null;
         } else if (c != null) {
             throw new UnsupportedOperationException(
                     "Underlying Data does not allow sorting");
