@@ -45,8 +45,8 @@
   <!-- Create dummy images for expanded/collapsed state -->
   <!-- These are used in javascript to change the images -->
     <xsl:if test="$dhtml">
-      <IMG HEIGHT="0" WIDTH="0" ID="{array[@name='collapse']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/menu/expanded.gif')}" ALT=""/>  
-      <IMG HEIGHT="0" WIDTH="0" ID="{array[@name='expand']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/menu/collapsed.gif')}" ALT=""/>  
+      <IMG HEIGHT="0" WIDTH="0" ID="{array[@name='collapse']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/expanded.gif')}" ALT=""/>  
+      <IMG HEIGHT="0" WIDTH="0" ID="{array[@name='expand']/@id}_IMG" STYLE="display:none;" SRC="{wa:resource('img/tree/collapsed.gif')}" ALT=""/>  
     </xsl:if>
 
   <!-- Actions -->
