@@ -736,4 +736,14 @@ public class Tree extends Select implements Container.Hierarchical {
 			throw new UnsupportedOperationException();
 	}
 
+	/** Focusing to this component is not supported.
+	 * @see org.millstone.base.ui.AbstractField#focus()
+	 * @throws UnsupportedOperationException if invoked.
+	 */
+	public void focus() 
+	throws UnsupportedOperationException
+	{
+		throw new UnsupportedOperationException();
+	}
+
 }
