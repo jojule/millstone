@@ -119,6 +119,7 @@ import org.millstone.base.terminal.PaintTarget;
 	public Form(Layout formLayout) {
 		super();
 		layout = formLayout;
+		layout.setParent(this);
 	}
 
 	/* Documented in interface */
@@ -537,4 +538,20 @@ import org.millstone.base.terminal.PaintTarget;
 		return newField;
 	}
 	
+	/**
+	 * @see org.millstone.base.ui.Component#attach()
+	 */
+	public void attach() {
+		super.attach();
+		layout.attach();
+	}
+
+	/**
+	 * @see org.millstone.base.ui.Component#detach()
+	 */
+	public void detach() {
+		super.detach();
+		layout.detach();
+	}
+
 }
