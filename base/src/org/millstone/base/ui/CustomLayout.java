@@ -85,6 +85,10 @@ public class CustomLayout extends AbstractComponentContainer implements Layout {
 	 * @param location The location of the component
 	 */
 	public void addComponent(Component c, String location) {
+		Component old = (Component)slots.get(location);
+		if (old != null) {
+			removeComponent(old);
+		}
 		slots.put(location, c);
 		c.setParent(this);
 		fireComponentAttachEvent(c);
