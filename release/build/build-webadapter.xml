@@ -8,7 +8,7 @@
 
     <target name="fail-if-servlet-missing" if="servlet.missing" depends="checks">
         <echo message="Servlet classes not found. "/> 
-	<fail message="The 'servlet.jar' must be in your classpath."/>
+	<!-- fail message="The 'servlet.jar' must be in your classpath."/ -->
     </target>       
     
     <target name="init" unless="version" depends="fail-if-servlet-missing">

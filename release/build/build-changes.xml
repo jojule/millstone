@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+
+<project name="Millstone Release Changelog" basedir="../.." default="all">
+
+    <!-- Default build target -->
+    <target name="all" depends="base-txt,web-adapter-txt,examples-txt" description="Build all">
+    </target>
+
+    <!-- Initialization - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <target name="check-parameters" unless="start" depends="check-parameters2">
+        <fail message="Define start date as '-Dstart=Dec 10 2002'"/>
+    </target>
+
+    <target name="check-parameters2" unless="nofetch">
+        <echo message="Define -Dnofetch=true to use prefected changelogs."/>
+    </target>
+
+    <target name="pre-init" depends="">
+        <!-- Directories -->
+        <property name="output-dir" value="${basedir}/release/build/changes"/>	
+        <property name="root-dir" value="." />
+    </target>
+
+    <target name="init" depends="check-parameters,pre-init">
+        
+	<!-- Create current timestamp -->
+	<tstamp/>
+	
+
+    	<!-- Create output directory -->
+        <mkdir dir="${output-dir}" />
+
+    </target>
+
+    <!-- Clean  - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <target name="clean" depends="pre-init">
+        <delete dir="${output-dir}" />        
+    </target>
+    
+    <!-- BASE - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <target name="base" depends="init" unless="nofetch">
+        <echo message="Changes from ${root-dir}/base to ${output-dir}/changes-base.xml since ${start}"/>
+        <cvschangelog dir="${root-dir}/base"
+	            start="${start}"
+      		    destfile="${output-dir}/changes-base.xml">
+        </cvschangelog>	
+    </target>
+
+    <target name="base-txt" depends="base">
+        <style in="${output-dir}/changes-base.xml" 
+	       out="${output-dir}/changes-base.txt" 
+	       style="${root-dir}/release/build/xsl/changelog.xsl">
+            <param name="module" expression="Base"/>
+        </style>	
+    </target>
+
+    <!-- WEBADAPTER  - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <target name="web-adapter" depends="init" unless="nofetch">
+        <echo message="Changes from ${root-dir}/web-adapter to ${output-dir}/changes-base.xml since ${start}"/>
+        <cvschangelog dir="${root-dir}/web-adapter"
+	            start="${start}"
+      		    destfile="${output-dir}/changes-web-adapter.xml">
+        </cvschangelog>	
+    </target>
+
+    <target name="web-adapter-txt" depends="web-adapter">
+        <style in="${output-dir}/changes-web-adapter.xml" 
+	       out="${output-dir}/changes-web-adapter.txt" 
+	       style="${root-dir}/release/build/xsl/changelog.xsl">
+            <param name="module" expression="Web-Adapter"/>
+        </style>	
+    </target>
+
+    <!-- EXAMPLES - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <target name="examples" depends="init" unless="nofetch">
+        <echo message="Changes from ${root-dir}/examples to ${output-dir}/changes-base.xml since ${start}"/>
+        <cvschangelog dir="${root-dir}/examples"
+	            start="${start}"
+      		    destfile="${output-dir}/changes-examples.xml">
+        </cvschangelog>	
+    </target>
+
+    <target name="examples-txt" depends="examples">
+        <style in="${output-dir}/changes-examples.xml" 
+	       out="${output-dir}/changes-examples.txt" 
+	       style="${root-dir}/release/build/xsl/changelog.xsl">
+            <param name="module" expression="Examples"/>
+        </style>	
+    </target>
+    
+</project>

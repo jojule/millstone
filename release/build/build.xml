@@ -30,18 +30,21 @@
    
     </target>
 
-    
+    <!--- Release requirements -->
+   
     <target name="check-version" unless="version" if="release">
         <echo message="You must specify version by setting the 'version' property!"/>
         <echo message="For example: -Dversion=3.0.1"/>
     </target>
 
-
-    <target name="check-tag" unless="version" if="release">
+    <target name="check-tag" depends="check-tag-format" unless="version" if="release">
         <echo message="You must specify CVS tag by setting the 'cvs-tag' property!"/>
         <echo message="For example: -Dcvs-tag=version-3_0_1"/>
     </target>
 
+    <target name="check-tag-format" unless="prerelease" if="release">
+        <input message="Buiding release. Ensure that ${cvs-tag} matches ${version}"/>
+    </target>
 
     <target name="init-release" depends="pre-init,check-version,check-tag" if="release">
 
