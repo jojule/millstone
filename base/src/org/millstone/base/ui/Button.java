@@ -44,8 +44,6 @@ import java.lang.reflect.Method;
 import org.millstone.base.data.Property;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.PaintException;
-import org.millstone.base.terminal.ErrorMessage;
-import org.millstone.base.terminal.SystemError;
 
 /** A generic button component.
  *
@@ -148,37 +146,29 @@ public class Button extends AbstractField {
 	 */
 	public void changeVariables(Object source, Map variables) {
 		if (variables.containsKey("state")) {
-			try {
+			// Get the new and old button states
+			Boolean newValue = (Boolean) variables.get("state");
+			Boolean oldValue = (Boolean) getValue();
 
-				// Get the new and old button states
-				Boolean newValue = (Boolean) variables.get("state");
-				Boolean oldValue = (Boolean) getValue();
+			if (isSwitchMode()) {
 
-				if (isSwitchMode()) {
-
-					// For switch button, the event is only sent if the 
-					// switch state is changed
-					if (newValue != null
-						&& !newValue.equals(oldValue)
-						&& !isReadOnly()) {
-						setValue(newValue);
-						fireClick();
-					}
-				} else {
-
-					// Only send click event if the button is pushed
-					if (newValue.booleanValue())
-						fireClick();
-
-					// If the button is true for some reason, release it
-					if (oldValue.booleanValue())
-						setValue(new Boolean(false));
+				// For switch button, the event is only sent if the 
+				// switch state is changed
+				if (newValue != null
+					&& !newValue.equals(oldValue)
+					&& !isReadOnly()) {
+					setValue(newValue);
+					fireClick();
 				}
-			} catch (Throwable e) {
-				if (e instanceof ErrorMessage)
-					setComponentError((ErrorMessage) e);
-				else
-					setComponentError(new SystemError(e));
+			} else {
+
+				// Only send click event if the button is pushed
+				if (newValue.booleanValue())
+					fireClick();
+
+				// If the button is true for some reason, release it
+				if (oldValue.booleanValue())
+					setValue(new Boolean(false));
 			}
 		}
 	}
@@ -237,8 +227,8 @@ public class Button extends AbstractField {
 
 	/** Click event. This event is thrown, when the button is clicked. 
 	 * @author IT Mill Ltd.
- 	 * @version @VERSION@
- 	 * @since 3.0
+		 * @version @VERSION@
+		 * @since 3.0
 	 */
 	public class ClickEvent extends Component.Event {
 
@@ -259,8 +249,8 @@ public class Button extends AbstractField {
 
 	/** Button click listener
 	 * @author IT Mill Ltd.
- 	 * @version @VERSION@
- 	 * @since 3.0
+		 * @version @VERSION@
+		 * @since 3.0
 	 */
 	public interface ClickListener {
 

@@ -42,8 +42,6 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Map;
 import org.millstone.base.terminal.UploadStream;
-import org.millstone.base.terminal.SystemError;
-import org.millstone.base.terminal.ErrorMessage;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.PaintException;
 import java.io.IOException;
@@ -81,8 +79,6 @@ public class Upload extends AbstractComponent {
 	/** Invoked when the value of a variable has changed.  */
 	public void changeVariables(Object source, Map variables) {
 
-		try {
-
 			// Check the variable name
 			if (!variables.containsKey("stream"))
 				return;
@@ -118,11 +114,6 @@ public class Upload extends AbstractComponent {
 				// Download interrupted
 				fireUploadInterrupted(filename, type, totalBytes);
 			}
-
-		} catch (Throwable e) {
-			if (e instanceof ErrorMessage) setComponentError((ErrorMessage)e);
-			else setComponentError(new SystemError(e));
-		}
 	}
 
 	/** Paint the content of this component.

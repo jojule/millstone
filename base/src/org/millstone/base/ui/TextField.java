@@ -40,8 +40,6 @@ package org.millstone.base.ui;
 
 import java.util.Map;
 import org.millstone.base.terminal.PaintException;
-import org.millstone.base.terminal.ErrorMessage;
-import org.millstone.base.terminal.SystemError;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.data.Property;
 
@@ -181,31 +179,24 @@ public class TextField extends AbstractField {
 	 * from implemented interface.
 	 */
 	public void changeVariables(Object source, Map variables) {
-		try {
 
-			// Set the text
-			if (variables.containsKey("text") && !isReadOnly()) {
+		// Set the text
+		if (variables.containsKey("text") && !isReadOnly()) {
 
-				// Only do the setting if the string representation of the value
-				// has been updated
-				String newValue = (String) variables.get("text");
-				String oldValue = toString();
-				if (newValue != null
-					&& (oldValue == null || isNullSettingAllowed())
-					&& newValue.equals(getNullRepresentation()))
-					newValue = null;
-				if (newValue != oldValue
-					&& (newValue == null || !newValue.equals(oldValue)))
-					setValue(newValue);
+			// Only do the setting if the string representation of the value
+			// has been updated
+			String newValue = (String) variables.get("text");
+			String oldValue = toString();
+			if (newValue != null
+				&& (oldValue == null || isNullSettingAllowed())
+				&& newValue.equals(getNullRepresentation()))
+				newValue = null;
+			if (newValue != oldValue
+				&& (newValue == null || !newValue.equals(oldValue)))
+				setValue(newValue);
 
-			}
-
-		} catch (Throwable e) {
-			if (e instanceof ErrorMessage)
-				setComponentError((ErrorMessage) e);
-			else
-				setComponentError(new SystemError(e));
 		}
+
 	}
 
 	/* Text field configuration ********************************************* */

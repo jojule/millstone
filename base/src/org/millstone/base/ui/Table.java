@@ -54,8 +54,6 @@ import org.millstone.base.data.util.ContainerOrderedWrapper;
 import org.millstone.base.data.util.IndexedContainer;
 import org.millstone.base.event.*;
 import org.millstone.base.terminal.PaintException;
-import org.millstone.base.terminal.ErrorMessage;
-import org.millstone.base.terminal.SystemError;
 import org.millstone.base.terminal.PaintTarget;
 import org.millstone.base.terminal.KeyMapper;
 import org.millstone.base.terminal.Resource;
@@ -446,7 +444,7 @@ public class Table extends Select implements Action.Container {
 			int index = getCurrentPageFirstItemIndex();
 			Object id = null;
 			if (index >= 0 && index < size())
-				 id = ((Container.Indexed) items).getIdByIndex(index);
+				id = ((Container.Indexed) items).getIdByIndex(index);
 			if (id != null && !id.equals(currentPageFirstItemId))
 				currentPageFirstItemId = id;
 		}
@@ -513,9 +511,9 @@ public class Table extends Select implements Action.Container {
 		// Refresh first item id
 		if (items instanceof Container.Indexed) {
 			try {
-			currentPageFirstItemId =
-				((Container.Indexed) items).getIdByIndex(
-					currentPageFirstItemIndex);
+				currentPageFirstItemId =
+					((Container.Indexed) items).getIdByIndex(
+						currentPageFirstItemIndex);
 			} catch (IndexOutOfBoundsException e) {
 				currentPageFirstItemId = null;
 			}
@@ -778,40 +776,30 @@ public class Table extends Select implements Action.Container {
 	 */
 	public void changeVariables(Object source, Map variables) {
 
-		try {
-			super.changeVariables(source, variables);
+		super.changeVariables(source, variables);
 
-			// Page start index
-			if (variables.containsKey("firstvisible")) {
-				setCurrentPageFirstItemIndex(
-					((Integer) variables.get("firstvisible")).intValue() - 1);
+		// Page start index
+		if (variables.containsKey("firstvisible")) {
+			setCurrentPageFirstItemIndex(
+				((Integer) variables.get("firstvisible")).intValue() - 1);
+		}
+
+		// Actions
+		if (variables.containsKey("action")) {
+			StringTokenizer st =
+				new StringTokenizer((String) variables.get("action"), ",");
+			if (st.countTokens() == 2) {
+				Object itemId = itemIdMapper.get(st.nextToken());
+				Action action = (Action) actionMapper.get(st.nextToken());
+				if (action != null
+					&& containsId(itemId)
+					&& actionHandlers != null)
+					for (Iterator i = actionHandlers.iterator(); i.hasNext();)
+						((Action.Handler) i.next()).handleAction(
+							action,
+							this,
+							itemId);
 			}
-
-			// Actions
-			if (variables.containsKey("action")) {
-				StringTokenizer st =
-					new StringTokenizer((String) variables.get("action"), ",");
-				if (st.countTokens() == 2) {
-					Object itemId = itemIdMapper.get(st.nextToken());
-					Action action = (Action) actionMapper.get(st.nextToken());
-					if (action != null
-						&& containsId(itemId)
-						&& actionHandlers != null)
-						for (Iterator i = actionHandlers.iterator();
-							i.hasNext();
-							)
-							((Action.Handler) i.next()).handleAction(
-								action,
-								this,
-								itemId);
-				}
-			}
-
-		} catch (Throwable e) {
-			if (e instanceof ErrorMessage)
-				setComponentError((ErrorMessage) e);
-			else
-				setComponentError(new SystemError(e));
 		}
 	}
 
@@ -886,9 +874,11 @@ public class Table extends Select implements Action.Container {
 		Set actionSet = new HashSet();
 		boolean selectable = isSelectable();
 		boolean[] iscomponent = new boolean[cols];
-		for (int i = 0; i < cols; i++)
+		for (int i = 0; i < cols; i++) {
+			Class colType = getType(colids[i]);
 			iscomponent[i] =
-				Component.class.isAssignableFrom(getType(colids[i]));
+				colType != null && Component.class.isAssignableFrom(colType);
+		}
 		target.startTag("rows");
 		for (int i = 0; i < cells[0].length; i++) {
 			target.startTag("tr");
@@ -1013,7 +1003,6 @@ public class Table extends Select implements Action.Container {
 		if (rows == 0)
 			return cells;
 		Object id = getCurrentPageFirstItemId();
-		boolean selecteble = isSelectable();
 		int headmode = getRowHeaderMode();
 		boolean[] iscomponent = new boolean[cols];
 		for (int i = 0; i < cols; i++)

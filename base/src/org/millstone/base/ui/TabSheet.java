@@ -73,7 +73,6 @@ public class TabSheet extends AbstractComponentContainer {
 	/** Holds value of property tabsHIdden. */
 	private boolean tabsHidden;
 
-
 	/** Construct new Tabsheet.
 	 *  Tabsheet is immediate by default.
 	 */
@@ -81,7 +80,7 @@ public class TabSheet extends AbstractComponentContainer {
 		super();
 		setImmediate(true);
 	}
-	
+
 	/** Get component container iterator for going trough all the components in the container.
 	 * @return Iterator of the components inside the container.
 	 */
@@ -98,7 +97,7 @@ public class TabSheet extends AbstractComponentContainer {
 			tabs.remove(c);
 			tabCaptions.remove(c);
 			if (c.equals(selected)) {
-				if (tabs.isEmpty()) 
+				if (tabs.isEmpty())
 					selected = null;
 				else {
 					selected = (Component) tabs.getFirst();
@@ -260,14 +259,9 @@ public class TabSheet extends AbstractComponentContainer {
 	 * the changed variable.
 	 */
 	public void changeVariables(Object source, Map variables) {
-		try {
-			if (variables.containsKey("selected"))
-				setSelectedTab(
-					(Component) keyMapper.get(
-						(String) variables.get("selected")));
-		} catch (Throwable e) {
-			setComponentError(new SystemError(e));
-		}
+		if (variables.containsKey("selected"))
+			setSelectedTab(
+				(Component) keyMapper.get((String) variables.get("selected")));
 	}
 
 	/* Documented in superclass */
@@ -280,19 +274,21 @@ public class TabSheet extends AbstractComponentContainer {
 		Resource oldIcon = getTabIcon(oldComponent);
 		String newCaption = getTabCaption(newComponent);
 		Resource newIcon = getTabIcon(newComponent);
-	
+
 		// Get the locations			
 		int oldLocation = -1;
-		int newLocation  = -1;
+		int newLocation = -1;
 		int location = 0;
-		for (Iterator i=tabs.iterator(); i.hasNext();) {
+		for (Iterator i = tabs.iterator(); i.hasNext();) {
 			Component component = (Component) i.next();
 
-			if (component == oldComponent) oldLocation = location;
-			if (component == newComponent) newLocation = location;
+			if (component == oldComponent)
+				oldLocation = location;
+			if (component == newComponent)
+				newLocation = location;
 
 			location++;
-		}	
+		}
 
 		if (oldLocation == -1)
 			addComponent(newComponent);
@@ -300,30 +296,29 @@ public class TabSheet extends AbstractComponentContainer {
 			removeComponent(oldComponent);
 			addComponent(newComponent);
 			tabs.remove(newComponent);
-			tabs.add(oldLocation,newComponent);
-			setTabCaption(newComponent,oldCaption);
-			setTabIcon(newComponent,oldIcon);
+			tabs.add(oldLocation, newComponent);
+			setTabCaption(newComponent, oldCaption);
+			setTabIcon(newComponent, oldIcon);
 		} else {
 			if (oldLocation > newLocation) {
 				tabs.remove(oldComponent);
-				tabs.add(newLocation,oldComponent);
+				tabs.add(newLocation, oldComponent);
 				tabs.remove(newComponent);
-				tabs.add(oldLocation,newComponent);	
+				tabs.add(oldLocation, newComponent);
 			} else {
 				tabs.remove(newComponent);
-				tabs.add(oldLocation,newComponent);	
+				tabs.add(oldLocation, newComponent);
 				tabs.remove(oldComponent);
-				tabs.add(newLocation,oldComponent);
+				tabs.add(newLocation, oldComponent);
 			}
-			setTabCaption(newComponent,oldCaption);
-			setTabIcon(newComponent,oldIcon);
-			setTabCaption(oldComponent,newCaption);
-			setTabIcon(oldComponent,newIcon);
-			
+			setTabCaption(newComponent, oldCaption);
+			setTabIcon(newComponent, oldIcon);
+			setTabCaption(oldComponent, newCaption);
+			setTabIcon(oldComponent, newIcon);
+
 			requestRepaint();
 		}
 	}
-
 
 	/* Click event ************************************************ */
 
@@ -343,8 +338,8 @@ public class TabSheet extends AbstractComponentContainer {
 	/** Selected Tab Change event. This event is thrown, when the selected tab
 	 * in the tab sheet is changed.
 	 * @author IT Mill Ltd.
- 	 * @version @VERSION@
- 	 * @since 3.0
+		 * @version @VERSION@
+		 * @since 3.0
 	 */
 	public class SelectedTabChangeEvent extends Component.Event {
 
@@ -365,8 +360,8 @@ public class TabSheet extends AbstractComponentContainer {
 
 	/** Selected Tab Change Event listener
 	 * @author IT Mill Ltd.
- 	 * @version @VERSION@
- 	 * @since 3.0
+		 * @version @VERSION@
+		 * @since 3.0
 	 */
 	public interface SelectedTabChangeListener {
 
@@ -380,17 +375,24 @@ public class TabSheet extends AbstractComponentContainer {
 	* @param listener Listener to be added.
 	*/
 	public void addListener(SelectedTabChangeListener listener) {
-		addListener(SelectedTabChangeEvent.class, listener, SELECTED_TAB_CHANGE_METHOD);
+		addListener(
+			SelectedTabChangeEvent.class,
+			listener,
+			SELECTED_TAB_CHANGE_METHOD);
 	}
 
 	/** Remove selected tab change listener
 	* @param listener Listener to be removed.
 	*/
 	public void removeListener(SelectedTabChangeListener listener) {
-		removeListener(SelectedTabChangeEvent.class, listener, SELECTED_TAB_CHANGE_METHOD);
+		removeListener(
+			SelectedTabChangeEvent.class,
+			listener,
+			SELECTED_TAB_CHANGE_METHOD);
 	}
 
 	/** Emit options change event. */
 	protected void fireSelectedTabChange() {
 		fireEvent(new SelectedTabChangeEvent(this));
-	}}
+	}
+}

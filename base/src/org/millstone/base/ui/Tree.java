@@ -261,8 +261,6 @@ public class Tree extends Select implements Container.Hierarchical, Action.Conta
 	 */
 	public void changeVariables(Object source, Map variables) {
 
-		try {
-
 			// Collapse nodes
 			if (variables.containsKey("collapse")) {
 				String[] keys = (String[]) variables.get("collapse");
@@ -306,12 +304,6 @@ public class Tree extends Select implements Container.Hierarchical, Action.Conta
 								itemId);
 				}
 			}
-		} catch (Throwable e) {
-			if (e instanceof ErrorMessage)
-				setComponentError((ErrorMessage) e);
-			else
-				setComponentError(new SystemError(e));
-		}
 	}
 
 	/**

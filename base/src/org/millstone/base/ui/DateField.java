@@ -237,93 +237,84 @@ public class DateField extends AbstractField {
 	 */
 	public void changeVariables(Object source, Map variables) {
 
-		try {
+		if (!isReadOnly()
+			&& (variables.containsKey("year")
+				|| variables.containsKey("month")
+				|| variables.containsKey("day")
+				|| variables.containsKey("hour")
+				|| variables.containsKey("min")
+				|| variables.containsKey("sec")
+				|| variables.containsKey("msec"))) {
 
-			if (!isReadOnly()
-				&& (variables.containsKey("year")
-					|| variables.containsKey("month")
-					|| variables.containsKey("day")
-					|| variables.containsKey("hour")
-					|| variables.containsKey("min")
-					|| variables.containsKey("sec")
-					|| variables.containsKey("msec"))) {
+			// Old and new dates
+			Date oldDate = (Date) getValue();
+			Date newDate = null;
 
-				// Old and new dates
-				Date oldDate = (Date) getValue();
-				Date newDate = null;
+			// Get the new date in parts
+			// Null values are converted to negative values.
+			int year =
+				variables.containsKey("year")
+					? (variables.get("year") == null
+						? -1
+						: ((Integer) variables.get("year")).intValue())
+					: 0;
+			int month =
+				variables.containsKey("month")
+					? (variables.get("month") == null
+						? -1
+						: ((Integer) variables.get("month")).intValue() - 1)
+					: 0;
+			int day =
+				variables.containsKey("day")
+					? (variables.get("day") == null
+						? -1
+						: ((Integer) variables.get("day")).intValue())
+					: 1;
+			int hour =
+				variables.containsKey("hour")
+					? (variables.get("hour") == null
+						? -1
+						: ((Integer) variables.get("hour")).intValue())
+					: 0;
+			int min =
+				variables.containsKey("min")
+					? (variables.get("min") == null
+						? -1
+						: ((Integer) variables.get("min")).intValue())
+					: 0;
+			int sec =
+				variables.containsKey("sec")
+					? (variables.get("sec") == null
+						? -1
+						: ((Integer) variables.get("sec")).intValue())
+					: 0;
+			int msec =
+				variables.containsKey("msec")
+					? (variables.get("msec") == null
+						? -1
+						: ((Integer) variables.get("msec")).intValue())
+					: 0;
 
-				// Get the new date in parts
-				// Null values are converted to negative values.
-				int year =
-					variables.containsKey("year")
-						? (variables.get("year") == null
-							? -1
-							: ((Integer) variables.get("year")).intValue())
-						: 0;
-				int month =
-					variables.containsKey("month")
-						? (variables.get("month") == null
-							? -1
-							: ((Integer) variables.get("month")).intValue() - 1)
-						: 0;
-				int day =
-					variables.containsKey("day")
-						? (variables.get("day") == null
-							? -1
-							: ((Integer) variables.get("day")).intValue())
-						: 1;
-				int hour =
-					variables.containsKey("hour")
-						? (variables.get("hour") == null
-							? -1
-							: ((Integer) variables.get("hour")).intValue())
-						: 0;
-				int min =
-					variables.containsKey("min")
-						? (variables.get("min") == null
-							? -1
-							: ((Integer) variables.get("min")).intValue())
-						: 0;
-				int sec =
-					variables.containsKey("sec")
-						? (variables.get("sec") == null
-							? -1
-							: ((Integer) variables.get("sec")).intValue())
-						: 0;
-				int msec =
-					variables.containsKey("msec")
-						? (variables.get("msec") == null
-							? -1
-							: ((Integer) variables.get("msec")).intValue())
-						: 0;
-
-				// If any of the components is < 0, the date should be null
-				if (year < 0
-					|| month < 0
-					|| day < 0
-					|| hour < 0
-					|| min < 0
-					|| sec < 0
-					|| msec < 0)
-					newDate = null;
-				else {
-					newDate =
-						new GregorianCalendar(year, month, day, hour, min, sec)
-							.getTime();
-					if (msec > 0)
-						newDate = new Date(newDate.getTime() + msec);
-				}
-
-				if (newDate != oldDate
-					&& (newDate == null || !newDate.equals(oldDate)))
-					setValue(newDate);
+			// If any of the components is < 0, the date should be null
+			if (year < 0
+				|| month < 0
+				|| day < 0
+				|| hour < 0
+				|| min < 0
+				|| sec < 0
+				|| msec < 0)
+				newDate = null;
+			else {
+				newDate =
+					new GregorianCalendar(year, month, day, hour, min, sec)
+						.getTime();
+				if (msec > 0)
+					newDate = new Date(newDate.getTime() + msec);
 			}
 
-		} catch (Throwable e) {
-			if (e instanceof ErrorMessage)
-				setComponentError((ErrorMessage) e);
-			else
-				setComponentError(new SystemError(e));
+			if (newDate != oldDate
+				&& (newDate == null || !newDate.equals(oldDate)))
+				setValue(newDate);
 		}
 	}
 

@@ -263,94 +263,86 @@ public class Select
 	public void changeVariables(Object source, Map variables) {
 
 		// Try to set the property value
-		try {
 
-			// New option entered (and it is allowed)
-			String newitem = (String) variables.get("newitem");
-			if (newitem != null && newitem.length() > 0) {
+		// New option entered (and it is allowed)
+		String newitem = (String) variables.get("newitem");
+		if (newitem != null && newitem.length() > 0) {
 
-				// Check for readonly
-				if (isReadOnly())
-					throw new Property.ReadOnlyException();
+			// Check for readonly
+			if (isReadOnly())
+				throw new Property.ReadOnlyException();
 
-				// Add new option
-				if (addItem(newitem) != null) {
+			// Add new option
+			if (addItem(newitem) != null) {
 
-					// Set the caption property, if used
-					if (getItemCaptionPropertyId() != null)
-						try {
-							getContainerProperty(
-								newitem,
-								getItemCaptionPropertyId()).setValue(
-								newitem);
-						} catch (Property.ConversionException ignored) {
-							// The conversion exception is safely ignored, the caption is
-							// just missing	
-						}
+				// Set the caption property, if used
+				if (getItemCaptionPropertyId() != null)
+					try {
+						getContainerProperty(
+							newitem,
+							getItemCaptionPropertyId()).setValue(
+							newitem);
+					} catch (Property.ConversionException ignored) {
+						// The conversion exception is safely ignored, the caption is
+						// just missing	
+					}
+			}
+		}
+
+		// Selection change
+		if (variables.containsKey("selected")) {
+			String[] ka = (String[]) variables.get("selected");
+
+			// Multiselect mode
+			if (isMultiSelect()) {
+
+				// Convert the key-array to id-set
+				LinkedList s = new LinkedList();
+				for (int i = 0; i < ka.length; i++) {
+					Object id = itemIdMapper.get(ka[i]);
+					if (id != null && containsId(id))
+						s.add(id);
+					else if (
+						itemIdMapper.isNewIdKey(ka[i])
+							&& newitem != null
+							&& newitem.length() > 0)
+						s.add(newitem);
+				}
+
+				// Limit the deselection to the set of visible items
+				// (non-visible items can not be deselected)
+				Collection visible = getVisibleItemIds();
+				if (visible != null) {
+					Set newsel = (Set) getValue();
+					if (newsel == null)
+						newsel = new HashSet();
+					else
+						newsel = new HashSet(newsel);
+					newsel.removeAll(visible);
+					newsel.addAll(s);
+					super.setValue(newsel);
 				}
 			}
 
-			// Selection change
-			if (variables.containsKey("selected")) {
-				String[] ka = (String[]) variables.get("selected");
+			// Single select mode
+			else {
+				if (ka.length == 0) {
 
-				// Multiselect mode
-				if (isMultiSelect()) {
-
-					// Convert the key-array to id-set
-					LinkedList s = new LinkedList();
-					for (int i = 0; i < ka.length; i++) {
-						Object id = itemIdMapper.get(ka[i]);
-						if (id != null && containsId(id))
-							s.add(id);
-						else if (
-							itemIdMapper.isNewIdKey(ka[i])
-								&& newitem != null
-								&& newitem.length() > 0)
-							s.add(newitem);
-					}
-
-					// Limit the deselection to the set of visible items
-					// (non-visible items can not be deselected)
+					// Allow deselection only if the deselected item is visible
+					Object current = getValue();
 					Collection visible = getVisibleItemIds();
-					if (visible != null) {
-						Set newsel = (Set) getValue();
-						if (newsel == null)
-							newsel = new HashSet();
-						else
-							newsel = new HashSet(newsel);
-						newsel.removeAll(visible);
-						newsel.addAll(s);
-						super.setValue(newsel);
-					}
-				}
-
-				// Single select mode
-				else {
-					if (ka.length == 0) {
-
-						// Allow deselection only if the deselected item is visible
-						Object current = getValue();
-						Collection visible = getVisibleItemIds();
-						if (visible != null && visible.contains(current))
-							setValue(null);
-					} else {
-						Object id = itemIdMapper.get(ka[0]);
-						if (id != null && id.equals(getNullSelectionItemId()))
-							setValue(null);
-						else if (itemIdMapper.isNewIdKey(ka[0]))
-							setValue(newitem);
-						else
-							setValue(id);
-					}
+					if (visible != null && visible.contains(current))
+						setValue(null);
+				} else {
+					Object id = itemIdMapper.get(ka[0]);
+					if (id != null && id.equals(getNullSelectionItemId()))
+						setValue(null);
+					else if (itemIdMapper.isNewIdKey(ka[0]))
+						setValue(newitem);
+					else
+						setValue(id);
 				}
 			}
-
-		} catch (Throwable e) {
-			if (e instanceof ErrorMessage)
-				setComponentError((ErrorMessage) e);
-			else
-				setComponentError(new SystemError(e));
 		}
 	}
 
@@ -499,7 +491,8 @@ public class Select
 
 		boolean retval =
 			items.addContainerProperty(propertyId, type, defaultValue);
-		if (retval && !(items instanceof Container.PropertySetChangeNotifier)) {
+		if (retval
+			&& !(items instanceof Container.PropertySetChangeNotifier)) {
 			firePropertySetChange();
 		}
 		return retval;
@@ -517,7 +510,7 @@ public class Select
 		boolean retval = items.removeAllItems();
 		if (retval) {
 			setValue(null);
-			if (!(items instanceof Container.ItemSetChangeNotifier))		
+			if (!(items instanceof Container.ItemSetChangeNotifier))
 				fireItemSetChange();
 		}
 		return retval;
@@ -533,7 +526,8 @@ public class Select
 	public Object addItem() throws UnsupportedOperationException {
 
 		Object retval = items.addItem();
-		if (retval != null && !(items instanceof Container.ItemSetChangeNotifier))
+		if (retval != null
+			&& !(items instanceof Container.ItemSetChangeNotifier))
 			fireItemSetChange();
 		return retval;
 	}
@@ -552,7 +546,8 @@ public class Select
 	public Item addItem(Object itemId) throws UnsupportedOperationException {
 
 		Item retval = items.addItem(itemId);
-		if (retval != null && !(items instanceof Container.ItemSetChangeNotifier))
+		if (retval != null
+			&& !(items instanceof Container.ItemSetChangeNotifier))
 			fireItemSetChange();
 		return retval;
 	}
