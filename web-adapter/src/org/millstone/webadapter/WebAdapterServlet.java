@@ -788,8 +788,9 @@ public class WebAdapterServlet
 
 		// Try to find the default theme JAR file based on the given path
 		String path = this.getServletContext().getRealPath(themeJarFile);
-		if (path != null) {
-			return new File(path);			
+		File file = null;
+		if (path != null && (file = new File(path)).exists()) {
+			return file;			
 		}
 		
 		// If we do not have access to individual files, create a temporary
