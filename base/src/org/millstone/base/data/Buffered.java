@@ -39,6 +39,8 @@
 
 package org.millstone.base.data;
 
+import java.util.Arrays;
+
 import org.millstone.base.terminal.ErrorMessage;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.PaintTarget;
@@ -193,11 +195,9 @@ public interface Buffered {
 		 * for the exception. This is possible if the commit operation
 		 * triggers more than one error at the same time.
 		 */
-		public final Throwable getCause() throws MoreThanOneCauseException {
+		public final Throwable getCause() {
 			if (causes.length == 0)
 				return null;
-			if (causes.length > 1)
-				throw new MoreThanOneCauseException();
 			return causes[0];
 		}
 
@@ -268,20 +268,6 @@ public interface Buffered {
 
 		}
 
-		/** An exception signaling that there are more than one causes
-		 * for a SourceException.
-		 */
-		public class MoreThanOneCauseException extends RuntimeException {
-
-			/** Get all the causes for this exception. 
-			 * 
-			 * @return throwables that caused this exception
-			 */
-			public Throwable[] getCauses() {
-				return causes;
-			}
-
-		}
 
 		/* Documented in super interface */
 		public void addListener(RepaintRequestListener listener) {
