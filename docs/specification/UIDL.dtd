@@ -545,8 +545,6 @@ Date selection component
         <array id="156" name="expand" />
         <array id="136" name="collapse" />
         <actions>
-        <array id="127" name="newitem">
-        </array>
             <array id="13" name="action">
                 <ai>actionikey</ai>
             </array>
@@ -590,19 +588,12 @@ Date selection component
         array of keys to be requested to be expanded
     array name="collapse": 
         array of keys to be requested to be collapsed (collapses are one done before expands)
-    string name="newitem": 
-        Placeholder for new items to be added to tree, that contains the id of the new item
-    string name="newitemtype": 
-		is either "node" or "leaf". If missing, leaf is implied.
-    string name="newitemparent": 
-		key of the parent. If missing, the new item is a root.
     -->
     <!ATTLIST tree
                 %componentAttributes;
 		        modified  (false|true)    #IMPLIED
    				focus     (false|true)    #IMPLIED
                 selectmode              (none|single|multi) "none" 
-                allownewitem  			(false|true)    #IMPLIED
                 disablenodeselection    (false|true)        #IMPLIED>
                 <!--
                 modified:
@@ -616,8 +607,6 @@ Date selection component
                     'multi' allows multiple nodes/items to be selected simultaneously
                 disablenodeselection:
                     disables the ability to select nodes (only leafs can be selected)
-                allownewitem:
-                    True to allow a new items to be dynamically added to tree.
                 -->
 
 <!-- ........................................................................
