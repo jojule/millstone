@@ -3,31 +3,28 @@
   Author:     IT Mill Ltd
 
   Description:
-    Styles for Millstone stoneplayer theme.
+    Styles for Millstone default theme.
 */
 
-
-/* Stoneplayer modifications  -------------------------------------------- */
+/* Stoneplayer modifications (Moved from below) -------------------------- */
 
 DIV.embedded { margin: 0px; }
 BODY { background-color: white; } /* #efebde; ButtonFace in XP*/
+
 
 /* Basic page properties ------------------------------------------------- */
 
 BODY, TABLE { 
 	color: black; 
 	font-style: normal; 
-	font-size: 11px;
+	font-size: 8pt;
 	font-weight: normal; 
 	font-family:verdana,arial,helvetica;
 	text-decoration: none; 
 	margin: 0px; 
 	padding: 0px;
 	}
-	
-
-/* BODY { background-color: #efebde; } /*  ButtonFace in XP*/
-	
+		
 A { 
 	color: navy; 
 	text-decoration: none 
@@ -50,22 +47,30 @@ IMG.icon {vertical-align: middle; }
 	color: #0059ef;
 }
 
-DIV.popup 
+DIV.popup,DIV.popup-inline
 {
-	position: absolute;
-	background-color: ffffca;
+	background-color: #ffffca;
 	border: solid 1px #aaaa88;
-	overflow: show;
-	z-index: 100;
+	overflow: visible;
+}
+DIV.popup  { position: absolute; z-index: 100000; }
+DIV.popup-inline  { margin:5px; }
+
+
+IMG.action {
+	cursor: pointer; 
+	cursor: hand; 
+	padding: 0px;
+	border: 0px;
+	margin: 0px;
+	vertical-align: middle;
 }
 
+/* Component Margins and Paddings --------------------------------------- */
 
-/* Paddings -------------------------------------------------------------- */
-
-INPUT.button, DIV.button, NOBR.button,
+INPUT.button, DIV.button-link, NOBR.button,
 DIV.component, 
 DIV.datefield,DIV.datefield-text,DIV.datefield-calendar,
-/* DIV.embedded, */
 DIV.label,
 DIV.link,
 DIV.select,DIV.select-optiongroup,
@@ -77,24 +82,39 @@ DIV.upload {
 	margin: 5px;
 }
 
+/* Layout Properties ----------------------------------------------------- */
+
 DIV.customlayout, DIV.gridlayout, DIV.orderedlayout, DIV.orderedlayout-form 
 { 
 	margin: 0px; 
 }
-
+TD.form-caption {
+	vertical-align: top;
+}
 
 /* TextField ------------------------------------------------------------- */
 
-INPUT.modified { border: 1px solid black; background-color: fffee0; }
+INPUT.modified { border: 1px solid black; background-color: #fffee0; }
 
 /* Button ---------------------------------------------------------------- */
 
-A.button, NOBR.button {
+A.button-link, NOBR.button {
 	font-weight: bold;
 	color: #0059ef;
 	cursor: pointer; 
 	cursor: hand; 
 }
+
+/* Server commands ------------------------------------------------------- */
+
+IFRAME.server-commands {
+	visibility: hidden;
+	position: absolute;
+	border: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	margin: 0px 0px 0px 0px;
+}
+
 
 /* Select ---------------------------------------------------------------- */
 
@@ -110,7 +130,7 @@ TD.tab-l-s, TD.tab-c-s, TD.tab-r-s, TD.tab-l, TD.tab-c, TD.tab-r
 }
 TD.tab-l-s, TD.tab-l  { width: 4px; }
 TD.tab-r-s, TD.tab-r  { width: 6px; background-repeat: no-repeat; }
-TD.tab-c-s, TD.tab-c 
+INPUT.tab-c-s, TD.tab-c-s, INPUT.tab-c, TD.tab-c 
 {
 	cursor: pointer; 
 	cursor: hand; 
@@ -118,12 +138,13 @@ TD.tab-c-s, TD.tab-c
 	text-align: center;
 	font-weight: bold;
 	padding: 2px 3px 3px 2px;
+	height: 20px;
 }
 TD.tab-l { background-image: url(../img/tabl.gif); }
-TD.tab-c { background-color: #7fabf6; }
+INPUT.tab-c, TD.tab-c { border: none; background-color: #7fabf6; }
 TD.tab-r { background-image: url(../img/tabr.gif); }
 TD.tab-l-s { background-image: url(../img/tabls.gif); }
-TD.tab-c-s { background-color: #0059ef; }
+INPUT.tab-c-s, TD.tab-c-s { border: none; background-color: #0059ef; }
 TD.tab-r-s { background-image: url(../img/tabrs.gif); }
 TD.tabsheet 
 {
@@ -151,6 +172,7 @@ DIV.panel-body-strong
 {
 	background-color: #dbe9ff;
 	padding: 0px 0px 0px 0px;
+	margin-top: 2px;
 }
 
 /* Table ----------------------------------------------------------------- */
@@ -169,8 +191,15 @@ TD.table-row-header
 TR.table, TR.table-unselected, TR.table-selected { 
 	border: dotted 1px #7fabf6; 
 	background-color: #fcfcfc; 
+	cursor: pointer; 
+	cursor: hand; 
 }
-TR.table-selected { background-color: #0059ef; color: white; }
+TR.table-list-selected,TR.table-list {
+	cursor: pointer; 
+	cursor: hand; 
+}
+
+TR.table-selected, TR.table-list-selected { background-color: #0059ef; color: white; }
 TD.table { padding: 2px; border-top: dotted 1px #7fabf6; }
 TD.table-select { border: 0px; margin: 0px; spacing: 0px; background-color: #7fabf6;}
 INPUT.table-select { border: 0px; margin: 0px;  }
@@ -178,14 +207,16 @@ TABLE.table-cursor { }
 
 /* Tree ----------------------------------------------------------------- */
 
-A.tree-node, A.tree-node-selected { color: black; padding: 1px; }
+A.tree-node, A.tree-node-selected {  color: black; padding: 1px; }
+INPUT.tree-node { text-align: left; height: 18px; background-color: white; border:none; }
+INPUT.tree-node-selected { text-align: left; height: 18px; background-color: #0059ef; color: white; border: none; }
 A.tree-node-selected { background-color: #0059ef; color: white; border: 1px slashed white; }
 A.tree-node:hover, A.tree-node-selected:hover { text-decoration: underline; }
-IMG.tree { margin: 0px; width: 16px; height 16px; }
+IMG.tree { margin: 0px; width: 16px; height: 16px; }
 
 /* Menu Style tree  ----------------------------------------------------- */
 
-IMG.tree-menu-exp { margin: 1px; vertical-align: text-top;}
+IMG.tree-menu-exp { margin: 1px; vertical-align: text-top; width: 13px; height: 13px;}
 DIV.tree-menu-body { 
 	cursor: pointer; 
 	cursor: hand; 
@@ -194,34 +225,114 @@ DIV.tree-menu-body {
 	background-color: #7fabf6; }
 
 /* Level 1 in menu  */
-DIV.tree-menu-1,DIV.tree-menu-1-selected {
-	color: white; 
+INPUT.tree-menu-1, 
+INPUT.tree-menu-1-selected, 
+DIV.tree-menu-1, 
+DIV.tree-menu-1-selected {
+	text-align:left;
+	color: white;
 	font-weight: bold; 
 	vertical-align: top; 
-	border-bottom: 1px solid #0059ef;}
-DIV.tree-menu-1-child { 
-	margin-bottom:1px; 
-	background-color: #fcfcfc;}
+	background-color: #7fabf6;
+	border: none;
+	height: 18px;}
+A.tree-menu-1, 
+A.tree-menu-1-selected {
+	color: white;
+	font-weight: bold;
+}
+
+DIV.tree-menu-1-child { background-color: #fcfcfc;}
+INPUT.tree-menu-1-selected, 
 DIV.tree-menu-1-selected { background-color: #0059ef; }
 
 /* Level 2 in menu  */
-DIV.tree-menu-2,DIV.tree-menu-2-selected { vertical-align: top; }
-DIV.tree-menu-2 { color: black;}
-DIV.tree-menu-2-child {margin-left:16px; border-top: 1px solid #0059ef;}
-DIV.tree-menu-2-selected { background-color: #0059ef; color: white; }
+DIV.tree-menu-2,
+DIV.tree-menu-2-selected { vertical-align: top; }
+INPUT.tree-menu-2 {
+	background-color: #fcfcfc; 
+	text-align:left; 
+	color: black; 
+	border:none; 
+}
+DIV.tree-menu-2 { background-color: #fcfcfc; }
+DIV.tree-menu-2-child { margin-left:16px; }
+DIV.tree-menu-2-selected { 
+	color: white; 
+	background-color: #0059ef; 
+}
+INPUT.tree-menu-2-selected {
+	text-align:left; 
+	border:none; 
+	background-color: #0059ef; 
+	height: 18px;
+}
 
 /* Level 3 in menu  */
-DIV.tree-menu-3, DIV.tree-menu-3-selected { vertical-align: top;}
-DIV.tree-menu-3 { color: black;}
-DIV.tree-menu-3-child {margin-left:16px; border-top: 1px solid #0059ef;}
-DIV.tree-menu-3-selected { background-color: #0059ef; color: white; }
+DIV.tree-menu-3,
+DIV.tree-menu-3-selected { vertical-align: top; }
+INPUT.tree-menu-3 {
+	background-color: #fcfcfc; 
+	text-align:left; 
+	color: black; 
+	border:none; 
+}
+DIV.tree-menu-3 { background-color: #fcfcfc; }
+DIV.tree-menu-3-child { margin-left:16px; }
+DIV.tree-menu-3-selected { 
+	color: white; 
+	background-color: #0059ef; 
+}
+INPUT.tree-menu-3-selected {
+	text-align:left; 
+	border:none; 
+	background-color: #0059ef; 
+	height: 18px;
+}
 
 /* Level 4 in menu  */
-DIV.tree-menu-4,DIV.tree-menu-4-selected { vertical-align: top; }
-DIV.tree-menu-4 { color: black;}
-DIV.tree-menu-4-child {margin-left:16px; border-top: 1px solid #0059ef;}
-DIV.tree-menu-4-selected { background-color: #0059ef; color: white; }
+DIV.tree-menu-4,
+DIV.tree-menu-4-selected { vertical-align: top; }
+INPUT.tree-menu-4 {
+	background-color: #fcfcfc; 
+	text-align:left; 
+	color: black; 
+	border:none; 
+}
+DIV.tree-menu-4 { background-color: #fcfcfc; }
+DIV.tree-menu-4-child { margin-left:16px; }
+DIV.tree-menu-4-selected { 
+	color: white; 
+	background-color: #0059ef; 
+}
+INPUT.tree-menu-4-selected {
+	text-align:left; 
+	border:none; 
+	background-color: #0059ef; 
+	height: 18px;
+}
 
+/* Level 5 in menu  */
+DIV.tree-menu-5,
+DIV.tree-menu-5-selected { vertical-align: top; }
+INPUT.tree-menu-5 {
+	background-color: #fcfcfc; 
+	text-align:left; 
+	color: black; 
+	border:none; 
+}
+DIV.tree-menu-5 { background-color: #fcfcfc; }
+DIV.tree-menu-5-child { margin-left:16px; }
+DIV.tree-menu-5-selected { 
+	color: white; 
+	background-color: #0059ef; 
+}
+INPUT.tree-menu-5-selected {
+	text-align:left; 
+	border:none; 
+	background-color: #0059ef; 
+	height: 18px;
+}
 
 /* Action styles  ----------------------------------------------------- */
 
