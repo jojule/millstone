@@ -216,16 +216,10 @@ public class DirectoryThemeSource implements ThemeSource {
 			for (Iterator i = fileNames.iterator(); i.hasNext();) {
 				File f = new File(this.path, (String) i.next());
 				try {
-					xslStreams.add(
-						new XSLInputStream(
-							new FileInputStream(f),
-							webAdapterServlet,
-							theme));
+					xslStreams.add(new FileInputStream(f));
 
 				} catch (java.io.FileNotFoundException e) {
 					throw new ThemeException("XSL File not found: " + f);
-				} catch (java.io.IOException e) {
-					throw new ThemeException("Failed to read XSL file. " + f);
 				}
 			}
 

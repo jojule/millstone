@@ -59,7 +59,6 @@ import java.util.zip.ZipEntry;
 
 import org.millstone.webadapter.ThemeSource.ThemeException;
 
-
 /** Theme source for reading themes from a JAR archive.
  *  At this time only jar files are supported and an archive
  *  may not contain any recursive archives.
@@ -68,7 +67,7 @@ import org.millstone.webadapter.ThemeSource.ThemeException;
  * @since 3.0
  */
 public class JarThemeSource implements ThemeSource {
-	
+
 	private File file;
 	private JarFile jar;
 	private Theme theme;
@@ -167,7 +166,8 @@ public class JarThemeSource implements ThemeSource {
 			// If description file was modified reload it
 			if (modTime > this.lastModified) {
 				this.lastModified = modTime;
-				JarEntry entry = jar.getJarEntry(this.path + Theme.DESCRIPTIONFILE);
+				JarEntry entry =
+					jar.getJarEntry(this.path + Theme.DESCRIPTIONFILE);
 				if (entry != null) {
 					try {
 						this.theme = new Theme(jar.getInputStream(entry));
@@ -210,8 +210,6 @@ public class JarThemeSource implements ThemeSource {
 		return xslFiles;
 	}
 
-
-
 	/** Get XSL stream without the XSL headers.
 	 *  @see org.millstone.webadapter.ThemeSource#getXSLStream(Theme,WebBrowserType)
 	 */
@@ -232,7 +230,8 @@ public class JarThemeSource implements ThemeSource {
 			// If description file was modified reload it
 			if (modTime > this.lastModified) {
 				this.lastModified = modTime;
-				JarEntry entry = jar.getJarEntry(this.path + Theme.DESCRIPTIONFILE);
+				JarEntry entry =
+					jar.getJarEntry(this.path + Theme.DESCRIPTIONFILE);
 				if (entry != null) {
 					try {
 						this.theme = new Theme(jar.getInputStream(entry));
@@ -252,11 +251,7 @@ public class JarThemeSource implements ThemeSource {
 			for (Iterator i = fileNames.iterator(); i.hasNext();) {
 				JarEntry entry = jar.getJarEntry(this.path + (String) i.next());
 				try {
-					xslStreams.add(
-						new XSLInputStream(
-							jar.getInputStream(entry),
-							webAdapterServlet,
-							theme));
+					xslStreams.add(jar.getInputStream(entry));
 				} catch (java.io.FileNotFoundException e) {
 					throw new ThemeException(
 						"XSL File not found: " + this.file + ": " + entry);
@@ -363,9 +358,9 @@ public class JarThemeSource implements ThemeSource {
 
 	/**
 	 * @author IT Mill Ltd.
- 	 * @version @VERSION@
- 	 * @since 3.0
- 	 */
+		 * @version @VERSION@
+		 * @since 3.0
+		 */
 	private class Cache {
 
 		private Map data = new HashMap();
@@ -398,7 +393,7 @@ public class JarThemeSource implements ThemeSource {
 		private Object data;
 		private String name;
 
-		public CacheItem(Object data, String name) {			
+		public CacheItem(Object data, String name) {
 			this.name = name;
 			this.data = data;
 		}
@@ -407,12 +402,12 @@ public class JarThemeSource implements ThemeSource {
 			return this.data;
 		};
 
-		public void finalize() throws Throwable {			
+		public void finalize() throws Throwable {
 			this.data = null;
 			this.name = null;
 			super.finalize();
 		}
 
 	}
-	
+
 }
