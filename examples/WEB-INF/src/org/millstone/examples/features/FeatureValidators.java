@@ -38,62 +38,13 @@
 
 package org.millstone.examples.features;
 
-import java.util.Hashtable;
-
-import org.millstone.base.data.util.BeanItem;
-import org.millstone.base.terminal.ClassResource;
-import org.millstone.base.ui.*;
-
-public class FeatureButton extends Feature {
-
-	public FeatureButton() {
-		super();
-	}
-
-	protected Component getDemoComponent() {
-
-		OrderedLayout l = new OrderedLayout();
-
-		// Example panel
-		Panel show = new Panel("Button component");
-		Button b = new Button("Caption");
-		show.addComponent(b);
-		l.addComponent(show);
-
-		// Properties
-		PropertyPanel p = new PropertyPanel(b);
-		Select themes = (Select) p.getField("style");
-		themes
-			.addItem("link")
-			.getItemProperty(themes.getItemCaptionPropertyId())
-			.setValue("link");
-		Form ap = p.createBeanPropertySet(new String[] { "switchMode" });
-		p.addProperties("Button Properties", ap);
-		l.addComponent(p);
-
-		return l;
-	}
+public class FeatureValidators extends Feature {
 
 	protected String getExampleSrc() {
-		return "Button b = new Button(\"Caption\");\n";
-
-	}
-
-	/**
-	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
-	 */
-	protected String getDescriptionXHTML() {
-		return "In Millstone, buttons may function either as a pushbuttons or switches. (checkboxes)<br/><br/>"
-			+ "On the demo tab you can try out how the different properties affect "
-			+ "the presentation of the component.";
-	}
-
-	protected String getImage() {
-		return "button.jpg";
+		return super.getExampleSrc();
 	}
 
 	protected String getTitle() {
-		return "Button";
+		return "Validators";
 	}
-
 }

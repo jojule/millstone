@@ -54,7 +54,7 @@ import org.millstone.base.ui.Panel;
 import org.millstone.base.ui.Upload;
 import org.millstone.base.ui.Upload.FinishedEvent;
 
-public class FeatureFileTransfer
+public class FeatureUpload
 	extends Feature
 	implements Upload.FinishedListener {
 
@@ -63,7 +63,7 @@ public class FeatureFileTransfer
 	Panel status = new Panel("Uploaded file:");
 	Panel download_window = new Panel("Uploaded files:");
 
-	public FeatureFileTransfer() {
+	public FeatureUpload() {
 		super();
 	}
 
@@ -82,13 +82,11 @@ public class FeatureFileTransfer
 		l.addComponent(status);
 		l.addComponent(show);
 
-		// Configuration
-		l.addComponent(createPropertyPanel(up, new String[] {
-		}, null));
-		download_window.setVisible(false);
-		l.addComponent(download_window);
+		// Properties
+		PropertyPanel p = new PropertyPanel(up);
+		l.addComponent(p);
 
-		return l;
+			return l;
 	}
 
 	protected String getExampleSrc() {
@@ -102,9 +100,7 @@ public class FeatureFileTransfer
 			+ " }";
 
 	}
-	/**
-	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
-	 */
+
 	protected String getDescriptionXHTML() {
 		return "This demonstrates the use of the Upload component together with the Link component. "
 			+ "This implementation does not actually store the file to disk, it only keeps it in a buffer. "
@@ -120,9 +116,6 @@ public class FeatureFileTransfer
 		return "Upload";
 	}
 
-	/**
-	 * @see org.millstone.base.ui.Upload.FinishedListener#uploadFinished(FinishedEvent)
-	 */
 	public void uploadFinished(FinishedEvent event) {
 		status.removeAllComponents();
 		if (buffer.getStream() == null)
@@ -164,9 +157,6 @@ public class FeatureFileTransfer
 		public Buffer() {
 
 		}
-		/**
-		 * @see org.millstone.base.terminal.StreamResource.StreamSource#getStream()
-		 */
 		public InputStream getStream() {
 			if (outputBuffer == null)
 				return null;
@@ -200,8 +190,4 @@ public class FeatureFileTransfer
 		}
 
 	}
-
 }
-
-/* This Millstone sample code is public domain. *  
- * For more information see www.millstone.org.  */

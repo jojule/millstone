@@ -38,62 +38,45 @@
 
 package org.millstone.examples.features;
 
-import java.util.Hashtable;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import org.millstone.base.data.util.BeanItem;
-import org.millstone.base.terminal.ClassResource;
+import org.millstone.base.terminal.ExternalResource;
 import org.millstone.base.ui.*;
 
-public class FeatureButton extends Feature {
+public class FeatureServerEvents extends Feature {
 
-	public FeatureButton() {
-		super();
+	protected String getTitle() {
+		return "Server Events";
 	}
-
+	
 	protected Component getDemoComponent() {
-
 		OrderedLayout l = new OrderedLayout();
 
-		// Example panel
-		Panel show = new Panel("Button component");
-		Button b = new Button("Caption");
-		show.addComponent(b);
-		l.addComponent(show);
+		l.addComponent(
+			new Label(
+				"<p>For demonstration, see GO-Game example application. The application implements a "+
+				"multi-player board game, where the moved by one player are immediately reflected to "+
+				"another player. Updating another players screen is totally automatic, and the programmed "+
+				"does not need to be avare when the refresh requests are sent to screen by the server. In "+
+				"web adapter the requests are passed through open HTTP-connection as java-script fragments "+
+				"that update the windows that need repainting.</p>",
+				Label.CONTENT_UIDL));
 
-		// Properties
-		PropertyPanel p = new PropertyPanel(b);
-		Select themes = (Select) p.getField("style");
-		themes
-			.addItem("link")
-			.getItemProperty(themes.getItemCaptionPropertyId())
-			.setValue("link");
-		Form ap = p.createBeanPropertySet(new String[] { "switchMode" });
-		p.addProperties("Button Properties", ap);
-		l.addComponent(p);
+		URL goUrl = null;
+		try {
+			goUrl = new URL(getApplication().getURL(), "../go/");
+		} catch (MalformedURLException e) {
+		}
+
+		if (goUrl != null) {
+			Link link = new Link("Start GO-Game", new ExternalResource(goUrl));
+			link.setTargetName("gogame");
+			link.setTargetBorder(Link.TARGET_BORDER_NONE);
+			l.addComponent(link);
+		}
 
 		return l;
 	}
-
-	protected String getExampleSrc() {
-		return "Button b = new Button(\"Caption\");\n";
-
-	}
-
-	/**
-	 * @see org.millstone.examples.features.Feature#getDescriptionXHTML()
-	 */
-	protected String getDescriptionXHTML() {
-		return "In Millstone, buttons may function either as a pushbuttons or switches. (checkboxes)<br/><br/>"
-			+ "On the demo tab you can try out how the different properties affect "
-			+ "the presentation of the component.";
-	}
-
-	protected String getImage() {
-		return "button.jpg";
-	}
-
-	protected String getTitle() {
-		return "Button";
-	}
-
+	
 }

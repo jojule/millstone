@@ -58,21 +58,21 @@ public class Feature extends CustomComponent {
 
 	private boolean initialized = false;
 
-	/** These are properties common to all features. */
-	private String[] commonProperties = new String[]{"enabled","visible","caption","readOnly",
-																						 "immediate","disabled","description","style"};
-
+	/** Constuctor for the feature component */
 	public Feature() {
 		ts = new TabSheet();
 		setCompositionRoot(ts);
 	}
 
+	/** Feature component initialization is lazily done when the 
+	 * feature is attached to application */
 	public void attach() {
 
+		// Check if the feature is already initialized
 		if (initialized) return;
 		initialized = true;
 
-		// Optional description
+		// Optional description with image
 		String desc = getDescriptionXHTML();
 		String title = getTitle();
 		if (desc != null && title != null) {
@@ -106,145 +106,28 @@ public class Feature extends CustomComponent {
 		}
 	}
 
+	/** Get the desctiption of the feature as XHTML fragment */
 	protected String getDescriptionXHTML() {
 		return "<h2>Feature description is under construction</h2>";
 	}
 
+	/** Get the title of the feature */
 	protected String getTitle() {
 		return this.getClass().getName();
 	}
 
+	/** Get the name of the image file that will be put on description page */
 	protected String getImage() {
 		return null;
 	}
 
+	/** Get the example application source code */
 	protected String getExampleSrc() {
 		return null;
 	}
 
+	/** Get the feature demo component */
 	protected Component getDemoComponent() {
 		return null;	
 	}
-
-	protected Component createPropertyPanel(
-		Object objectToConfigure,
-		String[] propertyNames,
-		Hashtable alternateEditors) {
-
-		Panel properties = new Panel("Properties",new GridLayout(2, 1));
-
-		try {
-			
-			// Create bean information
-			BeanInfo info =
-				Introspector.getBeanInfo(objectToConfigure.getClass());
-			PropertyDescriptor[] pd = info.getPropertyDescriptors();
-
-			Vector checkBoxes = new Vector();
-			Vector fields = new Vector();
-			Vector others = new Vector();
-
-			// Add common properties to the beginning of propertyNames
-			String[] tmp = propertyNames;
-			propertyNames = new String[propertyNames.length+commonProperties.length];
-			for (int i=0;i<commonProperties.length;i++) {
-				propertyNames[i] = commonProperties[i];	
-			}
-			for (int i=0;i<tmp.length;i++) {
-				propertyNames[i+commonProperties.length] = tmp[i];	
-			}
-			
-			// Add all the bean properties as MethodProperties to this Item
-			for (int k = 0; k < propertyNames.length; k++) {
-				for (int i = 0; i < pd.length; i++) {
-					if (i == (pd.length-1) && !propertyNames[k].equals(pd[i].getName())) {
-						System.out.println("!!! Property : "+	propertyNames[k] + " was not found in object!!");
-						System.out.println("Object class is: "+objectToConfigure.getClass().toString());
-						System.out.print("Available properties in object are: ");
-						for (int y=0;y<pd.length;y++) {
-							System.out.print(pd[y].getName()+" ");
-						}
-						System.out.print("\n");
-					}
-					// Skip till we find the property in question from bean property descriptor array.
-					if (!propertyNames[k].equals(pd[i].getName())) {
-						continue;
-					}
-					Method getMethod = pd[i].getReadMethod();
-					Method setMethod = pd[i].getWriteMethod();
-					Class type = pd[i].getPropertyType();
-					String name = pd[i].getName();
-
-					Property p =
-						new MethodProperty(
-							type,
-							objectToConfigure,
-							getMethod,
-							setMethod);
-
-					if (alternateEditors != null && alternateEditors.containsKey(name)) {
-						Property.Editor editor = (Property.Editor)alternateEditors.get(name);
-						editor.setPropertyDataSource(p);
-						others.add(editor);
-					} else {
-						// Create a field of appropriate type
-						if (java.util.Date.class.isAssignableFrom(p.getType()))
-							others.add(new DateField(captionize(name), p));
-						else if (Boolean.class.isAssignableFrom(p.getType()))
-							checkBoxes.add(new Button(captionize(name), p));
-						else
-							fields.add(new TextField(captionize(name), p));
-					}
-					break;
-				}
-			}
-
-			for (int i = 0; i < checkBoxes.size(); i++) {
-				properties.addComponent((Component) checkBoxes.get(i));
-			}
-			if ((checkBoxes.size() % 2) != 0) {properties.addComponent(new Label(""));}
-
-			for (int i = 0; i < fields.size(); i++) {
-				properties.addComponent((Component) fields.get(i));
-			}
-			if ((fields.size() % 2) != 0) {properties.addComponent(new Label(""));}
-
-			for (int i=0;i<others.size();i++) {
-				properties.addComponent((Component)others.get(i));	
-			}
-			if ((others.size() % 2) != 0) {properties.addComponent(new Label(""));}			
-
-		} catch (java.beans.IntrospectionException ignored) {
-		}
-
-		properties.addComponent(new Button("Set"));
-		return properties;
-	}
-
-	private String captionize(String s) {
-		return (s.substring(0,1).toUpperCase())+s.substring(1,s.length());
-	}
-
-	protected Select createSelect(
-		String caption,
-		Object[] keys,
-		String[] names) {
-		Select s = new Select(caption);
-		s.addContainerProperty("name", String.class, "");
-		for (int i = 0; i < keys.length; i++) {
-			if (Integer.class.isAssignableFrom(keys[i].getClass())) {
-				s.addItem((Integer) keys[i]).getItemProperty("name").setValue(
-					names[i]);
-			}
-			if (String.class.isAssignableFrom(keys[i].getClass())) {
-				s.addItem((String) keys[i]).getItemProperty("name").setValue(
-					names[i]);
-			}
-		}
-		s.setItemCaptionPropertyId("name");
-		return s;
-	}
 }
-
-/* This Millstone sample code is public domain. *  
- * For more information see www.millstone.org.  */

@@ -104,7 +104,7 @@ public class FeatureFrameWindow
 	}
 
 	protected String getImage() {
-		return "framewindow.gif";
+		return "framewindow.jpg";
 	}
 
 	protected String getTitle() {

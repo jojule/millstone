@@ -112,22 +112,15 @@ public class FeatureBrowser
 		registerFeature("/UI Components/Layouts/Window", new FeatureWindow());
 		registerFeature("/UI Components/Layouts/Frame Window", new FeatureFrameWindow());
 		registerFeature("/UI Components/Data handling/Embedded Objects", new FeatureEmbedded());
-		registerFeature("/UI Components/Data handling/Upload", new FeatureFileTransfer());
-		registerFeature("/Data Model/Properties", new Feature());
-		registerFeature("/Data Model/Items", new Feature());
-		registerFeature("/Data Model/Containers", new Feature());
-		registerFeature("/Data Model/Validators", new Feature());
-		registerFeature("/Data Model/Buffering", new Feature());
-		registerFeature("/Event Framework/Method Events", new Feature());
-		registerFeature("/Event Framework/Event Router", new Feature());
-		registerFeature("/Event Framework/Component Events", new Feature());
-		registerFeature("/Event Framework/Data Change Events", new Feature());
-		registerFeature("/Event Framework/Item Container Actions", new Feature());
-		registerFeature("/Terminal/Web Adapter Themes", new Feature());
-		registerFeature("/Terminal/Server Initiated Events", new Feature());
-		registerFeature("/Terminal/Resource Framework", new Feature());
+		registerFeature("/UI Components/Data handling/Upload", new FeatureUpload());
+		registerFeature("/Data Model/Properties", new FeatureProperties());
+		registerFeature("/Data Model/Items", new FeatureItems());
+		registerFeature("/Data Model/Containers", new FeatureContainers());
+		registerFeature("/Data Model/Validators", new FeatureValidators());
+		registerFeature("/Data Model/Buffering", new FeatureBuffering());
+		registerFeature("/Terminal/Server Initiated Events", new FeatureServerEvents());
+		registerFeature("/Terminal/Resources", new FeatureResources());
 		registerFeature("/Terminal/Parameters and URI Handling", new FeatureParameters());
-
 	}
 
 	public void registerFeature(String path, Feature feature) {
