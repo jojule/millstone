@@ -31,16 +31,18 @@ function TableHeaderDragger(variableId,cidName) {
         o.thd.moved = false;
         var y = parseInt(o.style.bottom);
         var x = parseInt(o.style.left);
+	    var posx = o.thd.getMouseX(e);
+	    var posy = o.thd.getMouseY(e);
 
-        o.lastMouseX = e.clientX;
-        o.lastMouseY = e.clientY;
+        o.lastMouseX = posx;
+        o.lastMouseY = posy;
 
-        o.startx = e.clientX;
+        o.startx = posx;
 
-        if (o.minX != null)	o.minMouseX	= e.clientX - x + o.minX;
+        if (o.minX != null)	o.minMouseX	= posx - x + o.minX;
         if (o.maxX != null)	o.maxMouseX	= o.minMouseX + o.maxX - o.minX;
-        if (o.minY != null) o.maxMouseY = -o.minY + e.clientY + y;
-        if (o.maxY != null) o.minMouseY = -o.maxY + e.clientY + y;
+        if (o.minY != null) o.maxMouseY = -o.minY + posy + y;
+        if (o.maxY != null) o.minMouseY = -o.maxY + posy + y;
 
         document.onmousemove	= o.thd.drag;
         document.onmouseup		= o.thd.end;
@@ -52,8 +54,11 @@ function TableHeaderDragger(variableId,cidName) {
         var o = thd.dragging;
         e = thd.fixE(e);
 
-        var ey	= e.clientY;
-        var ex	= e.clientX;
+	    var posx = thd.getMouseX(e);
+	    var posy = thd.getMouseY(e);
+
+        var ey	= posy;
+        var ex	= posx;
         var y = parseInt(o.style.bottom);
         var x = parseInt(o.style.left);
         var nx, ny;
@@ -61,17 +66,17 @@ function TableHeaderDragger(variableId,cidName) {
         nx = x + (ex - o.lastMouseX);
         ny = y + (ey - o.lastMouseY);
 
-        if (!thd.moved&&(e.clientX-o.startx)!=0) thd.moved = true;
+        if (!thd.moved&&(posy-o.startx)!=0) thd.moved = true;
 
-        o.style["left"] = e.clientX-o.startx;
+        o.style["left"] = posx-o.startx;
         o.style["top"] = 10;
 
         for (i=0;i<thd.all.length;i++) {
             var trg = thd.all[i];
-            if (trg!=o&&ex>=trg.offsetLeft&&ex<=trg.offsetLeft+(trg.offsetWidth/2)) {
+            if (trg!=o&&ex>=thd.getX(trg)&&ex<=thd.getX(trg)+(trg.offsetWidth/2)) {
             	trg.style.borderRight = 'none';
                 trg.style.borderLeft = '2px solid white';
-            } else if (trg!=o&&ex>=trg.offsetLeft+(trg.offsetWidth/2)&&ex<=trg.offsetLeft+trg.offsetWidth) {
+            } else if (trg!=o&&ex>=thd.getX(trg)+(trg.offsetWidth/2)&&ex<=thd.getX(trg)+trg.offsetWidth) {
             	trg.style.borderLeft = 'none';
                 trg.style.borderRight = '2px solid white';
             } else {
@@ -89,11 +94,13 @@ function TableHeaderDragger(variableId,cidName) {
         e = thd.fixE(e);
         document.onmousemove = null;
         document.onmouseup   = null;
+	    var posx = thd.getMouseX(e);
+	    var posy = thd.getMouseY(e);
 
         var hit = false;
         for (i=0;i<thd.all.length;i++) {
             var trg = thd.all[i];
-            if (trg!=o&&e.clientX>=trg.offsetLeft&&e.clientX<=trg.offsetLeft+(trg.offsetWidth/2)) {
+            if (trg!=o&&posx>=thd.getX(trg)&&posx<=thd.getX(trg)+(trg.offsetWidth/2)) {
                 hit = true;
                 // disconnect form old position
                 var oprev = o.prev;
@@ -110,7 +117,7 @@ function TableHeaderDragger(variableId,cidName) {
                 o.next = trg;
                 trg.prev = o;
                 break;
-            } else if (trg!=o&&e.clientX>=trg.offsetLeft+(trg.offsetWidth/2)&&e.clientX<=trg.offsetLeft+trg.offsetWidth) {
+            } else if (trg!=o&&posx>=thd.getX(trg)+(trg.offsetWidth/2)&&posx<=thd.getX(trg)+trg.offsetWidth) {
                 hit = true;
                 // disconnect form old position
                 var oprev = o.prev;
@@ -165,7 +172,44 @@ function TableHeaderDragger(variableId,cidName) {
            if (o.dragclickhandler) o.dragclickhandler(e);
         }
    }
-
+    this.getMouseY = function (e) {
+        if (e.pageY)
+        {
+            return e.pageY;
+        }
+        else if (e.clientY)
+        {
+            return (e.clientY + document.body.scrollTop);
+        }
+        return 0;
+    }
+    this.getMouseX = function (e) {
+        if (e.pageX)
+        {
+            return e.pageX;
+        }
+        else if (e.clientX)
+        {
+            return (e.clientX + document.body.scrollLeft);
+        }
+        return 0;
+    }
+    
+    this.getX = function (elm)
+    {
+        var curleft = 0;
+        if (elm.offsetParent)
+        {
+            while (elm.offsetParent)
+            {
+                curleft += elm.offsetLeft
+                elm = elm.offsetParent;
+            }
+        }
+        else if (elm.x)
+            curleft += elm.x;
+        return curleft;
+    }
 
 }
 
