@@ -61,11 +61,9 @@ public interface ThemeSource {
 	 *  requirements.
 	 *  @param theme Theme, which XSL should be returned
 	 *  @param type The type of the current client.
-	 *  @return Stream containing the XSL templates.
+	 *  @return Colection  containing the XSL streams.
 	 *  @see Theme
 	 */
-	public InputStream getXSLStream(Theme theme, WebBrowser type)
-		throws ThemeException;
 	public Collection getXSLStreams(Theme theme, WebBrowser type)
 		throws ThemeException;
 

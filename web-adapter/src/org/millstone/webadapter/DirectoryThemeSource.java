@@ -175,68 +175,6 @@ public class DirectoryThemeSource implements ThemeSource {
 
 	}
 
-	/**
-	 * @see org.millstone.webadapter.ThemeSource#getXSLStream(Theme,WebBrowser)
-	 */
-	public InputStream getXSLStream(Theme theme, WebBrowser type)
-		throws ThemeException {
-
-		Collection xslStreams = new LinkedList();
-
-		// If this directory contains a theme 
-		// return XSL from this theme	
-		if (this.theme != null) {
-
-			if (webAdapterServlet.isDebugMode()) {
-				Log.info("Loading theme: " + theme);
-			}
-
-			// Get modification time of the description file
-			long modTime =
-				new File(this.path, Theme.DESCRIPTIONFILE).lastModified();
-
-			// If desccription file was modified reload it
-			if (modTime > this.descriptionFileModTime) {
-				File description = new File(path, Theme.DESCRIPTIONFILE);
-				if (description.exists()) {
-					try {
-						this.theme = new Theme(description);
-						this.descriptionFileModTime =
-							description.lastModified();
-					} catch (IOException e) {
-						throw new ThemeException(
-							"Failed to reload theme description" + e);
-					}
-				}
-			}
-
-			Collection fileNames = theme.getFileNames(type);
-
-			// Add all XSL file streams
-			for (Iterator i = fileNames.iterator(); i.hasNext();) {
-				File f = new File(this.path, (String) i.next());
-				try {
-					xslStreams.add(new FileInputStream(f));
-
-				} catch (java.io.FileNotFoundException e) {
-					throw new ThemeException("XSL File not found: " + f);
-				}
-			}
-
-		} else {
-
-			// Handle subdirectories: return the first match
-			for (Iterator i = this.subdirs.iterator(); i.hasNext();) {
-				ThemeSource source = (ThemeSource) i.next();
-				if (source.getThemes().contains(theme))
-					xslStreams.add(source.getXSLStream(theme, type));
-			}
-		}
-
-		// Return the concatenated stream
-		return new SequenceInputStream(
-			java.util.Collections.enumeration(xslStreams));
-	}
 
 	/**
 	 * @see org.millstone.webadapter.ThemeSource#getModificationTime()

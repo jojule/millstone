@@ -61,15 +61,6 @@ public class CollectionThemeSource implements ThemeSource {
 
 	private Collection sources = new LinkedList();
 
-	private static final String xslHeader =
-		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\n<xsl:stylesheet "
-			+ "xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" "
-			+ "xmlns:wa=\"xalan://org.millstone.webadapter.ThemeFunctionLibrary\" "
-			+ "xmlns:browser=\"xalan://org.millstone.webadapter.WebBrowser\" "
-			+ "version=\"1.1\">\n"
-			+ "<xsl:output method=\"html\" "
-			+ "doctype-public=\"-//W3C//DTD HTML 4.0 Transitional//EN\"/>\n";
-	private static final String xslFooter = "</xsl:stylesheet>\n";
 
 	/**
 	 * @see org.millstone.webadapter.ThemeSource#getName()
@@ -113,73 +104,7 @@ public class CollectionThemeSource implements ThemeSource {
 			}
 		}		
 		return xslFiles;
-	}
-	
-
-	/**
-	 * @see org.millstone.webadapter.ThemeSource#getXSLStream(Theme, WebBrowser)
-	 */
-	public InputStream getXSLStream(Theme theme, WebBrowser type)
-		throws ThemeException {
-		Collection xslStreams = new LinkedList();
-
-		// Add XSL stylesheet header
-		xslStreams.add(new ByteArrayInputStream(this.xslHeader.getBytes()));
-
-		// Add parent theme XSL
-		xslStreams.add(this.getParentXSLStream(theme, type));
-
-		// Add theme XSL
-		xslStreams.add(this.doGetXSLStream(theme, type));
-
-		// Add XSL stylesheet footer
-		xslStreams.add(new ByteArrayInputStream(this.xslFooter.getBytes()));
-
-		// Return the concatenated stream
-		return new SequenceInputStream(
-			java.util.Collections.enumeration(xslStreams));
-	}
-
-	/**
-	 * @see org.millstone.webadapter.ThemeSource#getXSLStream(Theme,WebBrowserType)
-	 */
-	private InputStream doGetXSLStream(Theme theme, WebBrowser type)
-		throws ThemeException {
-
-		Collection xslStreams = new LinkedList();
-
-		// Handle subdirectories: return the first match
-		for (Iterator i = this.sources.iterator(); i.hasNext();) {
-			ThemeSource source = (ThemeSource) i.next();
-			if (source.getThemes().contains(theme))
-				xslStreams.add(source.getXSLStream(theme, type));
-		}
-
-		// Return the concatenated stream
-		return new SequenceInputStream(
-			java.util.Collections.enumeration(xslStreams));
-	}
-
-	private InputStream getParentXSLStream(Theme theme, WebBrowser type)
-		throws ThemeException {
-		Collection xslStreams = new LinkedList();
-		Collection parents = theme.getParentThemes();
-		for (Iterator i = parents.iterator(); i.hasNext();) {
-			String name = (String) i.next();
-			Theme parent = this.getThemeByName(name);
-			if (parent != null) {
-				xslStreams.add(this.doGetXSLStream(parent, type));
-			} else {
-				throw new ThemeSource.ThemeException(
-					"Parent theme not found for name: " + name);
-			}
-		}
-
-		// Return the concatenated stream
-		return new SequenceInputStream(
-			java.util.Collections.enumeration(xslStreams));
-
-	}
+	}	
 
 	/**
 	 * @see org.millstone.webadapter.ThemeSource#getModificationTime()
