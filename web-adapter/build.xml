@@ -162,15 +162,15 @@
         <jar jarfile="${millstone.wa.themes.jar}" 
 	     compress="false"
 	     manifest="${millstone.wa.themes.manifest.file}">
-            <fileset dir="${millstone.wa.themes.dir}">
+            <fileset dir="${millstone.wa.themes.dir}/default">
               <patternset>
-                <include name="default/**/*.xsl"/>
-                <include name="default/**/*.xml"/>
-                <include name="default/**/*.css"/>
-                <include name="default/**/*.js"/>
-                <include name="default/**/*.gif"/>
-                <include name="default/**/*.png"/>
-                <include name="default/**/*.jpg"/>
+                <include name="**/*.xsl"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.css"/>
+                <include name="**/*.js"/>
+                <include name="**/*.gif"/>
+                <include name="**/*.png"/>
+                <include name="**/*.jpg"/>
               </patternset>
             </fileset>
 		</jar>
