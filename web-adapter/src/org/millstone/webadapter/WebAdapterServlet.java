@@ -311,14 +311,19 @@ public class WebAdapterServlet
 					request.getContextPath()
 						+ request.getServletPath()
 						+ RESOURCE_URI;
-
-			// Check/handle client side feature checks
-			if (!this.enableBrowserProbe) {
-				WebBrowserProbe.setTerminalType(
-					request.getSession(),
-					WebBrowserProbe.probe(request));
-			} else if (WebBrowserProbe.handleProbeRequest(request, response))
-				return;
+						
+			// Set terminal type if not aleady set
+			if (WebBrowserProbe.getTerminalType(request.getSession())
+				== null) {
+				// Check/handle client side feature checks
+				if (!this.enableBrowserProbe) {
+					WebBrowserProbe.setTerminalType(
+						request.getSession(),
+						WebBrowserProbe.probe(request));
+				} else if (
+					WebBrowserProbe.handleProbeRequest(request, response))
+					return;
+			}
 
 			// Handle resource requests
 			if (handleResourceRequest(request, response))
@@ -1105,7 +1110,8 @@ public class WebAdapterServlet
 							w.println(
 								"<script>\n"
 									+ ThemeFunctionLibrary
-										.getWindowRefreshScript(application,
+										.getWindowRefreshScript(
+										application,
 										win)
 									+ "</script>");
 

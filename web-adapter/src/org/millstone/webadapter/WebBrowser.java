@@ -88,8 +88,8 @@ public class WebBrowser implements Terminal {
 	/** Holds value of property frameSupport. */
 	private boolean frameSupport = false;
 
-	/** Holds value of property markupLanguageVersion. */
-	private HTMLVersion markupLanguageVersion = MARKUP_HTML_3_2;
+	/** Holds value of property markup version. */
+	private MarkupVersion markupVersion = MARKUP_HTML_3_2;
 
 	/** Pixel width of the terminal screen */
 	private int screenWidth = -1;
@@ -103,7 +103,6 @@ public class WebBrowser implements Terminal {
 	 *  <li>User web browser (User-Agent)</li>
 	 *  <li>Supported locale(s)</li>
 	 * </ul>
-	 *  
 	 */
 
 	/**
@@ -156,16 +155,10 @@ public class WebBrowser implements Terminal {
 	 *
 	 * @return Supported markup language
 	 */
-	public HTMLVersion getMarkupLanguageVersion() {
-		return this.markupLanguageVersion;
+	public MarkupVersion getMarkupVersion() {
+		return this.markupVersion;
 	}
 
-	/** Set the supported markup language
-	 * @param markupLanguageVersion Supported markup language
-	 */
-	public void setMarkupLanguageVersion(String markupLanguageVersion) {
-		this.markupLanguageVersion = new HTMLVersion(markupLanguageVersion, 0);
-	}
 
 	/** Get height of the terminal window in pixels
 	 * @return Height of the terminal window
@@ -228,7 +221,7 @@ public class WebBrowser implements Terminal {
 			+ this.javaEnabled
 			+ ", "
 			+ "Markup:"
-			+ this.markupLanguageVersion
+			+ this.markupVersion
 			+ ", "
 			+ "Height:"
 			+ this.screenHeight
@@ -256,8 +249,8 @@ public class WebBrowser implements Terminal {
 	/** Check if this type supports given markup language version.
 	 *  @return true if this type supports the given markup version.
 	 */
-	public boolean supports(HTMLVersion html) {
-		return this.getMarkupLanguageVersion().supports(html);
+	public boolean supports(MarkupVersion html) {
+		return this.getMarkupVersion().supports(html);
 	}
 
 	/** Check if this type supports given javascript version.
@@ -271,10 +264,10 @@ public class WebBrowser implements Terminal {
 	/** Parse HTML version from string.
 	 * @return HTMLVersion instance.
 	 */
-	private HTMLVersion doParseHTMLVersion(String html) {
-		for (int i = 0; i < HTML_VERSIONS.length; i++) {
-			if (HTML_VERSIONS[i].name.equals(html))
-				return HTML_VERSIONS[i];
+	private MarkupVersion doParseHTMLVersion(String html) {
+		for (int i = 0; i < MARKUP_VERSIONS.length; i++) {
+			if (MARKUP_VERSIONS[i].name.equals(html))
+				return MARKUP_VERSIONS[i];
 		}
 		return MARKUP_UNKNOWN;
 	}
@@ -293,7 +286,7 @@ public class WebBrowser implements Terminal {
 	/** Parse HTML version from string.
 	 * @return HTMLVersion instance.
 	 */
-	public static HTMLVersion parseHTMLVersion(String html) {
+	public static MarkupVersion parseHTMLVersion(String html) {
 		return DEFAULT.doParseHTMLVersion(html);
 	}
 
@@ -385,10 +378,10 @@ public class WebBrowser implements Terminal {
 	}
 
 	/** Sets the markup language version.
-	 * @param markupLanguageVersion The markup language version to set
+	 * @param markupVersion ersion The markup language version to set
 	 */
-	public void setMarkupLanguageVersion(HTMLVersion markupLanguageVersion) {
-		this.markupLanguageVersion = markupLanguageVersion;
+	public void setMarkupVersion(MarkupVersion markupVersion) {
+		this.markupVersion = markupVersion;
 	}
 
 	/** Sets the screen height.
@@ -411,7 +404,7 @@ public class WebBrowser implements Terminal {
 	 * @version @VERSION@
 	 * @since 3.0
 	 */
-	public class HTMLVersion {
+	public class MarkupVersion {
 		private String name;
 		private int order;
 
@@ -419,8 +412,8 @@ public class WebBrowser implements Terminal {
 		 * @see java.lang.Object#equals(Object)
 		 */
 		public boolean equals(Object obj) {
-			if (obj instanceof HTMLVersion)
-				return name.equals(((HTMLVersion) obj).name);
+			if (obj instanceof MarkupVersion)
+				return name.equals(((MarkupVersion) obj).name);
 			return false;
 		}
 
@@ -431,7 +424,7 @@ public class WebBrowser implements Terminal {
 			return name;
 		}
 
-		private HTMLVersion(String name, int order) {
+		private MarkupVersion(String name, int order) {
 			this.name = name;
 			this.order = order;
 		}
@@ -439,35 +432,38 @@ public class WebBrowser implements Terminal {
 		/** Check compability with other HTML version.
 		 *  @return true if this is compatible with the other, false otherwise
 		 */
-		public boolean supports(HTMLVersion other) {
+		public boolean supports(MarkupVersion other) {
 			return (this.order >= other.order);
 		}
 
 	}
 
-	public static final HTMLVersion MARKUP_UNKNOWN =
-		DEFAULT.new HTMLVersion("HTML unknown", 0);
-	public static final HTMLVersion MARKUP_HTML_2_0 =
-		DEFAULT.new HTMLVersion("HTML 2.0", 20);
-	public static final HTMLVersion MARKUP_HTML_3_2 =
-		DEFAULT.new HTMLVersion("HTML 3.2", 32);
-	public static final HTMLVersion MARKUP_HTML_4_0 =
-		DEFAULT.new HTMLVersion("HTML 4.0", 40);
-	public static final HTMLVersion MARKUP_XHTML_1_0 =
-		DEFAULT.new HTMLVersion("XHTML 1.0", 100);
-	public static final HTMLVersion MARKUP_WML_1_0 =
-		DEFAULT.new HTMLVersion("WML 1.0", 10);
-	public static final HTMLVersion MARKUP_WML_1_1 =
-		DEFAULT.new HTMLVersion("WML 1.1", 11);
-	public static final HTMLVersion MARKUP_WML_1_2 =
-		DEFAULT.new HTMLVersion("WML 1.2", 12);
+	public static final MarkupVersion MARKUP_UNKNOWN =
+		DEFAULT.new MarkupVersion("HTML unknown", 0);
+	public static final MarkupVersion MARKUP_HTML_2_0 =
+		DEFAULT.new MarkupVersion("HTML 2.0", 20);
+	public static final MarkupVersion MARKUP_HTML_3_2 =
+		DEFAULT.new MarkupVersion("HTML 3.2", 32);
+	public static final MarkupVersion MARKUP_HTML_4_0 =
+		DEFAULT.new MarkupVersion("HTML 4.0", 40);
+	public static final MarkupVersion MARKUP_XHTML_1_0 =
+		DEFAULT.new MarkupVersion("XHTML 1.0", 110);
+	public static final MarkupVersion MARKUP_XHTML_2_0 =
+		DEFAULT.new MarkupVersion("XHTML 2.0", 120);
+	public static final MarkupVersion MARKUP_WML_1_0 =
+		DEFAULT.new MarkupVersion("WML 1.0", 10);
+	public static final MarkupVersion MARKUP_WML_1_1 =
+		DEFAULT.new MarkupVersion("WML 1.1", 11);
+	public static final MarkupVersion MARKUP_WML_1_2 =
+		DEFAULT.new MarkupVersion("WML 1.2", 12);
 
-	public static final HTMLVersion[] HTML_VERSIONS =
-		new HTMLVersion[] {
+	public static final MarkupVersion[] MARKUP_VERSIONS =
+		new MarkupVersion[] {
 			MARKUP_HTML_2_0,
 			MARKUP_HTML_3_2,
 			MARKUP_HTML_4_0,
 			MARKUP_XHTML_1_0,
+			MARKUP_XHTML_2_0,
 			MARKUP_WML_1_0,
 			MARKUP_WML_1_1,
 			MARKUP_WML_1_2 };
@@ -496,6 +492,7 @@ public class WebBrowser implements Terminal {
 		public String toString() {
 			return name;
 		}
+
 
 		private JavaScriptVersion(String name, int order) {
 			this.name = name;
@@ -563,7 +560,7 @@ public class WebBrowser implements Terminal {
 	public static final JavaScriptVersion JSCRIPT_5_5 =
 		DEFAULT.new JavaScriptVersion("JScript 5.5", 155);
 	public static final JavaScriptVersion JSCRIPT_5_6 =
-		DEFAULT.new JavaScriptVersion("JScript 5.6", 55);
+		DEFAULT.new JavaScriptVersion("JScript 5.6", 156);
 	public static final JavaScriptVersion ECMA_262 =
 		DEFAULT.new JavaScriptVersion("ECMA-262", 262);
 
@@ -579,6 +576,9 @@ public class WebBrowser implements Terminal {
 			JAVASCRIPT_1_5,
 			JSCRIPT_1_0,
 			JSCRIPT_3_0,
+			JSCRIPT_4_0,
 			JSCRIPT_5_0,
+			JSCRIPT_5_5,
+			JSCRIPT_5_6,
 			ECMA_262 };
 }

@@ -97,7 +97,7 @@ public class UIDLTransformerType {
 			+ "' js="
 			+ webBrowser.getJavaScriptVersion()
 			+ "' markup='"
-			+ webBrowser.getMarkupLanguageVersion()
+			+ webBrowser.getMarkupVersion()
 			+ "'";
 	}
 

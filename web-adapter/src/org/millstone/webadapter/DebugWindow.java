@@ -57,6 +57,7 @@ import javax.servlet.http.HttpSession;
 
 import org.millstone.base.Application;
 import org.millstone.base.data.Property;
+import org.millstone.base.data.util.BeanItem;
 import org.millstone.base.data.util.MethodProperty;
 import org.millstone.base.terminal.FileResource;
 import org.millstone.base.ui.*;
@@ -118,11 +119,34 @@ public class DebugWindow extends Window {
 		themeSelector = new Select("Application Theme", names);
 		themeSelector.setWriteThrough(false);
 
+		// Terminal type editor
 		Label terminal =
-			new Label(
-				"<h2>Terminal Information</h2> "
-					+ WebBrowserProbe.getTerminalType(session));
-		terminal.setContentMode(Label.CONTENT_XHTML);
+			new Label("<h2>Terminal Information</h2> ", Label.CONTENT_XHTML);
+		ItemEditor browser = new ItemEditor(null, "Set", "Discard");
+		browser.setItemDataSource(
+			new BeanItem(WebBrowserProbe.getTerminalType(session)));
+		browser.removeProperty("class");
+		String[] caps = new String[WebBrowser.JAVASCRIPT_VERSIONS.length];
+		for (int i = 0; i < caps.length; i++) {
+			caps[i] = WebBrowser.JAVASCRIPT_VERSIONS[i].toString();
+		}
+		Select s =
+			createSelect(
+				"javaScriptVersion",
+				WebBrowser.JAVASCRIPT_VERSIONS,
+				caps);
+		browser.setPropertyEditor("javaScriptVersion", s);
+
+		caps = new String[WebBrowser.MARKUP_VERSIONS.length];
+		for (int i = 0; i < caps.length; i++) {
+			caps[i] = WebBrowser.MARKUP_VERSIONS[i].toString();
+		}
+		s =
+			createSelect(
+				"markupVersion",
+				WebBrowser.MARKUP_VERSIONS,
+				caps);
+		browser.setPropertyEditor("markupVersion", s);
 
 		// Create disable tab tab
 		tabs.addTab(
@@ -133,8 +157,9 @@ public class DebugWindow extends Window {
 		// Add all components
 		addComponent(title);
 		addComponent(applicationInfo);
-		addComponent(terminal);
 		addComponent(controls);
+		addComponent(terminal);
+		addComponent(browser);
 		addComponent(themeSelector);
 		addComponent(new Button("Change theme", this, "commitTheme"));
 		addComponent(tabs);
@@ -143,6 +168,19 @@ public class DebugWindow extends Window {
 		// Set the debugged application
 		setDebuggedApplication(debuggedApplication);
 
+	}
+
+	protected Select createSelect(
+		String caption,
+		Object[] keys,
+		String[] names) {
+		Select s = new Select(caption);
+		s.addProperty("name", String.class, "");
+		for (int i = 0; i < keys.length; i++) {
+			s.addItem(keys[i]).getProperty("name").setValue(names[i]);
+		}
+		s.setItemCaptionPropertyId("name");
+		return s;
 	}
 
 	public void saveUIDL() {

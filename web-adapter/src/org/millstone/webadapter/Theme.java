@@ -724,23 +724,23 @@ public class Theme extends DefaultHandler {
 	 */
 	public class MarkupLanguageRequirement implements Requirement {
 
-		private WebBrowser.HTMLVersion requiredVersion;
+		private WebBrowser.MarkupVersion requiredVersion;
 
 		public MarkupLanguageRequirement(
-			WebBrowser.HTMLVersion requiredVersion) {
+			WebBrowser.MarkupVersion requiredVersion) {
 			this.requiredVersion = requiredVersion;
 		}
 
 		public boolean isMet(WebBrowser terminal) {
 			if (terminal
-				.getMarkupLanguageVersion()
+				.getMarkupVersion()
 				.supports(this.requiredVersion))
 				return true;
 			Log.info(
 				"Requirement: "
 					+ this.requiredVersion
 					+ " is not met by "
-					+ terminal.getMarkupLanguageVersion());
+					+ terminal.getMarkupVersion());
 			return false;
 
 		}

@@ -348,7 +348,7 @@ public class WebBrowserProbe {
 		else {
 			res.setJavaScriptVersion(WebBrowser.JAVASCRIPT_UNCHECKED);
 			res.setJavaEnabled(false);
-			res.setMarkupLanguageVersion(WebBrowser.MARKUP_UNKNOWN);
+			res.setMarkupVersion(WebBrowser.MARKUP_UNKNOWN);
 			res.setFrameSupport(false);
 		}
 
