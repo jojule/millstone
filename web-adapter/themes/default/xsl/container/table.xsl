@@ -44,7 +44,7 @@
   
   <!-- Sorting variables -->
   <INPUT TYPE="HIDDEN" ID="{./integer[@name='sortcolumn']/@id}" NAME="{./integer[@name='sortcolumn']/@id}" VALUE="{./integer[@name='sortcolumn']/@value}" />
-  <INPUT TYPE="HIDDEN" ID="{./boolean[@name='sortascendic']/@id}" NAME="{./boolean[@name='sortascendic']/@id}" VALUE="{./boolean[@name='sortascendic']/@value}" />
+  <INPUT TYPE="HIDDEN" ID="{./boolean[@name='sortascending']/@id}" NAME="{./boolean[@name='sortascending']/@id}" VALUE="{./boolean[@name='sortascending']/@value}" />
   
 </xsl:template>
 
@@ -73,11 +73,11 @@
 		         <A CLASS="{$class}-column-header">
 		           <xsl:choose>
 		               <xsl:when test="../../integer[@name='sortcolumn']/@value=$thispos">
-		                   <xsl:attribute name="HREF">javascript:setVarById('<xsl:value-of select="../../boolean[@name='sortascendic']/@id"/>','<xsl:value-of select="not(../../boolean[@name='sortascendic']/@value='true')"/>',true);</xsl:attribute>
+		                   <xsl:attribute name="HREF">javascript:setVarById('<xsl:value-of select="../../boolean[@name='sortascending']/@id"/>','<xsl:value-of select="not(../../boolean[@name='sortascending']/@value='true')"/>',true);</xsl:attribute>
 		                   <xsl:value-of select="@caption" />
 		                   <IMG BORDER="0" CLASS="{$class}-column-header" valign="middle">
-		                       <xsl:if test="../../boolean[@name='sortascendic']/@value='true'"><xsl:attribute name="SRC"><xsl:value-of select="wa:resource('icon/arrows/down.gif')"/></xsl:attribute></xsl:if>        
-		                       <xsl:if test="../../boolean[@name='sortascendic']/@value!='true'"><xsl:attribute name="SRC"><xsl:value-of select="wa:resource('icon/arrows/up.gif')"/></xsl:attribute></xsl:if>
+		                       <xsl:if test="../../boolean[@name='sortascending']/@value='true'"><xsl:attribute name="SRC"><xsl:value-of select="wa:resource('icon/arrows/down.gif')"/></xsl:attribute></xsl:if>        
+		                       <xsl:if test="../../boolean[@name='sortascending']/@value!='true'"><xsl:attribute name="SRC"><xsl:value-of select="wa:resource('icon/arrows/up.gif')"/></xsl:attribute></xsl:if>
 		                   </IMG>
 		               </xsl:when>
 		               <xsl:otherwise>
