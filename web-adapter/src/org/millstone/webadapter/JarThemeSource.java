@@ -67,7 +67,6 @@ public class JarThemeSource implements ThemeSource {
 	private Theme theme;
 	private String path;
 	private String name;
-	private long lastModified;
 	private WebAdapterServlet webAdapterServlet;
 	private Cache resourceCache = new Cache();
 
@@ -84,13 +83,12 @@ public class JarThemeSource implements ThemeSource {
 		File file,
 		WebAdapterServlet webAdapterServlet,
 		String path)
-		throws FileNotFoundException, IOException {
+		throws ThemeException, FileNotFoundException, IOException {
 
 		this.file = file;
 		this.jar = new JarFile(file);
 		this.theme = null;
 		this.path = path;
-		this.lastModified = file.lastModified();
 		if (this.path.length() > 0 && !this.path.endsWith("/")) {
 			this.path = this.path + "/";
 		}
@@ -108,7 +106,12 @@ public class JarThemeSource implements ThemeSource {
 		// Load description file
 		JarEntry entry = jar.getJarEntry(this.path + Theme.DESCRIPTIONFILE);
 		if (entry != null) {
-			this.theme = new Theme(jar.getInputStream(entry));
+			try {
+				this.theme = new Theme(jar.getInputStream(entry));
+			} catch (Exception e) {
+				throw new ThemeException(
+					"JarThemeSource: Failed to load '" + path + "': " + e);
+			}
 		} else {
 			// There was no description file found. 
 			// Handle subdirectories recursively		
@@ -152,34 +155,28 @@ public class JarThemeSource implements ThemeSource {
 		if (this.theme != null) {
 
 			if (webAdapterServlet.isDebugMode()) {
-				Log.info("JarThemeSource: Loading theme: " + theme);
+				Log.info("JarThemeSource: Loading XSL from: " + theme);
 			}
 
 			// Reload the theme if JAR has been modified
-			long modTime = this.file.lastModified();
-			// If description file was modified reload it
-			if (modTime > this.lastModified) {
-				this.lastModified = modTime;
-				JarEntry entry =
-					jar.getJarEntry(this.path + Theme.DESCRIPTIONFILE);
-				if (entry != null) {
-					try {
-						this.theme = new Theme(jar.getInputStream(entry));
-					} catch (IOException e) {
-						throw new ThemeException(
-							"Failed to read description: "
-								+ this.file
-								+ ":"
-								+ this.path
-								+ Theme.DESCRIPTIONFILE);
-					}
+			JarEntry entry = jar.getJarEntry(this.path + Theme.DESCRIPTIONFILE);
+			if (entry != null) {
+				try {
+					this.theme = new Theme(jar.getInputStream(entry));
+				} catch (IOException e) {
+					throw new ThemeException(
+						"Failed to read description: "
+							+ this.file
+							+ ":"
+							+ this.path
+							+ Theme.DESCRIPTIONFILE);
 				}
 			}
 
 			Collection fileNames = theme.getFileNames(type);
 			// Add all XSL file streams
 			for (Iterator i = fileNames.iterator(); i.hasNext();) {
-				JarEntry entry = jar.getJarEntry(this.path + (String) i.next());
+				entry = jar.getJarEntry(this.path + (String) i.next());
 				try {
 					xslFiles.add(jar.getInputStream(entry));
 				} catch (java.io.FileNotFoundException e) {
