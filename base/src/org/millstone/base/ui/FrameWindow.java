@@ -431,4 +431,17 @@ public class FrameWindow extends Window {
 	public void setScrollOffsetY(int pixelsScrolledDown) {
 	}
 
+	/** Frame window does not support adding components directly.
+	 * 
+	 * <p>To add component to frame window, normal window must be
+	 * first created and then attached to frame window as a frame.</p>
+	 * 
+	 * @see org.millstone.base.ui.ComponentContainer#addComponent(Component)
+	 * @throws UnsupportedOperationException if invoked.
+	 */
+	public void addComponent(Component c) 
+	throws UnsupportedOperationException {
+		throw new UnsupportedOperationException();
+	}
+
 }
