@@ -735,4 +735,13 @@ public class GridLayout extends AbstractComponentContainer implements Layout {
 		}
 	}
 	
+	/*
+	 * @see org.millstone.base.ui.ComponentContainer#removeAllComponents()
+	 */
+	public void removeAllComponents() {
+		super.removeAllComponents();
+		this.cursorX = 0;
+		this.cursorY = 0;
+	}
+
 }
