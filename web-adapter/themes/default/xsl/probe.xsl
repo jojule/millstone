@@ -52,32 +52,19 @@
 
     <!-- Form variables -->
 	<xsl:variable name="type">hidden</xsl:variable>
-  	<SPAN ID="wa_checkcss" STYLE="position:absolute;">.</SPAN>
    	<INPUT ID="wa_clientprobe" NAME="wa_clientprobe" TYPE="{$type}" VALUE="0" />
    	<INPUT ID="wa_jsversion" NAME="wa_jsversion" TYPE="{$type}" VALUE="" />
    	<INPUT ID="wa_screenwidth" NAME="wa_screenwidth" TYPE="{$type}" VALUE="" />
    	<INPUT ID="wa_screenheight" NAME="wa_screenheight" TYPE="{$type}" VALUE="" />
-   	<INPUT ID="wa_css" NAME="wa_css" TYPE="{$type}" VALUE="" />
-   	<INPUT ID="wa_frames" NAME="wa_frames" TYPE="{$type}" VALUE="" />
    	<INPUT ID="wa_javaenabled" NAME="wa_javaenabled" TYPE="{$type}" VALUE="" />
 
   <SCRIPT LANGUAGE="JavaScript">
-    function checkCSS() {
-        ret = (document.getElementById("wa_checkcss") != null) ? true : false;
-        return ret;
-    }
-    
-    function checkFrames() {
-        return true;
-    }
 
     function setVariables() {
     	document.millstone.wa_clientprobe.value = "1";
     	document.millstone.wa_jsversion.value = ver;
     	document.millstone.wa_screenwidth.value = window.screen.width;
     	document.millstone.wa_screenheight.value =  window.screen.height;
-    	document.millstone.wa_css.value =  checkCSS();
-    	document.millstone.wa_frames.value = checkFrames();
     	document.millstone.wa_javaenabled.value = navigator.javaEnabled();
     }
     
