@@ -968,11 +968,14 @@ public class Table extends Select implements Action.Container,
         Resource[] icons = getColumnIcons();
         String[] heads = getColumnHeaders();
         String[] aligns = getColumnAlignments();
+        Collection sortables = getSortableContainerPropertyIds();
         for (int i = 0; i < cols; i++) {
             target.startTag("ch");
             if (colheads) {
                 if (icons[i] != null)
                     target.addAttribute("icon", icons[i]);
+                if (sortables.contains(colids[i]))
+                    target.addAttribute("sortable", true);
                 String head = heads[i];
                 if (head == null && colHeadMode != COLUMN_HEADER_MODE_EXPLICIT)
                     head = colids[i].toString();
@@ -1660,16 +1663,10 @@ public class Table extends Select implements Action.Container,
         }
     }
 
-    /**
-     * @see fi.kttk.sto.common.ejb.SortableContainer#getSortContainerPropertyId()
-     */
     public Object getSortContainerPropertyId() {
         return this.sortContainerPropertyId;
     }
 
-    /**
-     * @see fi.kttk.sto.common.ejb.SortableContainer#setSortContainerPropertyId(java.lang.Object)
-     */
     public void setSortContainerPropertyId(Object propertyId) {
         if ((this.sortContainerPropertyId != null && !this.sortContainerPropertyId
                 .equals(propertyId))
