@@ -483,6 +483,15 @@ public class WebAdapterServlet
 			// Is this a download request from application
 			DownloadStream download = null;
 
+			// Invoke context transaction listeners
+			WebApplicationContext appContext = null;
+			if (application != null) {
+				appContext = (WebApplicationContext)application.getContext();
+			}
+			if (appContext != null) {
+				appContext.startTransaction(application,request);
+			}
+
 			// The rest of the process is synchronized with the application
 			// in order to guarantee that no parallel variable handling is 
 			// made
@@ -661,6 +670,11 @@ public class WebAdapterServlet
 
 				handleDownload(download, request, response);
 			}
+			
+			// Notify context of transaction end
+			if (appContext != null) {
+				appContext.endTransaction(application,request);
+			}			
 
 		} catch (UIDLTransformerException te) {
 			// Write the error report to client

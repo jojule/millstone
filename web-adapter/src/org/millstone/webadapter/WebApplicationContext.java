@@ -41,10 +41,14 @@ package org.millstone.webadapter;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.millstone.base.Application;
 import org.millstone.base.service.ApplicationContext;
 
 /** Web application context for Millstone applications.
@@ -55,7 +59,8 @@ import org.millstone.base.service.ApplicationContext;
  */
 public class WebApplicationContext implements ApplicationContext {
 
-	HttpSession session;
+	private List listeners;
+	private HttpSession session;
 
 	/** Create a new Web Application Context. */
 	WebApplicationContext(HttpSession session) {
@@ -112,4 +117,37 @@ public class WebApplicationContext implements ApplicationContext {
 		return session.hashCode();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.millstone.base.service.ApplicationContext#addTransactionListener(org.millstone.base.service.ApplicationContext.TransactionListener)
+	 */
+	public void addTransactionListener(TransactionListener listener) {
+		if (this.listeners == null)
+			this.listeners = new LinkedList();
+		this.listeners.add(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.millstone.base.service.ApplicationContext#removeTransactionListener(org.millstone.base.service.ApplicationContext.TransactionListener)
+	 */
+	public void removeTransactionListener(TransactionListener listener) {
+		if (this.listeners != null)
+			this.listeners.remove(listener);
+		
+	}
+
+	/** Notify transaction start */
+	protected void startTransaction(Application application, HttpServletRequest request) {
+		if (this.listeners == null) return;
+		for (Iterator i = this.listeners.iterator(); i.hasNext();) {
+			((ApplicationContext.TransactionListener)i.next()).transactionStart(application,request);			
+		}
+	}
+
+	/** Notify transaction end */
+	protected void endTransaction(Application application, HttpServletRequest request) {
+		if (this.listeners == null) return;
+		for (Iterator i = this.listeners.iterator(); i.hasNext();) {
+			((ApplicationContext.TransactionListener)i.next()).transactionEnd(application,request);
+		}
+	}
 }
