@@ -93,7 +93,6 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	private String codetype = null;
 	private String classId = null;
 	private String archive = null;
-	private String usemap = null;
 
 	/** Creates a new empty Embedded object.
 	 */
@@ -150,8 +149,6 @@ public class Embedded extends AbstractComponent implements Sizeable {
 			target.addAttribute("standby", standby);
 		if (archive != null && !"".equals(archive))
 			target.addAttribute("archive", archive);
-		if (usemap != null && !"".equals(usemap))
-			target.addAttribute("usemap", usemap);
 
 		// Params
 		for (Iterator i = this.getParameterNames(); i.hasNext();) {
@@ -379,22 +376,6 @@ public class Embedded extends AbstractComponent implements Sizeable {
 	 */
 	public void setArchive(String archive) {
 		this.archive = archive;
-	}
-
-	/**
-	 * Returns an URL to the used imagemap.
-	 * @return String
-	 */
-	public String getUsemap() {
-		return usemap;
-	}
-
-	/**
-	 * Sets an URL to an imagemap to use.
-	 * @param usemap The imagemap URL
-	 */
-	public void setUsemap(String usemap) {
-		this.usemap = usemap;
 	}
 
 	/**Get height property units.
