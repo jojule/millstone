@@ -11,8 +11,16 @@
         <xsl:if test="@icon"><IMG SRC="{@icon}"/></xsl:if>
         <xsl:value-of select="@caption"/>
       </NOBR>
-      <xsl:for-each select="./error"><xsl:apply-templates select="." mode="error"/></xsl:for-each>
-      <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
+      <xsl:choose>
+        <xsl:when test="$dhtml">
+          <xsl:for-each select="./error"><xsl:apply-templates select="." mode="error"/></xsl:for-each>
+          <xsl:for-each select="./description"><xsl:apply-templates select="." mode="description"/></xsl:for-each>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:if test="./error"><BR /><xsl:apply-templates select="./error" mode="inline"/></xsl:if>
+          <xsl:if test="./description"><BR /><xsl:apply-templates select="./description" mode="inline"/></xsl:if>
+        </xsl:otherwise>
+      </xsl:choose>
       <BR />
     </xsl:if>
     <xsl:apply-templates select="." mode="core"/>
@@ -23,9 +31,9 @@
 
 <xsl:template match="description"/>
 
-<xsl:template match="description" mode="description">
+<xsl:template match="description[$dhtml]" mode="description">
   <xsl:variable name="descid" select="generate-id(.)"/>
-  <A onclick="showPopupById('{$descid}',event.clientX,event.clientY);">	
+  <A ONCLICK="showPopupById('{$descid}',event.clientX,event.clientY);">	
     <IMG> 
       <xsl:attribute name="SRC"><xsl:value-of select="wa:resource('icon/error/info.gif')"/></xsl:attribute>
     </IMG>
@@ -34,20 +42,30 @@
 
 <xsl:template match="description" mode="popup">
   <xsl:variable name="descid" select="generate-id(.)"/>
-  <DIV ID="{$descid}" CLASS="popup" STYLE="display:none" onclick="hidePopupById('{$descid}');">
+  <DIV ID="{$descid}" CLASS="popup">
+    <xsl:if test="$dhtml">
+      <xsl:attribute name="STYLE">dispay:none;</xsl:attribute>
+      <xsl:attribute name="ONCLICK">hidePopupById('<xsl:value-of select="$descid"/>');</xsl:attribute>
+    </xsl:if>
     <xsl:apply-templates/>		 
   </DIV>
 </xsl:template>
 
+<xsl:template match="description" mode="inline">
+  <xsl:variable name="descid" select="generate-id(.)"/>
+  <DIV ID="{$descid}" CLASS="popup-inline">
+    <xsl:apply-templates/>		 
+  </DIV>
+</xsl:template>
 
 
 <!-- Error popup -->
 
 <xsl:template match="error"/>
 
-<xsl:template match="error" mode="error">
+<xsl:template match="error[$dhtml]" mode="error">
   <xsl:variable name="errid" select="generate-id(.)"/>
-  <A onclick="showPopupById('{$errid}',event.clientX-4,event.clientY-4);">	
+  <A ONCLICK="showPopupById('{$errid}',event.clientX-4,event.clientY-4);">	
     <xsl:call-template name="error-icon">
 	  <xsl:with-param name="level" select="@level"/>
 	</xsl:call-template>
@@ -56,7 +74,16 @@
 
 <xsl:template match="error" mode="popup">
   <xsl:variable name="errid" select="generate-id(.)"/>
-  <DIV ID="{$errid}" CLASS="popup" STYLE="display:none" onclick="hidePopupById('{$errid}');">
+  <DIV ID="{$errid}" CLASS="popup">
+      <xsl:attribute name="STYLE">display:none;</xsl:attribute>
+      <xsl:attribute name="ONCLICK">hidePopupById('<xsl:value-of select="$errid"/>');</xsl:attribute>
+    <xsl:apply-templates select="." mode="errordesc"/>		 
+  </DIV>
+</xsl:template>
+
+<xsl:template match="error" mode="inline">
+  <xsl:variable name="errid" select="generate-id(.)"/>
+  <DIV ID="{$errid}" CLASS="popup-inline">
     <xsl:apply-templates select="." mode="errordesc"/>		 
   </DIV>
 </xsl:template>
