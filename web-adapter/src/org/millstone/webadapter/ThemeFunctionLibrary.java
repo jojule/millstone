@@ -335,6 +335,34 @@ public class ThemeFunctionLibrary {
 			Calendar.FRIDAY,
 			Calendar.SATURDAY };
 
+
+	/** Returns the country and region code for current application locale.
+	 * @see Locale#getCountry()
+	 * @return language Country code of the current application locale.
+	 */
+	static public String getLocaleCountryId() {
+		try {
+			Application app =
+				(Application) ((Object[]) state.get())[APPLICATION];
+			return app.getLocale().getCountry();
+		} catch (NullPointerException e) {
+			throw new IllegalStateException();
+		}
+	}
+	/** Returns the language code for current application locale.
+	 * @see Locale#getLanguage()
+	 * @return language Language code for current application locale.
+	 */
+	static public String getLocaleLanguageId() {
+		try {
+			Application app =
+				(Application) ((Object[]) state.get())[APPLICATION];
+			return app.getLocale().getLanguage();
+		} catch (NullPointerException e) {
+			throw new IllegalStateException();
+		}
+	}
+
 	/** Get name for week day.
 	 * @param Number of week day. 0 first day of week.
 	 * @return Name of week day in applications current locale.
