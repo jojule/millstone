@@ -52,8 +52,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.swing.border.AbstractBorder;
 
+import org.millstone.ajaxadapter.browser.AbstractBrowser;
 import org.millstone.base.Application;
+import org.millstone.base.ui.Window;
 
 /**
  * Servlet implementing connection between a web-browser and Millstone
@@ -89,6 +92,8 @@ public class AjaxAdapterServlet extends HttpServlet {
     private static String GET_PARAM_UI_CHANGES_FORMAT = "format";
 
     private static String GET_PARAM_VARIABLE_CHANGES = "changeVariables";
+
+    private static String GET_PARAM_WINDOW = "window";
 
     private Class applicationClass;
 
@@ -197,7 +202,12 @@ public class AjaxAdapterServlet extends HttpServlet {
                 context.getApplicationManager(application)
                         .handleXmlHttpRequest(request, response);
             } else {
-                // TODO Get Ajax client
+                String windowName = request.getParameter(GET_PARAM_WINDOW);
+                Window window = windowName != null && windowName.length() > 0 ? application.getWindow(windowName) : application.getMainWindow();
+                
+                AbstractBrowser browser = AbstractBrowser.getBrowser(request
+                        .getHeader("User-Agent"));
+                browser.createAjaxClient(request, response, window);
             }
 
         } catch (InstantiationException e) {
