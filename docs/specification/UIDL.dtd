@@ -747,9 +747,6 @@ TextField component
     
     The 'vertical' orientation positions components from left to right.
     The 'horizontal' orientation positions components from top to bottom.
-    The 'flow' orientation let's the components flow from left to right, top 
-    to bottom, creating a new 'row' of components when the previous 'row' is
-    (visually) full.
                 
 .............................................................................
     <orderedlayout orientation="vertical">
@@ -762,7 +759,7 @@ TextField component
 <!ELEMENT orderedlayout ((%componentSections;)*,(%components;)*)>
     <!ATTLIST orderedlayout
                 %componentAttributes;
-                orientation (vertical|horizontal|flow)  "vertical">
+                orientation (vertical|horizontal)  "vertical">
                 <!--
                 orientation:
                     The visual orientation of the component.

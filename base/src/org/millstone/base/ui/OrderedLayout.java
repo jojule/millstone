@@ -62,9 +62,6 @@ public class OrderedLayout
 	public static int ORIENTATION_VERTICAL = 0;
 	/** Components are to be layed out horizontally. */
 	public static int ORIENTATION_HORIZONTAL = 1;
-	/** Components are to be layed out flowingly from left to right, 
-	 * wrapping to new line at window border. */
-	public static int ORIENTATION_FLOW = 2;
 
 	/** Custom layout slots containing the components */
 	private LinkedList components = new LinkedList();
@@ -151,9 +148,7 @@ public class OrderedLayout
 
 		// Add the attributes: orientation 
 		// note that the default values (b/vertival) are omitted
-		if (orientation == ORIENTATION_FLOW)
-			target.addAttribute("orientation", "flow");
-		else if (orientation == ORIENTATION_HORIZONTAL)
+		if (orientation == ORIENTATION_HORIZONTAL)
 			target.addAttribute("orientation", "horizontal");
 
 		// Add all items in all the locations
@@ -175,7 +170,7 @@ public class OrderedLayout
 
 		// Check the validity of the argument
 		if (orientation < ORIENTATION_VERTICAL
-			|| orientation > ORIENTATION_FLOW)
+			|| orientation > ORIENTATION_HORIZONTAL)
 			throw new IllegalArgumentException();
 
 		this.orientation = orientation;
