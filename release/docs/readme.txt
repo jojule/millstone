@@ -36,7 +36,7 @@ examples           Millstone Example applications. The examples
                    are also included as war-package under lib-directory.
 readme.txt         This readme-file
 license.txt        The GNU lesser general public license that applies
-                   to this release (unless otherwise noted)
+                   to all filed in this release (unless otherwise noted)
 install.txt        Installation notes
 release-notes.txt  Notes about this release
 

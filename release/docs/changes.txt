@@ -11,6 +11,15 @@
 
 ------------------------------------------------------------------------------
 
+version 3.0.0
+---------------------------
+- First public release of Millstone Base Library and Web Adapter
+- Branched the CVS with tag 'version-3_0'
+- Enhanced the Feature Browser application to include examples
+  of most of the Millstone components and features. 
+- Implemented support for non-Javascript browsers in default theme
+- Bugfixes and updates in Base and Web Adpater packages.
+
 version 3.0.0 pre3
 ---------------------------
 - First public pre-release of Millstone Base Library and Web Adapter
