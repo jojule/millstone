@@ -73,6 +73,15 @@ public class TabSheet extends AbstractComponentContainer {
 	/** Holds value of property tabsHIdden. */
 	private boolean tabsHidden;
 
+
+	/** Construct new Tabsheet.
+	 *  Tabsheet is immediate by default.
+	 */
+	public TabSheet() {
+		super();
+		setImmediate(true);
+	}
+	
 	/** Get component container iterator for going trough all the components in the container.
 	 * @return Iterator of the components inside the container.
 	 */
