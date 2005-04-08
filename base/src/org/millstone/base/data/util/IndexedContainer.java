@@ -1215,7 +1215,7 @@ public class IndexedContainer implements Container, Container.Indexed,
         LinkedList list = new LinkedList();
         for (Iterator i = this.propertyIds.iterator(); i.hasNext();) {
             Object id = i.next();
-            if (id instanceof Comparable)
+            if ((id instanceof Comparable) || (id instanceof Boolean))
                 list.add(id);
         }
 
@@ -1239,6 +1239,9 @@ public class IndexedContainer implements Container, Container.Indexed,
 
             int r = 0;
             if (p1 != null && p2 != null)
+                if ((p1 instanceof Boolean) && (p2 instanceof Boolean))
+                    r = p1.equals(p2) ? 0 : ((this.sortDirection[i] ? 1 : -1) * (((Boolean)p1).booleanValue() ? 1 : -1));
+                    else
                 r = this.sortDirection[i] ? ((Comparable) p1).compareTo(p2)
                         : -((Comparable) p1).compareTo(p2);
             if (r != 0)
