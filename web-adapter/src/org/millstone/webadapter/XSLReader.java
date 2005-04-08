@@ -70,6 +70,7 @@ public class XSLReader implements XMLReader, ContentHandler {
 	static protected final int XSLT_SAXON6 = 2;
 	static protected final int XSLT_SAXON7 = 3;
 	static protected final int XSLT_RESIN = 4;
+	static protected final int XSLT_WEBLOGIC = 5;
 	static protected int xsltProcessor = XSLT_UNKNOWN;
 	static {
 		String transformerName =
@@ -92,6 +93,9 @@ public class XSLReader implements XMLReader, ContentHandler {
 		// Resin
 		else if ("com.caucho.xsl.Xsl".equals(transformerName))
 			xsltProcessor = XSLT_RESIN;
+		
+		else if ("weblogic.xml.jaxp.RegistrySAXTransformerFactory".equals(transformerName))
+			xsltProcessor = XSLT_WEBLOGIC;
 		else {
 			throw new RuntimeException(
 				"\nThis version of Millstone Web Adapter "
