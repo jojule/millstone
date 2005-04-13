@@ -308,6 +308,7 @@
 <xsl:template name="table-cursor">
   <xsl:param name="class" />
   <xsl:variable name="firstvisible" select="./integer[@name='firstvisible']/@value"/>
+  <xsl:variable name="lastvisible" select="$firstvisible + @pagelength - 1"/>
   <xsl:variable name="fid" select="./integer[@name='firstvisible']/@id"/>
 
   <!-- Only tables with pagelength can have cursors -->
@@ -327,9 +328,16 @@
         </TD>
 
         <TD ALIGN="CENTER">
-          <xsl:value-of select="$firstvisible"/> - 
-          <xsl:value-of select="$firstvisible + @pagelength - 1"/> / 
-          <xsl:value-of select="@totalrows"/>
+			<xsl:value-of select="$firstvisible"/> 
+			- 
+			<xsl:choose>
+				<xsl:when test="number(@totalrows) &lt; number($lastvisible)">
+					<xsl:value-of select="@totalrows"/>
+				</xsl:when>
+				<xsl:otherwise><xsl:value-of select="$lastvisible"/></xsl:otherwise>
+			</xsl:choose>
+			/
+			<xsl:value-of select="@totalrows"/>
         </TD>
 
         <TD  ALIGN="RIGHT">
