@@ -805,11 +805,11 @@ public class WebAdapterServlet
 				response.setHeader("Pragma", "no-cache");
 				response.setDateHeader("Expires", 0);
 			} else {
-				response.setHeader("Cache-Control", "public");
 				response.setHeader("Cache-Control", "max-age="+cacheTime/1000);
 				response.setDateHeader(
 					"Expires",
 					System.currentTimeMillis() + cacheTime);
+				response.setHeader("Pragma", "cache"); // Required to apply caching in some Tomcats
 			}
 
 			// Copy download stream parameters directly
@@ -953,11 +953,11 @@ public class WebAdapterServlet
 
 				// Use default cache time for theme resources
 				if (this.themeCacheTime > 0) {
-					response.setHeader("Cache-Control", "public");
 					response.setHeader("Cache-Control", "max-age="+this.themeCacheTime/1000);
 					response.setDateHeader(
 						"Expires",
 						System.currentTimeMillis() + this.themeCacheTime);
+					response.setHeader("Pragma", "cache"); // Required to apply caching in some Tomcats
 				}
 				// Write the data to client 
 				byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
