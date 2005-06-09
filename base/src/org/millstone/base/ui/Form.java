@@ -170,7 +170,11 @@ public class Form
 		// Try to commit all
 		for (Iterator i = propertyIds.iterator(); i.hasNext();)
 			try {
-				((Field) fields.get(i.next())).commit();
+				Field f = ((Field) fields.get(i.next()));
+				//Commit only non-readonly fields.
+				if (!f.isReadOnly()) {
+					f.commit();
+				}
 			} catch (Buffered.SourceException e) {
 				if (problems == null)
 					problems = new LinkedList();
