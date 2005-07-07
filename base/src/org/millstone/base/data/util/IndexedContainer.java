@@ -1215,8 +1215,11 @@ public class IndexedContainer implements Container, Container.Indexed,
         LinkedList list = new LinkedList();
         for (Iterator i = this.propertyIds.iterator(); i.hasNext();) {
             Object id = i.next();
-            if ((id instanceof Comparable) || (id instanceof Boolean))
-                list.add(id);
+            Class type = this.getType(id); 
+            if (type != null && 
+                Comparable.class.isAssignableFrom(type)) { 
+                list.add(id); 
+            } 
         }
 
         return list;
