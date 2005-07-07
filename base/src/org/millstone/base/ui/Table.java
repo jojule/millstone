@@ -226,11 +226,15 @@ public class Table extends Select implements Action.Container,
     private boolean editable = false;
 
     /** Current sorting direction */
-    boolean sortAscending = true;
+    private boolean sortAscending = true;
 
     /** Currently table is sorted on this propertyId */
-    Object sortContainerPropertyId = null;
+    private Object sortContainerPropertyId = null;
 
+    /** Is table sorting disabled alltogether; even if some of the properties would be 
+     * sortable. */
+    private boolean sortDisabled = false;
+    
     /* Table constructors *************************************************** */
 
     /** Create new empty table */
@@ -2013,7 +2017,7 @@ public class Table extends Select implements Action.Container,
      */
     public Collection getSortableContainerPropertyIds() {
         Container c = getContainerDataSource();
-        if (c instanceof Container.Sortable) {
+        if (c instanceof Container.Sortable && !isSortDisabled()) {
             return ((Container.Sortable) c).getSortableContainerPropertyIds();
         } else {
             return new LinkedList();
@@ -2072,5 +2076,30 @@ public class Table extends Select implements Action.Container,
 
         // Assure visual refresh
         refreshCurrentPage();
+    }
+
+    /** Is sorting disabled alltogether.
+     * 
+     * True iff no sortable columns are given even in the case where datasource would support this.
+     * 
+     * @return True iff sorting is disabled.
+     */
+    public boolean isSortDisabled() {
+        return sortDisabled;
+    }
+
+
+    /** Disable sorting alltogether.
+     * 
+     * To disable sorting alltogether, set to true. In this case no 
+     * sortable columns are given even in the case where datasource would support this.
+     * 
+     * @param sortDisabled True iff sorting is disabled
+     */
+    public void setSortDisabled(boolean sortDisabled) {
+        if (this.sortDisabled != sortDisabled) {
+            this.sortDisabled = sortDisabled;
+            refreshCurrentPage();
+        }
     }
 }
