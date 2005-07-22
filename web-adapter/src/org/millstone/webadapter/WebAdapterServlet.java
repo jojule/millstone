@@ -309,8 +309,15 @@ public class WebAdapterServlet
 		}
 
 		// Try system properties
-		String pkgName = this.getClass().getPackage().getName();
-		val = System.getProperty(pkgName + "." + parameterName);
+        String pkgName;
+		Package pkg = this.getClass().getPackage();
+		if (pkg != null) {
+		    pkgName = pkg.getName();
+         } else {
+             String clazzName = this.getClass().getName();
+             pkgName = new String(clazzName.toCharArray(), 0,clazzName.lastIndexOf('.'));
+         }
+     	val = System.getProperty(pkgName + "." + parameterName);
 		if (val != null) {
 			return val;
 		}
