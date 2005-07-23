@@ -75,7 +75,9 @@ import org.millstone.base.terminal.PaintTarget;
  * </p>
  * 
  * @author IT Mill Ltd.
- * @version @VERSION@ @since 3.0
+ * @version
+ * @VERSION@
+ * @since 3.0
  */
 public abstract class AbstractField extends AbstractComponent implements Field,
         Property.ReadOnlyStatusChangeNotifier {
@@ -729,7 +731,9 @@ public abstract class AbstractField extends AbstractComponent implements Field,
      * status has changed.
      * 
      * @author IT Mill Ltd.
-     * @version @VERSION@ @since 3.0
+     * @version
+     * @VERSION@
+     * @since 3.0
      */
     public class ReadOnlyStatusChangeEvent extends Component.Event implements
             Property.ReadOnlyStatusChangeEvent {
@@ -916,4 +920,13 @@ public abstract class AbstractField extends AbstractComponent implements Field,
         this.required = required;
     }
 
+    /**
+     * Free used resources.
+     */
+    public void finalize() throws Throwable {
+        if (focusableId > -1) {
+            Window.removeFocusableId(focusableId);
+        }
+        super.finalize();
+    }
 }
