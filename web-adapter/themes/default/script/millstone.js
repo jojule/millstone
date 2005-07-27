@@ -477,17 +477,17 @@ MillstoneUtils.prototype.actionPopup = function(event,actionListId,itemKey,activ
 	// Disable all actions
 	for (i=0; i<popup.childNodes.length;i++) {
 		if (popup.childNodes[i].style && popup.childNodes[i].className == 'action-item') {
-			this.disableElement(popup.childNodes[i]);
+			popup.childNodes[i].className = 'action-item-disabled';
 		} 
 	}
 	
-	// Enable all actions, 
+	// Enable all active actions 
 	var acts = activeActions.split(',');
 	for (a in acts) {
 		var s = actionListId + "_" + acts[a];
 		var action = document.getElementById(s);
 		if (action && action.style) {
-			this.enableElement(action);
+			action.className = 'action-item';
 		}
 	}
 

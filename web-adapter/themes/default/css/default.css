@@ -355,6 +355,10 @@ DIV.action-item {
 	cursor: hand;
 }
 
+DIV.action-item-disabled {
+  display:none;
+}
+
 DIV.action-item-highlighted {
     color: white;
     padding-left: 5px;
