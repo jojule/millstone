@@ -697,15 +697,19 @@ public class Tree extends Select implements Container.Hierarchical, Action.Conta
 	 */
 	public void removeActionHandler(Action.Handler actionHandler) {
 
-		actionHandlers.remove(actionHandler);
+		if (actionHandlers != null && actionHandlers.contains(actionHandler)) {
+            
+            actionHandlers.remove(actionHandler);
+            
+            if (actionHandlers.isEmpty()) {
+                actionHandlers = null;
+                actionMapper = null;
+            }
 
-		if (actionHandlers.isEmpty()) {
-			actionHandlers = null;
-			actionMapper = null;
+            requestRepaint();        
 		}
-
-		requestRepaint();
 	}
+    
 	/**
 	 * @see org.millstone.base.ui.Select#getVisibleItemIds()
 	 */
