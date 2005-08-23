@@ -1634,9 +1634,11 @@ public class Table extends Select implements Action.Container,
                 actionMapper = new KeyMapper();
             }
 
-            actionHandlers.add(actionHandler);
+            if(!actionHandlers.contains(actionHandler)){ 
+                actionHandlers.add(actionHandler); 
+                requestRepaint(); 
+            }
 
-            requestRepaint();
         }
     }
 

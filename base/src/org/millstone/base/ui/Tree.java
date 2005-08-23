@@ -685,9 +685,10 @@ public class Tree extends Select implements Container.Hierarchical, Action.Conta
 				actionMapper = new KeyMapper();
 			}
 
-			actionHandlers.add(actionHandler);
-
-			requestRepaint();
+             if(!actionHandlers.contains(actionHandler)){ 
+                 actionHandlers.add(actionHandler); 
+                 requestRepaint(); 
+             }
 		}
 	}
 
