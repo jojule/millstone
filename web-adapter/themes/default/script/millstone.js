@@ -721,7 +721,7 @@ MillstoneUtils.prototype.treeSelClick = function(inputid,key,immediate,mode) {
 
   // Change selection value
   if (mode == "multi") {
-    if (listContainsInt(value,key)) 
+    if (this.listContainsInt(value,key)) 
       value = this.listRemoveInt(value,key);
     else 
       value = this.listAddInt(value,key);
