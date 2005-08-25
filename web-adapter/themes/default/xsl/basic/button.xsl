@@ -78,9 +78,11 @@
 <!-- Switch -->
 
 <xsl:template match="button[@type='switch']">
-  <NOBR class="button">		
+  <DIV>
+  	<xsl:attribute name="CLASS"><xsl:value-of select="local-name()"/><xsl:if test="(./@style) and (string-length(./@style) &gt; 0)">-<xsl:value-of select="./@style"/></xsl:if></xsl:attribute>
+  <NOBR>		
     <xsl:apply-templates select="." mode="core"/>
-    <SPAN>
+    <SPAN class="caption">
       <xsl:if test="not(@disabled) and $dhtml"><xsl:attribute name="ONCLICK">Millstone.toggleCheckbox('<xsl:value-of select="./boolean/@id"/>',<xsl:value-of select="@immediate or false"/>)</xsl:attribute></xsl:if>
       <xsl:if test="@disabled"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
       <xsl:if test="@icon"><IMG class="icon" SRC="{@icon}" /></xsl:if>
@@ -100,6 +102,7 @@
       <xsl:if test="./description"><BR /><xsl:apply-templates select="./description" mode="inline"/></xsl:if>
     </xsl:otherwise>
   </xsl:choose>
+  </DIV>
 </xsl:template>
 
 <xsl:template match="button[@type='switch']" mode="core">
