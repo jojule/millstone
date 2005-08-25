@@ -244,9 +244,12 @@ public class Form
 	 * interface.
 	 */
 	public boolean isModified() {
-		for (Iterator i = propertyIds.iterator(); i.hasNext();)
-			if (((Field) fields.get(i.next())).isModified())
+		for (Iterator i = propertyIds.iterator(); i.hasNext();) {
+			Field f = (Field) fields.get(i.next()); 
+			if (f != null && f.isModified())
 				return true;
+			
+		}
 		return false;
 	}
 
