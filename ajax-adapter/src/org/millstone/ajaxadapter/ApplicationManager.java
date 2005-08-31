@@ -55,7 +55,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.millstone.ajaxadapter.browser.Firefox;
 import org.millstone.base.Application;
 import org.millstone.base.Application.WindowAttachEvent;
 import org.millstone.base.Application.WindowDetachEvent;
@@ -163,17 +162,6 @@ Application.WindowAttachListener, Application.WindowDetachListener {
                     // Return if no window found
                     if (window == null)
                         return;
-
-                    // Get the terminal type for the window
-                    Terminal terminalType = window.getTerminal();
-
-                    // Set terminal type for the window, if not already set
-                    if (terminalType == null) {
-
-                        // TODO Terminal should be constructed in some
-                        // meaningful way
-                        terminalType = new Firefox();
-                    }
 
                     // Set the response type
                     response.setContentType("application/xml");
