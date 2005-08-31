@@ -53,9 +53,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.millstone.ajaxadapter.browser.WebBrowser;
 import org.millstone.base.Application;
-import org.millstone.base.ui.Window;
 
 /**
  * Servlet implementing connection between a web-browser and Millstone
@@ -82,17 +80,11 @@ import org.millstone.base.ui.Window;
  */
 public class AjaxAdapterServlet extends HttpServlet {
 
-    private static String GET_PARAM_XML_HTTP_REQUEST = "xmlHttpRequest";
-
     /**
      * Session attribute, where to find servlet context to
      * AjaxApplicationContext mapping
      */
     private static String SESSION_ATTR_APPLICATION_CONTEXT = "org.millstone.ajaxadapter.AjaxApplicationContext";
-
-    private static String PATH_INFO_THEME_XSL = "/theme.xsl";
-
-    private static String GET_PARAM_WINDOW = "window";
 
     private Class applicationClass;
 
@@ -193,43 +185,9 @@ public class AjaxAdapterServlet extends HttpServlet {
                         getApplicationUrl(request), request.getLocale(),
                         applicationProperties);
 
-            // Get window
-            String windowName = request.getParameter(GET_PARAM_WINDOW);
-            Window window = windowName != null && windowName.length() > 0 ? application
-                    .getWindow(windowName)
-                    : application.getMainWindow();
-
-            // Get browser
-            WebBrowser browser;
-            if (window.getTerminal() != null
-                    && window.getTerminal() instanceof WebBrowser)
-                browser = (WebBrowser) window.getTerminal();
-            else {
-                browser = WebBrowser.getBrowser(request
-                        .getHeader("User-Agent"));
-                window.setTerminal(browser);
-            }
-
-
-            // If theme request
-            if (PATH_INFO_THEME_XSL.equals(request.getPathInfo())) {
-                            // The the browser to handle the request
-                browser.sendThemeXsl(request, response, window);
-
-            }
-
-            // If xmlHttpRequest
-            else if (request.getParameter(GET_PARAM_XML_HTTP_REQUEST) != null) {
-                context.getApplicationManager(application)
-                        .handleXmlHttpRequest(request, response);
-            }
-
-            // If ajax application request
-            else {
-
-                            // The the browser to handle the request
-                browser.createAjaxClient(request, response, window, context.getApplicationManager(application));
-            }
+            // Uidl
+            context.getApplicationManager(application).handleXmlHttpRequest(
+                    request, response);
 
         } catch (InstantiationException e) {
             // TODO Auto-generated catch block
