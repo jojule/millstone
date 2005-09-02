@@ -60,7 +60,7 @@ import org.millstone.base.Application.WindowAttachEvent;
 import org.millstone.base.Application.WindowDetachEvent;
 import org.millstone.base.terminal.DownloadStream;
 import org.millstone.base.terminal.Paintable;
-import org.millstone.base.terminal.Terminal;
+
 import org.millstone.base.terminal.Paintable.RepaintRequestEvent;
 import org.millstone.base.ui.Window;
 
