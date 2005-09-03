@@ -185,10 +185,20 @@ public class AjaxAdapterServlet extends HttpServlet {
                         getApplicationUrl(request), request.getLocale(),
                         applicationProperties);
 
+            // Notify transaction start
+			if (context != null) {
+				context.startTransaction(application, request);
+			}
+			
             // Uidl
             context.getApplicationManager(application).handleXmlHttpRequest(
                     request, response);
 
+            // Notify transaction end
+			if (context != null) {
+				context.endTransaction(application, request);
+			}
+            
         } catch (InstantiationException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

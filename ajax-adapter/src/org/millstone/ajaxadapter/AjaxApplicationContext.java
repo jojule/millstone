@@ -49,6 +49,7 @@ import java.util.Properties;
 import java.util.WeakHashMap;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.millstone.base.Application;
 import org.millstone.base.service.ApplicationContext;
@@ -179,4 +180,21 @@ public class AjaxApplicationContext implements ApplicationContext {
 
         return application;
     }
+    
+	/** Notify transaction start */
+	protected void startTransaction(Application application, HttpServletRequest request) {
+		if (this.transactionListeners == null) return;
+		for (Iterator i = this.transactionListeners.iterator(); i.hasNext();) {
+			((ApplicationContext.TransactionListener)i.next()).transactionStart(application,request);			
+		}
+	}
+
+	/** Notify transaction end */
+	protected void endTransaction(Application application, HttpServletRequest request) {
+		if (this.transactionListeners == null) return;
+		for (Iterator i = this.transactionListeners.iterator(); i.hasNext();) {
+			((ApplicationContext.TransactionListener)i.next()).transactionEnd(application,request);
+		}
+	}
+    
 }
