@@ -44,6 +44,7 @@ import org.millstone.base.terminal.ExternalResource;
 import org.millstone.base.terminal.PaintException;
 import org.millstone.base.terminal.Paintable;
 import org.millstone.base.terminal.Resource;
+import org.millstone.base.terminal.ThemeResource;
 import org.millstone.base.terminal.VariableOwner;
 import org.millstone.base.terminal.UploadStream;
 import org.millstone.base.terminal.PaintTarget;
@@ -358,8 +359,11 @@ private ApplicationManager manager;
             uri += a.getRelativeLocation(r);
             addAttribute(name, uri);
 
+        } else if (value instanceof ThemeResource) {
+        	String uri = "theme://"+((ThemeResource)value).getResourceId();
+        	addAttribute(name,uri);
         } else
-            throw new PaintException("Web adapter does not "
+            throw new PaintException("Ajax adapter does not "
                     + "support resources of type: "
                     + value.getClass().getName());
 
@@ -642,9 +646,9 @@ private ApplicationManager manager;
      * @see org.millstone.base.terminal.PaintTarget#addCharacterData(java.lang.String)
      */
     public void addCharacterData(String text) throws PaintException {
-        // TODO Auto-generated method stub
-        throw new RuntimeException("Unimplemented");
-
+        // TODO: This should check the validity of characters
+    	ensureClosedTag();
+    	append(escapeXML(text));
     }
 
 }
