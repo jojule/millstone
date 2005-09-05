@@ -290,7 +290,7 @@ Application.WindowAttachListener, Application.WindowDetachListener {
 
         String id = (String) paintableIdMap.get(paintable);
         if (id == null) {
-            id = "PID-" + Integer.toString(idSequence++);
+            id = "PID" + Integer.toString(idSequence++);
             paintableIdMap.put(paintable,id);
         }
         
