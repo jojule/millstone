@@ -50,7 +50,9 @@ import org.millstone.base.terminal.UploadStream;
 import org.millstone.base.terminal.PaintTarget;
 
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Stack;
 
 /**
@@ -64,7 +66,7 @@ import java.util.Stack;
 public class UIDLPaintTarget implements PaintTarget {
 
     /* Document type declarations */
-    private final static String UIDL_XML_DECL = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>";
+    private final static String UIDL_XML_DECL = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
     private final static String UIDL_DOCTYPE_DECL = "<!DOCTYPE uidl PUBLIC \"-//MILLSTONE//DTD UIDL//EN\" \"http://millstone.org/xml/3.0/UIDL.dtd\">";
 
@@ -115,7 +117,11 @@ private ApplicationManager manager;
         this.output = output;
 
         // Set the target for UIDL writing
-        this.uidlBuffer = new PrintWriter(output);
+        try {
+            this.uidlBuffer = new PrintWriter(new OutputStreamWriter(output,"UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Internal error");
+        }
 
         // Initialize tag-writing
         mOpenTags = new Stack();
