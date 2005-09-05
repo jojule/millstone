@@ -49,6 +49,7 @@ import org.millstone.base.terminal.VariableOwner;
 import org.millstone.base.terminal.UploadStream;
 import org.millstone.base.terminal.PaintTarget;
 
+import java.io.BufferedWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -118,7 +119,7 @@ private ApplicationManager manager;
 
         // Set the target for UIDL writing
         try {
-            this.uidlBuffer = new PrintWriter(new OutputStreamWriter(output,"UTF-8"));
+            this.uidlBuffer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(output,"UTF-8")));
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Internal error");
         }
