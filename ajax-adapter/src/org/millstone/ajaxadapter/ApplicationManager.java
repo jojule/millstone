@@ -164,10 +164,7 @@ Application.WindowAttachListener, Application.WindowDetachListener {
                         return;
 
                     // Set the response type
-                    response.setContentType("application/xml");
-
-                    // Set the response type
-                    response.setCharacterEncoding("UTF-8");
+                    response.setContentType("application/xml; charset=UTF-8");
 
                     // Create UIDL writer
                     UIDLPaintTarget phoneTerminal = new UIDLPaintTarget(
