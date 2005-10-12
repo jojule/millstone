@@ -51,7 +51,8 @@
 
 1.2 Additional requirements
 ---------------------------
-
+  - Building Millstone-examples WAR need Html-document builder Java2Html
+    (http://www.java2html.de)
   - The StonePlayer example uses Java Layer 0.1.1 library for playing
     (http://www.javazoom.net/javalayer/javalayer.html). 
     However, you need not worry about this if you are using the 
@@ -238,7 +239,7 @@ The directory structure will look something like:
 The 'classes' -directory is for your java .class -files, while the
 'lib' -directory is for java .jar -libraries.
 
-Install install the Millstone base-, webadapter- and theme-libraries
+Install the Millstone base-, webadapter- and theme-libraries
 in the 'lib' directory:
 
    your-application/WEB-INF/lib/millstone-base-x.y.z.jar
