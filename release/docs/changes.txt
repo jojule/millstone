@@ -12,8 +12,93 @@
 ------------------------------------------------------------------------------
 version 3.1.0
 ---------------------------
-- TODO
+New features:
+-------------
+- Added interface Field implemented by the AbstractField and its subclasses
+- Added interface FieldFactory for creating Fields to Table and Form
+- Added FormField component for recursive forms.
+- Added Window-wide focus handling mechanism for Fields.
+- Added  Component.Focusable interface.
+- Added required property to all Fields.
+- Added Protected setInternalValue function.
+- Transaction listener interface to application context.
+- Paint caching support to PaintTarget and implemented in AbstractComponent 
+  and CustomComponent.
+- Added possibility to get/iterate applications in application context.
+- Added BeanItem constructor for limited set of properties.
+- Added sortable property to Container.
+- IndexedContainer: Support for Boolean comparisons.
+- Added IndexedContainer Collection constructor to create a Container from 
+  a collection of ItemIds.
+- IndexedContainer implements Sortable and Cloneable
+- Added java.lang.Comparable support to Label.
+- New RAW output mode added to Label.
+- Added sorting support to Table
+- Added support for user selectable column headers and column header sorting 
+  to Table.
+- Added default theme support for user rearrangable (drag and drop) table columns and 
+  support to hide (collapse) and show (expand) columns visually.
+- Added paint caching support to allow client-side caching.
+- PropertysetItem: cloneable support.
+- Support disabled tabs in TabSheet
+- New error handling framework for adapters and applications.
+- Added TextField format-property to allow custom formatting of values.
+- Upload implements Field and Component.Focusable interfaces.
+- Added child component getter function to CustomLayout.
 
+
+Modified features: 
+------------------
+- FilesystemContainer now sorts the files by name.
+- Added default constructor to all Ui components.
+- Changed type checks to use instanceof operatoe instead of assignableFrom call.
+- Promoted the immediate property to super interface VariableOwner.
+- Table cell value formatting can now be overriden.
+- GridLayout.removeAllComponents now also resets the cursor.
+- Panel.removeAllComponents now calls respective method in layout.
+- Changed the Property.ConversionException constructor argument type 
+  from Exception to Throwable.
+- PropertysetItem now maintains now the addition order of properties.
+- Added Action.Container declaration to Tree.
+- Caption property in Select can now be assigned be before datasource.
+- Added UID:s for inner-classes as suggested by Eclipse IDE
+
+
+Bug fixes:
+-----------
+- Removed unnecessary import in all UI classes.
+- Removed unused MoreThanOneCauseException.
+- Added missing detach/attach calls to CustomLayout.addComponent.
+- Fixed sortable properties listing in IndexedContainer.
+- Fixed Panel attach/detach problems.
+- Table and Tree  ActionHandlers are now only added once.
+- Fixed several possible NullPointerExceptions in table paint function.
+- Fixed Form to commit only non-readonly fields.
+- Fixed a memory leak in AbstractField.
+- Fixed Field.getValue misbehaviour when datasource was used.
+- Fixed Form NullPointerException when field creation fails.
+- Fixed possible recursion problem in Form.setValue.
+- Fixed NullPointerException in case of null datasource in DateField.
+- Fixed possible NullPointerException in Form isModified check.
+- Fixed problem with KeyMapper objects not being removed correctly.
+- Added missing MethodException message in ListenerMethod.
+- Fixed a NullPointerException in OrderedLayout paint function.
+- Fixed Select setItemCaption null handling.
+- Fixed Select multiselect problem with Collection values.
+- Fixed NPE in Table and Tree, if tried to remove nonregistered actionhandler.
+- Fixed an invalid index problem with currentPageFirstItemIndex property.
+- Fixed problems with invisible tabs in Tabsheet.
+- Fixed Tree painting bug on invalid areChildrenAllowed (now leaves do not
+       show children).
+- Fixed a possible memory leak in Window.
+- Fixed Window variable change NumberFormatException.
+- Also other minor fixes not listed here.
+
+Web-adabter
+---------------------------
+- WebAdapter support for new XSL/T  engines.
+- Reorganized the WebAdapter default theme javascripts and added support for new UI component features.
+- Several small fixes in WebAdapter default theme. 
 
 version 3.0.0
 ---------------------------
