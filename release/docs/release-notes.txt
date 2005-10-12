@@ -13,14 +13,23 @@
 
 Millstone 3.1.0 Release
 -----------------------
-This version of the Millstone is the first release of the Millstone 
-Base 3.1 and Millstone WebAdapter 3.1 modules. 
+This version of the Millstone is the first release of the Millstone
+Base 3.1 and Millstone WebAdapter 3.1 modules.
 
-The development of Millstone has been branched as 'version-3_1 'to create 
-stable distribution of Millstone for production applications and this is 
+The 3.1 version is backward compatible with previous 3.0.x releases.
+
+The focus of this version is to introduce new features required by
+new adapters and to stabilize the base UI package features.
+
+New features include Form and Field APIs together with new component error
+handling framework and application lifecycle frameworks and component
+paint mechanism enhancements.
+
+The development of Millstone has been branched as 'version-3_1 'to create
+stable distribution of Millstone for production applications and this is
 the initial release of that CVS branch.
 
-See changes.txt for information about what has been changed since the 
+See changes.txt for information about what has been changed since the
 previous release.
 
 
