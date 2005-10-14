@@ -139,7 +139,7 @@ Application.WindowAttachListener, Application.WindowDetachListener {
 
                 // Change all variables based on request parameters
                 Map unhandledParameters = getVariableMap().handleVariables(
-                        request);
+                        request, application);
 
                 // Handle the URI if the application is still running
                 if (application.isRunning())

@@ -196,5 +196,16 @@ public class AjaxApplicationContext implements ApplicationContext {
 			((ApplicationContext.TransactionListener)i.next()).transactionEnd(application,request);
 		}
 	}
+
+	/** Closes this application context and all applications bound to it.
+	 * 
+	 */
+	public void close() {
+		for (Iterator i = this.applications.iterator(); i.hasNext();) {
+			Application app = (Application) i.next();
+			app.close();
+		}
+		
+	}
     
 }

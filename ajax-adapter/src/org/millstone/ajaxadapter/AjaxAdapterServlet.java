@@ -43,6 +43,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -52,6 +53,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
 
 import org.millstone.base.Application;
 
@@ -86,9 +89,13 @@ public class AjaxAdapterServlet extends HttpServlet {
      */
     private static String SESSION_ATTR_APPLICATION_CONTEXT = "org.millstone.ajaxadapter.AjaxApplicationContext";
 
+	private static String SESSION_BINDING_LISTENER = "bindinglistener";
+    
     private Class applicationClass;
 
     private Properties applicationProperties;
+    
+
 
     /**
      * Called by the servlet container to indicate to a servlet that the servlet
@@ -153,6 +160,11 @@ public class AjaxAdapterServlet extends HttpServlet {
         if (acmap == null) {
             acmap = new HashMap();
             session.setAttribute(SESSION_ATTR_APPLICATION_CONTEXT, acmap);
+    		HttpSessionBindingListener sessionBindingListener = new SessionBindingListener(
+    				acmap);
+    		session.setAttribute(SESSION_BINDING_LISTENER,
+    				sessionBindingListener);
+
         }
 
         // Get the application context
@@ -206,7 +218,6 @@ public class AjaxAdapterServlet extends HttpServlet {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
     }
 
     /** Get the current application URL from request */
@@ -231,5 +242,38 @@ public class AjaxAdapterServlet extends HttpServlet {
 
         return applicationUrl;
     }
+    
+    
+	private class SessionBindingListener implements HttpSessionBindingListener {
+		private Map acmap;
+		protected SessionBindingListener(Map acmap) {
+			this.acmap = acmap;
+		}
+
+		/**
+		 * @see javax.servlet.http.HttpSessionBindingListener#valueBound(HttpSessionBindingEvent)
+		 */
+		public void valueBound(HttpSessionBindingEvent arg0) {
+			// We are not interested in bindings
+		}
+
+		/**
+		 * @see javax.servlet.http.HttpSessionBindingListener#valueUnbound(HttpSessionBindingEvent)
+		 */
+		public void valueUnbound(HttpSessionBindingEvent event) {
+
+			// If the binding listener is unbound from the session, the
+			// session must be closing
+			if (event.getName().equals(SESSION_BINDING_LISTENER)) {
+
+				// Close all applications
+				for (Iterator i = acmap.values().iterator(); i.hasNext();) {
+					AjaxApplicationContext actx = (AjaxApplicationContext) i.next();
+					actx.close();					
+				}
+			}
+		}
+
+	}
 
 }
