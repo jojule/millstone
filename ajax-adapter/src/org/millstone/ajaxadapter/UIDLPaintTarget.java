@@ -265,7 +265,6 @@ public class UIDLPaintTarget implements PaintTarget {
 
         StringBuffer result = new StringBuffer(xml.length() * 2);
 
-        int start = 0, end = 0;
         for (int i = 0; i < xml.length(); i++) {
             char c = xml.charAt(i);
             String s = toXmlChar(c);
