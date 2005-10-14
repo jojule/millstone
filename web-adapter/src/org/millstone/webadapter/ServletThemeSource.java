@@ -92,7 +92,10 @@ public class ServletThemeSource implements ThemeSource {
 		if ((this.path.length() > 0) && !this.path.endsWith("/")) {
 			this.path = this.path + "/";
 		}
-
+		if ((this.path.length() > 0) && !this.path.startsWith("/")) {
+			this.path = "/" +this.path;
+		}
+		
 		// Load description file
 		this.descFile = context.getResource(this.path + Theme.DESCRIPTIONFILE);
 		InputStream entry =
