@@ -287,9 +287,11 @@ MillstoneUtils.prototype.openWindow = function(url,name,width,height,border) {
 		props += ',height='+height+',width='+width;
 	}
 	
-	win = window.open(url,name,props);	
-	
+	var win = window.open(url,name,props);	
+	win.blur();	
 	win.focus();
+	
+	return win;
 }
 
 
