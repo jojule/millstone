@@ -88,7 +88,9 @@ public class XSLReader implements XMLReader, ContentHandler {
 		// Xalan
 		else if (
 			"org.apache.xalan.processor.TransformerFactoryImpl".equals(
-				transformerName))
+				transformerName) || 
+				"com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl".equals(
+						transformerName))
 			xsltProcessor = XSLT_XALAN;
 		// Resin
 		else if ("com.caucho.xsl.Xsl".equals(transformerName))
