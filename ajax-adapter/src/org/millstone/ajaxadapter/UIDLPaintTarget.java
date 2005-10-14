@@ -94,9 +94,13 @@ public class UIDLPaintTarget implements PaintTarget {
 
     private OutputStream output;
 
-private ApplicationManager manager; 
+    private ApplicationManager manager; 
 
     private String paintableId;
+    
+    private boolean trackPaints = false;
+    
+    private int numberOfPaints = 0;
 
     /**
      * Create a new XMLPrintWriter, without automatic line flushing.
@@ -173,6 +177,11 @@ private ApplicationManager manager;
         if (tagName == null)
             throw new NullPointerException();
 
+        // Incerement paint tracker
+        if (this.isTrackPaints()) {
+        	this.numberOfPaints++;
+        }
+        
         //Ensure that the target is open
         if (this.closed)
             throw new PaintException(
@@ -658,4 +667,27 @@ private ApplicationManager manager;
     	append(escapeXML(text));
     }
 
+	public boolean isTrackPaints() {
+		return trackPaints;
+	}
+	
+	/** Get number of paints. 
+	 * 
+	 * @return
+	 */
+	public int getNumberOfPaints() {
+		return numberOfPaints;
+	}
+	
+	/** Set tracking to true or false.
+	 * 
+	 * This also resets the number of paints.
+	 * @param trackPaints
+	 * @see #getNumberOfPaints()
+	 */
+	public void setTrackPaints(boolean enabled) {
+		this.trackPaints = enabled;
+		this.numberOfPaints = 0;
+	}
+	
 }
