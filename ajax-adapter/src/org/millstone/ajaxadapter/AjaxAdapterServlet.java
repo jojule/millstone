@@ -166,7 +166,7 @@ public class AjaxAdapterServlet extends HttpServlet {
         return ac;
     }
 
-    protected void doGet(HttpServletRequest request,
+    protected void service(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
 
         // Get the context
