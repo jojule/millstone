@@ -39,6 +39,7 @@
 package org.millstone.ajaxadapter;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -60,10 +61,10 @@ import org.millstone.base.Application.WindowAttachEvent;
 import org.millstone.base.Application.WindowDetachEvent;
 import org.millstone.base.terminal.DownloadStream;
 import org.millstone.base.terminal.Paintable;
+import org.millstone.base.terminal.URIHandler;
 
 import org.millstone.base.terminal.Paintable.RepaintRequestEvent;
 import org.millstone.base.ui.Window;
-
 /**
  * @author IT Mill Ltd, Joonas Lehtinen
  */
@@ -75,8 +76,12 @@ Application.WindowAttachListener, Application.WindowDetachListener {
     private static String GET_PARAM_REPAINT_ALL = "repaintAll";
 
     private static String GET_PARAM_UI_CHANGES_FORMAT = "format";
+    
+    private static int DEFAULT_BUFFER_SIZE = 32 * 1024;
+    
+    private static int MAX_BUFFER_SIZE = 64 * 1024;
 
-        private WeakHashMap applicationToVariableMapMap = new WeakHashMap();
+    private WeakHashMap applicationToVariableMapMap = new WeakHashMap();
 
     private HashSet dirtyPaintabletSet = new HashSet();
 
@@ -85,6 +90,8 @@ Application.WindowAttachListener, Application.WindowDetachListener {
     private int idSequence = 0;
 
     private Application application;
+
+	private Set removedWindows =  new HashSet();
 
     public ApplicationManager(Application application) {
         this.application = application;
@@ -135,9 +142,8 @@ Application.WindowAttachListener, Application.WindowDetachListener {
                         request);
 
                 // Handle the URI if the application is still running
-                // TODO No URI handling supported as of yet
-                // if (application.isRunning())
-                // 	download = handleURI(application, request, response);
+                if (application.isRunning())
+                 	download = handleURI(application, request, response);
 
                 // If this is not a download request
                 if (download == null) {
@@ -166,6 +172,9 @@ Application.WindowAttachListener, Application.WindowDetachListener {
                     // Set the response type
                     response.setContentType("application/xml; charset=UTF-8");
 
+                    // Set the response type
+                    response.setCharacterEncoding("UTF-8");
+
                     // Create UIDL writer
                     UIDLPaintTarget phoneTerminal = new UIDLPaintTarget(
                             getVariableMap(), this, out);
@@ -183,23 +192,46 @@ Application.WindowAttachListener, Application.WindowDetachListener {
                             Paintable p = (Paintable) i.next();
                             phoneTerminal.startTag("change");
                             phoneTerminal.addAttribute("format", "uidl");
-                            phoneTerminal.addAttribute("pid",
-                                    getPaintableId(p));
+                            String pid = getPaintableId(p);
+                            phoneTerminal.addAttribute("pid",pid);
+
+                            // Track paints to identify empty paints 
+                            phoneTerminal.setTrackPaints(true);
                             p.paint(phoneTerminal);
+                            
+                            // If no paints add attribute empty
+                            if (phoneTerminal.getNumberOfPaints() <= 0) {
+                            	phoneTerminal.addAttribute("visible",false);
+                            }
                             phoneTerminal.endTag("change");
                             paintablePainted(p);
                         }
-                        phoneTerminal.close();
                     }
+                    Set removed = getRemovedWindows();
+                    if (removed.size() > 0) {
+                    	for (Iterator i = removed.iterator(); i
+								.hasNext();) {
+							Window w = (Window) i.next();
+                            phoneTerminal.startTag("change");
+                            phoneTerminal.addAttribute("format", "uidl");
+                            String pid = getPaintableId(w);
+                            phoneTerminal.addAttribute("pid",pid);
+                            phoneTerminal.addAttribute("windowname",w.getName());
+                            phoneTerminal.addAttribute("visible",false);
+                            phoneTerminal.endTag("change");
+                            removedWindowNotified(w);
+							
+							
+						}
+                    }
+                    phoneTerminal.close();
                     out.flush();
+                } else {
+                	
+        			// For download request, transfer the downloaded data
+        			handleDownload(download, request, response);
                 }
             }
-
-            // For normal requests, transform the window
-            // TODO Downloads are not implemented
-            // if (download != null) {
-            //	handleDownload(download, request, response);
-            //}
 
             out.flush();
             out.close();
@@ -220,7 +252,9 @@ Application.WindowAttachListener, Application.WindowDetachListener {
 
     }
 
-    /**
+
+
+	/**
      * Get the existing application or create a new one. Get a window within an
      * application based on the requested URI.
      * 
@@ -264,6 +298,123 @@ Application.WindowAttachListener, Application.WindowDetachListener {
 
         return window;
     }
+    
+	/**
+	 * Handle the requested URI. An application can add handlers to do special
+	 * processing, when a certain URI is requested. The handlers are invoked
+	 * before any windows URIs are processed and if a DownloadStream is returned
+	 * it is sent to the client.
+	 * 
+	 * @see org.millstone.base.terminal.URIHandler
+	 * 
+	 * @param application
+	 *            Application owning the URI
+	 * @param request
+	 *            HTTP request instance
+	 * @param response
+	 *            HTTP response to write to.
+	 * @return boolean True if the request was handled and further processing
+	 *         should be suppressed, false otherwise.
+	 */
+	private DownloadStream handleURI(Application application,
+			HttpServletRequest request, HttpServletResponse response) {
+
+		String uri = request.getPathInfo();
+
+		// If no URI is available
+		if (uri == null || uri.length() == 0 || uri.equals("/"))
+			return null;
+
+		// Remove the leading /
+		while (uri.startsWith("/") && uri.length() > 0)
+			uri = uri.substring(1);
+
+		// Handle the uri
+		DownloadStream stream = null;
+		try {
+			stream = application.handleURI(application.getURL(), uri);
+		} catch (Throwable t) {
+			application.terminalError(new URIHandlerErrorImpl(application, t));
+		}
+
+		return stream;
+	}
+	
+	/**
+	 * Handle the requested URI. An application can add handlers to do special
+	 * processing, when a certain URI is requested. The handlers are invoked
+	 * before any windows URIs are processed and if a DownloadStream is returned
+	 * it is sent to the client.
+	 * 
+	 * @see org.millstone.base.terminal.URIHandler
+	 * 
+	 * @param application
+	 *            Application owning the URI
+	 * @param request
+	 *            HTTP request instance
+	 * @param response
+	 *            HTTP response to write to.
+	 * @return boolean True if the request was handled and further processing
+	 *         should be suppressed, false otherwise.
+	 */
+	private void handleDownload(DownloadStream stream,
+			HttpServletRequest request, HttpServletResponse response) {
+
+		// Download from given stream
+		InputStream data = stream.getStream();
+		if (data != null) {
+
+			// Set content type
+			response.setContentType(stream.getContentType());
+
+			// Set cache headers
+			long cacheTime = stream.getCacheTime();
+			if (cacheTime <= 0) {
+				response.setHeader("Cache-Control", "no-cache");
+				response.setHeader("Pragma", "no-cache");
+				response.setDateHeader("Expires", 0);
+			} else {
+				response.setHeader("Cache-Control", "max-age=" + cacheTime
+						/ 1000);
+				response.setDateHeader("Expires", System.currentTimeMillis()
+						+ cacheTime);
+				response.setHeader("Pragma", "cache"); // Required to apply
+													   // caching in some
+													   // Tomcats
+			}
+
+			// Copy download stream parameters directly
+			// to HTTP headers.
+			Iterator i = stream.getParameterNames();
+			if (i != null) {
+				while (i.hasNext()) {
+					String param = (String) i.next();
+					response.setHeader((String) param, stream
+							.getParameter(param));
+				}
+			}
+
+			int bufferSize = stream.getBufferSize();
+			if (bufferSize <= 0 || bufferSize > MAX_BUFFER_SIZE)
+				bufferSize = DEFAULT_BUFFER_SIZE;
+			byte[] buffer = new byte[bufferSize];
+			int bytesRead = 0;
+
+			try {
+				OutputStream out = response.getOutputStream();
+
+				while ((bytesRead = data.read(buffer)) > 0) {
+					out.write(buffer, 0, bytesRead);
+					out.flush();
+				}
+				out.close();
+			} catch (IOException ignored) {
+			}
+
+		}
+
+	}
+	
 
     /** End application */
     private void endApplication(HttpServletRequest request,
@@ -326,6 +477,41 @@ Application.WindowAttachListener, Application.WindowDetachListener {
 
     public void windowDetached(WindowDetachEvent event) {
         event.getWindow().removeListener(this);
+        // Notify client of the close operation
+        removedWindows.add(event.getWindow());
+    }
+    
+    public synchronized Set getRemovedWindows() {
+        return Collections.unmodifiableSet(removedWindows);
+
     }
 
+	private void removedWindowNotified(Window w) {
+		this.removedWindows.remove(w);		
+	}
+	
+	/** Implementation of URIHandler.ErrorEvent interface. */
+	public class URIHandlerErrorImpl implements URIHandler.ErrorEvent {
+
+		private URIHandler owner;
+		private Throwable throwable;
+
+		private URIHandlerErrorImpl(URIHandler owner, Throwable throwable) {
+			this.owner = owner;
+			this.throwable = throwable;
+		}
+
+		/**
+		 * @see org.millstone.base.terminal.Terminal.ErrorEvent#getThrowable()
+		 */
+		public Throwable getThrowable() {
+			return this.throwable;
+		}
+		/**
+		 * @see org.millstone.base.terminal.URIHandler.ErrorEvent#getURIHandler()
+		 */
+		public URIHandler getURIHandler() {
+			return this.owner;
+		}
+	}
 }
