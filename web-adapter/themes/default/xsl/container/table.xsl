@@ -343,7 +343,7 @@
         <TD  ALIGN="RIGHT">
           <INPUT TYPE="IMAGE" BORDER="0">
             <xsl:attribute name="SRC"><xsl:value-of select="wa:resource('icon/arrows/right.gif')"/></xsl:attribute>          
-            <xsl:if test="(@pagelength + $firstvisible) &lt; @totalrows "> 
+            <xsl:if test="(@pagelength + $firstvisible) &lt;= @totalrows "> 
               <xsl:attribute name="NAME">set:<xsl:value-of select="$fid"/>=<xsl:value-of select="$firstvisible + @pagelength"/></xsl:attribute>
             </xsl:if>
           </INPUT>
