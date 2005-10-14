@@ -1,40 +1,40 @@
 /* *************************************************************************
  
-   								Millstone(TM) 
-   				   Open Sourced User Interface Library for
-   		 		       Internet Development with Java
+ Millstone(TM) 
+ Open Sourced User Interface Library for
+ Internet Development with Java
 
-             Millstone is a registered trademark of IT Mill Ltd
-                  Copyright (C) 2000,2001,2002 IT Mill Ltd
-                     
-   *************************************************************************
+ Millstone is a registered trademark of IT Mill Ltd
+ Copyright (C) 2000,2001,2002 IT Mill Ltd
+ 
+ *************************************************************************
 
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
 
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Lesser General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with this library; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ You should have received a copy of the GNU Lesser General Public
+ License along with this library; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-   *************************************************************************
-   
-   For more information, contact:
-   
-   IT Mill Ltd                           phone: +358 2 4802 7180
-   Ruukinkatu 2-4                        fax:  +358 2 4802 7181
-   20540, Turku                          email: info@itmill.com
-   Finland                               company www: www.itmill.com
-   
-   Primary source for MillStone information and releases: www.millstone.org
+ *************************************************************************
+ 
+ For more information, contact:
+ 
+ IT Mill Ltd                           phone: +358 2 4802 7180
+ Ruukinkatu 2-4                        fax:  +358 2 4802 7181
+ 20540, Turku                          email: info@itmill.com
+ Finland                               company www: www.itmill.com
+ 
+ Primary source for MillStone information and releases: www.millstone.org
 
-   ********************************************************************** */
+ ********************************************************************** */
 
 package org.millstone.webadapter;
 
@@ -50,6 +50,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
@@ -85,29 +86,30 @@ import org.millstone.base.terminal.Paintable.RepaintRequestEvent;
 import org.millstone.base.ui.Window;
 import org.millstone.webadapter.ThemeSource.ThemeException;
 
-/** This servlet is the core of the MillStone Web Adapter, that adapts the
+/**
+ * This servlet is the core of the MillStone Web Adapter, that adapts the
  * MillStone applications to Web standards. The web adapter can be used to
  * represent the most MillStone application using Web browsers and corresponding
  * technologies.
- *
+ * 
  * @author IT Mill Ltd.
- * @version @VERSION@
+ * @version
+ * @VERSION@
  * @since 3.0
  */
 
-public class WebAdapterServlet
-	extends HttpServlet
-	implements
-		Application.WindowAttachListener,
-		Application.WindowDetachListener,
-		Paintable.RepaintRequestListener {
+public class WebAdapterServlet extends HttpServlet
+		implements
+			Application.WindowAttachListener,
+			Application.WindowDetachListener,
+			Paintable.RepaintRequestListener {
 
 	// Versions
 	private static final int VERSION_MAJOR = 3;
 	private static final int VERSION_MINOR = 1;
 	private static final int VERSION_BUILD = 0;
-	private static final String VERSION =
-		"" + VERSION_MAJOR + "." + VERSION_MINOR + "." + VERSION_BUILD;
+	private static final String VERSION = "" + VERSION_MAJOR + "."
+			+ VERSION_MINOR + "." + VERSION_BUILD;
 
 	//Configurable parameter names
 	private static final String PARAMETER_DEBUG = "Debug";
@@ -115,8 +117,7 @@ public class WebAdapterServlet
 	private static final String PARAMETER_THEMESOURCE = "ThemeSource";
 	private static final String PARAMETER_THEME_CACHETIME = "ThemeCacheTime";
 	private static final String PARAMETER_MAX_TRANSFORMERS = "MaxTransformers";
-	private static final String PARAMETER_TRANSFORMER_CACHETIME =
-		"TransformerCacheTime";
+	private static final String PARAMETER_TRANSFORMER_CACHETIME = "TransformerCacheTime";
 
 	private static int DEFAULT_THEME_CACHETIME = 1000 * 60 * 60 * 24;
 	private static int DEFAULT_BUFFER_SIZE = 32 * 1024;
@@ -129,11 +130,14 @@ public class WebAdapterServlet
 	private static String SESSION_DEFAULT_THEME = "default";
 	private static String RESOURCE_URI = "/RES/";
 	private static String THEME_DIRECTORY_PATH = "WEB-INF/lib/themes/";
-	private static String THEME_LISTING_FILE =
-		THEME_DIRECTORY_PATH + "themes.txt";
+	private static String THEME_LISTING_FILE = THEME_DIRECTORY_PATH
+			+ "themes.txt";
 	private static String DEFAULT_THEME_JAR_PREFIX = "millstone-web-themes";
-	private static String DEFAULT_THEME_JAR =
-		"WEB-INF/lib/" + DEFAULT_THEME_JAR_PREFIX + "-" + VERSION + ".jar";
+	private static String DEFAULT_THEME_JAR = "WEB-INF/lib/"
+			+ DEFAULT_THEME_JAR_PREFIX + "-" + VERSION + ".jar";
+	private static String DEFAULT_THEME_SNAPSHOT_JAR = "WEB-INF/lib/"
+			+ DEFAULT_THEME_JAR_PREFIX + "-" + VERSION_MAJOR + "."
+			+ VERSION_MINOR + "-SNAPSHOT.jar";
 	private static String DEFAULT_THEME_TEMP_FILE_PREFIX = "WA_TMP_";
 	private static String SERVER_COMMAND_PARAM = "SERVER_COMMANDS";
 	private static int SERVER_COMMAND_STREAM_MAINTAIN_PERIOD = 15000;
@@ -151,50 +155,48 @@ public class WebAdapterServlet
 	private long transformerCacheTime;
 	private long themeCacheTime;
 	private WeakHashMap applicationToDirtyWindowSetMap = new WeakHashMap();
-	private WeakHashMap applicationToServerCommandStreamLock =
-		new WeakHashMap();
+	private WeakHashMap applicationToServerCommandStreamLock = new WeakHashMap();
 	private WeakHashMap applicationToLastRequestDate = new WeakHashMap();
 	private List allWindows = new LinkedList();
 
-	/** Called by the servlet container to indicate to a servlet that the
-	 * servlet is being placed into service.
-	 *
-	 * @param servletConfig object containing the servlet's configuration and
-	 *        initialization parameters
-	 * @throws ServletException if an exception has occurred that interferes
-	 *         with the servlet's normal operation.
+	/**
+	 * Called by the servlet container to indicate to a servlet that the servlet
+	 * is being placed into service.
+	 * 
+	 * @param servletConfig
+	 *            object containing the servlet's configuration and
+	 *            initialization parameters
+	 * @throws ServletException
+	 *             if an exception has occurred that interferes with the
+	 *             servlet's normal operation.
 	 */
 	public void init(javax.servlet.ServletConfig servletConfig)
-		throws javax.servlet.ServletException {
+			throws javax.servlet.ServletException {
 		super.init(servletConfig);
 
 		// Get the application class name
-		String applicationClassName =
-			servletConfig.getInitParameter("application");
+		String applicationClassName = servletConfig
+				.getInitParameter("application");
 		if (applicationClassName == null) {
 			Log.error("Application not specified in servlet parameters");
 		}
 
 		// Store the application parameters into Properties object
 		this.applicationProperties = new Properties();
-		for (Enumeration e = servletConfig.getInitParameterNames();
-			e.hasMoreElements();
-			) {
+		for (Enumeration e = servletConfig.getInitParameterNames(); e
+				.hasMoreElements();) {
 			String name = (String) e.nextElement();
-			this.applicationProperties.setProperty(
-				name,
-				servletConfig.getInitParameter(name));
+			this.applicationProperties.setProperty(name, servletConfig
+					.getInitParameter(name));
 		}
 
-		// Override with server.xml parameters		
+		// Override with server.xml parameters
 		ServletContext context = servletConfig.getServletContext();
-		for (Enumeration e = context.getInitParameterNames();
-			e.hasMoreElements();
-			) {
+		for (Enumeration e = context.getInitParameterNames(); e
+				.hasMoreElements();) {
 			String name = (String) e.nextElement();
-			this.applicationProperties.setProperty(
-				name,
-				context.getInitParameter(name));
+			this.applicationProperties.setProperty(name, context
+					.getInitParameter(name));
 		}
 
 		// Get the debug window parameter
@@ -203,30 +205,20 @@ public class WebAdapterServlet
 		this.debugMode = debug.equals("true");
 
 		// Get the maximum number of simultaneous transformers
-		this.maxConcurrentTransformers =
-			Integer.parseInt(
-				getApplicationOrSystemProperty(
-					PARAMETER_MAX_TRANSFORMERS,
-					"-1"));
+		this.maxConcurrentTransformers = Integer
+				.parseInt(getApplicationOrSystemProperty(
+						PARAMETER_MAX_TRANSFORMERS, "-1"));
 		if (this.maxConcurrentTransformers < 1)
 			this.maxConcurrentTransformers = DEFAULT_MAX_TRANSFORMERS;
-		;
 
 		// Get cache time for transformers
-		this.transformerCacheTime =
-			Integer.parseInt(
-				getApplicationOrSystemProperty(
-					PARAMETER_TRANSFORMER_CACHETIME,
-					"-1"))
-				* 1000;
+		this.transformerCacheTime = Integer
+				.parseInt(getApplicationOrSystemProperty(
+						PARAMETER_TRANSFORMER_CACHETIME, "-1")) * 1000;
 
 		// Get cache time for theme resources
-		this.themeCacheTime =
-			Integer.parseInt(
-				getApplicationOrSystemProperty(
-					PARAMETER_THEME_CACHETIME,
-					"-1"))
-				* 1000;
+		this.themeCacheTime = Integer.parseInt(getApplicationOrSystemProperty(
+				PARAMETER_THEME_CACHETIME, "-1")) * 1000;
 		if (this.themeCacheTime < 0) {
 			this.themeCacheTime = DEFAULT_THEME_CACHETIME;
 		}
@@ -239,38 +231,37 @@ public class WebAdapterServlet
 		}
 
 		// Add the default theme source
-		String defaultThemeJar =
-			getApplicationOrSystemProperty(
-				PARAMETER_DEFAULT_THEME_JAR,
-				DEFAULT_THEME_JAR);
-		File f = findDefaultThemeJar(defaultThemeJar);
+		String[] defaultThemeFiles = new String[]{
+				getApplicationOrSystemProperty(PARAMETER_DEFAULT_THEME_JAR,
+						DEFAULT_THEME_JAR), DEFAULT_THEME_SNAPSHOT_JAR
+
+		};
+		File f = findDefaultThemeJar(defaultThemeFiles);
 		try {
-			// Add themes.jar if exists							
+			// Add themes.jar if exists
 			if (f != null && f.exists())
 				this.themeSource.add(new JarThemeSource(f, this, ""));
 			else {
-				Log.warn("Default theme JAR not found: " + defaultThemeJar);
+				Log.warn("Default theme JAR not found in: "
+						+ Arrays.asList(defaultThemeFiles));
 			}
 
 		} catch (Exception e) {
-			throw new ServletException(
-				"Failed to load default theme from " + defaultThemeJar,
-				e);
+			throw new ServletException("Failed to load default theme from "
+					+ Arrays.asList(defaultThemeFiles), e);
 		}
 
 		// Check that at least one themesource was loaded
 		if (this.themeSource.getThemes().size() <= 0) {
-			throw new ServletException("No themes found in specified themesources.");
+			throw new ServletException(
+					"No themes found in specified themesources.");
 		}
 
 		// Initialize the transformer factory, if not initialized
 		if (this.transformerFactory == null) {
 
-			this.transformerFactory =
-				new UIDLTransformerFactory(
-					this.themeSource,
-					this,
-					this.maxConcurrentTransformers,
+			this.transformerFactory = new UIDLTransformerFactory(
+					this.themeSource, this, this.maxConcurrentTransformers,
 					this.transformerCacheTime);
 		}
 
@@ -280,19 +271,22 @@ public class WebAdapterServlet
 		try {
 			this.applicationClass = loader.loadClass(applicationClassName);
 		} catch (ClassNotFoundException e) {
-			throw new ServletException(
-				"Failed to load application class: " + applicationClassName);
+			throw new ServletException("Failed to load application class: "
+					+ applicationClassName);
 		}
 	}
 
-	/**Get an application or system property value.
-	 * @param parameterName Name or the parameter
-	 * @param defaultValue Default to be used
+	/**
+	 * Get an application or system property value.
+	 * 
+	 * @param parameterName
+	 *            Name or the parameter
+	 * @param defaultValue
+	 *            Default to be used
 	 * @return String value or default if not found
 	 */
-	private String getApplicationOrSystemProperty(
-		String parameterName,
-		String defaultValue) {
+	private String getApplicationOrSystemProperty(String parameterName,
+			String defaultValue) {
 
 		// Try application properties
 		String val = this.applicationProperties.getProperty(parameterName);
@@ -302,8 +296,8 @@ public class WebAdapterServlet
 
 		// Try lowercased application properties for backward compability with
 		// 3.0.2 and earlier
-		val =
-			this.applicationProperties.getProperty(parameterName.toLowerCase());
+		val = this.applicationProperties.getProperty(parameterName
+				.toLowerCase());
 		if (val != null) {
 			return val;
 		}
@@ -331,12 +325,13 @@ public class WebAdapterServlet
 		return defaultValue;
 	}
 
-	/** Get ThemeSources from given path.
-	 *  Construct the list of avalable themes in path using the following
-	 *  sources:         1. content of THEME_PATH directory (if available) 2.
-	 * The themes   listed in THEME_LIST_FILE 3. "themesource" application
-	 * parameter -  "org. millstone.webadapter. themesource" system property
-	 *  
+	/**
+	 * Get ThemeSources from given path. Construct the list of avalable themes
+	 * in path using the following sources: 1. content of THEME_PATH directory
+	 * (if available) 2. The themes listed in THEME_LIST_FILE 3. "themesource"
+	 * application parameter - "org. millstone.webadapter. themesource" system
+	 * property
+	 * 
 	 * @param THEME_DIRECTORY_PATH
 	 * @return List
 	 */
@@ -347,62 +342,50 @@ public class WebAdapterServlet
 		// Check the list file in theme directory
 		List sourcePaths = new LinkedList();
 		try {
-			BufferedReader reader =
-				new BufferedReader(
-					new InputStreamReader(
-						this.getServletContext().getResourceAsStream(
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					this.getServletContext().getResourceAsStream(
 							THEME_LISTING_FILE)));
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				sourcePaths.add(THEME_DIRECTORY_PATH + line.trim());
 			}
 			if (this.isDebugMode()) {
-				Log.debug(
-					"Listed "
-						+ sourcePaths.size()
-						+ " themes in "
-						+ THEME_LISTING_FILE
-						+ ". Loading "
-						+ sourcePaths);
+				Log.debug("Listed " + sourcePaths.size() + " themes in "
+						+ THEME_LISTING_FILE + ". Loading " + sourcePaths);
 			}
 		} catch (Exception ignored) {
 			// If the file reading fails, just skip to next method
 		}
 
-		// If no file was found or it was empty, 
+		// If no file was found or it was empty,
 		// try to add themes filesystem directory if it is accessible
 		if (sourcePaths.size() <= 0) {
 			if (this.isDebugMode()) {
-				Log.debug(
-					"No themes listed in "
-						+ THEME_LISTING_FILE
+				Log.debug("No themes listed in " + THEME_LISTING_FILE
 						+ ". Trying to read the content of directory "
 						+ THEME_DIRECTORY_PATH);
 			}
 
 			try {
-				String path =
-					this.getServletContext().getRealPath(THEME_DIRECTORY_PATH);
+				String path = this.getServletContext().getRealPath(
+						THEME_DIRECTORY_PATH);
 				if (path != null) {
 					File f = new File(path);
 					if (f != null && f.exists())
 						returnValue.add(new DirectoryThemeSource(f, this));
 				}
 			} catch (java.io.IOException je) {
-				Log.info(
-					"Theme directory "
-						+ THEME_DIRECTORY_PATH
+				Log.info("Theme directory " + THEME_DIRECTORY_PATH
 						+ " not available. Skipped.");
 			} catch (ThemeException e) {
-				throw new ServletException(
-					"Failed to load themes from " + THEME_DIRECTORY_PATH,
-					e);
+				throw new ServletException("Failed to load themes from "
+						+ THEME_DIRECTORY_PATH, e);
 			}
 		}
 
 		// Add the theme sources from application properties
-		String paramValue =
-			getApplicationOrSystemProperty(PARAMETER_THEMESOURCE, null);
+		String paramValue = getApplicationOrSystemProperty(
+				PARAMETER_THEMESOURCE, null);
 		if (paramValue != null) {
 			StringTokenizer st = new StringTokenizer(paramValue, ";");
 			while (st.hasMoreTokens()) {
@@ -419,25 +402,20 @@ public class WebAdapterServlet
 				// Relative files are treated as streams (to support
 				// resource inside WAR files)
 				if (!sourceFile.isAbsolute()) {
-					returnValue.add(
-						new ServletThemeSource(
-							this.getServletContext(),
-							this,
-							source));
+					returnValue.add(new ServletThemeSource(this
+							.getServletContext(), this, source));
 				} else if (sourceFile.isDirectory()) {
 
 					// Absolute directories are read from filesystem
 					returnValue.add(new DirectoryThemeSource(sourceFile, this));
 				} else {
 
-					// Absolute JAR-files are read from filesystem					
+					// Absolute JAR-files are read from filesystem
 					returnValue.add(new JarThemeSource(sourceFile, this, ""));
 				}
 			} catch (Exception e) {
 				// Any exception breaks the the init
-				throw new ServletException(
-					"Invalid theme source: " + source,
-					e);
+				throw new ServletException("Invalid theme source: " + source, e);
 			}
 		}
 
@@ -445,35 +423,36 @@ public class WebAdapterServlet
 		return returnValue;
 	}
 
-	/** Receives standard HTTP requests from the public service method and
-	 *  dispatches them.
-	 *
-	 * @param request object that contains the request the client
-	 *        made of the servlet
-	 * @param response object that contains the response the servlet
-	 *        returns to the client
-	 * @throws ServletException if an input or output error occurs while the
-	 *         servlet is handling the TRACE request
-	 * @throws IOException if the request for the TRACE cannot be handled
+	/**
+	 * Receives standard HTTP requests from the public service method and
+	 * dispatches them.
+	 * 
+	 * @param request
+	 *            object that contains the request the client made of the
+	 *            servlet
+	 * @param response
+	 *            object that contains the response the servlet returns to the
+	 *            client
+	 * @throws ServletException
+	 *             if an input or output error occurs while the servlet is
+	 *             handling the TRACE request
+	 * @throws IOException
+	 *             if the request for the TRACE cannot be handled
 	 */
-	protected void service(
-		HttpServletRequest request,
-		HttpServletResponse response)
-		throws ServletException, IOException {
+	protected void service(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 
 		// Transformer and output stream for the result
 		UIDLTransformer transformer = null;
 		HttpVariableMap variableMap = null;
 		OutputStream out = response.getOutputStream();
-        HashSet currentlyDirtyWindowsForThisApplication = new HashSet();
+		HashSet currentlyDirtyWindowsForThisApplication = new HashSet();
 		try {
 
 			// If the resource path is unassigned, initialize it
 			if (resourcePath == null)
-				resourcePath =
-					request.getContextPath()
-						+ request.getServletPath()
-						+ RESOURCE_URI;
+				resourcePath = request.getContextPath()
+						+ request.getServletPath() + RESOURCE_URI;
 
 			// Handle resource requests
 			if (handleResourceRequest(request, response))
@@ -496,14 +475,14 @@ public class WebAdapterServlet
 			// Invoke context transaction listeners
 			WebApplicationContext appContext = null;
 			if (application != null) {
-				appContext = (WebApplicationContext)application.getContext();
+				appContext = (WebApplicationContext) application.getContext();
 			}
 			if (appContext != null) {
-				appContext.startTransaction(application,request);
+				appContext.startTransaction(application, request);
 			}
 
 			// The rest of the process is synchronized with the application
-			// in order to guarantee that no parallel variable handling is 
+			// in order to guarantee that no parallel variable handling is
 			// made
 			synchronized (application) {
 
@@ -515,14 +494,13 @@ public class WebAdapterServlet
 				if (variableMap == null)
 					return;
 
-				// Change  all variables based on request parameters
-				Map unhandledParameters =
-					variableMap.handleVariables(request, application);
+				// Change all variables based on request parameters
+				Map unhandledParameters = variableMap.handleVariables(request,
+						application);
 
 				// Check/handle client side feature checks
-				WebBrowserProbe.handleProbeRequest(
-					request,
-					unhandledParameters);
+				WebBrowserProbe
+						.handleProbeRequest(request, unhandledParameters);
 
 				// Handle the URI if the application is still running
 				if (application.isRunning())
@@ -535,21 +513,22 @@ public class WebAdapterServlet
 					response.setHeader("Cache-Control", "no-cache");
 					response.setHeader("Pragma", "no-cache");
 					response.setDateHeader("Expires", 0);
-	
+
 					// Find the window within the application
 					Window window = null;
 					if (application.isRunning())
 						window = getApplicationWindow(request, application);
 
-					// Handle the unhandled parameters if the application is still running
-					if (window != null
-						&& unhandledParameters != null
-						&& !unhandledParameters.isEmpty()) {
+					// Handle the unhandled parameters if the application is
+					// still running
+					if (window != null && unhandledParameters != null
+							&& !unhandledParameters.isEmpty()) {
 						try {
 							window.handleParameters(unhandledParameters);
 						} catch (Throwable t) {
-							application.terminalError(
-								new ParameterHandlerErrorImpl(window, t));
+							application
+									.terminalError(new ParameterHandlerErrorImpl(
+											window, t));
 						}
 					}
 					// Remove application if it has stopped
@@ -561,19 +540,21 @@ public class WebAdapterServlet
 					// Return blank page, if no window found
 					if (window == null) {
 						response.setContentType("text/html");
-						BufferedWriter page =
-							new BufferedWriter(new OutputStreamWriter(out));
+						BufferedWriter page = new BufferedWriter(
+								new OutputStreamWriter(out));
 						page.write("<html><head><script>");
-						page.write(
-							ThemeFunctionLibrary.generateWindowScript(
-								null,
-								application,
-								this,
-								WebBrowserProbe.getTerminalType(
-									request.getSession())));
+						page
+								.write(ThemeFunctionLibrary
+										.generateWindowScript(
+												null,
+												application,
+												this,
+												WebBrowserProbe
+														.getTerminalType(request
+																.getSession())));
 						page.write("</script></head><body>");
-						page.write(
-							"The requested window has been removed from application.");
+						page
+								.write("The requested window has been removed from application.");
 						page.write("</body></html>");
 						page.close();
 
@@ -585,9 +566,8 @@ public class WebAdapterServlet
 
 					// Set terminal type for the window, if not already set
 					if (terminalType == null) {
-						terminalType =
-							WebBrowserProbe.getTerminalType(
-								request.getSession());
+						terminalType = WebBrowserProbe.getTerminalType(request
+								.getSession());
 						window.setTerminal(terminalType);
 					}
 
@@ -595,84 +575,78 @@ public class WebAdapterServlet
 					UIDLTransformerType transformerType = null;
 					if (window.getTheme() != null) {
 						Theme activeTheme;
-						if ((activeTheme =
-							this.themeSource.getThemeByName(window.getTheme()))
-							!= null) {
-							transformerType =
-								new UIDLTransformerType(
-									terminalType,
-									activeTheme);
+						if ((activeTheme = this.themeSource
+								.getThemeByName(window.getTheme())) != null) {
+							transformerType = new UIDLTransformerType(
+									terminalType, activeTheme);
 						} else {
-							Log.info(
-								"Theme named '"
-									+ window.getTheme()
-									+ "' not found. Using system default theme.");
+							Log
+									.info("Theme named '"
+											+ window.getTheme()
+											+ "' not found. Using system default theme.");
 						}
 					}
 
 					// Use default theme if selected theme was not found.
 					if (transformerType == null) {
-						Theme defaultTheme = this.themeSource.getThemeByName(WebAdapterServlet.SESSION_DEFAULT_THEME);						 
+						Theme defaultTheme = this.themeSource
+								.getThemeByName(WebAdapterServlet.SESSION_DEFAULT_THEME);
 						if (defaultTheme == null) {
-							throw new ServletException("Default theme not found in the specified theme source(s).");
+							throw new ServletException(
+									"Default theme not found in the specified theme source(s).");
 						}
-						transformerType =
-							new UIDLTransformerType(
-								terminalType,defaultTheme
-								);
+						transformerType = new UIDLTransformerType(terminalType,
+								defaultTheme);
 					}
 
-					transformer =
-						this.transformerFactory.getTransformer(transformerType);
+					transformer = this.transformerFactory
+							.getTransformer(transformerType);
 
 					// Set the response type
 					response.setContentType(terminalType.getContentType());
 
 					// Create UIDL writer
-					WebPaintTarget paintTarget =
-						transformer.getPaintTarget(variableMap);
+					WebPaintTarget paintTarget = transformer
+							.getPaintTarget(variableMap);
 
-					// Assure that the correspoding debug window will be repainted property
+					// Assure that the correspoding debug window will be
+					// repainted property
 					// by clearing it before the actual paint.
-					DebugWindow debugWindow =
-						(DebugWindow) application.getWindow(
-							DebugWindow.WINDOW_NAME);
+					DebugWindow debugWindow = (DebugWindow) application
+							.getWindow(DebugWindow.WINDOW_NAME);
 					if (debugWindow != null && debugWindow != window) {
 						debugWindow.setWindowUIDL(window, "Painting...");
 					}
 
-					// Paint window		
+					// Paint window
 					window.paint(paintTarget);
 					paintTarget.close();
 
-                    // For exception handling, memorize the current dirty status
-                    Collection dirtyWindows = (Collection) applicationToDirtyWindowSetMap
-                            .get(application);
-        			if (dirtyWindows == null) {
-        				dirtyWindows = new HashSet();
-        				applicationToDirtyWindowSetMap.put(application, dirtyWindows);
-        			}                    
-                    currentlyDirtyWindowsForThisApplication
-                            .addAll(dirtyWindows);
+					// For exception handling, memorize the current dirty status
+					Collection dirtyWindows = (Collection) applicationToDirtyWindowSetMap
+							.get(application);
+					if (dirtyWindows == null) {
+						dirtyWindows = new HashSet();
+						applicationToDirtyWindowSetMap.put(application,
+								dirtyWindows);
+					}
+					currentlyDirtyWindowsForThisApplication
+							.addAll(dirtyWindows);
 
 					// Window is now painted
 					windowPainted(application, window);
 
 					// Debug
 					if (debugWindow != null && debugWindow != window) {
-						debugWindow.setWindowUIDL(
-							window,
-							paintTarget.getUIDL());
+						debugWindow
+								.setWindowUIDL(window, paintTarget.getUIDL());
 					}
 
 					// Set the function library state for this thread
-					ThemeFunctionLibrary.setState(
-						application,
-						window,
-						transformerType.getWebBrowser(),
-						request.getSession(),
-						this,
-						transformerType.getTheme().getName());
+					ThemeFunctionLibrary.setState(application, window,
+							transformerType.getWebBrowser(), request
+									.getSession(), this, transformerType
+									.getTheme().getName());
 
 				}
 			}
@@ -684,7 +658,7 @@ public class WebAdapterServlet
 				// Note that the transform and transfer of the result is
 				// not synchronized with the variable map. This allows
 				// parallel transfers and transforms for better performance,
-				// but requires that all calls from the XSL to java are 
+				// but requires that all calls from the XSL to java are
 				// thread-safe
 				transformer.transform(out);
 			}
@@ -694,38 +668,39 @@ public class WebAdapterServlet
 
 				handleDownload(download, request, response);
 			}
-			
+
 			// Notify context of transaction end
 			if (appContext != null) {
-				appContext.endTransaction(application,request);
-			}			
-
-		} catch (UIDLTransformerException te) {
-			
-			try {			
-    			// Write the error report to client
-    			response.setContentType("text/html");
-    			BufferedWriter err =
-    				new BufferedWriter(new OutputStreamWriter(out));
-    			err.write(
-    				"<html><head><title>Application Internal Error</title></head><body>");
-    			err.write("<h1>" + te.getMessage() + "</h1>");
-    			err.write(te.getHTMLDescription());
-    			err.write("</body></html>");
-    			err.close();
-			} catch (Throwable t) {
-				Log.except("Failed to write error page: "+t+". Original exception was: ",te);
+				appContext.endTransaction(application, request);
 			}
 
-            // Add previously dirty windows to dirtyWindowList in order
-            // to make sure that eventually they are repainted
-            Application currentApplication = getApplication(request);
-            for (Iterator iter = currentlyDirtyWindowsForThisApplication
-                    .iterator(); iter.hasNext();) {
-                Window dirtyWindow = (Window) iter.next();
-                addDirtyWindow(currentApplication, dirtyWindow);
-            }
-            
+		} catch (UIDLTransformerException te) {
+
+			try {
+				// Write the error report to client
+				response.setContentType("text/html");
+				BufferedWriter err = new BufferedWriter(new OutputStreamWriter(
+						out));
+				err
+						.write("<html><head><title>Application Internal Error</title></head><body>");
+				err.write("<h1>" + te.getMessage() + "</h1>");
+				err.write(te.getHTMLDescription());
+				err.write("</body></html>");
+				err.close();
+			} catch (Throwable t) {
+				Log.except("Failed to write error page: " + t
+						+ ". Original exception was: ", te);
+			}
+
+			// Add previously dirty windows to dirtyWindowList in order
+			// to make sure that eventually they are repainted
+			Application currentApplication = getApplication(request);
+			for (Iterator iter = currentlyDirtyWindowsForThisApplication
+					.iterator(); iter.hasNext();) {
+				Window dirtyWindow = (Window) iter.next();
+				addDirtyWindow(currentApplication, dirtyWindow);
+			}
+
 		} catch (Throwable e) {
 			// Re-throw other exceptions
 			throw new ServletException(e);
@@ -735,29 +710,31 @@ public class WebAdapterServlet
 			if (transformer != null)
 				transformerFactory.releaseTransformer(transformer);
 
-			// Clean the function library state for this thread 
+			// Clean the function library state for this thread
 			// for security reasons
 			ThemeFunctionLibrary.cleanState();
 		}
 	}
 
-	/** Handle the requested URI.
-	 *  An application can add handlers to do special processing, when
-	 *  a certain URI is requested. The handlers are invoked before
-	 *  any windows URIs are processed and if a DownloadStream is
-	 *  returned it is sent to the client.
-	 *  @see org.millstone.base.terminal.URIHandler
-	 *  
-	 *  @param application Application owning the URI
-	 *  @param request HTTP request instance
-	 *  @param response HTTP response to write to.
-	 *  @return boolean True if the request was handled and further processing
-	 *           should be suppressed, false otherwise.
+	/**
+	 * Handle the requested URI. An application can add handlers to do special
+	 * processing, when a certain URI is requested. The handlers are invoked
+	 * before any windows URIs are processed and if a DownloadStream is returned
+	 * it is sent to the client.
+	 * 
+	 * @see org.millstone.base.terminal.URIHandler
+	 * 
+	 * @param application
+	 *            Application owning the URI
+	 * @param request
+	 *            HTTP request instance
+	 * @param response
+	 *            HTTP response to write to.
+	 * @return boolean True if the request was handled and further processing
+	 *         should be suppressed, false otherwise.
 	 */
-	private DownloadStream handleURI(
-		Application application,
-		HttpServletRequest request,
-		HttpServletResponse response) {
+	private DownloadStream handleURI(Application application,
+			HttpServletRequest request, HttpServletResponse response) {
 
 		String uri = request.getPathInfo();
 
@@ -765,7 +742,7 @@ public class WebAdapterServlet
 		if (uri == null || uri.length() == 0 || uri.equals("/"))
 			return null;
 
-		// Remove the leading /	
+		// Remove the leading /
 		while (uri.startsWith("/") && uri.length() > 0)
 			uri = uri.substring(1);
 
@@ -780,23 +757,25 @@ public class WebAdapterServlet
 		return stream;
 	}
 
-	/** Handle the requested URI.
-	 *  An application can add handlers to do special processing, when
-	 *  a certain URI is requested. The handlers are invoked before
-	 *  any windows URIs are processed and if a DownloadStream is
-	 *  returned it is sent to the client.
-	 *  @see org.millstone.base.terminal.URIHandler
-	 *  
-	 *  @param application Application owning the URI
-	 *  @param request HTTP request instance
-	 *  @param response HTTP response to write to.
-	 *  @return boolean True if the request was handled and further processing
-	 *           should be suppressed, false otherwise.
+	/**
+	 * Handle the requested URI. An application can add handlers to do special
+	 * processing, when a certain URI is requested. The handlers are invoked
+	 * before any windows URIs are processed and if a DownloadStream is returned
+	 * it is sent to the client.
+	 * 
+	 * @see org.millstone.base.terminal.URIHandler
+	 * 
+	 * @param application
+	 *            Application owning the URI
+	 * @param request
+	 *            HTTP request instance
+	 * @param response
+	 *            HTTP response to write to.
+	 * @return boolean True if the request was handled and further processing
+	 *         should be suppressed, false otherwise.
 	 */
-	private void handleDownload(
-		DownloadStream stream,
-		HttpServletRequest request,
-		HttpServletResponse response) {
+	private void handleDownload(DownloadStream stream,
+			HttpServletRequest request, HttpServletResponse response) {
 
 		// Download from given stream
 		InputStream data = stream.getStream();
@@ -812,11 +791,13 @@ public class WebAdapterServlet
 				response.setHeader("Pragma", "no-cache");
 				response.setDateHeader("Expires", 0);
 			} else {
-				response.setHeader("Cache-Control", "max-age="+cacheTime/1000);
-				response.setDateHeader(
-					"Expires",
-					System.currentTimeMillis() + cacheTime);
-				response.setHeader("Pragma", "cache"); // Required to apply caching in some Tomcats
+				response.setHeader("Cache-Control", "max-age=" + cacheTime
+						/ 1000);
+				response.setDateHeader("Expires", System.currentTimeMillis()
+						+ cacheTime);
+				response.setHeader("Pragma", "cache"); // Required to apply
+													   // caching in some
+													   // Tomcats
 			}
 
 			// Copy download stream parameters directly
@@ -825,9 +806,8 @@ public class WebAdapterServlet
 			if (i != null) {
 				while (i.hasNext()) {
 					String param = (String) i.next();
-					response.setHeader(
-						(String) param,
-						stream.getParameter(param));
+					response.setHeader((String) param, stream
+							.getParameter(param));
 				}
 			}
 
@@ -852,31 +832,36 @@ public class WebAdapterServlet
 
 	}
 
-	/** Look for default theme JAR file.
+	/**
+	 * Look for default theme JAR file.
+	 * 
 	 * @return Jar file or null if not found.
 	 */
-	private File findDefaultThemeJar(String themeJarFile) {
+	private File findDefaultThemeJar(String[] fileList) {
 
 		// Try to find the default theme JAR file based on the given path
-		String path = this.getServletContext().getRealPath(themeJarFile);
-		File file = null;
-		if (path != null && (file = new File(path)).exists()) {
-			return file;
+		for (int i = 0; i < fileList.length; i++) {
+			String path = this.getServletContext().getRealPath(fileList[i]);
+			File file = null;
+			if (path != null && (file = new File(path)).exists()) {
+				return file;
+			}
 		}
 
 		// If we do not have access to individual files, create a temporary
-		// file from named resource.  
-		InputStream defaultTheme =
-			this.getServletContext().getResourceAsStream(themeJarFile);
-
-		// Read the content to temporary file and return it
-		if (defaultTheme != null) {
-			return createTemporaryFile(defaultTheme, ".jar");
+		// file from named resource.
+		for (int i = 0; i < fileList.length; i++) {
+			InputStream defaultTheme = this.getServletContext()
+					.getResourceAsStream(fileList[i]);
+			// Read the content to temporary file and return it
+			if (defaultTheme != null) {
+				return createTemporaryFile(defaultTheme, ".jar");
+			}
 		}
 
 		// Try to find the default theme JAR file based on file naming scheme
 		// NOTE: This is for backward compability with 3.0.2 and earlier.
-		path = this.getServletContext().getRealPath("/WEB-INF/lib");
+		String path = this.getServletContext().getRealPath("/WEB-INF/lib");
 		if (path != null) {
 
 			File lib = new File(path);
@@ -884,7 +869,7 @@ public class WebAdapterServlet
 			if (files != null) {
 				for (int i = 0; i < files.length; i++) {
 					if (files[i].toLowerCase().endsWith(".jar")
-						&& files[i].startsWith(DEFAULT_THEME_JAR_PREFIX)) {
+							&& files[i].startsWith(DEFAULT_THEME_JAR_PREFIX)) {
 						return new File(lib, files[i]);
 					}
 				}
@@ -895,16 +880,20 @@ public class WebAdapterServlet
 		return null;
 	}
 
-	/**Create a temporary file for given stream.
-	 * @param stream Stream to be stored into temporary file.
-	 * @param extension File type extension
+	/**
+	 * Create a temporary file for given stream.
+	 * 
+	 * @param stream
+	 *            Stream to be stored into temporary file.
+	 * @param extension
+	 *            File type extension
 	 * @return File
 	 */
 	private File createTemporaryFile(InputStream stream, String extension) {
 		File tmpFile;
 		try {
-			tmpFile =
-				File.createTempFile(DEFAULT_THEME_TEMP_FILE_PREFIX, extension);
+			tmpFile = File.createTempFile(DEFAULT_THEME_TEMP_FILE_PREFIX,
+					extension);
 			FileOutputStream out = new FileOutputStream(tmpFile);
 			byte[] buf = new byte[1024];
 			int bytes = 0;
@@ -913,27 +902,28 @@ public class WebAdapterServlet
 			}
 			out.close();
 		} catch (IOException e) {
-			System.err.println(
-				"Failed to create temporary file for default theme: " + e);
+			System.err
+					.println("Failed to create temporary file for default theme: "
+							+ e);
 			tmpFile = null;
 		}
 
 		return tmpFile;
 	}
 
-	/** Handle theme resource file requests.
-	 *  Resources supplied with the themes are provided by the
-	 *  WebAdapterServlet.
+	/**
+	 * Handle theme resource file requests. Resources supplied with the themes
+	 * are provided by the WebAdapterServlet.
 	 * 
-	 *  @param request HTTP request 
-	 *  @param response HTTP response 
-	 *  @return boolean True if the request was handled and further processing
-	 *           should be suppressed, false otherwise.
+	 * @param request
+	 *            HTTP request
+	 * @param response
+	 *            HTTP response
+	 * @return boolean True if the request was handled and further processing
+	 *         should be suppressed, false otherwise.
 	 */
-	private boolean handleResourceRequest(
-		HttpServletRequest request,
-		HttpServletResponse response)
-		throws ServletException {
+	private boolean handleResourceRequest(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException {
 
 		String resourceId = request.getPathInfo();
 
@@ -955,18 +945,21 @@ public class WebAdapterServlet
 		// Write the response
 		try {
 			if (data != null) {
-				response.setContentType(
-					FileTypeResolver.getMIMEType(resourceId));
+				response.setContentType(FileTypeResolver
+						.getMIMEType(resourceId));
 
 				// Use default cache time for theme resources
 				if (this.themeCacheTime > 0) {
-					response.setHeader("Cache-Control", "max-age="+this.themeCacheTime/1000);
-					response.setDateHeader(
-						"Expires",
-						System.currentTimeMillis() + this.themeCacheTime);
-					response.setHeader("Pragma", "cache"); // Required to apply caching in some Tomcats
+					response.setHeader("Cache-Control", "max-age="
+							+ this.themeCacheTime / 1000);
+					response.setDateHeader("Expires", System
+							.currentTimeMillis()
+							+ this.themeCacheTime);
+					response.setHeader("Pragma", "cache"); // Required to apply
+														   // caching in some
+														   // Tomcats
 				}
-				// Write the data to client 
+				// Write the data to client
 				byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 				int bytesRead = 0;
 				OutputStream out = response.getOutputStream();
@@ -980,12 +973,8 @@ public class WebAdapterServlet
 			}
 
 		} catch (java.io.IOException e) {
-			Log.info(
-				"Resource transfer failed:  "
-					+ request.getRequestURI()
-					+ ". ("
-					+ e.getMessage()
-					+ ")");
+			Log.info("Resource transfer failed:  " + request.getRequestURI()
+					+ ". (" + e.getMessage() + ")");
 		}
 
 		return true;
@@ -993,8 +982,7 @@ public class WebAdapterServlet
 
 	/** Get the variable map for the session */
 	private static synchronized HttpVariableMap getVariableMap(
-		Application application,
-		HttpServletRequest request) {
+			Application application, HttpServletRequest request) {
 
 		HttpSession session = request.getSession();
 
@@ -1006,8 +994,8 @@ public class WebAdapterServlet
 		}
 
 		// Create a variable map, if it does not exists.
-		HttpVariableMap variableMap =
-			(HttpVariableMap) varMapMap.get(application);
+		HttpVariableMap variableMap = (HttpVariableMap) varMapMap
+				.get(application);
 		if (variableMap == null) {
 			variableMap = new HttpVariableMap();
 			varMapMap.put(application, variableMap);
@@ -1018,44 +1006,39 @@ public class WebAdapterServlet
 
 	/** Get the current application URL from request */
 	private URL getApplicationUrl(HttpServletRequest request)
-		throws MalformedURLException {
+			throws MalformedURLException {
 
 		URL applicationUrl;
 		try {
-			URL reqURL =
-				new URL(
-					(request.isSecure() ? "https://" : "http://")
-						+ request.getServerName()
-						+ ":"
-						+ request.getServerPort()
-						+ request.getRequestURI());
-			String servletPath =
-				request.getContextPath() + request.getServletPath();
+			URL reqURL = new URL((request.isSecure() ? "https://" : "http://")
+					+ request.getServerName() + ":" + request.getServerPort()
+					+ request.getRequestURI());
+			String servletPath = request.getContextPath()
+					+ request.getServletPath();
 			if (servletPath.length() == 0
-				|| servletPath.charAt(servletPath.length() - 1) != '/')
+					|| servletPath.charAt(servletPath.length() - 1) != '/')
 				servletPath = servletPath + "/";
 			applicationUrl = new URL(reqURL, servletPath);
 		} catch (MalformedURLException e) {
-			Log.error(
-				"Error constructing application url "
-					+ request.getRequestURI()
-					+ " ("
-					+ e
-					+ ")");
+			Log.error("Error constructing application url "
+					+ request.getRequestURI() + " (" + e + ")");
 			throw e;
 		}
 
 		return applicationUrl;
 	}
 
-	/** Get the existing application for given request.
-	 *  Looks for application instance for given request
-	 *  based on the requested URL.
-	 *  @param request HTTP request 
-	 *	@return Application instance, or null if the URL does not map to valid application.
+	/**
+	 * Get the existing application for given request. Looks for application
+	 * instance for given request based on the requested URL.
+	 * 
+	 * @param request
+	 *            HTTP request
+	 * @return Application instance, or null if the URL does not map to valid
+	 *         application.
 	 */
 	private Application getApplication(HttpServletRequest request)
-		throws MalformedURLException {
+			throws MalformedURLException {
 
 		// Ensure that the session is still valid
 		HttpSession session = request.getSession(false);
@@ -1063,20 +1046,19 @@ public class WebAdapterServlet
 			return null;
 
 		// Get application list for the session.
-		LinkedList applications =
-			(LinkedList) session.getAttribute(SESSION_ATTR_APPS);
+		LinkedList applications = (LinkedList) session
+				.getAttribute(SESSION_ATTR_APPS);
 		if (applications == null)
 			return null;
 
 		// Search for the application (using the application URI) from the list
 		Application application = null;
-		for (Iterator i = applications.iterator();
-			i.hasNext() && application == null;
-			) {
+		for (Iterator i = applications.iterator(); i.hasNext()
+				&& application == null;) {
 			Application a = (Application) i.next();
 			String aPath = a.getURL().getPath();
-			String servletPath =
-				request.getContextPath() + request.getServletPath();
+			String servletPath = request.getContextPath()
+					+ request.getServletPath();
 			if (servletPath.length() < aPath.length())
 				servletPath += "/";
 			if (servletPath.equals(aPath))
@@ -1092,11 +1074,14 @@ public class WebAdapterServlet
 		return application;
 	}
 
-	/** Create a new application.
-	 *	@return New application instance
+	/**
+	 * Create a new application.
+	 * 
+	 * @return New application instance
 	 */
 	private Application createApplication(HttpServletRequest request)
-		throws MalformedURLException, InstantiationException, IllegalAccessException {
+			throws MalformedURLException, InstantiationException,
+			IllegalAccessException {
 
 		Application application = null;
 
@@ -1107,16 +1092,15 @@ public class WebAdapterServlet
 		HttpSession session = request.getSession();
 		if (session == null)
 			return null;
-		LinkedList applications =
-			(LinkedList) session.getAttribute(SESSION_ATTR_APPS);
+		LinkedList applications = (LinkedList) session
+				.getAttribute(SESSION_ATTR_APPS);
 		if (applications == null) {
 			applications = new LinkedList();
 			session.setAttribute(SESSION_ATTR_APPS, applications);
-			HttpSessionBindingListener sessionBindingListener =
-				new SessionBindingListener(applications);
-			session.setAttribute(
-				SESSION_BINDING_LISTENER,
-				sessionBindingListener);
+			HttpSessionBindingListener sessionBindingListener = new SessionBindingListener(
+					applications);
+			session.setAttribute(SESSION_BINDING_LISTENER,
+					sessionBindingListener);
 		}
 
 		// Create new application and start it
@@ -1128,25 +1112,22 @@ public class WebAdapterServlet
 			application.setLocale(request.getLocale());
 
 			// Get application context for this session
-			WebApplicationContext context = (WebApplicationContext)session.getAttribute(SESSION_ATTR_CONTEXT);
+			WebApplicationContext context = (WebApplicationContext) session
+					.getAttribute(SESSION_ATTR_CONTEXT);
 			if (context == null) {
 				context = new WebApplicationContext(session);
-				session.setAttribute(SESSION_ATTR_CONTEXT,context);
+				session.setAttribute(SESSION_ATTR_CONTEXT, context);
 			}
-			
-			application.start(
-				applicationUrl,
-				this.applicationProperties,
-				context); 
+
+			application.start(applicationUrl, this.applicationProperties,
+					context);
 
 		} catch (IllegalAccessException e) {
-			Log.error(
-				"Illegal access to application class "
+			Log.error("Illegal access to application class "
 					+ this.applicationClass.getName());
 			throw e;
 		} catch (InstantiationException e) {
-			Log.error(
-				"Failed to instantiate application class: "
+			Log.error("Failed to instantiate application class: "
 					+ this.applicationClass.getName());
 			throw e;
 		}
@@ -1155,11 +1136,9 @@ public class WebAdapterServlet
 	}
 
 	/** End application */
-	private void endApplication(
-		HttpServletRequest request,
-		HttpServletResponse response,
-		Application application)
-		throws IOException {
+	private void endApplication(HttpServletRequest request,
+			HttpServletResponse response, Application application)
+			throws IOException {
 
 		String logoutUrl = application.getLogoutURL();
 		if (logoutUrl == null)
@@ -1167,8 +1146,8 @@ public class WebAdapterServlet
 
 		HttpSession session = request.getSession();
 		if (session != null) {
-			LinkedList applications =
-				(LinkedList) session.getAttribute(SESSION_ATTR_APPS);
+			LinkedList applications = (LinkedList) session
+					.getAttribute(SESSION_ATTR_APPS);
 			if (applications != null)
 				applications.remove(application);
 		}
@@ -1176,16 +1155,18 @@ public class WebAdapterServlet
 		response.sendRedirect(response.encodeRedirectURL(logoutUrl));
 	}
 
-	/** Get the existing application or create a new one.
-	 *  Get a window within an application based on the requested URI.
-	 *  @param request HTTP Request.
-	 *  @param application Application to query for window.
-	 *  @return Window mathing the given URI or null if not found.
+	/**
+	 * Get the existing application or create a new one. Get a window within an
+	 * application based on the requested URI.
+	 * 
+	 * @param request
+	 *            HTTP Request.
+	 * @param application
+	 *            Application to query for window.
+	 * @return Window mathing the given URI or null if not found.
 	 */
-	private Window getApplicationWindow(
-		HttpServletRequest request,
-		Application application)
-		throws ServletException {
+	private Window getApplicationWindow(HttpServletRequest request,
+			Application application) throws ServletException {
 
 		Window window = null;
 
@@ -1232,29 +1213,29 @@ public class WebAdapterServlet
 
 		// Create and open new debug window for application if requested
 		if (this.debugMode
-			&& application.getWindow(DebugWindow.WINDOW_NAME) == null)
+				&& application.getWindow(DebugWindow.WINDOW_NAME) == null)
 			try {
-				DebugWindow debugWindow =
-					new DebugWindow(
-						application,
-						request.getSession(false),
-						this);
+				DebugWindow debugWindow = new DebugWindow(application, request
+						.getSession(false), this);
 				debugWindow.setWidth(370);
 				debugWindow.setHeight(480);
 				application.addWindow(debugWindow);
 			} catch (Exception e) {
 				throw new ServletException(
-					"Failed to create debug window for application",
-					e);
+						"Failed to create debug window for application", e);
 			}
 
 		return window;
 	}
 
-	/** Get relative location of a theme resource.
-	 *  @param theme Theme name
-	 *  @param resource Theme resource
-	 *  @return External URI specifying the resource
+	/**
+	 * Get relative location of a theme resource.
+	 * 
+	 * @param theme
+	 *            Theme name
+	 * @param resource
+	 *            Theme resource
+	 * @return External URI specifying the resource
 	 */
 	public String getResourceLocation(String theme, ThemeResource resource) {
 
@@ -1263,14 +1244,18 @@ public class WebAdapterServlet
 		return resourcePath + theme + "/" + resource.getResourceId();
 	}
 
-	/** Check if web adapter is in debug mode.
-	 * 	Extra output is generated to log when debug mode is enabled.
-	 *  @return Debug mode 
+	/**
+	 * Check if web adapter is in debug mode. Extra output is generated to log
+	 * when debug mode is enabled.
+	 * 
+	 * @return Debug mode
 	 */
 	public boolean isDebugMode() {
 		return debugMode;
 	}
-	/** Returns the theme source.
+	/**
+	 * Returns the theme source.
+	 * 
 	 * @return ThemeSource
 	 */
 	public ThemeSource getThemeSource() {
@@ -1279,8 +1264,8 @@ public class WebAdapterServlet
 
 	protected void addDirtyWindow(Application application, Window window) {
 		synchronized (applicationToDirtyWindowSetMap) {
-			HashSet dirtyWindows =
-				(HashSet) applicationToDirtyWindowSetMap.get(application);
+			HashSet dirtyWindows = (HashSet) applicationToDirtyWindowSetMap
+					.get(application);
 			if (dirtyWindows == null) {
 				dirtyWindows = new HashSet();
 				applicationToDirtyWindowSetMap.put(application, dirtyWindows);
@@ -1291,8 +1276,8 @@ public class WebAdapterServlet
 
 	protected void removeDirtyWindow(Application application, Window window) {
 		synchronized (applicationToDirtyWindowSetMap) {
-			HashSet dirtyWindows =
-				(HashSet) applicationToDirtyWindowSetMap.get(application);
+			HashSet dirtyWindows = (HashSet) applicationToDirtyWindowSetMap
+					.get(application);
 			if (dirtyWindows != null)
 				dirtyWindows.remove(window);
 		}
@@ -1322,7 +1307,7 @@ public class WebAdapterServlet
 	 */
 	public void windowDetached(WindowDetachEvent event) {
 		event.getWindow().removeListener(
-			(Paintable.RepaintRequestListener) this);
+				(Paintable.RepaintRequestListener) this);
 
 		// Add dirty window reference for closing the window
 		addDirtyWindow(event.getApplication(), event.getWindow());
@@ -1362,10 +1347,12 @@ public class WebAdapterServlet
 		removeDirtyWindow(app, window);
 	}
 
-	/** Generate server commands stream. If the server commands are not requested, return false */
-	private boolean handleServerCommands(
-		HttpServletRequest request,
-		HttpServletResponse response) {
+	/**
+	 * Generate server commands stream. If the server commands are not
+	 * requested, return false
+	 */
+	private boolean handleServerCommands(HttpServletRequest request,
+			HttpServletResponse response) {
 
 		// Server commands are allways requested with certain parameter
 		if (request.getParameter(SERVER_COMMAND_PARAM) == null)
@@ -1395,60 +1382,63 @@ public class WebAdapterServlet
 			// Clock for synchronizing the stream
 			Object lock = new Object();
 			synchronized (applicationToServerCommandStreamLock) {
-				Object oldlock =
-					applicationToServerCommandStreamLock.get(application);
+				Object oldlock = applicationToServerCommandStreamLock
+						.get(application);
 				if (oldlock != null)
 					synchronized (oldlock) {
 						oldlock.notifyAll();
 					}
 				applicationToServerCommandStreamLock.put(application, lock);
 			}
-			while (applicationToServerCommandStreamLock.get(application)
-				== lock
-				&& application.isRunning()) {
+			while (applicationToServerCommandStreamLock.get(application) == lock
+					&& application.isRunning()) {
 				synchronized (application) {
 
 					// Session expiration
-					Date lastRequest =
-						(Date) applicationToLastRequestDate.get(application);
+					Date lastRequest = (Date) applicationToLastRequestDate
+							.get(application);
 					if (lastRequest != null
-						&& lastRequest.getTime()
-							+ request.getSession().getMaxInactiveInterval()
-								* 1000
-							< System.currentTimeMillis()) {
+							&& lastRequest.getTime()
+									+ request.getSession()
+											.getMaxInactiveInterval() * 1000 < System
+									.currentTimeMillis()) {
 
 						// Session expired, close application
 						application.close();
 					} else {
 
-						// Application still alive - keep updating windows					
+						// Application still alive - keep updating windows
 						Set dws = getDirtyWindows(application);
 						if (dws != null && !dws.isEmpty()) {
 
-							// For one of the dirty windows (in each application)
+							// For one of the dirty windows (in each
+							// application)
 							// request redraw
 							Window win = (Window) dws.iterator().next();
-							w.println(
-								"<script>\n"
-									+ ThemeFunctionLibrary
-										.getWindowRefreshScript(
-										application,
-										win,
-										WebBrowserProbe.getTerminalType(
-											request.getSession()))
-									+ "</script>");
+							w
+									.println("<script>\n"
+											+ ThemeFunctionLibrary
+													.getWindowRefreshScript(
+															application,
+															win,
+															WebBrowserProbe
+																	.getTerminalType(request
+																			.getSession()))
+											+ "</script>");
 
 							removeDirtyWindow(application, win);
 
-							// Windows that are closed immediately are "painted" now
+							// Windows that are closed immediately are "painted"
+							// now
 							if (win.getApplication() == null
-								|| !win.isVisible())
+									|| !win.isVisible())
 								win.requestRepaintRequests();
 						}
 					}
 				}
 
-				// Send the generated commands and newline immediately to browser
+				// Send the generated commands and newline immediately to
+				// browser
 				w.println(" ");
 				w.flush();
 				response.flushBuffer();
@@ -1465,8 +1455,7 @@ public class WebAdapterServlet
 			// In case of an Exceptions the server command stream is
 			// terminated
 			synchronized (applicationToServerCommandStreamLock) {
-				if (applicationToServerCommandStreamLock.get(application)
-					== application)
+				if (applicationToServerCommandStreamLock.get(application) == application)
 					applicationToServerCommandStreamLock.remove(application);
 			}
 		}
@@ -1474,8 +1463,7 @@ public class WebAdapterServlet
 		return true;
 	}
 
-	private class SessionBindingListener
-		implements HttpSessionBindingListener {
+	private class SessionBindingListener implements HttpSessionBindingListener {
 		private LinkedList applications;
 		protected SessionBindingListener(LinkedList applications) {
 			this.applications = applications;
@@ -1503,11 +1491,11 @@ public class WebAdapterServlet
 					if (apps[i] != null) {
 
 						// Close app
-						 ((Application) apps[i]).close();
+						((Application) apps[i]).close();
 
 						// Stop application server commands stream
-						Object lock =
-							applicationToServerCommandStreamLock.get(apps[i]);
+						Object lock = applicationToServerCommandStreamLock
+								.get(apps[i]);
 						if (lock != null)
 							synchronized (lock) {
 								lock.notifyAll();
@@ -1525,14 +1513,14 @@ public class WebAdapterServlet
 
 	/** Implementation of ParameterHandler.ErrorEvent interface. */
 	public class ParameterHandlerErrorImpl
-		implements ParameterHandler.ErrorEvent {
+			implements
+				ParameterHandler.ErrorEvent {
 
 		private ParameterHandler owner;
 		private Throwable throwable;
 
-		private ParameterHandlerErrorImpl(
-			ParameterHandler owner,
-			Throwable throwable) {
+		private ParameterHandlerErrorImpl(ParameterHandler owner,
+				Throwable throwable) {
 			this.owner = owner;
 			this.throwable = throwable;
 		}
