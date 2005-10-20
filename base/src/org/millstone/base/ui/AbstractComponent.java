@@ -74,6 +74,9 @@ public abstract class AbstractComponent
 
 	/** Caption text. */
 	private String caption;
+    
+    /** Application specific data object. */
+    private Object applicationData;
 
 	/** Icon to be shown together with caption. */
 	private Resource icon;
@@ -803,4 +806,22 @@ public abstract class AbstractComponent
 	protected void fireComponentErrorEvent() {
 		fireEvent(new Component.ErrorEvent(this.getComponentError(),this));
 	}
+
+	/** Sets application specific data object.
+     * 
+     * @param data Application specific data.
+     * @since 3.1
+	 */
+    public void setData(Object data) {
+        this.applicationData = data;
+    }
+    
+    /** Gets application specific data.
+     * 
+     * @return Application specific data set with setData function.
+     * @since 3.1
+     */
+    Object getData() {
+        return this.applicationData;
+    }
 }
