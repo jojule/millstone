@@ -2,15 +2,15 @@
 
 <project name="Millstone Base Release" default="package">
 
-    <target name="checks" >
+	<target name="checks" >
 	<condition property="codeformatter.missing">
-	    <not><available classname="Java2Html"/></not>
+	    <not><available classname="de.java2html.anttasks.Java2HtmlTask"/></not>
 	</condition>
     </target>
 
     <target name="fail-if-formatter-missing" if="codeformatter.missing" depends="checks">
         <echo message="Code syntax highlighter not found. "/> 
-	<fail message="The Java2Html JAR must be in your classpath."/>
+	<fail message="The J2H JAR must be in your classpath."/>
     </target>       
     
     <target name="init" unless="version" depends="fail-if-formatter-missing">
@@ -143,19 +143,23 @@
 	         includes="**/*.java"/>
 
 	<!-- Apply source code syntax highlighting -->
-	<apply executable="java" dir="${war-dir}/docs/sources" dest="${war-dir}/docs/sources" parallel="false">
-  		<arg value="Java2Html"/>
-  		<srcfile/>		
- 		<targetfile/>
-		<fileset dir="${war-dir}/docs/sources">
-			<patternset>
-      			<include name="**/*.java"/>
-    			</patternset>
-		</fileset>
-		<mapper type="glob" from="*.java" to="*.html"/>
-	</apply>
- 
- 	<!-- Create the WAR archive -->
+    <taskdef name="java2html"
+          	     classname="de.java2html.anttasks.Java2HtmlTask"
+   	    	     classpath="C:/apache-ant-1.6.5/lib/java2html.jar"
+    />
+        	    	
+    <java2html
+    		srcdir="${war-dir}/docs/sources"
+    	    destdir="${war-dir}/docs"
+    	    includes="**/*.java"
+    	    style="eclipse"
+    	    showLineNumbers="false"
+    	    showFileName="true"
+    	    showTableBorder="false"
+    />
+    
+    	
+    <!-- Create the WAR archive -->
         <war warfile="${work-dir}/examples/${examples-war-name}"
 	     webxml="${root-dir}/examples/WEB-INF/web.xml">
             <fileset dir="${war-dir}"/>
