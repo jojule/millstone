@@ -3,14 +3,14 @@
 <project name="Millstone Base Release" default="package">
 
 	<target name="checks" >
-	<condition property="codeformatter.missing">
-	    <not><available classname="de.java2html.anttasks.Java2HtmlTask"/></not>
-	</condition>
+		<condition property="codeformatter.missing">
+	    	<not><available classname="de.java2html.anttasks.Java2HtmlTask"/></not>
+		</condition>
     </target>
 
     <target name="fail-if-formatter-missing" if="codeformatter.missing" depends="checks">
         <echo message="Code syntax highlighter not found. "/> 
-	<fail message="The J2H JAR must be in your classpath."/>
+		<fail message="The J2H JAR must be in your classpath."/>
     </target>       
     
     <target name="init" unless="version" depends="fail-if-formatter-missing">
@@ -21,10 +21,10 @@
     <target name="checkout" if="release" depends="init">
 	<!-- Do the CVS checkout -->
     	<echo message="Checking out MillStone ${version} from ${cvs-root} with tag ${cvs-tag} to ${checkout-dir}" />
-	<delete dir="${checkout-dir}/examples"/>
-	<mkdir dir="${checkout-dir}"/>
-	<cvs cvsRoot="${cvs-root}" package="examples" tag="${cvs-tag}"
-	   dest="${checkout-dir}"/> 	
+		<delete dir="${checkout-dir}/examples"/>
+		<mkdir dir="${checkout-dir}"/>
+		<cvs cvsRoot="${cvs-root}" package="examples" tag="${cvs-tag}"
+	   		 dest="${checkout-dir}"/> 	
     </target>    
 
 
@@ -32,28 +32,27 @@
         
         <mkdir dir="${work-dir}/examples"/>     
     	<javac srcdir="${root-dir}/examples/WEB-INF/src" destdir="${work-dir}/examples" 
-	     deprecation="on" optimize="${optimize}"
-             classpath="${classpath}:${output-dir}/lib/${base-bin-jar-name}:${root-dir}/examples/WEB-INF/lib/jl011.jar">
-	    <include name="org/millstone/examples/*"/>
-	    <include name="org/millstone/examples/stoneplayer/**"/>
-	    <include name="org/millstone/examples/features/**"/>
-	    <include name="org/millstone/examples/gogame/**"/>
-	</javac>	
-	
-    </target>
+	     	   deprecation="on" optimize="${optimize}"
+               classpath="${classpath}:${output-dir}/lib/${base-bin-jar-name}:${root-dir}/examples/WEB-INF/lib/jl011.jar">
+	    	<include name="org/millstone/examples/*"/>
+	    	<include name="org/millstone/examples/stoneplayer/**"/>
+	    	<include name="org/millstone/examples/features/**"/>
+	    	<include name="org/millstone/examples/gogame/**"/>
+		</javac>	
+	</target>
     
     
     <target name="jar" depends="compile">
     
         <!-- Copy image resources -->
-	<copy  todir="${work-dir}/examples/">
+		<copy  todir="${work-dir}/examples/">
             <fileset dir="${root-dir}/examples/WEB-INF/src">
               <patternset>
                 <include name="org/millstone/examples/**/*.jpg"/>
                 <include name="org/millstone/examples/**/*.gif"/>
               </patternset>
             </fileset>
-	</copy>
+		</copy>
 
         <!-- Create Examples JAR -->
         <jar jarfile="${work-dir}/examples/${examples-jar-name}"
@@ -72,20 +71,20 @@
 
     <target name="package" depends="jar">
 
-	<!-- Copy example binary -->
-	<copy file="${work-dir}/examples/${examples-jar-name}" todir="${output-dir}/lib"/>
+		<!-- Copy example binary -->
+		<copy file="${work-dir}/examples/${examples-jar-name}" todir="${output-dir}/lib"/>
 
-	<!-- Create WAR content  -->
-	<property name="war-dir" value="${output-dir}/examples"/>
+		<!-- Create WAR content  -->
+		<property name="war-dir" value="${output-dir}/examples"/>
     
     	<delete dir="${war-dir}"/>
-	<mkdir dir="${war-dir}"/>
+		<mkdir dir="${war-dir}"/>
 	
-	<copy todir="${war-dir}">
+		<copy todir="${war-dir}">
             <fileset dir="${root-dir}/examples">
               <patternset>
-		<include name="*.html"/>
-		<include name="millstoneorg.css"/>
+				<include name="*.html"/>
+				<include name="millstoneorg.css"/>
                	<include name="img/*.gif"/>
 		
                	<include name="WEB-INF/src/**/*.java"/>
@@ -103,52 +102,52 @@
 
               </patternset>
             </fileset>
-	</copy>    
+		</copy>    
 
         <!-- Convert sources CRLF's and tabs -->
         <fixcrlf srcdir="${war-dir}/WEB-INF/src"
                  eol="crlf"
-		 tablength="4"
-		 tab="remove"
-	         includes="**/*.java"/>
+		 		 tablength="4"
+		 		 tab="remove"
+	         	 includes="**/*.java"/>
 
 
-	<!-- Copy Millstone JARs to lib -->
-	<copy todir="${war-dir}/WEB-INF/lib">
+		<!-- Copy Millstone JARs to lib -->
+		<copy todir="${war-dir}/WEB-INF/lib">
             <fileset dir="${output-dir}/lib">
               <patternset>
                 <include name="${base-bin-jar-name}"/>
                 <include name="${examples-jar-name}"/>
                 <include name="${webadapter-bin-jar-name}"/>
-		<include name="${web-themes-jar-name}"/>
+				<include name="${web-themes-jar-name}"/>
               </patternset>
             </fileset>
-	</copy>   
+		</copy>   
 
-	<!-- Copy java sources to documentation to public -->
-	<mkdir dir="${war-dir}/docs/sources"/>
-	<copy todir="${war-dir}/docs/sources">
+		<!-- Copy java sources to documentation to public -->
+		<mkdir dir="${war-dir}/docs/sources"/>
+		<copy todir="${war-dir}/docs/sources">
             <fileset dir="${root-dir}/examples/WEB-INF/src">
               <patternset>
                 <include name="**/*.java"/>
               </patternset>
             </fileset>
-	</copy>   
+		</copy>   
 
         <!-- Convert sources CRLF's and tabs -->
         <fixcrlf srcdir="${war-dir}/docs/sources"
                  eol="crlf"
-		 tablength="4"
-		 tab="remove"
-	         includes="**/*.java"/>
+		 		 tablength="4"
+		 		 tab="remove"
+	         	 includes="**/*.java"/>
 
-	<!-- Apply source code syntax highlighting -->
-    <taskdef name="java2html"
+		<!-- Apply source code syntax highlighting -->
+    	<taskdef name="java2html"
           	     classname="de.java2html.anttasks.Java2HtmlTask"
-   	    	     classpath="C:/apache-ant-1.6.5/lib/java2html.jar"
-    />
+   	    	     classpath="${lib-dir}/java2html.jar"
+    	/>
         	    	
-    <java2html
+    	<java2html
     		srcdir="${war-dir}/docs/sources"
     	    destdir="${war-dir}/docs"
     	    includes="**/*.java"
@@ -156,21 +155,21 @@
     	    showLineNumbers="false"
     	    showFileName="true"
     	    showTableBorder="false"
-    />
+    	/>
     
     	
-    <!-- Create the WAR archive -->
+    	<!-- Create the WAR archive -->
         <war warfile="${work-dir}/examples/${examples-war-name}"
-	     webxml="${root-dir}/examples/WEB-INF/web.xml">
+	     	 webxml="${root-dir}/examples/WEB-INF/web.xml">
             <fileset dir="${war-dir}"/>
         </war>
 	
-	<!-- Copy WAR archive to distribution -->
-	<copy todir="${output-dir}/lib" 
-	file="${work-dir}/examples/${examples-war-name}"/>
+		<!-- Copy WAR archive to distribution -->
+		<copy todir="${output-dir}/lib" 
+			  file="${work-dir}/examples/${examples-war-name}"/>
 	
-	<!-- Delete temporaty directory -->
-	<!-- delete dir="${war-dir}"/ -->
+		<!-- Delete temporaty directory -->
+		<!-- delete dir="${war-dir}"/ -->
   
     </target>
 
