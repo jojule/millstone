@@ -77,8 +77,9 @@
             <sourcepath>
                 <pathelement location="${work-dir}/docsrc"/>
             </sourcepath>
-	    <bottom><![CDATA[<i>Copyright &#169; 2000,2001,2002 IT Mill Ltd. All Rights
-                Reserved.</i>]]></bottom>
+	    	<bottom>
+	    		<![CDATA[<i>Copyright &#169; 2000-2005 IT Mill Ltd. All Rights Reserved.</i>]]>
+	    	</bottom>
         </javadoc>
         <delete dir="${work-dir}/docsrc"/>
     </target>
