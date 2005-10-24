@@ -10,23 +10,24 @@
 
     <target name="pre-init">
         
-	<!-- Create current timestamp -->
-	<tstamp/>
+		<!-- Create current timestamp -->
+		<tstamp/>
 	
-        <!-- Directories -->
-        <property name="work-dir" value="build/work"/>
-        <property name="original-manifests" value="manifest"/>
-        <property name="tmp-dir" value="${work-dir}/tmp"/>
-        <property name="checkout-dir" value="${work-dir}/CVS-CHECKOUT"/>
-
-	<!-- Are the compiler optimizations on/off -->
-	<property name="optimize" value="off"/>
+    	<!-- Directories -->
+    	<property name="work-dir" value="build/work"/>
+    	<property name="original-manifests" value="manifest"/>
+    	<property name="tmp-dir" value="${work-dir}/tmp"/>
+    	<property name="checkout-dir" value="${work-dir}/CVS-CHECKOUT"/>
+		<property name="lib-dir" value="${basedir}/lib"/>
+    	
+		<!-- Are the compiler optimizations on/off -->
+		<property name="optimize" value="off"/>
 	
         <!-- Fixed CVS properties -->
-	<property name="cvs-root" value=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/millstone"/>
+		<property name="cvs-root" value=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/millstone"/>
 
         <!-- Environment -->
-	<property environment="env"/>
+		<property environment="env"/>
    
     </target>
 
@@ -52,17 +53,17 @@
         <property name="root-dir" value="${checkout-dir}" />
 
     	<echo message="Creating MillStone ${version}"/>
-	<echo message="Checkout from: ${cvs-root} with tag ${cvs-tag}"/>
-	<echo message="Checkout to: ${checkout-dir}" />
-	<echo message="Root: ${root-dir}" />
-	<echo message="JAVA_HOME: ${env.JAVA_HOME}" />
+		<echo message="Checkout from: ${cvs-root} with tag ${cvs-tag}"/>
+		<echo message="Checkout to: ${checkout-dir}" />
+		<echo message="Root: ${root-dir}" />
+		<echo message="JAVA_HOME: ${env.JAVA_HOME}" />
     </target>
 
 
     <target name="init-development" depends="pre-init" unless="release">
 
         <!-- MillStone version -->
-	<property name="version" value="${DSTAMP}.${TSTAMP}" />
+		<property name="version" value="${DSTAMP}.${TSTAMP}" />
 	
         <!-- Create Version filter -->
         <filter token="VERSION" value="${version}"/>
@@ -71,10 +72,10 @@
         
     	<echo message="Preparing for development snapshot."/>
     	<echo message="Creating MillStone ${version}"/>
-	<echo message="Root: ${root-dir}" />
-	<echo message="JAVA_HOME: ${env.JAVA_HOME}" />
+		<echo message="Root: ${root-dir}" />
+		<echo message="JAVA_HOME: ${env.JAVA_HOME}" />
  	
-	<echo message="You can build releases by setting the 'release' property to true."/>
+		<echo message="You can build releases by setting the 'release' property to true."/>
     </target>
 
     <target name="pause">
@@ -86,7 +87,7 @@
         <property name="target-name" value="millstone-${version}"/>
         <property name="release-docs" value="${basedir}/docs"/>
 
-	<!-- Directories -->
+		<!-- Directories -->
         <property name="output-dir" value="${work-dir}/${target-name}"/>
         <property name="manifest-dir" value="${work-dir}/compiled-manifests"/>
       
@@ -128,9 +129,9 @@
 
         <!-- Copy/filter core documentation to correct places -->
         <copy todir="${output-dir}">
-	    <filterset>
+	    	<filterset>
     	       <filter token="VERSION" value="${version}"/>
-            </filterset>
+        	</filterset>
             <fileset dir="${release-docs}">
                 <include name="readme.txt"/>
                 <include name="install.txt"/>
@@ -143,9 +144,9 @@
         <!-- Convert to CRLF -->
         <fixcrlf srcdir="${output-dir}"
                  eol="crlf"
-		 tablength="4"
-		 tab="remove"
-	         includes="*.txt"/>
+		 		 tablength="4"
+		 		 tab="remove"
+	         	 includes="*.txt"/>
 	
         <!-- Create Output Directory Hierarchy -->
         <mkdir dir="${output-dir}/docs/apidocs" />
