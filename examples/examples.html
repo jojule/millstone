@@ -6,27 +6,24 @@
 
 <SCRIPT LANGUAGE="JavaScript">
     function openLink(ex, size, path, classes) {
-    	var clist = classes.split(',');
         win = window.open(
-        	"loading.html",
-        	"source",
-        	"width=750,height=550,directories=no,location=no,menubar=no,scrollbars=yes,status=no,toolbar=no,resizable=yes");
+        	"source_view.html",
+        	"source_view",	"width=750,height=550,directories=no,location=no,menubar=no,scrollbars=yes,status=no,toolbar=no,resizable=yes");
 
-	  win.document.write('<FRAMESET rows="*,55"><FRAME name="src" src="nosource.html"><FRAME name="class" border="0" frameborder="no" src="loading.html"></FRAMESET>');  
-	  win.frames['class'].document.open();
-	  win.frames['class'].document.write('<html><head><link href="millstoneorg.css" type="text/css" rel="STYLESHEET"></head><body><TABLE cellpaddig="5"><TR>' +"\n");
-	  for (src in clist) {
-		win.frames['class'].document.write("\n<TD>\n");
-	  	win.frames['class'].document.write('<A class="caption" target="src" href="docs/'+path+'/'+clist[src]+'.java.html">'+clist[src]+'</A> (<A target="src" href="docs/sources/'+path+'/'+clist[src]+'.java">.java</A>)');
-	  	win.frames['class'].document.write("\n</TD>\n");
-	  }
-	  win.frames['class'].document.write("</TR></TABLE></body></html>\n");
-	  win.frames['class'].document.close();
+		
+		setTimeout(check,1);
 
-	win.focus();
-	win.document.close();
+		function check() {
+			if (win.frames['source_select'] == null) {
+				setTimeout(check,1);
+				return;
+			} else {				
+				win.frames['source_select'].location.href = "source_select.html?path="+path+"&classes=" + classes;	
+				win.focus();
+			}	
+		}
+	}
 
-    }
 </SCRIPT>
 </head>
 

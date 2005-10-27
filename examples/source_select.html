@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+    <link href="millstoneorg.css" type="text/css" rel="STYLESHEET">
+	<title>Millstone Sample Source</title>	
+</head>
+	<body>
+	<TABLE><TR>
+		<SCRIPT>
+			var url = window.location.href.split("&classes=");
+			var classes = url[1];
+			if (classes != null) {
+				classes = classes.split(",");
+			}
+			var path = url[0].split("?path=")[1];
+
+			if (classes != null) {
+				for (var i =0; i< classes.length;i++ ) {
+					document.write("<TD>");
+					document.write('<A class="caption" target="source" href="docs/sources/'+path+'/'+classes[i]+'.html">'+classes[i]+'</A>'); 
+					document.write(' (<A class="caption" target="source" href="docs/sources/'+path+'/'+classes[i]+'.html">HTML</A>/'); 
+					document.write('<A target="source" href="docs/sources/'+path+'/'+classes[i]+'.java">Java</A>)');
+					document.write("</TD>");
+				}
+			} else {
+					document.write("<TD><h1>No source files available</h1></TD>");
+			}
+
+		</SCRIPT>
+	</TR></TABLE>
+	</body>
+</html>
