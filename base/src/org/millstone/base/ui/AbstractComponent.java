@@ -820,7 +820,7 @@ public abstract class AbstractComponent
      * @return Application specific data set with setData function.
      * @since 3.1
      */
-    Object getData() {
+    public Object getData() {
         return this.applicationData;
     }
 }
