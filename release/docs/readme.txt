@@ -84,9 +84,6 @@ Finland
 email: info@itmill.com
 www: www.itmill.com
 
-Millstone community www-pages will be opened at www.millstone.org in
-near future.
-
 
 ------------------------------------------------------------------------------
 Millstone is a registered trademark of IT Mill Ltd
