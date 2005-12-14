@@ -1234,18 +1234,35 @@ public class IndexedContainer implements Container, Container.Indexed,
 
         for (int i = 0; i < sortPropertyId.length; i++) {
 
-            Object p1 = getContainerProperty(o1, this.sortPropertyId[i])
-                    .getValue();
-            Object p2 = getContainerProperty(o2, this.sortPropertyId[i])
-                    .getValue();
+            // Get the compared properties
+            Property pp1 = getContainerProperty(o1, this.sortPropertyId[i]);
+            Property pp2 = getContainerProperty(o2, this.sortPropertyId[i]);
+           
+            // Get the compared values
+            Object p1 = pp1 == null ? null : pp1.getValue();
+            Object p2 = pp2 == null ? null : pp2.getValue();
 
+            // Result of the comparison
             int r = 0;
-            if (p1 != null && p2 != null)
+
+            // Normal non-null comparison
+            if (p1 != null && p2 != null) {
                 if ((p1 instanceof Boolean) && (p2 instanceof Boolean))
                     r = p1.equals(p2) ? 0 : ((this.sortDirection[i] ? 1 : -1) * (((Boolean)p1).booleanValue() ? 1 : -1));
                     else
                 r = this.sortDirection[i] ? ((Comparable) p1).compareTo(p2)
                         : -((Comparable) p1).compareTo(p2);
+            } 
+            
+            // If both are nulls
+            else if (p1 == p2)
+                r = 0;
+            
+            // If one of the properties are null
+            else
+                r = p1 == null ? -1 : 1;
+            
+            // If order can be decided
             if (r != 0)
                 return r;
         }
