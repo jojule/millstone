@@ -1156,8 +1156,9 @@ public class Table extends Select implements Action.Container,
 
         // Page start index
         if (variables.containsKey("firstvisible")) {
-            setCurrentPageFirstItemIndex(((Integer) variables
-                    .get("firstvisible")).intValue() - 1);
+            Integer value = (Integer) variables.get("firstvisible");
+            if (value != null)
+                setCurrentPageFirstItemIndex(value.intValue() - 1);
         }
 
         // Actions
