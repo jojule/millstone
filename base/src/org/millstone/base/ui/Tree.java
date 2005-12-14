@@ -145,6 +145,7 @@ public class Tree extends Select implements Container.Hierarchical, Action.Conta
 
 		// Expand
 		expanded.add(itemId);
+		requestRepaint();
 		fireExpandEvent(itemId);
 
 		return true;
@@ -190,6 +191,7 @@ public class Tree extends Select implements Container.Hierarchical, Action.Conta
 
 		// Collapse
 		expanded.remove(itemId);
+		requestRepaint();
 		fireCollapseEvent(itemId);
 
 		return true;
