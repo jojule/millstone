@@ -617,6 +617,11 @@ public class MultipartRequest
 			else
 			{
 				strLine = new String(blockOfBytes, 0, read, charEncoding);
+				
+				// Mac IE4 adds extra line after last boundary - 1.21
+                if(strLine==null || strLine.length() == 0 || strLine.trim().length() == 0)
+                    break;
+				
 				strName = trimQuotes(getValue("name", strLine));
 				// If this is not null, it indicates that we are processing a filename.
 				strFilename = trimQuotes(getValue("filename", strLine));
