@@ -235,7 +235,7 @@ public class HierarchicalContainer
 	 */
 	public Object addItem() {
 		Object id = super.addItem();
-		if (id != null)
+		if (id != null && !roots.contains(id))
 			roots.add(id);
 		return id;
 		
