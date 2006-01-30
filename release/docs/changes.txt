@@ -11,6 +11,11 @@
 
 ------------------------------------------------------------------------------
 
+version 3.1.1 pre1
+------------------
+
+- Bugfixes and updates in Base and Web Adpater packages.
+
 version 3.1.0
 -------------
 
