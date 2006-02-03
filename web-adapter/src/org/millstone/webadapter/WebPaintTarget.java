@@ -71,10 +71,13 @@ public class WebPaintTarget implements PaintTarget {
 	private Stack mOpenTags;
 	private boolean mTagArgumentListOpen;
 	private StringBuffer uidlBuffer;
+	private StringBuffer tagBuffer;
 	private HttpVariableMap variableMap;
 	private boolean closed = false;
 	private WebAdapterServlet webAdapterServlet;
 	private Theme theme;
+    private static final int TAG_BUFFER_DEFAULT_SIZE = 20;
+    private boolean mSuppressOutput = false;
 
 
 	/** Create a new XMLPrintWriter, without automatic line flushing.
@@ -101,6 +104,9 @@ public class WebPaintTarget implements PaintTarget {
 		// Set the target for UIDL writing
 		this.uidlBuffer = new StringBuffer();
 
+		// Set the target for TAG data
+		this.tagBuffer = new StringBuffer();
+		
 		// Initialize tag-writing
 		mOpenTags = new Stack();
 		mTagArgumentListOpen = false;
@@ -124,8 +130,9 @@ public class WebPaintTarget implements PaintTarget {
 	 */
 	private void ensureClosedTag() {
 		if (mTagArgumentListOpen) {
-			uidlBuffer.append("\n>");
+			tagBuffer.append(">");
 			mTagArgumentListOpen = false;
+			append(tagBuffer);			
 		}
 	}
 	/**  Print element start tag.
@@ -152,9 +159,10 @@ public class WebPaintTarget implements PaintTarget {
 
 		// Check tagName and attributes here
 		mOpenTags.push(tagName);
+		tagBuffer = new StringBuffer(TAG_BUFFER_DEFAULT_SIZE);
 
 		// Print the tag with attributes
-		uidlBuffer.append("<" + tagName);
+		tagBuffer.append("<" + tagName);
 
 		mTagArgumentListOpen = true;
 	}
@@ -188,15 +196,36 @@ public class WebPaintTarget implements PaintTarget {
 
 		// Make sure that the open start tag is closed before
 		// anything is written.
-		if (mTagArgumentListOpen) {
-			uidlBuffer.append("\n>");
-			mTagArgumentListOpen = false;
-		}
+		ensureClosedTag();
 
 		//Write the end (closing) tag
-		uidlBuffer.append("</" + lastTag + "\n>");
+		append("</" + lastTag + "\n>");
+		
+		// NOTE: We re-enable the output (if it has been disabled)
+		// for subsequent tags. The output is suppressed if tag
+		// contains attribute "invisible" with value true.
+		mSuppressOutput = false;
 	}
 	
+	/** Append data into UIDL output buffer.
+	 * 
+	 * @param data String to be appended.
+	 */
+	private void append(String data) {
+	    if (!mSuppressOutput) {
+	        uidlBuffer.append(data);
+	    }
+	}
+
+	/** Append data into UIDL output buffer.
+	 * 
+	 * @param data StringBuffer to be appended.
+	 */
+	private void append(StringBuffer data) {
+	    if (!mSuppressOutput) {
+		    uidlBuffer.append(data);	        
+	    }
+	}
 	
 	/** Substitute the XML sensitive characters with predefined XML entities.
 	 *
@@ -272,7 +301,7 @@ public class WebPaintTarget implements PaintTarget {
 		ensureClosedTag();
 
 		// Write what was given
-		uidlBuffer.append(str);
+		append(str);
 	}
 
 	/** Print XML-escaped text.
@@ -290,7 +319,14 @@ public class WebPaintTarget implements PaintTarget {
 	 */
 	public void addAttribute(String name, boolean value)
 		throws PaintException {
-		addAttribute(name, String.valueOf(value));
+	    if ("invisible".equals(name) && value) {
+	        // NOTE: If we receive the "invisible attribute
+	        // we filter these tags (and ceontent) from 
+	        // them out from the output. 
+	        this.mSuppressOutput = true;
+	    } else {
+			addAttribute(name, String.valueOf(value));	        
+	    }
 	}
 
 	/** Adds a resource attribute to component.
@@ -374,7 +410,7 @@ public class WebPaintTarget implements PaintTarget {
 		if (!mTagArgumentListOpen)
 			throw new PaintException("XML argument list not open.");
 
-		uidlBuffer.append(" " + name + "=\"" + escapeXML(value) + "\"");
+		tagBuffer.append(" " + name + "=\"" + escapeXML(value) + "\"");
 	}
 
 	/** Add a string type variable.
@@ -483,7 +519,7 @@ public class WebPaintTarget implements PaintTarget {
 
 		// Escape and write what was given
 		if (xml != null)
-			uidlBuffer.append(xml);
+			append(xml);
 
 	}
 	/** Add XML section with namespace
@@ -502,11 +538,12 @@ public class WebPaintTarget implements PaintTarget {
 		startTag(sectionTagName);
 		if (namespace != null)
 			addAttribute("xmlns", namespace);
-		uidlBuffer.append(">");
-		mTagArgumentListOpen = false;
+
+		// Close that starting tag
+		ensureClosedTag();
 
 		if (sectionData != null)
-			uidlBuffer.append(sectionData);
+			append(sectionData);
 		endTag(sectionTagName);
 	}
 
