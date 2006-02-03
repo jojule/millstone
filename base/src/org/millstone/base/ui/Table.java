@@ -856,34 +856,36 @@ public class Table extends Select implements Action.Container,
     /**
      * Setter for property currentPageFirstItem.
      * 
-     * @param currentPageFirstItem
+     * @param newIndex
      *            New value of property currentPageFirstItem.
      */
-    public void setCurrentPageFirstItemIndex(int currentPageFirstItemIndex) {
+    public void setCurrentPageFirstItemIndex(int newIndex) {
 
         // Ensure that the new value is valid
-        if (currentPageFirstItemIndex < 0)
-            currentPageFirstItemIndex = 0;
-        if (currentPageFirstItemIndex >= size())
-            currentPageFirstItemIndex = size() - 1;
+        if (newIndex < 0)
+            newIndex = 0;
+        if (newIndex >= size())
+            newIndex = size() - 1;
 
         // Refresh first item id
         if (items instanceof Container.Indexed) {
             try {
                 currentPageFirstItemId = ((Container.Indexed) items)
-                        .getIdByIndex(currentPageFirstItemIndex);
+                        .getIdByIndex(newIndex);
             } catch (IndexOutOfBoundsException e) {
                 currentPageFirstItemId = null;
             }
-            this.currentPageFirstItemIndex = currentPageFirstItemIndex;
+            this.currentPageFirstItemIndex = newIndex;
         } else {
 
             // For containers not supporting indexes, we must iterate the
             // container forwards / backwards
             // next available item forward or backward
 
+            this.currentPageFirstItemId = ((Container.Ordered) items).firstItemId();
+            
             // Go forwards in the middle of the list (respect borders)
-            while (this.currentPageFirstItemIndex < currentPageFirstItemIndex
+            while (this.currentPageFirstItemIndex < newIndex
                     && !((Container.Ordered) items)
                             .isLastId(currentPageFirstItemId)) {
                 this.currentPageFirstItemIndex++;
@@ -897,7 +899,7 @@ public class Table extends Select implements Action.Container,
             }
 
             // Go backwards in the middle of the list (respect borders)
-            while (this.currentPageFirstItemIndex > currentPageFirstItemIndex
+            while (this.currentPageFirstItemIndex > newIndex
                     && !((Container.Ordered) items)
                             .isFirstId(currentPageFirstItemId)) {
                 this.currentPageFirstItemIndex--;
@@ -911,7 +913,7 @@ public class Table extends Select implements Action.Container,
             }
 
             // Go forwards once more
-            while (this.currentPageFirstItemIndex < currentPageFirstItemIndex
+            while (this.currentPageFirstItemIndex < newIndex
                     && !((Container.Ordered) items)
                             .isLastId(currentPageFirstItemId)) {
                 this.currentPageFirstItemIndex++;
@@ -922,7 +924,7 @@ public class Table extends Select implements Action.Container,
             // If for some reason we do hit border again, override
             // the user index request
             if (((Container.Ordered) items).isLastId(currentPageFirstItemId)) {
-                currentPageFirstItemIndex = this.currentPageFirstItemIndex = size() - 1;
+                newIndex = this.currentPageFirstItemIndex = size() - 1;
             }
         }
 
@@ -1179,13 +1181,20 @@ public class Table extends Select implements Action.Container,
         // Sorting
         boolean doSort = false;
         if (variables.containsKey("sortcolumn")) {
-            setSortContainerPropertyId(this.columnIdMap.get(variables.get("sortcolumn").toString()));
-            doSort = true;
+            String colId = (String) variables.get("sortcolumn");
+            if (colId != null &&  !"".equals(colId) && !"null".equals(colId)) {
+                Object id = this.columnIdMap.get(colId);
+                setSortContainerPropertyId(id);
+            	doSort = true;
+            }
         }
         if (variables.containsKey("sortascending")) {
-            setSortAscending(((Boolean) variables.get("sortascending"))
-                    .booleanValue());
-            doSort = true;
+            boolean state = ((Boolean) variables.get("sortascending"))
+            .booleanValue();
+            if (state != this.sortAscending) {
+                setSortAscending(state);
+                doSort = true;
+            }
         }
         if (doSort)
             this.sort();
@@ -1294,8 +1303,8 @@ public class Table extends Select implements Action.Container,
                     String header = (String) this.getColumnHeader(columnId);
                     target.addAttribute("caption", (header != null ? header
                             : ""));
-                    target.addAttribute("cid", this.columnIdMap.key(columnId));
                 }
+                target.addAttribute("cid", this.columnIdMap.key(columnId));                
                 if (!ALIGN_LEFT.equals(this.getColumnAlignment(columnId)))
                     target.addAttribute("align", this
                             .getColumnAlignment(columnId));
@@ -1994,8 +2003,7 @@ public class Table extends Select implements Action.Container,
         if (c instanceof Container.Sortable) {
         	int pageIndex = this.getCurrentPageFirstItemIndex();
             ((Container.Sortable) c).sort(propertyId, ascending);
-            setCurrentPageFirstItemIndex(pageIndex);
-            this.currentPageFirstItemId = null;
+            setCurrentPageFirstItemIndex(pageIndex);           
         } else if (c != null) {
             throw new UnsupportedOperationException(
                     "Underlying Data does not allow sorting");
