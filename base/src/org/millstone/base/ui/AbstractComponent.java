@@ -456,21 +456,24 @@ public abstract class AbstractComponent
 	 */
 	public final void paint(PaintTarget target) throws PaintException {
 
-		if (isVisible()) {
-			if (!target.startTag(this, this.getTag())) {
-				if (getStyle() != null && getStyle().length() > 0)
-					target.addAttribute("style", getStyle());
-				if (isReadOnly())
-					target.addAttribute("readonly", true);
-				if (isImmediate())
-					target.addAttribute("immediate", true);
-				if (!isEnabled())
-					target.addAttribute("disabled", true);
-				if (getCaption() != null)
-					target.addAttribute("caption", getCaption());
-				if (getIcon() != null)
-					target.addAttribute("icon", getIcon());
+		if (!target.startTag(this, this.getTag())) {
+			if (getStyle() != null && getStyle().length() > 0)
+				target.addAttribute("style", getStyle());
+			if (isReadOnly())
+				target.addAttribute("readonly", true);
+			if (!isVisible())
+				target.addAttribute("invisible", true);
+			if (isImmediate())
+				target.addAttribute("immediate", true);
+			if (!isEnabled())
+				target.addAttribute("disabled", true);
+			if (getCaption() != null)
+				target.addAttribute("caption", getCaption());
+			if (getIcon() != null)
+				target.addAttribute("icon", getIcon());
 
+			// Only paint content of visible components.
+			if (isVisible()) {
 				paintContent(target);
 
 				String desc = getDescription();
@@ -484,8 +487,8 @@ public abstract class AbstractComponent
 				if (error != null)
 					error.paint(target);
 			}
-			target.endTag(this.getTag());
 		}
+		target.endTag(this.getTag());
 
 		repaintRequestListenersNotified = false;
 	}
