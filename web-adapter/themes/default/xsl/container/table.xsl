@@ -295,7 +295,7 @@
   <!-- Header -->
   <xsl:if test="../../@rowheaders='true'">
     <TD CLASS="{$class}-row-header">
-      <xsl:if test="@icon"><xsl:value-of select="@icon"/></xsl:if>
+      <xsl:if test="@icon"><IMG SRC="@icon"/></xsl:if>
       <xsl:value-of select="@caption"/>
     </TD>
   </xsl:if>
