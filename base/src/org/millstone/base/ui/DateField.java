@@ -247,25 +247,25 @@ public class DateField extends AbstractField {
             // Null values are converted to negative values.
             int year = variables.containsKey("year") ? (variables.get("year") == null ? -1
                     : ((Integer) variables.get("year")).intValue())
-                    : 0;
+                    : -1;
             int month = variables.containsKey("month") ? (variables
                     .get("month") == null ? -1 : ((Integer) variables
-                    .get("month")).intValue() - 1) : 0;
+                    .get("month")).intValue() - 1) : -1;
             int day = variables.containsKey("day") ? (variables.get("day") == null ? -1
                     : ((Integer) variables.get("day")).intValue())
-                    : 1;
+                    : -1;
             int hour = variables.containsKey("hour") ? (variables.get("hour") == null ? -1
                     : ((Integer) variables.get("hour")).intValue())
-                    : 0;
+                    : -1;
             int min = variables.containsKey("min") ? (variables.get("min") == null ? -1
                     : ((Integer) variables.get("min")).intValue())
-                    : 0;
+                    : -1;
             int sec = variables.containsKey("sec") ? (variables.get("sec") == null ? -1
                     : ((Integer) variables.get("sec")).intValue())
-                    : 0;
+                    : -1;
             int msec = variables.containsKey("msec") ? (variables.get("msec") == null ? -1
                     : ((Integer) variables.get("msec")).intValue())
-                    : 0;
+                    : -1;
 
             // If all of the components is < 0 use the previous value
             if (year < 0 && month < 0 && day < 0 && hour < 0 && min < 0
