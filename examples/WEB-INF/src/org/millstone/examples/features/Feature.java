@@ -37,6 +37,7 @@
 
 package org.millstone.examples.features;
 
+import org.millstone.base.terminal.Resource;
 import org.millstone.base.terminal.ClassResource;
 import org.millstone.base.ui.*;
 
@@ -46,6 +47,8 @@ public class Feature extends CustomComponent {
 
 	private boolean initialized = false;
 
+	private static Resource sampleIcon;
+	
 	/** Constuctor for the feature component */
 	public Feature() {
 		ts = new TabSheet();
@@ -118,4 +121,11 @@ public class Feature extends CustomComponent {
 	protected Component getDemoComponent() {
 		return null;	
 	}
+	
+	/** Get sample icon resource */
+	protected Resource getSampleIcon() {
+	    if (sampleIcon == null) sampleIcon = new ClassResource("m.gif",this.getApplication());
+	    return sampleIcon;
+	}
+
 }

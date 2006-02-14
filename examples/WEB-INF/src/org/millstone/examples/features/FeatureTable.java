@@ -105,7 +105,7 @@ public class FeatureTable extends Feature implements Action.Handler {
 
 		// Add random rows to table
 		for (int j = 0; j < 50; j++) {
-			t.addItem(
+			Object id = t.addItem(
 				new Object[] {
 					firstnames[(int) (Math.random() * (firstnames.length-1))],
 					lastnames[(int) (Math.random() * (lastnames.length-1))],
@@ -113,6 +113,7 @@ public class FeatureTable extends Feature implements Action.Handler {
 					eyecolors[(int) (Math.random() * 3)],
 					haircolors[(int) (Math.random() * 4)] },
 				new Integer(j));
+			t.setItemIcon(id,getSampleIcon());
 		}
 
 		// Actions
