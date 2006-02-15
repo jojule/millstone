@@ -180,7 +180,8 @@ public class DateField extends AbstractField {
         
         // Get the calendar
         Calendar calendar = getCalendar();
-        Date currentDate = calendar.getTime();
+        Date currentDate = (Date) getValue();
+        
         for (int r = resolution; r <= largestModifiable; r++)
             switch (r) {
             case RESOLUTION_MSEC:
