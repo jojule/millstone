@@ -11,6 +11,18 @@
 
 ------------------------------------------------------------------------------
 
+version 3.1.1
+-------------
+Base:
+- Column ids are now included in UIDL regardless of column header visibility in Table-component.
+- Partial date submit now possible in DateField; retains old values - zeroed all previously
+- Added locale attribute to UIDL.
+- Minor bugfixes in Base packages.
+
+Web-adapter:
+- Support now Table row-header icon.
+- Minor bugfixes in Web Adpater packages.
+
 version 3.1.1 pre1
 ------------------
 
