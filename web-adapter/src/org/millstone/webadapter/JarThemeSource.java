@@ -107,7 +107,7 @@ public class JarThemeSource implements ThemeSource {
 				this.theme = new Theme(jar.getInputStream(entry));
 			} catch (Exception e) {
 				throw new ThemeException(
-					"JarThemeSource: Failed to load '" + path + "': " + e);
+					"JarThemeSource: Failed to load '" + path + "': ",e);
 			}
 
 			// Debug info

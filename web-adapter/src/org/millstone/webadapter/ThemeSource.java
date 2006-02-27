@@ -98,11 +98,20 @@ public interface ThemeSource {
 	public class ThemeException extends Exception {
 
 		/** Create new theme exception.
-		 *  @param description Error message.
+		 *  @param message Error message.
 		 */
-		public ThemeException(String description) {
-			super(description);
+		public ThemeException(String message) {
+			super(message);
 		}
+
+        /** Createa new theme exception.
+         * 
+         * @param message
+         * @param e
+         */
+        public ThemeException(String message, Throwable cause) {
+           super(message,cause); 	
+        }
 	}
 
 	/** Wrapper class for XSL InputStreams */
