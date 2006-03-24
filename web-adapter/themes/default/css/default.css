@@ -109,9 +109,9 @@ A.button-link, NOBR.button {
 IFRAME.server-commands {
 	visibility: hidden;
 	position: absolute;
-	border: 0px 0px 0px 0px;
-	padding: 0px 0px 0px 0px;
-	margin: 0px 0px 0px 0px;
+	border: 0px;
+	padding: 0px;
+	margin: 0px;
 }
 
 
@@ -202,7 +202,7 @@ TR.table-list-selected,TR.table-list {
 
 TR.table-selected, TR.table-list-selected { background-color: #0059ef; color: white; }
 TD.table { padding: 2px; border-top: dotted 1px #7fabf6; }
-TD.table-select { border: 0px; margin: 0px; spacing: 0px; background-color: #7fabf6;}
+TD.table-select { border: 0px; margin: 0px; cellspacing: 0px; background-color: #7fabf6;}
 INPUT.table-select { border: 0px; margin: 0px;  }
 TABLE.table-cursor { }
 
@@ -211,7 +211,7 @@ TABLE.table-cursor { }
 A.tree-node, A.tree-node-selected {  color: black; padding: 1px; }
 INPUT.tree-node { text-align: left; height: 18px; background-color: white; border:none; }
 INPUT.tree-node-selected { text-align: left; height: 18px; background-color: #0059ef; color: white; border: none; }
-A.tree-node-selected { background-color: #0059ef; color: white; border: 1px slashed white; }
+A.tree-node-selected { background-color: #0059ef; color: white; border: 1px dashed white; }
 A.tree-node:hover, A.tree-node-selected:hover { text-decoration: underline; }
 IMG.tree { margin: 0px; width: 16px; height: 16px; }
 
@@ -455,7 +455,7 @@ TD.cal-day-selected {
 }	
 
 .draggable {
-	display:			box;
+	display:			block;
 	float:				left;
 	background-color: 	red;
 	cursor:				pointer;
