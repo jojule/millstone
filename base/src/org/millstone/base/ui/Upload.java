@@ -119,7 +119,8 @@ public class Upload extends AbstractComponent implements Component.Focusable {
 			// Download successfull
 			out.close();
 			fireUploadSuccess(filename, type, totalBytes);
-
+			requestRepaint();
+			
 		} catch (IOException e) {
 
 			// Download interrupted
