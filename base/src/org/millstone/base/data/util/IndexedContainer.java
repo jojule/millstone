@@ -1260,7 +1260,7 @@ public class IndexedContainer implements Container, Container.Indexed,
             
             // If one of the properties are null
             else
-                r = p1 == null ? -1 : 1;
+                r = (this.sortDirection[i] ? 1 : -1) * (p1 == null ? -1 : 1);
             
             // If order can be decided
             if (r != 0)
