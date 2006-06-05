@@ -107,6 +107,11 @@ public class Upload extends AbstractComponent implements Component.Focusable {
 			throw new RuntimeException("Error getting outputstream from upload receiver");
 
 		InputStream in = upload.getStream();
+		if (null==in) {
+		    // No file, for instance non-existent filename in html upload
+			fireUploadInterrupted(filename, type, 0);
+			return;
+		}
 		byte buffer[] = new byte[BUFFER_SIZE];
 		int bytesRead = 0;
 		long totalBytes = 0;
