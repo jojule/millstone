@@ -362,6 +362,7 @@ public class Embedded extends AbstractComponent implements Sizeable {
 			} else {
 				type = TYPE_OBJECT;
 			}
+			requestRepaint();
 		}
 	}
 
