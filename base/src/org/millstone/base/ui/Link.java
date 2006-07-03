@@ -197,8 +197,10 @@ public class Link extends AbstractComponent {
 	public void setTargetBorder(int targetBorder) {
 		if (targetBorder == TARGET_BORDER_DEFAULT
 			|| targetBorder == TARGET_BORDER_MINIMAL
-			|| targetBorder == TARGET_BORDER_NONE)
+			|| targetBorder == TARGET_BORDER_NONE) {
 			this.targetBorder = targetBorder;
+			requestRepaint();
+		}
 	}
 
 	/** Sets the target window height.
@@ -206,6 +208,7 @@ public class Link extends AbstractComponent {
 	 */
 	public void setTargetHeight(int targetHeight) {
 		this.targetHeight = targetHeight;
+		requestRepaint();
 	}
 
 	/** Sets the target window name.
@@ -213,6 +216,7 @@ public class Link extends AbstractComponent {
 	 */
 	public void setTargetName(String targetName) {
 		this.targetName = targetName;
+		requestRepaint();
 	}
 
 	/** Sets the target window width.
@@ -220,6 +224,7 @@ public class Link extends AbstractComponent {
 	 */
 	public void setTargetWidth(int targetWidth) {
 		this.targetWidth = targetWidth;
+		requestRepaint();
 	}
 	/** Returns the resource this link opens.
 	 * @return Resource
@@ -240,8 +245,10 @@ public class Link extends AbstractComponent {
 	 */
 	public void setResource(Resource resource) {
 		this.resource = resource;
-		if (resource != null)
+		if (resource != null) {
 			window = null;
+		}
+		requestRepaint();
 	}
 
 	/** Sets the window this link opens.
@@ -249,8 +256,10 @@ public class Link extends AbstractComponent {
 	 */
 	public void setWindow(Window window) {
 		this.window = window;
-		if (window != null)
+		if (window != null) {
 			this.resource = null;
+		}
+		requestRepaint();
 	}
 
 }
