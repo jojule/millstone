@@ -201,7 +201,7 @@
         <!-- Component caption, icon, errors, descriptions -->
         <xsl:if test="@disabled='true'"><xsl:attribute name="DISABLED">true</xsl:attribute></xsl:if>
         <xsl:if test="(@icon) and not(@style='link' and local-name()='button')"><IMG SRC="{@icon}"/></xsl:if>
-        <xsl:if test="(string-length(@caption) &gt; 0) and (local-name()!='link' and local-name()!='button')"><xsl:value-of select="@caption"/><br /></xsl:if>
+        <xsl:if test="(string-length(@caption) &gt; 0) and (local-name()!='link' and local-name()!='button' and local-name()!='confirmedbutton')"><xsl:value-of select="@caption"/><br /></xsl:if>
         <xsl:choose>
           <xsl:when test="$dhtml">
             <xsl:for-each select="./error"><xsl:apply-templates select="." mode="dhtml"/></xsl:for-each>
