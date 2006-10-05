@@ -1,15 +1,21 @@
 
 <project name="Millstone Base Release" default="package">
+	
+	<!-- Load defaults -->
+	<target name="load-properties">
+   		<property file="local-build.properties"/>
+   		<property file="build.properties"/>
+	</target>
 
 	<!-- Initialize version information for development build-->
-	<target name="init-version"  depends="check-release-version" unless="millstone.version">
+	<target name="init-version"  depends="load-properties,check-release-version" unless="millstone.version">
 		<!-- Create current timestamp and version based on that -->
 		<tstamp/>
 		<property name="millstone.version" value="${DSTAMP}" />
 	</target>
 	
 	<!-- Ensure version information for release build-->
-	<target name="check-release-version" unless="millstone.version" if="release">
+	<target name="check-release-version" depends="load-properties" unless="millstone.version" if="release">
 		<echo message="You must specify version by setting the 'millstone.version' property!"/>
 		<echo message="For example: -Dmillstone.version=3.1.1"/>
 	</target>
