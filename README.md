@@ -1,6 +1,6 @@
-# Millstone Web Application Framework
+![Millstone Web Application Framework](examples/WEB-INF/src/org/millstone/examples/features/millstone-logo.gif)
 
-> **Historical Archive**: This repository contains the archived source code of the Millstone framework (2002-2006), which later evolved into the [Vaadin Framework](https://vaadin.com).
+> **Historical Archive**: This repository contains the archived source code of the Millstone framework (2000-2006), which later evolved into the [Vaadin Framework](https://vaadin.com).
 
 [![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL%20v2.1-blue.svg)](https://www.gnu.org/licenses/lgpl-2.1)
 [![Java](https://img.shields.io/badge/Java-J2EE-orange.svg)](https://www.oracle.com/java/)
@@ -35,13 +35,13 @@ Millstone laid the foundation for what would become one of the most successful J
 
 ### Technical Highlights
 
-- ✅ Based on Java and XML standards
-- ✅ J2EE architecture integration
-- ✅ Themeable presentation layer
-- ✅ UIDL (User Interface Definition Language) for terminal abstraction
-- ✅ Multiple terminal adapter support (Web, WAP, MIDP)
-- ✅ Open Source (LGPL 2.1)
-- ✅ Research funded by Tekes (Finnish Funding Agency for Technology and Innovation)
+- One of the first (if not the first) UI component based web framework
+- Based on Java and J2EE
+- UIDL (User Interface Definition Language) for terminal abstraction
+  - Both XSLT-based and Ajax rendering
+    - Themeable presentation layer
+  - Supports multiple terminal adapters (Web, WAP, MIDP, J2PE); but only Web is included in the Open Source project
+- Open Source (LGPL 2.1)
 
 ## Architecture
 
@@ -232,17 +232,17 @@ Millstone solved these problems by:
 
 ## Project Status
 
-⚠️ **This is a historical archive**. The Millstone framework is no longer actively developed.
+**This is a historical archive**. The Millstone framework is no longer actively developed.
 
 For modern web application development with Java, please use **[Vaadin](https://vaadin.com)**, the direct successor to Millstone, which continues the same philosophy with modern technology.
 
 ## Repository Information
 
 This repository was converted from the original CVS repository, preserving:
-- ✅ Complete commit history (2002-2006)
-- ✅ All branches and tags
-- ✅ Original committer information
-- ✅ Version history (3.0.0 through 3.1.1)
+- Commit history (2002-2006)
+  - Earlier proprietary work startig from 2000 was not imported commit by commit
+- All branches and tags
+- Original committer information
 
 ### Branches
 
@@ -277,7 +277,7 @@ Requirements:
 The `examples/` directory contains sample applications demonstrating:
 - Hello World
 - Calculator
-- Chat application
+- Chat application (server push)
 - Feature Browser (comprehensive component showcase)
 
 ## Community
@@ -292,16 +292,13 @@ While this project is archived, you can:
 This framework was made possible by:
 - **IT Mill Ltd** (now Vaadin Ltd) - Original development
 - **Tekes** - Research funding
-- **The open source community** - Testing, feedback, and contributions
+- **The open source community and customers** - Ideas, testing, feedback, and contributions
 - **All contributors** - See the commit history for individual contributions
 
 ## Links
 
-- 🌐 Modern Framework: [Vaadin](https://vaadin.com) [(Source Code)](https://github.com/vaadin)
-- 📖 Vaadin Documentation: [vaadin.com/docs](https://vaadin.com/docs)
-- 💬 Community: [Vaadin Forums](https://vaadin.com/forum)
-- 📦 Original SourceForge: [sourceforge.net/projects/millstone](https://sourceforge.net/projects/millstone/)
-
----
-
-*Millstone™ is a trademark of IT Mill Ltd (now Vaadin Ltd). This repository is maintained as a historical archive of an important chapter in Java web framework history.*
+- Modern version of Millstone: [Vaadin](https://vaadin.com)
+  - [Documentation](https://vaadin.com/docs)
+  - [Source Code](https://github.com/vaadin)
+  - [Discussion forum](https://vaadin.com/forum)
+- Original Millstone SourceForge repository: [sourceforge.net/projects/millstone](https://sourceforge.net/projects/millstone/)
